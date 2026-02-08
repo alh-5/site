@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Stock Check System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            color: #4ecdc4;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.85;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .import-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .import-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .import-card {
+            background-color: #f9fafc;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e1e5eb;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .import-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .import-card.current-stock {
+            border-top: 5px solid #3498db;
+        }
+        
+        .import-card.purchase {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .card-header h2 {
+            font-size: 1.6rem;
+            margin-left: 15px;
+        }
+        
+        .current-stock .card-header i {
+            color: #3498db;
+            font-size: 1.8rem;
+        }
+        
+        .purchase .card-header i {
+            color: #e74c3c;
+            font-size: 1.8rem;
+        }
+        
+        .file-input-wrapper {
+            margin-bottom: 20px;
+        }
+        
+        .file-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .file-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .file-input:hover {
+            border-color: #3498db;
+        }
+        
+        .mapping-section {
+            margin-top: 25px;
+        }
+        
+        .mapping-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .mapping-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .mapping-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 1rem;
+        }
+        
+        .mapping-note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .button-section {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .calculate-btn:hover {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .results-section {
+            margin-top: 40px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .results-header h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .export-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .export-btn:hover {
+            background-color: #219653;
+        }
+        
+        .export-pdf-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .export-pdf-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Search box styling */
+        .search-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        .search-results-count {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .suggestion-sku {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .suggestion-name {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
+        .clear-search-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .clear-search-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        th {
+            background-color: #2c3e50;
+            color: white;
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9fafc;
+        }
+        
+        tr:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .sku-code {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .positive-stock {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .zero-stock {
+            color: #f39c12;
+            font-weight: 600;
+        }
+        
+        .negative-stock {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        .file-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .instruction-note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-ready {
+            background-color: #2ecc71;
+        }
+        
+        .status-pending {
+            background-color: #f1c40f;
+        }
+        
+        .status-empty {
+            background-color: #e74c3c;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .results-summary {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .positive-summary {
+            color: #27ae60;
+        }
+        
+        .zero-summary {
+            color: #f39c12;
+        }
+        
+        .negative-summary {
+            color: #e74c3c;
+        }
+        
+        .report-header {
+            display: none;
+        }
+        
+        .sku-duplicate-note {
+            font-size: 0.85rem;
+            color: #e74c3c;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-boxes"></i> Inventory Stock Check System</h1>
+            <p class="subtitle">Import Current Stock and Not Recieve Purchase data to calculate available inventory</p>
+        </header>
+        
+        <div class="main-content">
+            
+            
+            <div class="import-section">
+                <div class="import-card current-stock">
+                    <div class="card-header">
+                        <i class="fas fa-warehouse"></i>
+                        <h2>Current Stock Import</h2>
+                    </div>
+                    
+                    <div class="file-input-wrapper">
+                        <label class="file-label">Upload Current Stock File (.xls, .xlsx)</label>
+                        <input type="file" id="currentStockFile" class="file-input" accept=".xls,.xlsx">
+                        <div class="status-indicator">
+                            <span class="status-dot status-empty"></span>
+                            <span id="currentStockStatus">No file selected</span>
+                        </div>
+                    </div>
+					
+					<button class="upload-btn" id="uploadBtn" onclick="window.location.href='https://alh-5.github.io/alh/Stock Available from Not Received physical product/Current Stock.xlsx';">
+                        <i class="fas fa-chart-pie"></i> Download Current Stock
+                    </button>
+                    
+                    <div class="mapping-section">
+                        <h3>Map Your Columns</h3>
+                        <div class="mapping-row">
+                            <span class="mapping-label">SKU Code:</span>
+                            <select id="currentSkuCode">
+                                <option value="">Select column</option>
+                            </select>
+                        </div>
+                        <div class="mapping-row">
+                            <span class="mapping-label">SKU Name:</span>
+                            <select id="currentSkuName">
+                                <option value="">Select column</option>
+                            </select>
+                        </div>
+                        <div class="mapping-row">
+                            <span class="mapping-label">Qty:</span>
+                            <select id="currentQty">
+                                <option value="">Select column</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="import-card purchase">
+                    <div class="card-header">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h2>Purchase Import</h2>
+                    </div>
+                    
+                    <div class="file-input-wrapper">
+                        <label class="file-label">Upload Purchase File (.xls, .xlsx)</label>
+                        <input type="file" id="purchaseFile" class="file-input" accept=".xls,.xlsx">
+                        <div class="status-indicator">
+                            <span class="status-dot status-empty"></span>
+                            <span id="purchaseStatus">No file selected</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mapping-section">
+                        <h3>Map Your Columns</h3>
+                        <div class="mapping-row">
+                            <span class="mapping-label">SKU Code:</span>
+                            <select id="purchaseSkuCode">
+                                <option value="">Select column</option>
+                            </select>
+                        </div>
+                        <div class="mapping-row">
+                            <span class="mapping-label">SKU Name:</span>
+                            <select id="purchaseSkuName">
+                                <option value="">Select column</option>
+                            </select>
+                        </div>
+                        <div class="mapping-row">
+                            <span class="mapping-label">Quantity:</span>
+                            <select id="purchaseQty">
+                                <option value="">Select column</option>
+                            </select>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-section">
+                <button id="calculateBtn" class="calculate-btn">
+                    <i class="fas fa-calculator"></i> Calculate Inventory Availability
+                </button>
+            </div>
+            
+            <div class="results-section">
+                <div class="results-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Inventory Availability Results</h2>
+                    <div class="export-buttons">
+                        <button id="exportBtn" class="export-btn" disabled>
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                        <button id="exportPdfBtn" class="export-pdf-btn" disabled>
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Enter your Search...">
+                        <i class="fas fa-search search-icon"></i>
+                        <div id="suggestionsDropdown" class="suggestions-dropdown"></div>
+                    </div>
+                    <div id="searchResultsCount" class="search-results-count"></div>
+                    <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                        <i class="fas fa-times"></i> Clear Search
+                    </button>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="status-dot status-ready" style="background-color: #27ae60;"></span>
+                        <span>Positive Stock</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-dot status-ready" style="background-color: #f39c12;"></span>
+                        <span>Zero Stock</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-dot status-ready" style="background-color: #e74c3c;"></span>
+                        <span>Negative Stock</span>
+                    </div>
+                </div>
+                
+                <!-- Report Header (hidden on screen but will appear in PDF) -->
+                <div id="reportHeader" class="report-header">
+                    <h1>Inventory Availability Report</h1>
+                    <p>Generated on: <span id="reportDate"></span></p>
+                    <p>Total SKUs: <span id="reportTotalSkus"></span></p>
+                </div>
+                
+                <div id="resultsContainer">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Inventory Stock Check System &copy; 2026 | Supports .xlsx files | Groups by SKU Code only</p>
+        </footer>
+    </div>
+
+    <script>
+        // Variables to store imported data
+        let currentStockData = [];
+        let purchaseData = [];
+        let currentStockHeaders = [];
+        let purchaseHeaders = [];
+        let inventoryAvailability = [];
+        let originalInventoryData = []; // Store original data for search filtering
+        let searchSuggestions = []; // Store search suggestions
+        
+        // DOM Elements
+        const currentStockFileInput = document.getElementById('currentStockFile');
+        const purchaseFileInput = document.getElementById('purchaseFile');
+        const currentStockStatus = document.getElementById('currentStockStatus');
+        const purchaseStatus = document.getElementById('purchaseStatus');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsDropdown = document.getElementById('suggestionsDropdown');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        
+        // Mapping select elements
+        const currentSkuCode = document.getElementById('currentSkuCode');
+        const currentSkuName = document.getElementById('currentSkuName');
+        const currentQty = document.getElementById('currentQty');
+        const purchaseSkuCode = document.getElementById('purchaseSkuCode');
+        const purchaseSkuName = document.getElementById('purchaseSkuName');
+        const purchaseQty = document.getElementById('purchaseQty');
+        
+        // Report elements
+        const reportDate = document.getElementById('reportDate');
+        const reportTotalSkus = document.getElementById('reportTotalSkus');
+        
+        // Event Listeners
+        currentStockFileInput.addEventListener('change', function(e) {
+            handleFileUpload(e, 'currentStock');
+        });
+        
+        purchaseFileInput.addEventListener('change', function(e) {
+            handleFileUpload(e, 'purchase');
+        });
+        
+        calculateBtn.addEventListener('click', calculateInventoryAvailability);
+        exportBtn.addEventListener('click', exportResults);
+        exportPdfBtn.addEventListener('click', exportToPDF);
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            if (searchTerm.length > 0) {
+                clearSearchBtn.style.display = 'flex';
+                filterResults(searchTerm);
+                showSuggestions(searchTerm);
+            } else {
+                clearSearchBtn.style.display = 'none';
+                suggestionsDropdown.style.display = 'none';
+                // Show all results if search is cleared
+                if (originalInventoryData.length > 0) {
+                    displayResults(originalInventoryData);
+                    searchResultsCount.textContent = `Showing all ${originalInventoryData.length} SKUs`;
+                }
+            }
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            if (searchTerm.length > 0 && searchSuggestions.length > 0) {
+                showSuggestions(searchTerm);
+            }
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-box')) {
+                suggestionsDropdown.style.display = 'none';
+            }
+        });
+        
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            suggestionsDropdown.style.display = 'none';
+            if (originalInventoryData.length > 0) {
+                displayResults(originalInventoryData);
+                searchResultsCount.textContent = `Showing all ${originalInventoryData.length} SKUs`;
+            }
+        });
+        
+        // Handle file upload and parsing
+        function handleFileUpload(event, fileType) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                
+                if (jsonData.length === 0) {
+                    alert('The selected file is empty or cannot be read.');
+                    return;
+                }
+                
+                // Extract headers (first row)
+                const headers = jsonData[0];
+                // Extract data rows (skip header)
+                const rows = jsonData.slice(1).filter(row => row.length > 0);
+                
+                if (fileType === 'currentStock') {
+                    currentStockHeaders = headers;
+                    currentStockData = rows;
+                    updateStatus('currentStock', file.name, rows.length);
+                    populateMappingOptions('currentStock', headers);
+                } else {
+                    purchaseHeaders = headers;
+                    purchaseData = rows;
+                    updateStatus('purchase', file.name, rows.length);
+                    populateMappingOptions('purchase', headers);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // Update status indicator
+        function updateStatus(fileType, fileName, rowCount) {
+            const statusElement = fileType === 'currentStock' ? currentStockStatus : purchaseStatus;
+            const statusDot = statusElement.previousElementSibling;
+            
+            if (rowCount > 0) {
+                statusElement.textContent = `${fileName} - ${rowCount} rows loaded`;
+                statusDot.className = 'status-dot status-ready';
+            } else {
+                statusElement.textContent = `${fileName} - No data found`;
+                statusDot.className = 'status-dot status-pending';
+            }
+        }
+        
+        // Populate mapping dropdowns with file headers
+        function populateMappingOptions(fileType, headers) {
+            let skuCodeSelect, skuNameSelect, qtySelect;
+            
+            if (fileType === 'currentStock') {
+                skuCodeSelect = currentSkuCode;
+                skuNameSelect = currentSkuName;
+                qtySelect = currentQty;
+                
+                // Clear previous options
+                skuCodeSelect.innerHTML = '<option value="">Select column</option>';
+                skuNameSelect.innerHTML = '<option value="">Select column</option>';
+                qtySelect.innerHTML = '<option value="">Select column</option>';
+            } else {
+                skuCodeSelect = purchaseSkuCode;
+                skuNameSelect = purchaseSkuName;
+                qtySelect = purchaseQty;
+                
+                // Clear previous options
+                skuCodeSelect.innerHTML = '<option value="">Select column</option>';
+                skuNameSelect.innerHTML = '<option value="">Select column</option>';
+                qtySelect.innerHTML = '<option value="">Select column</option>';
+            }
+            
+            // Add header options
+            headers.forEach((header, index) => {
+                if (header && header.toString().trim() !== '') {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = header;
+                    
+                    // Auto-select based on header name (case-insensitive partial matching)
+                    const headerLower = header.toString().toLowerCase();
+                    
+                    if (fileType === 'currentStock') {
+                        skuCodeSelect.appendChild(option.cloneNode(true));
+                        skuNameSelect.appendChild(option.cloneNode(true));
+                        qtySelect.appendChild(option.cloneNode(true));
+                        
+                        // Auto-select if header name matches expected column
+                        if (headerLower.includes('sku') && headerLower.includes('code')) {
+                            skuCodeSelect.value = index;
+                        }
+                        if (headerLower.includes('sku') && headerLower.includes('name')) {
+                            skuNameSelect.value = index;
+                        }
+                        if (headerLower === 'qty') {
+                            qtySelect.value = index;
+                        }
+                    } else {
+                        skuCodeSelect.appendChild(option.cloneNode(true));
+                        skuNameSelect.appendChild(option.cloneNode(true));
+                        qtySelect.appendChild(option.cloneNode(true));
+                        
+                        // Auto-select if header name matches expected column
+                        if (headerLower.includes('sku') && headerLower.includes('code')) {
+                            skuCodeSelect.value = index;
+                        }
+                        if (headerLower.includes('sku') && headerLower.includes('name')) {
+                            skuNameSelect.value = index;
+                        }
+                        if (headerLower.includes('quantity')) {
+                            purchaseQty.value = index;
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Main calculation function - CORRECTED to group by SKU code only
+        function calculateInventoryAvailability() {
+            // Validate file uploads
+            if (currentStockData.length === 0) {
+                alert('Please upload a Current Stock file first.');
+                return;
+            }
+            
+            if (purchaseData.length === 0) {
+                alert('Please upload a Purchase file first.');
+                return;
+            }
+            
+            // Validate mapping selections
+            if (!currentSkuCode.value || !currentSkuName.value || !currentQty.value) {
+                alert('Please map all required columns for Current Stock: SKU Code, SKU Name, and Qty.');
+                return;
+            }
+            
+            if (!purchaseSkuCode.value || !purchaseSkuName.value || !purchaseQty.value) {
+                alert('Please map all required columns for Purchase: SKU Code, SKU Name, and Quantity.');
+                return;
+            }
+            
+            // Process current stock data - sum quantities for duplicate SKU CODES only
+            const currentStockMap = new Map();
+            const currentStockNameMap = new Map(); // Track first SKU name for each SKU code
+            
+            currentStockData.forEach(row => {
+                const skuCode = row[currentSkuCode.value] ? row[currentSkuCode.value].toString().trim() : '';
+                const skuName = row[currentSkuName.value] ? row[currentSkuName.value].toString().trim() : '';
+                const qty = parseFloat(row[currentQty.value]) || 0;
+                
+                if (skuCode) {
+                    if (currentStockMap.has(skuCode)) {
+                        // Sum quantities for same SKU code
+                        const existingQty = currentStockMap.get(skuCode);
+                        currentStockMap.set(skuCode, existingQty + qty);
+                    } else {
+                        // First time seeing this SKU code
+                        currentStockMap.set(skuCode, qty);
+                        currentStockNameMap.set(skuCode, skuName || 'Unknown');
+                    }
+                }
+            });
+            
+            // Process purchase data - sum quantities for duplicate SKU CODES only
+            const purchaseMap = new Map();
+            const purchaseNameMap = new Map(); // Track first SKU name for each SKU code
+            
+            purchaseData.forEach(row => {
+                const skuCode = row[purchaseSkuCode.value] ? row[purchaseSkuCode.value].toString().trim() : '';
+                const skuName = row[purchaseSkuName.value] ? row[purchaseSkuName.value].toString().trim() : '';
+                const qty = parseFloat(row[purchaseQty.value]) || 0;
+                
+                if (skuCode) {
+                    if (purchaseMap.has(skuCode)) {
+                        // Sum quantities for same SKU code
+                        const existingQty = purchaseMap.get(skuCode);
+                        purchaseMap.set(skuCode, existingQty + qty);
+                    } else {
+                        // First time seeing this SKU code
+                        purchaseMap.set(skuCode, qty);
+                        purchaseNameMap.set(skuCode, skuName || 'Unknown');
+                    }
+                }
+            });
+            
+            // Calculate inventory availability
+            inventoryAvailability = [];
+            
+            // Process all current stock items
+            for (const [skuCode, currentQty] of currentStockMap) {
+                const purchaseQty = purchaseMap.has(skuCode) ? purchaseMap.get(skuCode) : 0;
+                const availableQty = currentQty - purchaseQty;
+                const skuName = currentStockNameMap.get(skuCode) || 'Unknown';
+                
+                inventoryAvailability.push({
+                    skuCode: skuCode,
+                    skuName: skuName,
+                    currentStock: currentQty,
+                    purchaseQty: purchaseQty,
+                    availableQty: availableQty
+                });
+                
+                // Remove from purchaseMap to track which purchase items have been processed
+                if (purchaseMap.has(skuCode)) {
+                    purchaseMap.delete(skuCode);
+                }
+            }
+            
+            // Add any purchase items that weren't in current stock (negative availability)
+            for (const [skuCode, purchaseQty] of purchaseMap) {
+                const skuName = purchaseNameMap.get(skuCode) || 'Unknown';
+                inventoryAvailability.push({
+                    skuCode: skuCode,
+                    skuName: skuName,
+                    currentStock: 0,
+                    purchaseQty: purchaseQty,
+                    availableQty: -purchaseQty
+                });
+            }
+            
+            // Sort by SKU Code
+            inventoryAvailability.sort((a, b) => a.skuCode.localeCompare(b.skuCode));
+            
+            // Store original data for search filtering
+            originalInventoryData = [...inventoryAvailability];
+            
+            // Generate search suggestions
+            generateSearchSuggestions(inventoryAvailability);
+            
+            // Display results
+            displayResults(inventoryAvailability);
+            
+            // Update search results count
+            searchResultsCount.textContent = `Showing all ${inventoryAvailability.length} SKUs`;
+            
+            // Enable export buttons
+            exportBtn.disabled = false;
+            exportPdfBtn.disabled = false;
+        }
+        
+        // Generate search suggestions from inventory data
+        function generateSearchSuggestions(data) {
+            searchSuggestions = [];
+            data.forEach(item => {
+                // Add SKU code suggestion
+                if (item.skuCode && !searchSuggestions.includes(item.skuCode)) {
+                    searchSuggestions.push({
+                        type: 'code',
+                        value: item.skuCode,
+                        name: item.skuName
+                    });
+                }
+                
+                // Add SKU name suggestion
+                if (item.skuName && !searchSuggestions.some(s => s.type === 'name' && s.value === item.skuName)) {
+                    searchSuggestions.push({
+                        type: 'name',
+                        value: item.skuName,
+                        code: item.skuCode
+                    });
+                }
+            });
+        }
+        
+        // Show search suggestions dropdown
+        function showSuggestions(searchTerm) {
+            if (searchSuggestions.length === 0 || searchTerm.length === 0) {
+                suggestionsDropdown.style.display = 'none';
+                return;
+            }
+            
+            // Filter suggestions based on search term
+            const filteredSuggestions = searchSuggestions.filter(suggestion => 
+                suggestion.value.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            if (filteredSuggestions.length === 0) {
+                suggestionsDropdown.style.display = 'none';
+                return;
+            }
+            
+            // Build suggestions HTML
+            let suggestionsHTML = '';
+            filteredSuggestions.slice(0, 10).forEach(suggestion => {
+                if (suggestion.type === 'code') {
+                    suggestionsHTML += `
+                        <div class="suggestion-item" data-value="${suggestion.value}">
+                            <span class="suggestion-sku">${suggestion.value}</span>
+                            <span class="suggestion-name">${suggestion.name || ''}</span>
+                        </div>
+                    `;
+                } else {
+                    suggestionsHTML += `
+                        <div class="suggestion-item" data-value="${suggestion.value}">
+                            <span class="suggestion-sku">${suggestion.value}</span>
+                            <span class="suggestion-name">SKU: ${suggestion.code || ''}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            suggestionsDropdown.innerHTML = suggestionsHTML;
+            suggestionsDropdown.style.display = 'block';
+            
+            // Add click event to suggestion items
+            const suggestionItems = suggestionsDropdown.querySelectorAll('.suggestion-item');
+            suggestionItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    searchInput.value = this.getAttribute('data-value');
+                    suggestionsDropdown.style.display = 'none';
+                    filterResults(searchInput.value);
+                });
+            });
+        }
+        
+        // Filter results based on search term
+        function filterResults(searchTerm) {
+            if (!searchTerm || searchTerm.trim() === '') {
+                displayResults(originalInventoryData);
+                return;
+            }
+            
+            const filteredData = originalInventoryData.filter(item => 
+                item.skuCode.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                item.skuName.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            displayResults(filteredData);
+            searchResultsCount.textContent = `Showing ${filteredData.length} of ${originalInventoryData.length} SKUs`;
+        }
+        
+        // Display results in a table
+        function displayResults(data) {
+            if (data.length === 0) {
+                resultsContainer.innerHTML = '<p style="text-align: center; padding: 40px; color: #7f8c8d;">No data to display. Please check your files and try again.</p>';
+                return;
+            }
+            
+            // Calculate summary statistics
+            const totalSKUs = data.length;
+            const positiveStock = data.filter(item => item.availableQty > 0).length;
+            const zeroStock = data.filter(item => item.availableQty === 0).length;
+            const negativeStock = data.filter(item => item.availableQty < 0).length;
+            
+            let tableHTML = `
+                <div class="results-summary">
+                    <div class="summary-item">
+                        <div class="summary-value">${totalSKUs}</div>
+                        <div class="summary-label">Total SKUs</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value positive-summary">${positiveStock}</div>
+                        <div class="summary-label">Positive Stock</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value zero-summary">${zeroStock}</div>
+                        <div class="summary-label">Zero Stock</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value negative-summary">${negativeStock}</div>
+                        <div class="summary-label">Negative Stock</div>
+                    </div>
+                </div>
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>SKU Code</th>
+                            <th>SKU Name</th>
+                            <th>Current Stock (Qty)</th>
+                            <th>Purchase Quantity</th>
+                            <th>Available Inventory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.forEach(item => {
+                let stockClass = '';
+                if (item.availableQty > 0) {
+                    stockClass = 'positive-stock';
+                } else if (item.availableQty === 0) {
+                    stockClass = 'zero-stock';
+                } else {
+                    stockClass = 'negative-stock';
+                }
+                
+                tableHTML += `
+                    <tr>
+                        <td class="sku-code">${item.skuCode || 'N/A'}</td>
+                        <td>${item.skuName || 'N/A'}</td>
+                        <td>${item.currentStock}</td>
+                        <td>${item.purchaseQty}</td>
+                        <td class="${stockClass}">${item.availableQty}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+                <div class="file-info">
+                    <p><strong>Total SKUs:</strong> ${totalSKUs} | <strong>Positive Stock:</strong> ${positiveStock} | 
+                    <strong>Zero Stock:</strong> ${zeroStock} | 
+                    <strong>Negative Stock:</strong> ${negativeStock}</p>
+                    <p><strong>Generated on:</strong> ${new Date().toLocaleString()}</p>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = tableHTML;
+            
+            // Update report header
+            reportDate.textContent = new Date().toLocaleString();
+            reportTotalSkus.textContent = totalSKUs;
+        }
+        
+        // Export results to Excel
+        function exportResults() {
+            // We need to extract the data from the table
+            const table = resultsContainer.querySelector('table');
+            if (!table) {
+                alert('No results to export. Please calculate inventory availability first.');
+                return;
+            }
+            
+            // Convert table to worksheet
+            const ws = XLSX.utils.table_to_sheet(table);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Inventory Availability");
+            
+            // Generate file name with timestamp
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+            const fileName = `Inventory_Availability_${timestamp}.xlsx`;
+            
+            // Export to file
+            XLSX.writeFile(wb, fileName);
+        }
+        
+        // Export results to PDF
+        async function exportToPDF() {
+            if (inventoryAvailability.length === 0) {
+                alert('No results to export. Please calculate inventory availability first.');
+                return;
+            }
+            
+            // Show loading message
+            const originalText = exportPdfBtn.innerHTML;
+            exportPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+            exportPdfBtn.disabled = true;
+            
+            try {
+                // Create a new jsPDF instance
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape');
+                
+                // Set document properties
+                doc.setProperties({
+                    title: 'Inventory Availability Report',
+                    subject: 'Inventory Stock Analysis',
+                    author: 'Inventory System',
+                    keywords: 'inventory, stock, availability, report',
+                    creator: 'Inventory Stock Check System'
+                });
+                
+                // Add header
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.text('Inventory Availability Report', 14, 20);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+                doc.text(`Total SKUs: ${inventoryAvailability.length}`, 14, 37);
+                
+                // Calculate summary stats for PDF
+                const positiveStock = inventoryAvailability.filter(item => item.availableQty > 0).length;
+                const zeroStock = inventoryAvailability.filter(item => item.availableQty === 0).length;
+                const negativeStock = inventoryAvailability.filter(item => item.availableQty < 0).length;
+                
+                // Add summary section
+                doc.setFontSize(11);
+                doc.setTextColor(60, 60, 60);
+                doc.text('Summary:', 14, 47);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(80, 80, 80);
+                doc.text(`Total SKUs: ${inventoryAvailability.length}`, 14, 54);
+                doc.text(`Positive Stock: ${positiveStock}`, 60, 54);
+                doc.text(`Zero Stock: ${zeroStock}`, 110, 54);
+                doc.text(`Negative Stock: ${negativeStock}`, 160, 54);
+                
+                // Create table headers
+                const headers = [['SKU Code', 'SKU Name', 'Current Stock', 'Purchase Qty', 'Available Inventory']];
+                const columnWidths = [40, 70, 40, 40, 40];
+                
+                // Prepare data for table
+                const tableData = inventoryAvailability.map(item => [
+                    item.skuCode || 'N/A',
+                    item.skuName || 'N/A',
+                    item.currentStock.toString(),
+                    item.purchaseQty.toString(),
+                    item.availableQty.toString()
+                ]);
+                
+                // Set table start position
+                let startY = 65;
+                
+                // Function to add a page with header if needed
+                const addNewPage = () => {
+                    doc.addPage();
+                    doc.setPage(doc.internal.getNumberOfPages());
+                    // Add header on new page
+                    doc.setFontSize(12);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Inventory Availability Report (Continued)', 14, 15);
+                    return 20; // Return new startY position
+                };
+                
+                // Create table
+                doc.autoTable({
+                    head: headers,
+                    body: tableData,
+                    startY: startY,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [44, 62, 80],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold'
+                    },
+                    columnStyles: {
+                        0: { cellWidth: columnWidths[0], fontStyle: 'bold' },
+                        1: { cellWidth: columnWidths[1] },
+                        2: { cellWidth: columnWidths[2], halign: 'center' },
+                        3: { cellWidth: columnWidths[3], halign: 'center' },
+                        4: { 
+                            cellWidth: columnWidths[4], 
+                            halign: 'center',
+                            // Color code based on value
+                            cellPadding: { top: 2, right: 2, bottom: 2, left: 2 }
+                        }
+                    },
+                    didDrawCell: function(data) {
+                        // Color code the Available Inventory column
+                        if (data.column.index === 4 && data.cell.raw) {
+                            const value = parseFloat(data.cell.raw);
+                            if (value > 0) {
+                                doc.setTextColor(39, 174, 96); // Green for positive
+                            } else if (value < 0) {
+                                doc.setTextColor(231, 76, 60); // Red for negative
+                            } else {
+                                doc.setTextColor(243, 156, 18); // Yellow for zero
+                            }
+                        }
+                    },
+                    margin: { top: startY, right: 14, bottom: 20, left: 14 },
+                    styles: {
+                        fontSize: 9,
+                        cellPadding: 3,
+                        overflow: 'linebreak'
+                    },
+                    // Handle page breaks
+                    didDrawPage: function(data) {
+                        // Reset text color after drawing
+                        doc.setTextColor(0, 0, 0);
+                    }
+                });
+                
+                // Add footer with page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(10);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 40, doc.internal.pageSize.height - 10);
+                }
+                
+                // Generate file name with timestamp
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+                const fileName = `Inventory_Availability_${timestamp}.pdf`;
+                
+                // Save the PDF
+                doc.save(fileName);
+                
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
+            } finally {
+                // Restore button state
+                exportPdfBtn.innerHTML = originalText;
+                exportPdfBtn.disabled = false;
+            }
+        }
+        
+        // Initialize with sample data mapping options
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some common column names to the dropdowns as examples
+            const commonHeadersCurrentStock = [
+                "SKU Code", "Part#", "Product Code", "Item Code",
+                "SKU Name", "Part Name", "Product Name", "Item Name",
+                "Qty", "Stock"
+            ];
+            
+            const commonHeadersPurchase = [
+                "SKU Code", "Part#", "Product Code", "Item Code",
+                "SKU Name", "Part Name", "Product Name", "Item Name",
+                "Quantity", "Qty Ordered"
+            ];
+            
+            // Populate Current Stock with common examples
+            commonHeadersCurrentStock.forEach((header, index) => {
+                if (header.toLowerCase().includes('code')) {
+                    currentSkuCode.innerHTML += `<option value="${index}">${header} (example)</option>`;
+                }
+                
+                if (header.toLowerCase().includes('name')) {
+                    currentSkuName.innerHTML += `<option value="${index}">${header} (example)</option>`;
+                }
+                
+                // For current stock, only show "Qty" as an example for quantity
+                if (header === "Qty") {
+                    currentQty.innerHTML += `<option value="${index}">${header} (required)</option>`;
+                } else if (header.toLowerCase().includes('qty') || header.toLowerCase().includes('stock')) {
+                    currentQty.innerHTML += `<option value="${index}">${header} (not recommended)</option>`;
+                }
+            });
+            
+            // Populate Purchase with common examples
+            commonHeadersPurchase.forEach((header, index) => {
+                const adjustedIndex = index + 10; // Offset to avoid duplicate values
+                
+                if (header.toLowerCase().includes('code')) {
+                    purchaseSkuCode.innerHTML += `<option value="${adjustedIndex}">${header} (example)</option>`;
+                }
+                
+                if (header.toLowerCase().includes('name')) {
+                    purchaseSkuName.innerHTML += `<option value="${adjustedIndex}">${header} (example)</option>`;
+                }
+                
+                if (header.toLowerCase().includes('quantity')) {
+                    purchaseQty.innerHTML += `<option value="${adjustedIndex}">${header} (recommended)</option>`;
+                } else if (header.toLowerCase().includes('qty')) {
+                    purchaseQty.innerHTML += `<option value="${adjustedIndex}">${header} (example)</option>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

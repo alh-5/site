@@ -1,0 +1,3305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Financial year report</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 i {
+            color: #4fd1c5;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 1100px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* File Upload Section */
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            height: fit-content;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .upload-area:hover {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .upload-area i {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .upload-area p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .file-name {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        
+        .detection-info {
+            background: linear-gradient(135deg, #e8f4fc 0%, #d1ecf1 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            border-left: 4px solid #3498db;
+        }
+        
+        .detection-info i {
+            color: #3498db;
+            margin-right: 8px;
+        }
+        
+        /* Filters Section */
+        .filters-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .filters-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        .filter-select, .filter-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        /* Autocomplete container */
+        .autocomplete-container {
+            position: relative;
+        }
+        
+        .customer-autocomplete {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .customer-autocomplete:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .clear-customer {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none;
+        }
+        
+        .clear-customer:hover {
+            color: #c0392b;
+        }
+        
+        /* Autocomplete dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .autocomplete-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .autocomplete-item:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .autocomplete-item.highlighted {
+            background-color: #e3f2fd;
+            font-weight: 600;
+        }
+        
+        .autocomplete-item i {
+            color: #3498db;
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .no-results {
+            padding: 15px;
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        /* Real-time update indicator */
+        .filter-updating {
+            border-color: #2ecc71 !important;
+            background-color: rgba(46, 204, 113, 0.1) !important;
+        }
+        
+        /* Search bar for SKU */
+        .search-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        /* Multi-select checkbox styles */
+        .multi-select-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 5px;
+            background: white;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .checkbox-item:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .checkbox-item input {
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            cursor: pointer;
+            flex-grow: 1;
+            margin: 0;
+            font-weight: normal;
+        }
+        
+        .select-all-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid #3498db;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+        
+        .select-all-row input {
+            margin-right: 12px;
+        }
+        
+        .sku-count {
+            font-size: 0.85rem;
+            color: white;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+        
+        /* NEW: Month Checkbox Filter */
+        .month-checkbox-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 5px;
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+        
+        .month-checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .month-checkbox-item:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .month-checkbox-item input {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .month-checkbox-item label {
+            cursor: pointer;
+            flex-grow: 1;
+            margin: 0;
+            font-weight: normal;
+            font-size: 0.9rem;
+        }
+        
+        .month-count {
+            font-size: 0.85rem;
+            color: white;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+        
+        /* Month-Year Filter */
+        .month-year-filter {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .apply-filters {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+        }
+        
+        .apply-filters:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+        }
+        
+        /* Data Display Section */
+        .data-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-header h2 {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .records-count {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+        }
+        
+        .records-count.updating {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+        
+        .totals-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .total-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border-left: 6px solid #3498db;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .total-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, transparent);
+        }
+        
+        .total-card.updating {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .total-card h4 {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .total-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #2c3e50;
+            transition: all 0.3s;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .total-card.quantity {
+            border-left-color: #e74c3c;
+        }
+        
+        .total-card.quantity::before {
+            background: linear-gradient(90deg, #e74c3c, transparent);
+        }
+        
+        .total-card.product {
+            border-left-color: #f39c12;
+        }
+        
+        .total-card.product::before {
+            background: linear-gradient(90deg, #f39c12, transparent);
+        }
+        
+        .total-card.value {
+            border-left-color: #2ecc71;
+        }
+        
+        .total-card.value::before {
+            background: linear-gradient(90deg, #2ecc71, transparent);
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+            background: white;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .table-container.updating {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+            position: relative;
+        }
+        
+        th::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        th:last-child::after {
+            display: none;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8fafc;
+            transform: scale(1.002);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        td {
+            padding: 15px;
+            color: #34495e;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        /* Dashboard Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 1400px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-header h3 {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-header i {
+            color: #3498db;
+            animation: spin 10s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        /* Utility Meter */
+        .utility-meter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .utility-meter::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .utility-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .utility-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .meter-container {
+            position: relative;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .meter-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, #4fd1c5, #38b2ac);
+            transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .meter-indicator {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 3px;
+            height: 120px;
+            background: white;
+            transform: translateX(-50%);
+        }
+        
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Download Buttons */
+        .download-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-btn.excel {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        
+        .download-btn.chart {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        
+        .download-btn.report {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+        
+        /* AI Suggestion */
+        .ai-suggestion {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 6px solid #3498db;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ai-suggestion.updating {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left-color: #2ecc71;
+        }
+        
+        .ai-suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ai-suggestion-header h4 {
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .ai-suggestion-header i {
+            color: #3498db;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .ai-suggestion p {
+            color: #34495e;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .column-mapping-info {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #5d4037;
+            border-left: 4px solid #ffb300;
+        }
+        
+        .column-mapping-info i {
+            color: #ff9800;
+            margin-right: 8px;
+        }
+        
+        .data-warning {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+            transition: all 0.3s;
+        }
+        
+        .data-warning i {
+            color: #f44336;
+            margin-right: 8px;
+        }
+        
+        .no-skus-found {
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        /* Loading animation */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* NEW: Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .pagination-info {
+            font-size: 0.95rem;
+            color: #34495e;
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .pagination-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .pagination-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .page-number {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .page-number:hover {
+            background-color: #f0f7ff;
+            border-color: #3498db;
+        }
+        
+        .page-number.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border-color: #3498db;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .totals-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .month-year-filter {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .month-checkbox-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .pagination-container {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .pagination-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i>Auto Lube House Smart Market Dashboard</h1>
+            <p class="subtitle">Upload an Excel file and get real-time market analysis with interactive charts, utility meters, and insights.</p>
+        </header>
+        
+        <div class="dashboard-container">
+            <!-- Left Panel: Upload & Filters -->
+            <div class="left-panel">
+                <div class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-file-excel"></i>
+                        <h3>Upload Excel File</h3>
+                        <p>Drag & drop your Excel file here or click to browse</p>
+                        <p><small>Supported formats: .xlsx, .xls, .csv</small></p>
+                    </div>
+                    
+                    <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv">
+                    
+                    <button class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-upload"></i> Choose Excel File
+                    </button>
+                    
+                    <div class="file-name" id="fileName">No file selected</div>
+					
+					<button class="upload-btn" id="uploadBtn" onclick="window.location.href='https://alh-5.github.io/alh/data/sales2526.xlsx';">
+                        <i class="fas fa-chart-pie"></i> Sales Report
+                    </button>
+                    
+                    <div class="detection-info" id="detectionInfo">
+                        <i class="fas fa-info-circle"></i>
+                        <span>The Sales AI will automatically detect from your Excel file.</span>
+                    </div>
+                    
+                    <div class="column-mapping-info" id="columnMappingInfo">
+                        <i class="fas fa-map-signs"></i>
+                        <span><strong>Real-time Updates:</strong> All calculations update immediately when filters change.</span>
+                    </div>
+                </div>
+                
+                <div class="filters-section">
+                    <h3><i class="fas fa-filter"></i> Filters</h3>
+                    
+                    <!-- Customer Name with autocomplete -->
+                    <div class="filter-group">
+                        <label for="customerAutocomplete">Customer Name</label>
+                        <div class="autocomplete-container">
+                            <input type="text" id="customerAutocomplete" class="customer-autocomplete" 
+                                   placeholder="Type to search customers..." autocomplete="off">
+                            <button class="clear-customer" id="clearCustomer" title="Clear selection">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="autocomplete-dropdown" id="customerDropdown">
+                                <!-- Autocomplete items will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="groupFilter">Customer Group</label>
+                        <select id="groupFilter" class="filter-select">
+                            <option value="">All Groups</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>SKU Name <span class="sku-count" id="skuSelectedCount">0 selected</span></label>
+                        
+                        <!-- SKU Search Bar -->
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="skuSearch" class="search-input" placeholder="Search SKU...">
+                        </div>
+                        
+                        <!-- SKU Multi-select -->
+                        <div class="multi-select-container" id="skuMultiSelect">
+                            <div class="select-all-row">
+                                <input type="checkbox" id="selectAllSKU">
+                                <label for="selectAllSKU">Select All SKUs</label>
+                            </div>
+                            <!-- SKU checkboxes will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Invoice Date Filter <span class="month-count" id="monthSelectedCount">0 selected</span></label>
+                        
+                        <!-- Year Filter -->
+                        <div style="margin-bottom: 10px;">
+                            <label for="yearFilter" style="font-size: 0.85rem; color: #7f8c8d;">Year</label>
+                            <select id="yearFilter" class="filter-select">
+                                <option value="">All Years</option>
+                                <!-- Years will be populated dynamically -->
+                            </select>
+                        </div>
+                        
+                        <!-- NEW: Month Checkboxes -->
+                        <div class="month-checkbox-container" id="monthCheckboxContainer">
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_01" value="01">
+                                <label for="month_01">January</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_02" value="02">
+                                <label for="month_02">February</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_03" value="03">
+                                <label for="month_03">March</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_04" value="04">
+                                <label for="month_04">April</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_05" value="05">
+                                <label for="month_05">May</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_06" value="06">
+                                <label for="month_06">June</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_07" value="07">
+                                <label for="month_07">July</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_08" value="08">
+                                <label for="month_08">August</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_09" value="09">
+                                <label for="month_09">September</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_10" value="10">
+                                <label for="month_10">October</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_11" value="11">
+                                <label for="month_11">November</label>
+                            </div>
+                            <div class="month-checkbox-item">
+                                <input type="checkbox" id="month_12" value="12">
+                                <label for="month_12">December</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="apply-filters" id="applyFilters">
+                        <i class="fas fa-check"></i> Apply Filters
+                    </button>
+                    
+                    <button class="apply-filters" id="clearFilters" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); margin-top: 10px;">
+                        <i class="fas fa-times"></i> Clear All Filters
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Data Display -->
+            <div class="data-section">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                </div>
+                
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> Market Analysis Dashboard</h2>
+                    <div class="records-count" id="recordsCount">0 records</div>
+                </div>
+                
+                <div class="totals-container">
+                    <div class="total-card quantity">
+                        <h4>Total Quantity (Numbers)</h4>
+                        <div class="total-value" id="totalQuantity">0</div>
+                    </div>
+                    
+                    <div class="total-card product">
+                        <h4>Total Product Quantity(L/Kg)</h4>
+                        <div class="total-value" id="totalProduct">0</div>
+                    </div>
+                    
+                    <div class="total-card value">
+                        <h4>Total Invoice Value (Rs.)</h4>
+                        <div class="total-value" id="totalValue">0</div>
+                    </div>
+                </div>
+                
+                <!-- Market Utility Meter -->
+                <div class="utility-meter" id="utilityMeter">
+                    <div class="utility-header">
+                        <h3><i class="fas fa-bolt"></i> Market Utility & Demand Indicator</h3>
+                        <div class="total-value" id="utilityValue">50%</div>
+                    </div>
+                    <div class="meter-container">
+                        <div class="meter-fill" id="meterFill">
+                            <span id="meterText">Market Utility</span>
+                        </div>
+                        <div class="meter-indicator"></div>
+                    </div>
+                    <div class="meter-labels">
+                        <span><i class="fas fa-arrow-down"></i> Low Demand</span>
+                        <span>Market Equilibrium</span>
+                        <span>High Demand <i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+				
+				<!-- Download Buttons -->
+                <div class="download-section">
+				<button class="download-btn chart" id="Purcahse Analys" onclick="window.location.href='purfy.html';">
+                        <i class="fas fa-chart-pie"></i> Purchase Analysis
+                    </button>
+				
+                    <button class="download-btn excel" id="downloadExcel">
+                        <i class="fas fa-file-excel"></i> Download as Excel
+                    </button>
+                    
+                    <button class="download-btn chart" id="downloadCharts">
+                        <i class="fas fa-chart-line"></i> Download Charts
+                    </button>
+                    <button class="download-btn report" id="downloadReport">
+                        <i class="fas fa-download"></i> Full Report
+                    </button>
+                </div>
+				
+				<div> &nbsp </div>
+                
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-bar"></i> Sales Distribution by Customer</h3>
+                            <span class="records-count" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">Top 10</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Market Share by SKU</h3>
+                            <span class="records-count" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">Top 5</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container" id="tableContainer">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Customer Group</th>
+                                <th>Customer District</th>
+                                <th>Invoice Number</th>
+                                <th>Invoice Date</th>
+                                <th>SKU Name</th>
+                                <th>Quantity (Numbers)</th>
+                                <th>Product Quantity(L/Kg)</th>
+                                <th>Invoice Value (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="9" class="no-data">
+                                    <i class="fas fa-file-import"></i>
+                                    <p>Upload an Excel file to see your data here</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- NEW: Pagination Controls -->
+                    <div class="pagination-container" id="paginationContainer" style="display: none;">
+                        <div class="pagination-info" id="paginationInfo">
+                            Showing 0 to 0 of 0 entries
+                        </div>
+                        <div class="pagination-buttons">
+                            <button class="pagination-btn" id="prevPage">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </button>
+                            <div class="page-numbers" id="pageNumbers">
+                                <!-- Page numbers will be generated here -->
+                            </div>
+                            <button class="pagination-btn" id="nextPage">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ai-suggestion" id="aiSuggestion">
+                    <div class="ai-suggestion-header">
+                        <i class="fas fa-robot"></i>
+                        <h4>AI Market Insights</h4>
+                    </div>
+                    <p id="aiInsightText">This Sakes AI will analyze trends, identify opportunities, and provide actionable recommendations.</p>
+                </div>
+                
+                <div class="data-warning" id="dataWarning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="warningText"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileName = document.getElementById('fileName');
+        const tableBody = document.getElementById('tableBody');
+        const tableContainer = document.getElementById('tableContainer');
+        const recordsCount = document.getElementById('recordsCount');
+        const totalQuantity = document.getElementById('totalQuantity');
+        const totalProduct = document.getElementById('totalProduct');
+        const totalValue = document.getElementById('totalValue');
+        
+        // Customer elements
+        const customerAutocomplete = document.getElementById('customerAutocomplete');
+        const clearCustomerBtn = document.getElementById('clearCustomer');
+        const customerDropdown = document.getElementById('customerDropdown');
+        
+        const groupFilter = document.getElementById('groupFilter');
+        const skuSearch = document.getElementById('skuSearch');
+        const skuMultiSelect = document.getElementById('skuMultiSelect');
+        const selectAllSKU = document.getElementById('selectAllSKU');
+        const skuSelectedCount = document.getElementById('skuSelectedCount');
+        const yearFilter = document.getElementById('yearFilter');
+        const applyFilters = document.getElementById('applyFilters');
+        const clearFilters = document.getElementById('clearFilters');
+        const aiSuggestion = document.getElementById('aiSuggestion');
+        const detectionInfo = document.getElementById('detectionInfo');
+        const columnMappingInfo = document.getElementById('columnMappingInfo');
+        const dataWarning = document.getElementById('dataWarning');
+        const warningText = document.getElementById('warningText');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const aiInsightText = document.getElementById('aiInsightText');
+        
+        // NEW: Month checkbox elements
+        const monthCheckboxContainer = document.getElementById('monthCheckboxContainer');
+        const monthSelectedCount = document.getElementById('monthSelectedCount');
+        let monthCheckboxes = [];
+        
+        // Chart Elements
+        const barChartCtx = document.getElementById('barChart').getContext('2d');
+        const pieChartCtx = document.getElementById('pieChart').getContext('2d');
+        const utilityMeter = document.getElementById('utilityMeter');
+        const meterFill = document.getElementById('meterFill');
+        const meterText = document.getElementById('meterText');
+        const utilityValue = document.getElementById('utilityValue');
+        
+        // Download buttons
+        const downloadExcel = document.getElementById('downloadExcel');
+        const downloadCharts = document.getElementById('downloadCharts');
+        const downloadReport = document.getElementById('downloadReport');
+        
+        // NEW: Pagination elements
+        const paginationContainer = document.getElementById('paginationContainer');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const pageNumbers = document.getElementById('pageNumbers');
+        
+        // Data storage
+        let allData = [];
+        let filteredData = [];
+        let columnMapping = {};
+        let selectedSKUs = new Set();
+        let allSKUs = [];
+        let skuCheckboxes = [];
+        let updateTimeout = null;
+        
+        // NEW: Month selection storage
+        let selectedMonths = new Set();
+        let selectedYear = '';
+        
+        // Customer autocomplete variables
+        let allCustomers = [];
+        let filteredCustomers = [];
+        let highlightedIndex = -1;
+        let selectedCustomer = '';
+        
+        // Chart instances
+        let barChart = null;
+        let pieChart = null;
+        
+        // Market utility variables
+        let marketUtility = 50;
+        let utilityHistory = [];
+        const utilityUpdateInterval = 3000;
+        
+        // NEW: Pagination variables
+        let currentPage = 1;
+        const rowsPerPage = 5;
+        let totalPages = 1;
+        
+        // Event Listeners
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f0f7ff';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = 'white';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'white';
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileUpload();
+            }
+        });
+        
+        fileInput.addEventListener('change', handleFileUpload);
+        
+        // Customer autocomplete events
+        customerAutocomplete.addEventListener('input', handleCustomerInput);
+        customerAutocomplete.addEventListener('focus', handleCustomerFocus);
+        customerAutocomplete.addEventListener('blur', () => {
+            setTimeout(() => {
+                customerDropdown.style.display = 'none';
+            }, 200);
+        });
+        customerAutocomplete.addEventListener('keydown', handleCustomerKeydown);
+        
+        clearCustomerBtn.addEventListener('click', clearCustomerSelection);
+        
+        groupFilter.addEventListener('change', () => {
+            showFilterUpdateEffect(groupFilter);
+            applyDataFiltersWithDebounce();
+        });
+        
+        yearFilter.addEventListener('change', () => {
+            showFilterUpdateEffect(yearFilter);
+            selectedYear = yearFilter.value;
+            applyDataFiltersWithDebounce();
+        });
+        
+        skuSearch.addEventListener('input', filterSKUs);
+        
+        selectAllSKU.addEventListener('change', () => {
+            showFilterUpdateEffect(selectAllSKU);
+            toggleAllSKUs();
+            applyDataFiltersWithDebounce();
+        });
+        
+        // NEW: Pagination event listeners
+        prevPage.addEventListener('click', goToPreviousPage);
+        nextPage.addEventListener('click', goToNextPage);
+        
+        // NEW: Month checkbox events
+        function initializeMonthCheckboxes() {
+            monthCheckboxes = [];
+            // Get all month checkboxes
+            const monthCheckboxElements = monthCheckboxContainer.querySelectorAll('input[type="checkbox"]');
+            monthCheckboxElements.forEach(checkbox => {
+                monthCheckboxes.push(checkbox);
+                checkbox.addEventListener('change', () => {
+                    updateMonthSelection();
+                    showFilterUpdateEffect(checkbox);
+                    applyDataFiltersWithDebounce();
+                });
+            });
+        }
+        
+        // NEW: Update month selection
+        function updateMonthSelection() {
+            selectedMonths.clear();
+            monthCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedMonths.add(checkbox.value);
+                }
+            });
+            updateMonthSelectedCount();
+        }
+        
+        // NEW: Update month selected count
+        function updateMonthSelectedCount() {
+            const totalMonths = 12;
+            monthSelectedCount.textContent = `${selectedMonths.size} selected`;
+            
+            if (selectedMonths.size === totalMonths) {
+                monthSelectedCount.textContent = 'All selected';
+            }
+        }
+        
+        applyFilters.addEventListener('click', () => {
+            showFilterUpdateEffect(applyFilters);
+            applyDataFilters();
+        });
+        
+        clearFilters.addEventListener('click', () => {
+            showFilterUpdateEffect(clearFilters);
+            clearAllFilters();
+        });
+        
+        // Download button events
+        downloadExcel.addEventListener('click', downloadAsExcel);
+        downloadCharts.addEventListener('click', downloadChartsAsImage);
+        downloadReport.addEventListener('click', downloadFullReport);
+        
+        // NEW: Pagination functions
+        function goToPreviousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderData();
+                updatePaginationControls();
+            }
+        }
+        
+        function goToNextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderData();
+                updatePaginationControls();
+            }
+        }
+        
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages && page !== currentPage) {
+                currentPage = page;
+                renderData();
+                updatePaginationControls();
+            }
+        }
+        
+        function updatePaginationControls() {
+            // Update previous/next buttons
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === totalPages;
+            
+            // Update pagination info
+            const startIndex = (currentPage - 1) * rowsPerPage + 1;
+            const endIndex = Math.min(currentPage * rowsPerPage, filteredData.length);
+            paginationInfo.textContent = `Showing ${startIndex} to ${endIndex} of ${filteredData.length} entries`;
+            
+            // Update page numbers
+            pageNumbers.innerHTML = '';
+            
+            // Always show first page
+            addPageNumber(1);
+            
+            // Show ellipsis if needed
+            if (currentPage > 3) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.style.padding = '8px 12px';
+                pageNumbers.appendChild(ellipsis);
+            }
+            
+            // Show pages around current page
+            const startPage = Math.max(2, currentPage - 1);
+            const endPage = Math.min(totalPages - 1, currentPage + 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                addPageNumber(i);
+            }
+            
+            // Show ellipsis if needed
+            if (currentPage < totalPages - 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.style.padding = '8px 12px';
+                pageNumbers.appendChild(ellipsis);
+            }
+            
+            // Always show last page if more than 1 page
+            if (totalPages > 1) {
+                addPageNumber(totalPages);
+            }
+        }
+        
+        function addPageNumber(page) {
+            const pageElement = document.createElement('span');
+            pageElement.className = 'page-number';
+            if (page === currentPage) {
+                pageElement.classList.add('active');
+            }
+            pageElement.textContent = page;
+            pageElement.addEventListener('click', () => goToPage(page));
+            pageNumbers.appendChild(pageElement);
+        }
+        
+        // Handle customer input for autocomplete
+        function handleCustomerInput() {
+            const searchTerm = customerAutocomplete.value.trim().toLowerCase();
+            selectedCustomer = customerAutocomplete.value;
+            
+            // Show/hide clear button
+            clearCustomerBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            if (searchTerm.length === 0) {
+                customerDropdown.style.display = 'none';
+                applyDataFiltersWithDebounce();
+                return;
+            }
+            
+            // Filter customers based on search term
+            filteredCustomers = allCustomers.filter(customer => 
+                customer.toLowerCase().includes(searchTerm)
+            );
+            
+            // Show dropdown with results
+            showCustomerDropdown(filteredCustomers, searchTerm);
+            
+            // Apply filters if exact match found
+            if (filteredCustomers.length === 1 && 
+                filteredCustomers[0].toLowerCase() === searchTerm) {
+                setTimeout(() => {
+                    selectCustomer(filteredCustomers[0]);
+                }, 300);
+            } else {
+                applyDataFiltersWithDebounce();
+            }
+        }
+        
+        // Handle customer focus
+        function handleCustomerFocus() {
+            if (customerAutocomplete.value.trim().length > 0) {
+                const searchTerm = customerAutocomplete.value.trim().toLowerCase();
+                filteredCustomers = allCustomers.filter(customer => 
+                    customer.toLowerCase().includes(searchTerm)
+                );
+                showCustomerDropdown(filteredCustomers, searchTerm);
+            } else {
+                // Show all customers when clicking on empty field
+                filteredCustomers = [...allCustomers];
+                showCustomerDropdown(allCustomers, '');
+            }
+        }
+        
+        // Handle keyboard navigation in autocomplete
+        function handleCustomerKeydown(e) {
+            if (!customerDropdown.style.display || customerDropdown.style.display === 'none') {
+                return;
+            }
+            
+            const items = customerDropdown.querySelectorAll('.autocomplete-item');
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    highlightedIndex = (highlightedIndex + 1) % items.length;
+                    updateHighlightedItem(items);
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    highlightedIndex = highlightedIndex <= 0 ? items.length - 1 : highlightedIndex - 1;
+                    updateHighlightedItem(items);
+                    break;
+                    
+                case 'Enter':
+                    e.preventDefault();
+                    if (highlightedIndex >= 0 && highlightedIndex < items.length) {
+                        selectCustomer(items[highlightedIndex].textContent);
+                    }
+                    break;
+                    
+                case 'Escape':
+                    customerDropdown.style.display = 'none';
+                    highlightedIndex = -1;
+                    break;
+            }
+        }
+        
+        // Update highlighted item in dropdown
+        function updateHighlightedItem(items) {
+            items.forEach((item, index) => {
+                if (index === highlightedIndex) {
+                    item.classList.add('highlighted');
+                    item.scrollIntoView({ block: 'nearest' });
+                } else {
+                    item.classList.remove('highlighted');
+                }
+            });
+        }
+        
+        // Show customer dropdown
+        function showCustomerDropdown(customers, searchTerm) {
+            customerDropdown.innerHTML = '';
+            
+            if (customers.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = `No customers found matching "${searchTerm}"`;
+                customerDropdown.appendChild(noResults);
+            } else {
+                customers.forEach(customer => {
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    
+                    // Highlight matching text
+                    const lowerCustomer = customer.toLowerCase();
+                    const lowerSearch = searchTerm.toLowerCase();
+                    const matchIndex = lowerCustomer.indexOf(lowerSearch);
+                    
+                    if (matchIndex >= 0) {
+                        const beforeMatch = customer.substring(0, matchIndex);
+                        const match = customer.substring(matchIndex, matchIndex + searchTerm.length);
+                        const afterMatch = customer.substring(matchIndex + searchTerm.length);
+                        
+                        item.innerHTML = `
+                            <i class="fas fa-user"></i>
+                            ${beforeMatch}<strong>${match}</strong>${afterMatch}
+                        `;
+                    } else {
+                        item.innerHTML = `
+                            <i class="fas fa-user"></i>
+                            ${customer}
+                        `;
+                    }
+                    
+                    item.addEventListener('click', () => {
+                        selectCustomer(customer);
+                    });
+                    
+                    customerDropdown.appendChild(item);
+                });
+            }
+            
+            customerDropdown.style.display = 'block';
+            highlightedIndex = -1;
+        }
+        
+        // Select a customer from autocomplete
+        function selectCustomer(customer) {
+            customerAutocomplete.value = customer;
+            selectedCustomer = customer;
+            customerDropdown.style.display = 'none';
+            clearCustomerBtn.style.display = 'block';
+            highlightedIndex = -1;
+            
+            // Show update effect and apply filters
+            showFilterUpdateEffect(customerAutocomplete);
+            applyDataFiltersWithDebounce();
+        }
+        
+        // Clear customer selection
+        function clearCustomerSelection() {
+            customerAutocomplete.value = '';
+            selectedCustomer = '';
+            clearCustomerBtn.style.display = 'none';
+            customerDropdown.style.display = 'none';
+            highlightedIndex = -1;
+            
+            // Show update effect and apply filters
+            showFilterUpdateEffect(customerAutocomplete);
+            applyDataFiltersWithDebounce();
+        }
+        
+        // Handle file upload
+        function handleFileUpload() {
+            if (!fileInput.files.length) return;
+            
+            const file = fileInput.files[0];
+            fileName.textContent = `Selected: ${file.name}`;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get first sheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Convert to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    // Process the data with smart detection
+                    processExcelData(jsonData);
+                    
+                    // Show success message
+                    detectionInfo.innerHTML = `<i class="fas fa-check-circle"></i> <span>Successfully loaded ${allData.length} records with smart column mapping.</span>`;
+                    detectionInfo.style.background = 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)';
+                    detectionInfo.style.color = '#155724';
+                    
+                } catch (error) {
+                    console.error('Error reading file:', error);
+                    fileName.textContent = 'Error reading file. Please try again.';
+                    detectionInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>Error reading file: ${error.message}</span>`;
+                    detectionInfo.style.background = 'linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%)';
+                    detectionInfo.style.color = '#721c24';
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // Show visual effect when filter is updated
+        function showFilterUpdateEffect(element) {
+            element.classList.add('filter-updating');
+            setTimeout(() => {
+                element.classList.remove('filter-updating');
+            }, 500);
+        }
+        
+        // Debounced filter application
+        function applyDataFiltersWithDebounce() {
+            showLoadingState(true);
+            
+            if (updateTimeout) {
+                clearTimeout(updateTimeout);
+            }
+            
+            updateTimeout = setTimeout(() => {
+                applyDataFilters();
+                showLoadingState(false);
+            }, 300);
+        }
+        
+        // Show/hide loading state
+        function showLoadingState(show) {
+            if (show) {
+                loadingOverlay.classList.add('active');
+                recordsCount.classList.add('updating');
+                tableContainer.classList.add('updating');
+                aiSuggestion.classList.add('updating');
+                
+                document.querySelectorAll('.total-card').forEach(card => {
+                    card.classList.add('updating');
+                });
+            } else {
+                loadingOverlay.classList.remove('active');
+                recordsCount.classList.remove('updating');
+                tableContainer.classList.remove('updating');
+                aiSuggestion.classList.remove('updating');
+                
+                document.querySelectorAll('.total-card').forEach(card => {
+                    card.classList.remove('updating');
+                });
+            }
+        }
+        
+        // Smart column detection from Excel data
+        function detectColumns(headers) {
+            const columnPatterns = {
+                'Customer Name': /customer.*name|client.*name|cust.*name|customer|client|cust/i,
+                'Customer Group': /customer.*group|client.*group|group|category|type/i,
+                'Customer District': /customer.*district|client.*district|district|region|area|location/i,
+                'Invoice Number': /invoice.*no|inv.*no|invoice.*number|inv.*number|invoice.*id|inv.*id/i,
+                'Invoice Date': /invoice.*date|inv.*date|date.*invoice|date|transaction.*date/i,
+                'SKU Name': /sku.*name|product.*name|item.*name|sku|product|item|description|material|goods|commodity|article/i,
+                'Quantity (Numbers)': /quantity.*number|qty.*number|quantity|qty|number|count|units|pieces|pcs|nos/i,
+                'Product Quantity(L/Kg)': /product.*quantity.*\(l\/kg\)|prod.*qty.*\(l\/kg\)|product.*quantity|prod.*qty|weight.*\(l\/kg\)|volume.*\(l\/kg\)|net.*weight|gross.*weight|weight|volume|kg|l|litre|kilogram|liter/i,
+                'Invoice Value (Rs.)': /invoice.*value.*\(rs\.\)|inv.*value.*\(rs\.\)|amount.*\(rs\.\)|total.*rs|value.*rs|price.*\(rs\.\)|cost.*\(rs\.\)|invoice.*value|inv.*value|amount|total.*amount|invoice.*amount|net.*amount|gross.*amount|bill.*amount|rs|rupees|₹/i
+            };
+            
+            const mapping = {};
+            const matchedColumns = new Set();
+            const headerIndexMap = {};
+            
+            // Create a map of headers for easy lookup
+            headers.forEach((header, index) => {
+                if (!header) return;
+                const headerStr = header.toString().trim().toLowerCase();
+                headerIndexMap[headerStr] = index;
+            });
+            
+            // First pass: Exact matches
+            Object.keys(columnPatterns).forEach(targetCol => {
+                const targetColLower = targetCol.toLowerCase();
+                if (headerIndexMap.hasOwnProperty(targetColLower)) {
+                    mapping[targetCol] = headerIndexMap[targetColLower];
+                    matchedColumns.add(targetCol);
+                }
+            });
+            
+            // Second pass: Pattern matching
+            headers.forEach((header, index) => {
+                if (!header || matchedColumns.size >= Object.keys(columnPatterns).length) return;
+                
+                const headerStr = header.toString().trim().toLowerCase();
+                
+                for (const [targetCol, pattern] of Object.entries(columnPatterns)) {
+                    if (matchedColumns.has(targetCol)) continue;
+                    
+                    if (pattern.test(headerStr)) {
+                        let alreadyMapped = false;
+                        for (const mappedCol in mapping) {
+                            if (mapping[mappedCol] === index) {
+                                alreadyMapped = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!alreadyMapped) {
+                            mapping[targetCol] = index;
+                            matchedColumns.add(targetCol);
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            // Special handling for SKU Name
+            if (!matchedColumns.has('SKU Name')) {
+                for (const [header, idx] of Object.entries(headerIndexMap)) {
+                    if (header.includes('prod') || header.includes('item') || header.includes('sku') || 
+                        header.includes('desc') || header.includes('name') && !header.includes('customer')) {
+                        mapping['SKU Name'] = idx;
+                        matchedColumns.add('SKU Name');
+                        break;
+                    }
+                }
+            }
+            
+            // Special handling for Product Quantity
+            if (!matchedColumns.has('Product Quantity(L/Kg)')) {
+                for (const [header, idx] of Object.entries(headerIndexMap)) {
+                    if (header.includes('kg') || header.includes('l') || header.includes('liter') || 
+                        header.includes('litre') || header.includes('weight') || header.includes('volume') ||
+                        header.includes('net') || header.includes('qty') || header.includes('quantity')) {
+                        if (mapping['Quantity (Numbers)'] !== idx) {
+                            mapping['Product Quantity(L/Kg)'] = idx;
+                            matchedColumns.add('Product Quantity(L/Kg)');
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Special handling for Invoice Value
+            if (!matchedColumns.has('Invoice Value (Rs.)')) {
+                for (const [header, idx] of Object.entries(headerIndexMap)) {
+                    if (header.includes('rs') || header.includes('₹') || header.includes('amount') || 
+                        header.includes('value') || header.includes('price') || header.includes('total') ||
+                        header.includes('bill') || header.includes('cost')) {
+                        mapping['Invoice Value (Rs.)'] = idx;
+                        matchedColumns.add('Invoice Value (Rs.)');
+                        break;
+                    }
+                }
+            }
+            
+            // If still missing columns, assign by position
+            const defaultOrder = [
+                'Customer Name', 'Customer Group', 'Customer District', 
+                'Invoice Number', 'Invoice Date', 'SKU Name',
+                'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
+            ];
+            
+            let colIndex = 0;
+            defaultOrder.forEach(col => {
+                if (!matchedColumns.has(col) && colIndex < headers.length) {
+                    while (Object.values(mapping).includes(colIndex) && colIndex < headers.length) {
+                        colIndex++;
+                    }
+                    if (colIndex < headers.length) {
+                        mapping[col] = colIndex;
+                        matchedColumns.add(col);
+                        colIndex++;
+                    }
+                }
+            });
+            
+            return mapping;
+        }
+        
+        // Process Excel data with smart detection
+        function processExcelData(jsonData) {
+            if (!jsonData || jsonData.length < 2) {
+                alert('Dbareh Smart Bot Says "upload data required".');
+                return;
+            }
+            
+            // Get headers
+            const headers = jsonData[0];
+            
+            // Detect columns automatically
+            columnMapping = detectColumns(headers);
+            
+            // Clear previous data
+            allData = [];
+            
+            // Track data issues
+            let missingSKUCount = 0;
+            let missingQuantityCount = 0;
+            let missingValueCount = 0;
+            let uniqueYears = new Set();
+            
+            for (let i = 1; i < jsonData.length; i++) {
+                const row = jsonData[i];
+                if (!row || row.length === 0) continue;
+                
+                const dataRow = {};
+                
+                // Map columns based on detection
+                for (const [colName, colIndex] of Object.entries(columnMapping)) {
+                    if (colIndex < row.length && row[colIndex] !== undefined && row[colIndex] !== null) {
+                        dataRow[colName] = row[colIndex];
+                    } else {
+                        dataRow[colName] = '';
+                    }
+                }
+                
+                // Track missing critical data
+                if (!dataRow['SKU Name'] || dataRow['SKU Name'].toString().trim() === '') {
+                    missingSKUCount++;
+                }
+                
+                // Process dates
+                if (dataRow['Invoice Date']) {
+                    let invoiceDate = dataRow['Invoice Date'];
+                    let parsedDate = null;
+                    
+                    try {
+                        if (typeof invoiceDate === 'number') {
+                            const excelEpoch = new Date(1899, 11, 30);
+                            parsedDate = new Date(excelEpoch.getTime() + invoiceDate * 86400000);
+                        } else if (invoiceDate instanceof Date) {
+                            parsedDate = invoiceDate;
+                        } else if (typeof invoiceDate === 'string') {
+                            parsedDate = new Date(invoiceDate);
+                            
+                            if (isNaN(parsedDate.getTime())) {
+                                const parts = invoiceDate.split(/[\/\-\.]/);
+                                if (parts.length === 3) {
+                                    const dateStr1 = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    const dateStr2 = `${parts[2]}-${parts[0]}-${parts[1]}`;
+                                    
+                                    parsedDate = new Date(dateStr1);
+                                    if (isNaN(parsedDate.getTime())) {
+                                        parsedDate = new Date(dateStr2);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (parsedDate && !isNaN(parsedDate.getTime())) {
+                            const year = parsedDate.getFullYear();
+                            const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(parsedDate.getDate()).padStart(2, '0');
+                            
+                            dataRow['Invoice Date'] = `${year}-${month}-${day}`;
+                            dataRow['Invoice Year'] = year.toString();
+                            dataRow['Invoice Month'] = month;
+                            
+                            uniqueYears.add(year);
+                        } else {
+                            dataRow['Invoice Date'] = '';
+                            dataRow['Invoice Year'] = '';
+                            dataRow['Invoice Month'] = '';
+                        }
+                    } catch (e) {
+                        dataRow['Invoice Date'] = '';
+                        dataRow['Invoice Year'] = '';
+                        dataRow['Invoice Month'] = '';
+                    }
+                } else {
+                    dataRow['Invoice Year'] = '';
+                    dataRow['Invoice Month'] = '';
+                }
+                
+                // Convert numeric values
+                if (dataRow['Quantity (Numbers)'] !== undefined && dataRow['Quantity (Numbers)'] !== null && dataRow['Quantity (Numbers)'] !== '') {
+                    dataRow['Quantity (Numbers)'] = parseNumericValue(dataRow['Quantity (Numbers)']);
+                    if (isNaN(dataRow['Quantity (Numbers)']) || dataRow['Quantity (Numbers)'] === 0) {
+                        missingQuantityCount++;
+                    }
+                } else {
+                    dataRow['Quantity (Numbers)'] = 0;
+                    missingQuantityCount++;
+                }
+                
+                if (dataRow['Product Quantity(L/Kg)'] !== undefined && dataRow['Product Quantity(L/Kg)'] !== null && dataRow['Product Quantity(L/Kg)'] !== '') {
+                    dataRow['Product Quantity(L/Kg)'] = parseNumericValue(dataRow['Product Quantity(L/Kg)']);
+                } else {
+                    dataRow['Product Quantity(L/Kg)'] = 0;
+                }
+                
+                if (dataRow['Invoice Value (Rs.)'] !== undefined && dataRow['Invoice Value (Rs.)'] !== null && dataRow['Invoice Value (Rs.)'] !== '') {
+                    dataRow['Invoice Value (Rs.)'] = parseNumericValue(dataRow['Invoice Value (Rs.)']);
+                    if (isNaN(dataRow['Invoice Value (Rs.)']) || dataRow['Invoice Value (Rs.)'] === 0) {
+                        missingValueCount++;
+                    }
+                } else {
+                    dataRow['Invoice Value (Rs.)'] = 0;
+                    missingValueCount++;
+                }
+                
+                // Only add row if it has at least some data
+                if (Object.values(dataRow).some(val => val !== '' && val !== 0 && val !== null)) {
+                    allData.push(dataRow);
+                }
+            }
+            
+            // Show data warnings if needed
+            showDataWarnings(missingSKUCount, missingQuantityCount, missingValueCount, allData.length);
+            
+            // Update filters including customers for autocomplete
+            updateFilterOptions(Array.from(uniqueYears).sort((a, b) => b - a));
+            
+            // Apply initial filters and render data
+            applyDataFilters();
+            
+            // Start market utility updates
+            startMarketUtilityUpdates();
+        }
+        
+        // Helper function to parse numeric values
+        function parseNumericValue(value) {
+            if (typeof value === 'number') return value;
+            if (typeof value === 'string') {
+                const cleaned = value.replace(/[^\d.-]/g, '');
+                const parsed = parseFloat(cleaned);
+                return isNaN(parsed) ? 0 : parsed;
+            }
+            return 0;
+        }
+        
+        // Show warnings about data quality
+        function showDataWarnings(missingSKU, missingQty, missingValue, totalRows) {
+            const warnings = [];
+            
+            if (missingSKU > 0) {
+                warnings.push(`${missingSKU} rows missing SKU Name`);
+            }
+            
+            if (missingQty > 0) {
+                warnings.push(`${missingQty} rows missing or invalid Quantity`);
+            }
+            
+            if (missingValue > 0) {
+                warnings.push(`${missingValue} rows missing or invalid Invoice Value`);
+            }
+            
+            if (warnings.length > 0) {
+                warningText.innerHTML = `<strong>Data Quality Issues:</strong> ${warnings.join(', ')} out of ${totalRows} total rows.`;
+                dataWarning.style.display = 'block';
+            } else {
+                dataWarning.style.display = 'none';
+            }
+        }
+        
+        // Update filter options with autocomplete support
+        function updateFilterOptions(years) {
+            // Get unique values for each filter
+            allCustomers = [...new Set(allData.map(row => {
+                const val = row['Customer Name'];
+                return val ? val.toString().trim() : null;
+            }).filter(Boolean))].sort();
+            
+            const groups = [...new Set(allData.map(row => {
+                const val = row['Customer Group'];
+                return val ? val.toString().trim() : null;
+            }).filter(Boolean))].sort();
+            
+            // Get unique SKUs
+            allSKUs = [...new Set(allData.map(row => {
+                const val = row['SKU Name'];
+                return val ? val.toString().trim() : null;
+            }).filter(Boolean))].sort();
+            
+            // Customer filter is now handled by autocomplete
+            
+            // Populate group filter
+            groupFilter.innerHTML = '<option value="">All Groups</option>';
+            groups.forEach(group => {
+                groupFilter.innerHTML += `<option value="${group}">${group}</option>`;
+            });
+            
+            // Populate year filter
+            yearFilter.innerHTML = '<option value="">All Years</option>';
+            years.forEach(year => {
+                yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
+            });
+            
+            // Populate SKU multi-select
+            updateSKUMultiSelect(allSKUs);
+            
+            // Initialize month checkboxes
+            initializeMonthCheckboxes();
+            
+            // Reset selections
+            selectedSKUs.clear();
+            selectedMonths.clear();
+            selectedYear = '';
+            selectedCustomer = '';
+            
+            updateSKUSelectedCount();
+            updateMonthSelectedCount();
+            
+            // Clear search
+            skuSearch.value = '';
+            
+            // Clear customer autocomplete
+            customerAutocomplete.value = '';
+            clearCustomerBtn.style.display = 'none';
+        }
+        
+        // Update SKU multi-select checkboxes
+        function updateSKUMultiSelect(skus) {
+            // Clear existing checkboxes
+            const existingCheckboxes = skuMultiSelect.querySelectorAll('.checkbox-item, .no-skus-found');
+            existingCheckboxes.forEach(cb => cb.remove());
+            
+            skuCheckboxes = [];
+            
+            // Add checkboxes for each SKU
+            skus.forEach(sku => {
+                const checkboxItem = document.createElement('div');
+                checkboxItem.className = 'checkbox-item';
+                const skuId = sku.replace(/[^a-zA-Z0-9]/g, '_');
+                checkboxItem.innerHTML = `
+                    <input type="checkbox" id="sku_${skuId}" value="${sku}">
+                    <label for="sku_${skuId}">${sku}</label>
+                `;
+                skuMultiSelect.appendChild(checkboxItem);
+                
+                // Store reference
+                const checkbox = checkboxItem.querySelector('input');
+                skuCheckboxes.push(checkbox);
+                
+                // Add event listener
+                checkbox.addEventListener('change', () => {
+                    updateSKUSelection();
+                    showFilterUpdateEffect(checkbox);
+                    applyDataFiltersWithDebounce();
+                });
+            });
+            
+            // If no SKUs, show message
+            if (skus.length === 0) {
+                const noSkusMessage = document.createElement('div');
+                noSkusMessage.className = 'no-skus-found';
+                noSkusMessage.textContent = 'No SKUs found';
+                skuMultiSelect.appendChild(noSkusMessage);
+            }
+        }
+        
+        // Filter SKUs based on search input
+        function filterSKUs() {
+            const searchTerm = skuSearch.value.toLowerCase();
+            
+            // Hide all checkboxes first
+            const checkboxItems = skuMultiSelect.querySelectorAll('.checkbox-item');
+            checkboxItems.forEach(item => {
+                item.style.display = 'none';
+            });
+            
+            // Show only matching SKUs
+            let visibleCount = 0;
+            skuCheckboxes.forEach(checkbox => {
+                const label = checkbox.nextElementSibling;
+                const skuText = label.textContent.toLowerCase();
+                
+                if (skuText.includes(searchTerm)) {
+                    checkbox.parentElement.style.display = 'flex';
+                    visibleCount++;
+                }
+            });
+            
+            // Show/hide Select All row
+            const selectAllRow = document.querySelector('.select-all-row');
+            if (selectAllRow) {
+                selectAllRow.style.display = searchTerm ? 'none' : 'flex';
+            }
+            
+            // Show message if no matches
+            const noSkusMessage = skuMultiSelect.querySelector('.no-skus-found');
+            if (visibleCount === 0 && searchTerm) {
+                if (!noSkusMessage) {
+                    const message = document.createElement('div');
+                    message.className = 'no-skus-found';
+                    message.textContent = 'No SKUs match your search';
+                    skuMultiSelect.appendChild(message);
+                }
+            } else if (noSkusMessage) {
+                noSkusMessage.remove();
+            }
+        }
+        
+        // Update SKU selection tracking
+        function updateSKUSelection() {
+            selectedSKUs.clear();
+            
+            // Get all visible SKU checkboxes
+            const visibleCheckboxes = Array.from(skuCheckboxes).filter(cb => 
+                cb.parentElement.style.display !== 'none'
+            );
+            
+            visibleCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    selectedSKUs.add(cb.value);
+                }
+            });
+            
+            // Update Select All checkbox state
+            const allVisibleChecked = visibleCheckboxes.length > 0 && 
+                visibleCheckboxes.every(cb => cb.checked);
+            selectAllSKU.checked = allVisibleChecked;
+            
+            updateSKUSelectedCount();
+        }
+        
+        // Toggle all SKUs
+        function toggleAllSKUs() {
+            // Get all visible SKU checkboxes
+            const visibleCheckboxes = Array.from(skuCheckboxes).filter(cb => 
+                cb.parentElement.style.display !== 'none'
+            );
+            
+            const isChecked = selectAllSKU.checked;
+            
+            visibleCheckboxes.forEach(cb => {
+                cb.checked = isChecked;
+                if (isChecked) {
+                    selectedSKUs.add(cb.value);
+                } else {
+                    selectedSKUs.delete(cb.value);
+                }
+            });
+            
+            updateSKUSelectedCount();
+        }
+        
+        // Update SKU selected count display
+        function updateSKUSelectedCount() {
+            const totalSKUs = allSKUs.length;
+            skuSelectedCount.textContent = `${selectedSKUs.size} selected`;
+            
+            if (selectedSKUs.size === totalSKUs && totalSKUs > 0) {
+                skuSelectedCount.textContent = 'All selected';
+            }
+        }
+        
+        // Clear all filters
+        function clearAllFilters() {
+            // Clear customer autocomplete
+            customerAutocomplete.value = '';
+            selectedCustomer = '';
+            clearCustomerBtn.style.display = 'none';
+            
+            groupFilter.value = '';
+            
+            // Clear SKU selections
+            skuCheckboxes.forEach(cb => cb.checked = false);
+            selectedSKUs.clear();
+            updateSKUSelectedCount();
+            
+            // Clear month selections
+            monthCheckboxes.forEach(cb => cb.checked = false);
+            selectedMonths.clear();
+            updateMonthSelectedCount();
+            
+            // Clear year selection
+            yearFilter.value = '';
+            selectedYear = '';
+            
+            // Clear search
+            skuSearch.value = '';
+            filterSKUs();
+            
+            // Re-apply filters
+            applyDataFilters();
+        }
+        
+        // Apply filters to data with autocomplete support
+        function applyDataFilters() {
+            if (allData.length === 0) return;
+            
+            // Show loading state
+            showLoadingState(true);
+            
+            // Use setTimeout to allow UI to update
+            setTimeout(() => {
+                filteredData = [...allData];
+                
+                // Apply customer filter from autocomplete
+                if (selectedCustomer && selectedCustomer.trim() !== '') {
+                    filteredData = filteredData.filter(row => {
+                        const customer = row['Customer Name'];
+                        return customer && customer.toString().trim().toLowerCase() === selectedCustomer.trim().toLowerCase();
+                    });
+                }
+                
+                // Apply group filter
+                const selectedGroup = groupFilter.value;
+                if (selectedGroup) {
+                    filteredData = filteredData.filter(row => {
+                        const group = row['Customer Group'];
+                        return group && group.toString().trim() === selectedGroup;
+                    });
+                }
+                
+                // Apply SKU filter
+                if (selectedSKUs.size > 0) {
+                    filteredData = filteredData.filter(row => {
+                        const sku = row['SKU Name'];
+                        return sku && selectedSKUs.has(sku.toString().trim());
+                    });
+                }
+                
+                // Apply year filter
+                if (selectedYear) {
+                    filteredData = filteredData.filter(row => {
+                        const year = row['Invoice Year'];
+                        return year && year.toString() === selectedYear;
+                    });
+                }
+                
+                // Apply month filter
+                if (selectedMonths.size > 0) {
+                    filteredData = filteredData.filter(row => {
+                        const month = row['Invoice Month'];
+                        return month && selectedMonths.has(month);
+                    });
+                }
+                
+                // Reset to first page when filters change
+                currentPage = 1;
+                
+                // Render filtered data
+                renderData();
+                
+                // Update charts with filtered data
+                updateCharts();
+                
+                // Update market utility based on filtered data
+                updateMarketUtility();
+                
+                // Hide loading state
+                showLoadingState(false);
+            }, 100);
+        }
+        
+        // Update market utility meter
+        function updateMarketUtility() {
+            if (filteredData.length === 0) {
+                marketUtility = 50;
+            } else {
+                // Calculate utility based on data metrics
+                const totalValue = parseFloat(document.getElementById('totalValue').textContent.replace(/[^0-9.-]+/g, '')) || 0;
+                const avgValue = totalValue / filteredData.length;
+                
+                // More complex utility calculation
+                const growthFactor = Math.random() * 20 - 10; // Simulated growth/decline
+                const demandFactor = filteredData.length / Math.max(allData.length, 1) * 30;
+                const valueFactor = Math.min(totalValue / 100000, 30);
+                
+                marketUtility = 40 + demandFactor + valueFactor + growthFactor;
+                marketUtility = Math.max(0, Math.min(100, marketUtility));
+            }
+            
+            // Update utility history
+            utilityHistory.push(marketUtility);
+            if (utilityHistory.length > 10) {
+                utilityHistory.shift();
+            }
+            
+            // Update meter with animation
+            const currentWidth = parseFloat(meterFill.style.width) || 50;
+            const targetWidth = marketUtility;
+            
+            animateValue(currentWidth, targetWidth, 1000, (value) => {
+                meterFill.style.width = value + '%';
+                utilityValue.textContent = Math.round(value) + '%';
+                
+                // Update color based on value
+                if (value < 30) {
+                    meterFill.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+                    meterText.textContent = 'Low Demand';
+                } else if (value < 70) {
+                    meterFill.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+                    meterText.textContent = 'Moderate Demand';
+                } else {
+                    meterFill.style.background = 'linear-gradient(90deg, #2ecc71, #27ae60)';
+                    meterText.textContent = 'High Demand';
+                }
+            });
+        }
+        
+        // Start market utility updates
+        function startMarketUtilityUpdates() {
+            // Initial update
+            updateMarketUtility();
+            
+            // Update every few seconds to simulate real-time changes
+            setInterval(() => {
+                if (filteredData.length > 0) {
+                    // Simulate small fluctuations
+                    const fluctuation = (Math.random() * 4 - 2);
+                    marketUtility = Math.max(0, Math.min(100, marketUtility + fluctuation));
+                    updateMarketUtility();
+                }
+            }, utilityUpdateInterval);
+        }
+        
+        // Update charts with current data
+        function updateCharts() {
+            if (filteredData.length === 0) return;
+            
+            // Prepare data for bar chart (top customers by value)
+            const customerSales = {};
+            filteredData.forEach(row => {
+                const customer = row['Customer Name'] || 'Unknown';
+                const value = parseFloat(row['Invoice Value (Rs.)']) || 0;
+                customerSales[customer] = (customerSales[customer] || 0) + value;
+            });
+            
+            // Sort and get top 10
+            const topCustomers = Object.entries(customerSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            const customerLabels = topCustomers.map(item => {
+                const name = item[0];
+                return name.length > 15 ? name.substring(0, 15) + '...' : name;
+            });
+            const customerValues = topCustomers.map(item => item[1]);
+            
+            // Prepare data for pie chart (top SKUs by quantity)
+            const skuQuantities = {};
+            filteredData.forEach(row => {
+                const sku = row['SKU Name'] || 'Unknown';
+                const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
+                skuQuantities[sku] = (skuQuantities[sku] || 0) + quantity;
+            });
+            
+            // Sort and get top 5
+            const topSkus = Object.entries(skuQuantities)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const skuLabels = topSkus.map(item => {
+                const name = item[0];
+                return name.length > 20 ? name.substring(0, 20) + '...' : name;
+            });
+            const skuValues = topSkus.map(item => item[1]);
+            
+            // Define chart colors
+            const barColors = generateGradientColors('#3498db', '#2ecc71', customerLabels.length);
+            const pieColors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6'];
+            
+            // Destroy existing charts if they exist
+            if (barChart) {
+                barChart.destroy();
+            }
+            if (pieChart) {
+                pieChart.destroy();
+            }
+            
+            // Create bar chart
+            barChart = new Chart(barChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerLabels,
+                    datasets: [{
+                        label: 'Sales Value (₹)',
+                        data: customerValues,
+                        backgroundColor: barColors,
+                        borderColor: barColors.map(color => color.replace('0.8', '1')),
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        hoverBackgroundColor: barColors.map(color => color.replace('0.8', '0.9'))
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ₹${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Create pie chart
+            pieChart = new Chart(pieChartCtx, {
+                type: 'pie',
+                data: {
+                    labels: skuLabels,
+                    datasets: [{
+                        data: skuValues,
+                        backgroundColor: pieColors,
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value.toLocaleString()} units (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Generate gradient colors
+        function generateGradientColors(startColor, endColor, steps) {
+            const colors = [];
+            const start = hexToRgb(startColor);
+            const end = hexToRgb(endColor);
+            
+            for (let i = 0; i < steps; i++) {
+                const r = Math.round(start.r + (end.r - start.r) * (i / (steps - 1)));
+                const g = Math.round(start.g + (end.g - start.g) * (i / (steps - 1)));
+                const b = Math.round(start.b + (end.b - start.b) * (i / (steps - 1)));
+                colors.push(`rgba(${r}, ${g}, ${b}, 0.8)`);
+            }
+            
+            return colors;
+        }
+        
+        // Convert hex to RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+        
+        // Animate value changes
+        function animateValue(start, end, duration, callback) {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const current = start + (end - start) * easeOutCubic(progress);
+                callback(current);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // Easing function
+        function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3);
+        }
+        
+        // Render data to table with pagination
+        function renderData() {
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="no-data">
+                            <i class="fas fa-search"></i>
+                            <p>No data matches your filters. Try adjusting filter criteria.</p>
+                        </td>
+                    </tr>
+                `;
+                
+                recordsCount.textContent = '0 records';
+                totalQuantity.textContent = '0';
+                totalProduct.textContent = '0';
+                totalValue.textContent = '0';
+                
+                // Hide pagination
+                paginationContainer.style.display = 'none';
+                
+                // Update AI suggestion
+                aiInsightText.textContent = 'No data matches your current filters. Try clearing some filters or selecting different criteria to see market insights.';
+                
+                return;
+            }
+            
+            // Calculate totals
+            let quantityTotal = 0;
+            let productTotal = 0;
+            let valueTotal = 0;
+            
+            // Calculate totals from all filtered data (not just current page)
+            filteredData.forEach(row => {
+                quantityTotal += parseFloat(row['Quantity (Numbers)']) || 0;
+                productTotal += parseFloat(row['Product Quantity(L/Kg)']) || 0;
+                valueTotal += parseFloat(row['Invoice Value (Rs.)']) || 0;
+            });
+            
+            // Calculate pagination
+            totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+            const currentPageData = filteredData.slice(startIndex, endIndex);
+            
+            // Build table rows for current page
+            let tableHTML = '';
+            
+            currentPageData.forEach(row => {
+                const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
+                const productQty = parseFloat(row['Product Quantity(L/Kg)']) || 0;
+                const invoiceValue = parseFloat(row['Invoice Value (Rs.)']) || 0;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${row['Customer Name'] || ''}</td>
+                        <td>${row['Customer Group'] || ''}</td>
+                        <td>${row['Customer District'] || ''}</td>
+                        <td>${row['Invoice Number'] || ''}</td>
+                        <td>${row['Invoice Date'] || ''}</td>
+                        <td>${row['SKU Name'] || ''}</td>
+                        <td>${quantity.toLocaleString()}</td>
+                        <td>${productQty.toLocaleString()}</td>
+                        <td>${formatCurrency(invoiceValue)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = tableHTML;
+            
+            // Show pagination controls
+            paginationContainer.style.display = 'flex';
+            
+            // Update summary with animation
+            updateCounter(recordsCount, filteredData.length, 'records');
+            updateCounter(totalQuantity, quantityTotal, 'number');
+            updateCounter(totalProduct, productTotal, 'number');
+            updateCounter(totalValue, valueTotal, 'currency');
+            
+            // Update pagination controls
+            updatePaginationControls();
+            
+            // Update AI suggestion
+            updateAISuggestion();
+        }
+        
+        // Animate counter updates
+        function updateCounter(element, targetValue, type) {
+            const currentValue = parseFloat(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+            const duration = 500;
+            const steps = 20;
+            const stepValue = (targetValue - currentValue) / steps;
+            let currentStep = 0;
+            
+            function update() {
+                currentStep++;
+                const newValue = currentValue + (stepValue * currentStep);
+                
+                if (type === 'currency') {
+                    element.textContent = formatCurrency(newValue);
+                } else if (type === 'records') {
+                    element.textContent = Math.round(newValue).toLocaleString() + ' records';
+                } else {
+                    element.textContent = Math.round(newValue).toLocaleString();
+                }
+                
+                if (currentStep < steps) {
+                    setTimeout(update, duration / steps);
+                } else {
+                    if (type === 'currency') {
+                        element.textContent = formatCurrency(targetValue);
+                    } else if (type === 'records') {
+                        element.textContent = targetValue.toLocaleString() + ' records';
+                    } else {
+                        element.textContent = targetValue.toLocaleString();
+                    }
+                }
+            }
+            
+            update();
+        }
+        
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        // Update AI suggestion based on current data
+        function updateAISuggestion() {
+            if (filteredData.length === 0) return;
+            
+            // Calculate insights
+            const totalValue = parseFloat(document.getElementById('totalValue').textContent.replace(/[^0-9.-]+/g, '')) || 0;
+            const totalQuantity = parseFloat(document.getElementById('totalQuantity').textContent.replace(/[^0-9.-]+/g, '')) || 0;
+            
+            // Find top customer
+            const customerTotals = {};
+            filteredData.forEach(row => {
+                const customer = row['Customer Name'];
+                const value = parseFloat(row['Invoice Value (Rs.)']) || 0;
+                
+                if (customer) {
+                    customerTotals[customer] = (customerTotals[customer] || 0) + value;
+                }
+            });
+            
+            let topCustomer = '';
+            let topValue = 0;
+            
+            for (const [customer, value] of Object.entries(customerTotals)) {
+                if (value > topValue) {
+                    topValue = value;
+                    topCustomer = customer;
+                }
+            }
+            
+            // Find most popular SKU
+            const skuCounts = {};
+            filteredData.forEach(row => {
+                const sku = row['SKU Name'];
+                if (sku) {
+                    skuCounts[sku] = (skuCounts[sku] || 0) + 1;
+                }
+            });
+            
+            let popularSku = '';
+            let maxCount = 0;
+            
+            for (const [sku, count] of Object.entries(skuCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    popularSku = sku;
+                }
+            }
+            
+            // Calculate averages
+            const avgInvoiceValue = totalValue / filteredData.length;
+            const avgQuantity = totalQuantity / filteredData.length;
+            
+            // Determine market trend
+            let marketTrend = 'stable';
+            let trendIcon = 'fa-arrows-left-right';
+            if (marketUtility > 70) {
+                marketTrend = 'bullish';
+                trendIcon = 'fa-arrow-trend-up';
+            } else if (marketUtility < 30) {
+                marketTrend = 'bearish';
+                trendIcon = 'fa-arrow-trend-down';
+            }
+            
+            // Generate AI insights
+            const insights = [
+                `Market is currently <strong>${marketTrend}</strong> with ${Math.round(marketUtility)}% utility`,
+                `<strong>${topCustomer}</strong> is your top customer with ${formatCurrency(topValue)} in sales`,
+                `<strong>${popularSku}</strong> is the most popular product (appears ${maxCount} times)`,
+                `Average order value: ${formatCurrency(avgInvoiceValue)}`,
+                `Total market volume: ${totalQuantity.toLocaleString()} units`
+            ];
+            
+            aiInsightText.innerHTML = insights.map(insight => `• ${insight}`).join('<br>');
+        }
+        
+        // Download as Excel
+        function downloadAsExcel() {
+            if (filteredData.length === 0) {
+                alert('No data to download. Please upload and filter data first.');
+                return;
+            }
+            
+            try {
+                // Prepare worksheet data
+                const wsData = [];
+                
+                // Add headers
+                const headers = [
+                    'Customer Name', 'Customer Group', 'Customer District',
+                    'Invoice Number', 'Invoice Date', 'SKU Name',
+                    'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
+                ];
+                wsData.push(headers);
+                
+                // Add data rows
+                filteredData.forEach(row => {
+                    wsData.push([
+                        row['Customer Name'] || '',
+                        row['Customer Group'] || '',
+                        row['Customer District'] || '',
+                        row['Invoice Number'] || '',
+                        row['Invoice Date'] || '',
+                        row['SKU Name'] || '',
+                        row['Quantity (Numbers)'] || 0,
+                        row['Product Quantity(L/Kg)'] || 0,
+                        row['Invoice Value (Rs.)'] || 0
+                    ]);
+                });
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Market Data');
+                
+                // Generate and download file
+                const date = new Date().toISOString().split('T')[0];
+                XLSX.writeFile(wb, `Auto_Lube_House_Analysis_${date}.xlsx`);
+                
+                // Show success message
+                showDownloadSuccess('Excel file downloaded successfully!');
+            } catch (error) {
+                console.error('Error generating Excel:', error);
+                alert('Error generating Excel file. Please try again.');
+            }
+        }
+        
+        // Download charts as image
+        function downloadChartsAsImage() {
+            if (!barChart && !pieChart) {
+                alert('No charts available to download. Please upload and filter data first.');
+                return;
+            }
+            
+            // Create a canvas to combine charts
+            const combinedCanvas = document.createElement('canvas');
+            combinedCanvas.width = 1200;
+            combinedCanvas.height = 800;
+            const ctx = combinedCanvas.getContext('2d');
+            
+            // Set background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+            
+            // Add title
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Auto Lube House - Market Analysis Charts', combinedCanvas.width / 2, 40);
+            
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillText(`Generated on ${new Date().toLocaleDateString()}`, combinedCanvas.width / 2, 65);
+            
+            // Draw bar chart
+            if (barChart) {
+                const barChartCanvas = document.getElementById('barChart');
+                ctx.drawImage(barChartCanvas, 50, 100, 500, 300);
+            }
+            
+            // Draw pie chart
+            if (pieChart) {
+                const pieChartCanvas = document.getElementById('pieChart');
+                ctx.drawImage(pieChartCanvas, 650, 100, 500, 300);
+            }
+            
+            // Add summary data
+            ctx.fillStyle = '#3498db';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Summary Data', 50, 450);
+            
+            ctx.fillStyle = '#34495e';
+            ctx.font = '14px Arial';
+            const summaryY = 480;
+            const lineHeight = 25;
+            ctx.fillText(`Total Records: ${filteredData.length}`, 50, summaryY);
+            ctx.fillText(`Total Value: ${totalValue.textContent}`, 50, summaryY + lineHeight);
+            ctx.fillText(`Market Utility: ${utilityValue.textContent}`, 50, summaryY + lineHeight * 2);
+            
+            // Convert to image and download
+            const link = document.createElement('a');
+            link.download = `Auto_Lube_House_Charts_${new Date().toISOString().split('T')[0]}.png`;
+            link.href = combinedCanvas.toDataURL('image/png');
+            link.click();
+            
+            // Show success message
+            showDownloadSuccess('Charts downloaded as PNG image!');
+        }
+        
+        // Download full report
+        function downloadFullReport() {
+            if (filteredData.length === 0) {
+                alert('No data to create report. Please upload and filter data first.');
+                return;
+            }
+            
+            // Create comprehensive report
+            const reportContent = `
+AUTO LUBE HOUSE - MARKET ANALYSIS REPORT
+=========================================
+Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
+
+EXECUTIVE SUMMARY
+-----------------
+Total Records: ${filteredData.length}
+Total Quantity: ${totalQuantity.textContent}
+Total Product Quantity: ${totalProduct.textContent}
+Total Value: ${totalValue.textContent}
+Market Utility Indicator: ${utilityValue.textContent}
+Date Range: ${getDateRange()}
+
+TOP CUSTOMERS
+-------------
+${getTopCustomers(5).map((cust, i) => `${i+1}. ${cust.name}: ${formatCurrency(cust.value)}`).join('\n')}
+
+TOP PRODUCTS
+------------
+${getTopProducts(5).map((prod, i) => `${i+1}. ${prod.name}: ${prod.quantity} units`).join('\n')}
+
+MARKET INSIGHTS
+---------------
+${aiInsightText.textContent}
+
+DATA SAMPLE (First 10 Records)
+------------------------------
+${getDataSample(10).map(row => 
+    `${row['Customer Name'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
+).join('\n')}
+
+FILTERS APPLIED
+---------------
+${getActiveFilters().join('\n') || 'No filters applied'}
+
+RECOMMENDATIONS
+---------------
+1. Focus on top performing customers for retention
+2. Increase inventory for high-demand products
+3. Review underperforming products
+4. Monitor market utility trends regularly
+
+END OF REPORT
+-------------
+Generated by Auto Lube House Smart Dashboard
+            `.trim();
+            
+            // Create and download text file
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.download = `Auto_Lube_House_Report_${new Date().toISOString().split('T')[0]}.txt`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            
+            // Show success message
+            showDownloadSuccess('Full market report downloaded!');
+        }
+        
+        // Helper function to get top customers
+        function getTopCustomers(count) {
+            const customerTotals = {};
+            filteredData.forEach(row => {
+                const customer = row['Customer Name'];
+                const value = parseFloat(row['Invoice Value (Rs.)']) || 0;
+                if (customer) {
+                    customerTotals[customer] = (customerTotals[customer] || 0) + value;
+                }
+            });
+            
+            return Object.entries(customerTotals)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, count)
+                .map(([name, value]) => ({ name, value }));
+        }
+        
+        // Helper function to get top products
+        function getTopProducts(count) {
+            const productTotals = {};
+            filteredData.forEach(row => {
+                const product = row['SKU Name'];
+                const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
+                if (product) {
+                    productTotals[product] = (productTotals[product] || 0) + quantity;
+                }
+            });
+            
+            return Object.entries(productTotals)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, count)
+                .map(([name, quantity]) => ({ name, quantity }));
+        }
+        
+        // Helper function to get date range
+        function getDateRange() {
+            if (filteredData.length === 0) return 'N/A';
+            
+            const dates = filteredData
+                .map(row => row['Invoice Date'])
+                .filter(date => date)
+                .map(date => new Date(date));
+            
+            if (dates.length === 0) return 'N/A';
+            
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            
+            return `${minDate.toLocaleDateString()} - ${maxDate.toLocaleDateString()}`;
+        }
+        
+        // Helper function to get data sample
+        function getDataSample(count) {
+            return filteredData.slice(0, Math.min(count, filteredData.length));
+        }
+        
+        // Helper function to get active filters
+        function getActiveFilters() {
+            const filters = [];
+            
+            if (selectedCustomer && selectedCustomer.trim() !== '') {
+                filters.push(`Customer: ${selectedCustomer}`);
+            }
+            if (groupFilter.value) filters.push(`Group: ${groupFilter.options[groupFilter.selectedIndex].text}`);
+            if (selectedSKUs.size > 0) filters.push(`SKUs: ${selectedSKUs.size} selected`);
+            if (selectedMonths.size > 0) {
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                   'July', 'August', 'September', 'October', 'November', 'December'];
+                const selectedMonthNames = Array.from(selectedMonths)
+                    .map(month => monthNames[parseInt(month) - 1])
+                    .join(', ');
+                filters.push(`Months: ${selectedMonthNames}`);
+            }
+            if (selectedYear) filters.push(`Year: ${selectedYear}`);
+            
+            return filters;
+        }
+        
+        // Show download success message
+        function showDownloadSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #2ecc71, #27ae60);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 600;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                successDiv.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(successDiv);
+                    document.head.removeChild(style);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Sample data for demonstration
+        function loadSampleData() {
+            // Generate realistic sample data
+            const sampleData = [
+                
+            ];
+            
+            // Process the sample data
+            processExcelData(sampleData);
+            
+            // Update UI to show it's sample data
+            fileName.textContent = 'Download Sales Report';
+            detectionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Upload your own Excel file to analyze your market data.</span>`;
+            
+            aiInsightText.innerHTML = 'Download Sales Report or Upload your own Excel file to get intelligent market insights, trend analysis, and actionable recommendations based on your actual business data.';
+        }
+        
+        // Load sample data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadSampleData, 500);
+        });
+    </script>
+</body>
+</html>

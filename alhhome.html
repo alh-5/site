@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Lube House Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Central Magnetic Wave Background - Mobile Optimized */
+        .wave-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #0a0800 0%, #000000 100%);
+        }
+        
+        /* Central Magnetic Wave */
+        .central-wave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(255, 215, 0, 0.3) 0%,
+                rgba(255, 215, 0, 0.2) 20%,
+                rgba(255, 215, 0, 0.1) 40%,
+                transparent 70%);
+            animation: centralPulse 4s infinite alternate ease-in-out;
+            filter: blur(20px);
+            box-shadow: 
+                0 0 200px rgba(255, 215, 0, 0.3),
+                inset 0 0 100px rgba(255, 215, 0, 0.2);
+        }
+        
+        .wave-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            animation: waveRing 6s infinite linear;
+        }
+        
+        .ring-1 {
+            width: 700px;
+            height: 700px;
+            animation-delay: 0s;
+        }
+        
+        .ring-2 {
+            width: 900px;
+            height: 900px;
+            animation-delay: 1s;
+            border-width: 1px;
+        }
+        
+        .ring-3 {
+            width: 1100px;
+            height: 1100px;
+            animation-delay: 2s;
+            border-width: 1px;
+        }
+        
+        .ring-4 {
+            width: 1300px;
+            height: 1300px;
+            animation-delay: 3s;
+            border-width: 1px;
+        }
+        
+        @keyframes centralPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes waveRing {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .magnetic-field-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 50%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%),
+                radial-gradient(circle at 70% 50%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%),
+                radial-gradient(circle at 50% 30%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%),
+                radial-gradient(circle at 50% 70%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%);
+            animation: magneticMove 20s infinite linear;
+        }
+        
+        @keyframes magneticMove {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Transparent container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header with Stereo Moving Effect */
+        header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(255, 215, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        /* Stereo Moving Background Effect */
+        .stereo-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.05) 20%, 
+                transparent 40%, 
+                rgba(255, 215, 0, 0.05) 60%, 
+                transparent 80%, 
+                rgba(255, 215, 0, 0.05) 100%);
+            background-size: 200% 100%;
+            animation: stereoMove 8s infinite linear;
+            z-index: -1;
+        }
+        
+        @keyframes stereoMove {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* Header Stereo Bars */
+        .stereo-bars {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 0 20px;
+        }
+        
+        .stereo-bar {
+            width: 4px;
+            background: linear-gradient(to top, #88E788, transparent);
+            animation: stereoBarDance 1.5s infinite ease-in-out;
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .stereo-bar:nth-child(1) { height: 3px; animation-delay: 0s; }
+        .stereo-bar:nth-child(2) { height: 5px; animation-delay: 0.1s; }
+        .stereo-bar:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+        .stereo-bar:nth-child(4) { height: 12px; animation-delay: 0.3s; }
+        .stereo-bar:nth-child(5) { height: 15px; animation-delay: 0.4s; }
+        .stereo-bar:nth-child(6) { height: 12px; animation-delay: 0.5s; }
+        .stereo-bar:nth-child(7) { height: 8px; animation-delay: 0.6s; }
+        .stereo-bar:nth-child(8) { height: 5px; animation-delay: 0.7s; }
+        .stereo-bar:nth-child(9) { height: 3px; animation-delay: 0.8s; }
+        
+        @keyframes stereoBarDance {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+        
+        /* Spinning icon in header left corner */
+        .header-icon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+        
+        .spinning-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #88E788;
+            box-shadow: 
+                0 5px 20px rgba(255, 215, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.2);
+            position: relative;
+            animation: spin 6s linear infinite;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .spinning-icon::before {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 215, 0, 0.1);
+            animation: spinReverse 8s linear infinite;
+        }
+        
+        .spinning-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 8px 25px rgba(255, 215, 0, 0.5),
+                0 0 40px rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.6);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes spinReverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        .icon-label {
+            font-size: 0.9rem;
+            color: #88E788;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 8px;
+            white-space: nowrap;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            animation: pulseGlow 2s infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            }
+        }
+        
+        /* Header text content */
+        .header-content {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: 1.5px;
+            position: relative;
+            display: inline-block;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.3),
+                0 0 20px rgba(255, 215, 0, 0.1);
+            animation: textGlow 3s infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.3),
+                            0 0 20px rgba(255, 215, 0, 0.1);
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(255, 215, 0, 0.5),
+                            0 0 30px rgba(255, 215, 0, 0.2);
+            }
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 120px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 2px;
+            box-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.5),
+                0 0 20px rgba(255, 215, 0, 0.2);
+            animation: linePulse 2s infinite alternate;
+        }
+        
+        @keyframes linePulse {
+            0% {
+                width: 120px;
+                opacity: 0.8;
+            }
+            100% {
+                width: 150px;
+                opacity: 1;
+            }
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-top: 12px;
+            max-width: 800px;
+            position: relative;
+            padding-left: 15px;
+            border-left: 2px solid rgba(255, 215, 0, 0.3);
+            animation: subtitleSlide 1s ease-out;
+        }
+        
+        @keyframes subtitleSlide {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* About button integrated into header */
+        .about-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 215, 0, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: #88E788;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                0 0 10px rgba(255, 215, 0, 0.1);
+            font-size: 0.95rem;
+            animation: buttonFloat 4s infinite ease-in-out;
+        }
+        
+        @keyframes buttonFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .about-btn:hover {
+            background: rgba(255, 215, 0, 0.25);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 
+                0 6px 20px rgba(255, 215, 0, 0.2),
+                0 0 15px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* Transposed tab layout - Transparent */
+        .tab-wrapper {
+            display: flex;
+            gap: 30px;
+            margin-top: 10px;
+            flex: 1;
+        }
+        
+        /* Vertical tabs on the left - Transparent */
+        .tab-sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tab-header {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 215, 0, 0.2);
+            flex: 1;
+        }
+        
+        .tab-btn {
+            padding: 25px 20px;
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+        
+        .tab-btn:last-child {
+            border-bottom: none;
+        }
+        
+        .tab-btn i {
+            font-size: 1.5rem;
+            width: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+        }
+        
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+        
+        .tab-btn:hover i {
+            transform: translateX(5px);
+            color: #88E788;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .tab-btn.active {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+            border-left: 4px solid #FFD700;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1);
+        }
+        
+        .tab-btn.active i {
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        /* Tab content area - Transparent */
+        .tab-content-area {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tab-content {
+            padding: 40px;
+            min-height: 500px;
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-title {
+            font-size: 2.2rem;
+            color: #FFD700;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+        }
+        
+        .tab-desc {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            flex: 1;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-list li {
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: rgba(255, 215, 0, 0.08);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 10px;
+            border-left: 4px solid #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .feature-list li:hover {
+            background: rgba(255, 215, 0, 0.15);
+            transform: translateX(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-list li i {
+            color: #96F97B;
+            font-size: 1.2rem;
+        }
+        
+        /* Website link buttons */
+        .website-link-container {
+            margin-top: auto;
+            padding-top: 30px;
+            border-top: 2px dashed rgba(255, 215, 0, 0.3);
+        }
+        
+        .website-link {
+            display: inline-block;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.8), rgba(218, 165, 32, 0.8));
+            color: #000;
+            text-decoration: none;
+            padding: 16px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 5px 20px rgba(255, 215, 0, 0.3),
+                0 0 15px rgba(255, 215, 0, 0.2);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: fit-content;
+            min-width: 250px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .website-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .website-link:hover {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
+            transform: translateY(-5px);
+            box-shadow: 
+                0 10px 25px rgba(255, 215, 0, 0.5),
+                0 0 25px rgba(255, 215, 0, 0.3);
+            color: #000;
+        }
+        
+        .website-link:hover::before {
+            left: 100%;
+        }
+        
+        .website-link i {
+            font-size: 1.3rem;
+        }
+        
+        .link-note {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 12px;
+            font-style: italic;
+        }
+        
+        /* Footer - Transparent */
+        footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .footer-logo {
+            color: #FFD700;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        
+        /* MOBILE HAMBURGER MENU FOR TABS */
+        .mobile-tab-toggle {
+            display: none;
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 15px;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            font-size: 1.1rem;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mobile-tab-toggle i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-tab-toggle.active i {
+            transform: rotate(180deg);
+        }
+        
+        /* MOBILE SPECIFIC STYLES */
+        @media (max-width: 1024px) {
+            .tab-wrapper {
+                flex-direction: column;
+            }
+            
+            .tab-sidebar {
+                width: 100%;
+                flex-direction: row;
+            }
+            
+            .tab-header {
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            }
+            
+            .tab-btn {
+                min-width: 200px;
+                border-bottom: none;
+                border-right: 1px solid rgba(255, 255, 255, 0.05);
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .tab-btn.active {
+                border-left: none;
+                border-bottom: 4px solid #FFD700;
+            }
+            
+            .tab-btn:hover i {
+                transform: translateY(3px);
+            }
+            
+            .central-wave {
+                width: 400px;
+                height: 400px;
+            }
+            
+            .ring-1 { width: 500px; height: 500px; }
+            .ring-2 { width: 600px; height: 600px; }
+            .ring-3 { width: 700px; height: 700px; }
+            .ring-4 { width: 800px; height: 800px; }
+        }
+        
+        @media (max-width: 768px) {
+            /* Improved mobile header */
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px;
+                position: relative;
+            }
+            
+            .header-icon-container {
+                flex-direction: row;
+                gap: 15px;
+                align-items: center;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .spinning-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.2rem;
+            }
+            
+            .icon-label {
+                margin-top: 0;
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+            
+            h1::after {
+                width: 80px;
+                height: 2px;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-top: 8px;
+                padding-left: 10px;
+            }
+            
+            .about-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                align-self: flex-start;
+                margin-top: 10px;
+                order: 3;
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            
+            /* Mobile hamburger menu for tabs */
+            .mobile-tab-toggle {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .tab-sidebar {
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.5s ease;
+                border-radius: 10px;
+                margin-bottom: 0;
+                order: 1;
+            }
+            
+            .tab-sidebar.active {
+                max-height: 500px;
+                margin-bottom: 20px;
+            }
+            
+            .tab-header {
+                flex-direction: column;
+                overflow: visible;
+                border-bottom: none;
+            }
+            
+            .tab-btn {
+                min-width: 100%;
+                padding: 18px 15px;
+                font-size: 1rem;
+                justify-content: flex-start;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .tab-btn.active {
+                border-left: 4px solid #FFD700;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .tab-content-area {
+                order: 2;
+                width: 100%;
+            }
+            
+            .tab-content {
+                padding: 25px;
+                min-height: auto;
+            }
+            
+            .tab-title {
+                font-size: 1.7rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .tab-title i {
+                font-size: 1.5rem;
+            }
+            
+            .tab-desc {
+                font-size: 1rem;
+                line-height: 1.6;
+                margin-bottom: 25px;
+            }
+            
+            .feature-list li {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .feature-list li i {
+                font-size: 1.1rem;
+            }
+            
+            .website-link {
+                min-width: 100%;
+                padding: 14px 25px;
+                font-size: 1rem;
+                justify-content: center;
+            }
+            
+            .link-note {
+                text-align: center;
+                font-size: 0.8rem;
+            }
+            
+            /* Reduced wave effect for mobile */
+            .central-wave {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .ring-1 { width: 350px; height: 350px; }
+            .ring-2 { width: 400px; height: 400px; }
+            .ring-3 { width: 450px; height: 450px; }
+            .ring-4 { width: 500px; height: 500px; }
+            
+            /* Stereo bars optimization for mobile */
+            .stereo-bars {
+                padding: 0 10px;
+            }
+            
+            .stereo-bar {
+                width: 3px;
+            }
+            
+            /* Mobile-specific layout adjustments */
+            .tab-wrapper {
+                gap: 15px;
+            }
+            
+            footer {
+                padding: 25px 15px;
+                margin-top: 40px;
+                font-size: 0.85rem;
+            }
+            
+            .footer-logo {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-icon-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .spinning-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            
+            .icon-label {
+                align-self: flex-start;
+                font-size: 0.75rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .tab-btn {
+                padding: 15px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .tab-btn i {
+                font-size: 1.2rem;
+                width: 25px;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .feature-list li {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .website-link {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            /* Further reduced wave effect for small mobile */
+            .central-wave {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .ring-1 { width: 250px; height: 250px; }
+            .ring-2 { width: 300px; height: 300px; }
+            .ring-3 { width: 350px; height: 350px; }
+            .ring-4 { width: 400px; height: 400px; }
+            
+            /* Adjust stereo bars for very small screens */
+            .stereo-bars {
+                height: 3px;
+            }
+            
+            .stereo-bar {
+                width: 2px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .tab-title {
+                font-size: 1.5rem;
+            }
+            
+            .tab-btn {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .central-wave {
+                width: 150px;
+                height: 150px;
+                filter: blur(10px);
+            }
+        }
+        
+        /* Touch-friendly enhancements */
+        @media (hover: none) and (pointer: coarse) {
+            .tab-btn:hover {
+                background: transparent;
+            }
+            
+            .tab-btn.active:hover {
+                background: rgba(255, 215, 0, 0.15);
+            }
+            
+            .website-link:hover {
+                transform: none;
+            }
+            
+            .feature-list li:hover {
+                transform: none;
+                background: rgba(255, 215, 0, 0.08);
+            }
+            
+            /* Better touch targets */
+            .tab-btn {
+                min-height: 60px;
+            }
+            
+            .website-link {
+                min-height: 55px;
+            }
+            
+            .about-btn {
+                min-height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Central Magnetic Wave Background -->
+    <div class="wave-container">
+        <div class="central-wave"></div>
+        <div class="wave-ring ring-1"></div>
+        <div class="wave-ring ring-2"></div>
+        <div class="wave-ring ring-3"></div>
+        <div class="wave-ring ring-4"></div>
+        <div class="magnetic-field-lines"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Header with Stereo Moving Effect -->
+        <header>
+            <!-- Stereo Moving Background -->
+            <div class="stereo-effect"></div>
+            
+            <!-- Stereo Bars -->
+            <div class="stereo-bars">
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+            </div>
+            
+            <div class="header-icon-container">
+                <div class="spinning-icon">ALH</div>
+                <div class="icon-label">ENERGY & POWER</div>
+            </div>
+            
+            <div class="header-content">
+                <h1>Auto Lube House</h1>
+                <div class="subtitle">Premium Automotive Lubrication Solutions & Transparency System</div>
+                
+                <!-- About button integrated into header -->
+                <button class="about-btn" id="aboutBtn">
+                    <i class="fas fa-info-circle"></i>
+                    About ALH
+                </button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="tab-wrapper">
+                <!-- Mobile tab toggle button -->
+                <button class="mobile-tab-toggle" id="mobileTabToggle">
+                    <span>Navigation Menu</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <!-- Vertical tabs sidebar -->
+                <div class="tab-sidebar" id="tabSidebar">
+                    <div class="tab-header">
+                        <button class="tab-btn active" data-tab="bazaar">
+                            <i class="fas fa-store"></i>
+                            Bazaar Order
+                        </button>
+                        <button class="tab-btn" data-tab="ro">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            R/O Order
+                        </button>
+                        <button class="tab-btn" data-tab="requirement">
+                            <i class="fas fa-clipboard-list"></i>
+                            Requirement
+                        </button>
+                        <button class="tab-btn" data-tab="profit">
+                            <i class="fas fa-calculator"></i>
+                            Profit Calculator
+                        </button>
+						<button class="tab-btn" data-tab="Pricelist">
+                            <i class="fa-file-invoice-dollar"></i>
+                            Pricelist
+                        </button>
+						
+						<button class="tab-btn" data-tab="SPanalys">
+                            <i class="fas fa-store"></i>
+                            Sales & Purchase Analys
+                        </button>
+						
+						<button class="tab-btn" data-tab="invtracker">
+                            <i class="fas fa-store"></i>
+                            Invoice Status
+                        </button>
+						 						 
+                        <button class="tab-btn" data-tab="Home2">
+                            <i class="fa-clipboard-list"></i>
+                            Next Button
+                        </button>
+								   
+											
+						
+
+                    </div>
+                </div>
+                
+                <!-- Tab content area -->
+                <div class="tab-content-area">
+                    <div class="tab-content active" id="bazaar-tab">
+                        <h2 class="tab-title"><i class="fas fa-store"></i> Bazaar Order Management</h2>
+                        <p class="tab-desc">Manage all your bazaar orders efficiently. Track orders, manage inventory, and process customer requests with our comprehensive bazaar order system designed specifically for Auto Lube House. Access real-time data, generate reports, and streamline your ordering process with our intuitive platform.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Create and manage bazaar orders in real-time</li>
+                            <li><i class="fas fa-check-circle"></i> Track order status from placement to delivery</li>
+                            <li><i class="fas fa-check-circle"></i> Generate invoices and receipts automatically</li>
+                            <li><i class="fas fa-check-circle"></i> Monitor inventory levels and set reorder points</li>
+                            <li><i class="fas fa-check-circle"></i> Customer management with order history</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href= 'alhbazaar.html'" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open Bazaar Order Website
+                            </a>
+                            <p class="link-note">Click to access bazaar order system</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="ro-tab">
+                        <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> R/O Retail Outlet</h2>
+                        <p class="tab-desc">Streamline RO process with our dedicated RO management system. Handle Retail Outlet, Order requests, all in one place. Improve Oeder Compilation efficiency, reduce errors, and enhance customer satisfaction with our comprehensive RO management solution.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Create and assign orders to Retail Outlet</li>
+                            <li><i class="fas fa-check-circle"></i> Track status and estimated completion times</li>
+                            <li><i class="fas fa-check-circle"></i> Manage customer Lube information and service history</li>
+                            <li><i class="fas fa-check-circle"></i> Generate service estimates and final invoices</li>
+                            <li><i class="fas fa-check-circle"></i> Integration with inventory for parts usage tracking</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="alhro.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open RO Order Website
+                            </a>
+                            <p class="link-note">Click to access R/O order</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="requirement-tab">
+                        <h2 class="tab-title"><i class="fas fa-clipboard-list"></i> Requirements & Inventory</h2>
+                        <p class="tab-desc">Monitor your inventory levels, identify requirements, and ensure you never run out of essential lubrication products with our smart inventory management system. Get real-time insights, automated alerts, and data-driven recommendations to optimize your inventory and reduce operational costs.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Real-time inventory tracking across all locations</li>
+                            <li><i class="fas fa-check-circle"></i> Automated requirement generation based on sales trends</li>
+                            <li><i class="fas fa-check-circle"></i> Low stock alerts and reorder recommendations</li>
+                            <li><i class="fas fa-check-circle"></i> Supplier management and purchase order generation</li>
+                            <li><i class="fas fa-check-circle"></i> Product categorization and batch tracking</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="Advance Stock/alhadvancestock.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open Requirements Website
+                            </a>
+                            <p class="link-note">Click to access inventory management</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="profit-tab">
+                        <h2 class="tab-title"><i class="fas fa-calculator"></i> Profit Calculator & Analytics</h2>
+                        <p class="tab-desc">Make informed business decisions with our comprehensive profit calculation and analytics tools. Track margins, analyze sales data, and optimize pricing strategies. Visualize your business performance with interactive dashboards and reports that help you identify opportunities for growth and efficiency improvements.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Calculate profit margins on individual products and services</li>
+                            <li><i class="fas fa-check-circle"></i> Sales analytics with visual charts and reports</li>
+                            <li><i class="fas fa-check-circle"></i> Expense tracking and overhead cost allocation</li>
+                            <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
+                            <li><i class="fas fa-check-circle"></i> What-if analysis for pricing and discount strategies</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="Profit Amount/alhprofit.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open Profit Calculator Website
+                            </a>
+                            <p class="link-note">Click to access financial analysis dashboard</p>
+                        </div>
+                    </div>
+					
+					
+					<div class="tab-content" id="Pricelist-tab">
+                        <h2 class="tab-title"><i class="fas fa-calculator"></i> Pricelist</h2>
+                        <p class="tab-desc">Pricelist calculation and analytics tools. Track margins, analyze sales data, and optimize pricing strategies. Visualize your business performance with interactive dashboards and reports that help you identify opportunities for growth and efficiency improvements.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Price and margins on individual products and services</li>
+                            <li><i class="fas fa-check-circle"></i> Sales analytics with visual reports</li>
+                            <li><i class="fas fa-check-circle"></i> Expense tracking and overhead cost allocation</li>
+                            <li><i class="fas fa-check-circle"></i> Performance comparison on products</li>
+                            <li><i class="fas fa-check-circle"></i> pricing and discount strategies</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="smlp.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open Pricelist Website
+                            </a>
+                            <p class="link-note">Click to access Pricelist analysis dashboard</p>
+                        </div>
+                    </div>
+					
+					
+					<div class="tab-content" id="SPanalys-tab">
+                        <h2 class="tab-title"><i class="fas fa-calculator"></i> Sales & Purchase Analys</h2>
+                        <p class="tab-desc">Sales & Purchase Financial and analytics tools. Track margins, analyze sales purchase data, and optimize Margin strategies. Visualize your business performance with interactive dashboards and reports that help you identify opportunities for growth and efficiency improvements.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Analys Customers products and services</li>
+                            <li><i class="fas fa-check-circle"></i> Sales Purchase analytics with visual reports</li>
+                            <li><i class="fas fa-check-circle"></i> tracking and overhead cost allocation</li>
+                            <li><i class="fas fa-check-circle"></i> Performance comparison on products</li>
+                            <li><i class="fas fa-check-circle"></i> Market strategies</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="salfy.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open Sales & Purchase Financial Website
+                            </a>
+                            <p class="link-note">Click to access Sales & Purchase Financial dashboard</p>
+                        </div>
+                    </div>
+					
+					
+					<div class="tab-content" id="invtracker-tab">
+                        <h2 class="tab-title"><i class="fas fa-calculator"></i>Invoice Status Tracker</h2>
+                        <p class="tab-desc">Click Invoice Status to View More.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Invoices Pending Tracker</li>
+							<li><i class="fas fa-check-circle"></i> Invoice Analys and Software</li>
+                            <li><i class="fas fa-check-circle"></i> Delivered Product Tracker</li>
+                            <li><i class="fas fa-check-circle"></i> Support mobile Version View</li>
+                            <li><i class="fas fa-check-circle"></i> friendly and responsive</li>
+                       </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="https://invnotdeliver.netlify.app/" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Invoice Status Tracker
+                            </a>
+                            <p class="link-note">Click Invoice Status</p>
+                        </div>
+                    </div>
+					
+					<div class="tab-content" id="Home2-tab">
+                        <h2 class="tab-title"><i class="fas fa-calculator"></i>Next</h2>
+                        <p class="tab-desc">Click Next to View More.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Click Next to View More tools & services</li>
+							<li><i class="fas fa-check-circle"></i> Analys and Software</li>
+                            <li><i class="fas fa-check-circle"></i> Easy and Free to Use</li>
+                            <li><i class="fas fa-check-circle"></i> Support mobile Version View</li>
+                            <li><i class="fas fa-check-circle"></i> friendly and responsive</li>
+                       </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="alhhome2.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Tools & Services
+                            </a>
+                            <p class="link-note">Click Next</p>
+                        </div>
+                    </div>
+
+                    
+
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer-logo">AUTO LUBE HOUSE</div>
+            <p>Premium Automotive Lubrication Solutions &copy; 2026</p>
+            <p style="margin-top: 8px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">All rights reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                // Show corresponding tab content
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+                
+                // Animate stereo bars on tab change
+                animateStereoBars();
+                
+                // On mobile, close the tab sidebar after selection
+                if (window.innerWidth <= 768) {
+                    const tabSidebar = document.getElementById('tabSidebar');
+                    const mobileToggle = document.getElementById('mobileTabToggle');
+                    tabSidebar.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                }
+            });
+        });
+        
+        // Mobile tab toggle functionality
+        const mobileTabToggle = document.getElementById('mobileTabToggle');
+        const tabSidebar = document.getElementById('tabSidebar');
+        
+        if (mobileTabToggle && tabSidebar) {
+            mobileTabToggle.addEventListener('click', function() {
+                tabSidebar.classList.toggle('active');
+                this.classList.toggle('active');
+                animateStereoBars();
+            });
+        }
+        
+        // Close mobile sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const isClickInsideSidebar = tabSidebar.contains(event.target);
+                const isClickOnToggle = mobileTabToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && tabSidebar.classList.contains('active')) {
+                    tabSidebar.classList.remove('active');
+                    mobileTabToggle.classList.remove('active');
+                }
+            }
+        });
+        
+        // About button functionality
+        const aboutBtn = document.getElementById('aboutBtn');
+        aboutBtn.addEventListener('click', function() {
+            alert('About Auto Lube House\n\nProprietor:"Shekhar Podar" Auto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.\n\nOur central magnetic wave represents the flow of lubricants and the dynamic energy of our automotive solutions.');
+            animateStereoBars();
+        });
+        
+        // Simulate website links (in a real scenario these would be actual URLs)
+        const websiteLinks = document.querySelectorAll('.website-link');
+        
+        websiteLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // In a real implementation, this would navigate to the actual website
+                // For this demo, we'll show an alert instead
+                const siteName = this.textContent.includes('Bazaar') ? 'Bazaar Order' :
+                                this.textContent.includes('RO') ? 'RO Order' :
+                                this.textContent.includes('Requirements') ? 'Requirements' :
+								this.textContent.includes('invtracker') ? 'Invoice Status' :
+                                'Profit Calculator'
+								'Pricelist'
+								'SPanalys';
+                
+                // Only show alert for demo purposes - in real use, remove this
+                if (this.getAttribute('href').includes('example.com')) {
+                    e.preventDefault();
+                    alert(`This would open the ${siteName} website in a new tab.\n\nIn a real implementation, this link would navigate to:\n${this.getAttribute('href')}`);
+                    animateStereoBars();
+                }
+            });
+        });
+        
+        // Add hover effect to spinning icon
+        const spinIcon = document.querySelector('.spinning-icon');
+        
+        spinIcon.addEventListener('mouseenter', function() {
+            this.style.animationDuration = '3s';
+            animateStereoBars();
+        });
+        
+        spinIcon.addEventListener('mouseleave', function() {
+            this.style.animationDuration = '6s';
+        });
+        
+        // Stereo bars animation function
+        function animateStereoBars() {
+            const bars = document.querySelectorAll('.stereo-bar');
+            bars.forEach(bar => {
+                bar.style.animation = 'none';
+                setTimeout(() => {
+                    bar.style.animation = '';
+                }, 10);
+            });
+        }
+        
+        // Interactive magnetic wave effect on mouse move
+        document.addEventListener('mousemove', function(e) {
+            const centralWave = document.querySelector('.central-wave');
+            const rings = document.querySelectorAll('.wave-ring');
+            
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            // Move central wave slightly based on mouse position
+            const waveX = (x - 0.5) * 20;
+            const waveY = (y - 0.5) * 20;
+            
+            centralWave.style.transform = `translate(calc(-50% + ${waveX}px), calc(-50% + ${waveY}px))`;
+            
+            // Move rings with different intensities
+            rings.forEach((ring, index) => {
+                const intensity = (index + 1) * 0.3;
+                const ringX = (x - 0.5) * 10 * intensity;
+                const ringY = (y - 0.5) * 10 * intensity;
+                
+                ring.style.transform = `translate(calc(-50% + ${ringX}px), calc(-50% + ${ringY}px))`;
+            });
+            
+            // Update stereo bars based on mouse movement
+            const bars = document.querySelectorAll('.stereo-bar');
+            const movement = Math.abs(e.movementX) + Math.abs(e.movementY);
+            const intensity = Math.min(movement / 10, 2);
+            
+            bars.forEach((bar, index) => {
+                const scale = 1 + (intensity * Math.sin(Date.now() / 200 + index));
+                bar.style.transform = `scaleY(${scale})`;
+            });
+        });
+        
+        // Random stereo bar movement when idle
+        setInterval(() => {
+            const bars = document.querySelectorAll('.stereo-bar');
+            bars.forEach((bar, index) => {
+                const randomScale = 0.8 + Math.random() * 0.7;
+                bar.style.transform = `scaleY(${randomScale})`;
+            });
+        }, 1500);
+        
+        // Initialize stereo bars animation
+        animateStereoBars();
+        
+        // Handle window resize for responsive behavior
+        window.addEventListener('resize', function() {
+            // If resizing to larger screen, ensure tab sidebar is visible
+            if (window.innerWidth > 768) {
+                tabSidebar.classList.add('active');
+                mobileTabToggle.style.display = 'none';
+            } else {
+                mobileTabToggle.style.display = 'flex';
+                // Only keep sidebar open if it was already open
+                if (!mobileTabToggle.classList.contains('active')) {
+                    tabSidebar.classList.remove('active');
+                }
+            }
+        });
+        
+        // Initialize based on current screen size
+        if (window.innerWidth <= 768) {
+            mobileTabToggle.style.display = 'flex';
+            tabSidebar.classList.remove('active');
+        } else {
+            mobileTabToggle.style.display = 'none';
+            tabSidebar.classList.add('active');
+        }
+    </script>
+</body>
+</html>

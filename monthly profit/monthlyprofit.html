@@ -1,0 +1,3166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Profit Margin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.scriptiecdn.com/v1.10.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9c 100%);
+            color: white;
+            padding: 25px 30px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h1 i {
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding: 30px;
+        }
+        
+        /* Import Section */
+        .import-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .upload-card {
+            background-color: #f9fbfd;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e1e8f0;
+            transition: all 0.3s;
+        }
+        
+        .upload-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sales-card {
+            border-top: 4px solid #2ecc71;
+        }
+        
+        .purchase-card {
+            border-top: 4px solid #e74c3c;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e8f0;
+        }
+        
+        .card-header h2 {
+            font-size: 20px;
+            color: #0d4d9c;
+        }
+        
+        .sales-icon {
+            color: #2ecc71;
+        }
+        
+        .purchase-icon {
+            color: #e74c3c;
+        }
+        
+        .upload-area {
+            margin: 20px 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .sales-btn {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+        }
+        
+        .purchase-btn {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .download-sample-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .download-sales-sample {
+            background: linear-gradient(to right, #3498db, #2980b9);
+        }
+        
+        .download-purchase-sample {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+        }
+        
+        .download-sample-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .file-name {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .file-type-info {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .file-type-info span {
+            background-color: #e8f1ff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .data-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .sales-status {
+            background-color: #e8f8ef;
+            color: #27ae60;
+        }
+        
+        .purchase-status {
+            background-color: #fdedec;
+            color: #c0392b;
+        }
+        
+        /* Mapping Section */
+        .mapping-section {
+            background-color: #f9fbfd;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e1e8f0;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #0d4d9c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 22px;
+        }
+        
+        .auto-mapping-info {
+            background-color: #e8f4ff;
+            border-left: 4px solid #1a6dcc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+        }
+        
+        .mapping-tabs {
+            display: flex;
+            border-bottom: 2px solid #e1e8f0;
+            margin-bottom: 20px;
+        }
+        
+        .mapping-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .mapping-tab.active {
+            color: #1a6dcc;
+            border-bottom-color: #1a6dcc;
+        }
+        
+        .mapping-content {
+            display: none;
+        }
+        
+        .mapping-content.active {
+            display: block;
+        }
+        
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+        
+        .mapping-table th {
+            background-color: #f0f5ff;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #0d4d9c;
+            border-bottom: 2px solid #e1e8f0;
+        }
+        
+        .mapping-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .mapping-table select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d0d9e6;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 14px;
+        }
+        
+        /* Search & Filter Section */
+        .filter-section {
+            background-color: #f9fbfd;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e1e8f0;
+        }
+        
+        .filter-controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 14px 45px 14px 20px;
+            border: 1px solid #d0d9e6;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: white;
+            transition: all 0.3s;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #1a6dcc;
+            box-shadow: 0 0 0 3px rgba(26, 109, 204, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+        }
+        
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #d0d9e6;
+            border-radius: 0 0 8px 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f0f5ff;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-highlight {
+            background-color: #fffacd;
+            font-weight: 600;
+        }
+        
+        .date-filter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .date-filter-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .date-select {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #d0d9e6;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .date-select:focus {
+            outline: none;
+            border-color: #1a6dcc;
+            box-shadow: 0 0 0 3px rgba(26, 109, 204, 0.1);
+        }
+        
+        .selected-dates-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .date-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #e8f1ff;
+            color: #1a6dcc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .date-tag .remove-date {
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .date-tag .remove-date:hover {
+            color: #e74c3c;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 15px;
+            grid-column: span 3;
+        }
+        
+        .filter-btn {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        
+        .reset-filter-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .reset-filter-btn:hover {
+            background: #e67e22;
+        }
+        
+        /* Dashboard Section */
+        .dashboard-section {
+            background-color: #f9fbfd;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e1e8f0;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .sales-stat {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .purchase-stat {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .profit-stat {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .margin-stat {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .stat-info h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-info .value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .sales-value {
+            color: #27ae60;
+        }
+        
+        .purchase-value {
+            color: #c0392b;
+        }
+        
+        .positive-value {
+            color: #2ecc71;
+        }
+        
+        .negative-value {
+            color: #e74c3c;
+        }
+        
+        .margin-value {
+            color: #9b59b6;
+        }
+        
+        /* Charts */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-card h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+        
+        /* Comparison Table */
+        .comparison-table-container {
+            overflow-x: auto;
+            border: 1px solid #e1e8f0;
+            border-radius: 8px;
+            background-color: white;
+            max-height: 500px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1700px;
+        }
+        
+        .comparison-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .comparison-table th {
+            background-color: #f0f5ff;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #0d4d9c;
+            border-bottom: 2px solid #e1e8f0;
+            white-space: nowrap;
+        }
+        
+        .comparison-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .sku-code {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .sku-name {
+            color: #34495e;
+        }
+        
+        .invoice-date {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .per-unit-sales {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .per-unit-purchase {
+            color: #c0392b;
+            font-weight: 600;
+        }
+        
+        .per-unit-profit {
+            color: #3498db;
+            font-weight: 700;
+        }
+        
+        .per-unit-margin {
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: center;
+            display: inline-block;
+            font-size: 13px;
+        }
+        
+        .per-unit-margin-positive {
+            background-color: #e8f6f3;
+            color: #27ae60;
+        }
+        
+        .per-unit-margin-negative {
+            background-color: #fdedec;
+            color: #e74c3c;
+        }
+        
+        .per-unit-margin-neutral {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+        }
+        
+        .profit-amount {
+            font-weight: 600;
+        }
+        
+        .profit-margin {
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 20px;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .margin-positive {
+            background-color: #e8f6f3;
+            color: #27ae60;
+        }
+        
+        .margin-negative {
+            background-color: #fdedec;
+            color: #e74c3c;
+        }
+        
+        .margin-neutral {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+        }
+        
+        .uom-cell {
+            font-weight: 600;
+            color: #7d3c98;
+            background-color: #f4ecf7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        /* Change Amount Styles */
+        .change-amount-sales, .change-amount-purchase {
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 4px;
+            text-align: center;
+            display: inline-block;
+            font-size: 12px;
+        }
+        
+        .change-amount-positive {
+            background-color: #e8f6f3;
+            color: #27ae60;
+            border-left: 3px solid #27ae60;
+        }
+        
+        .change-amount-negative {
+            background-color: #fdedec;
+            color: #e74c3c;
+            border-left: 3px solid #e74c3c;
+        }
+        
+        .change-amount-neutral {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            border-left: 3px solid #7f8c8d;
+        }
+        
+        /* Price Range Styles */
+        .price-range-sales, .price-range-purchase {
+            font-size: 11px;
+            color: #666;
+            background-color: #f8f9fa;
+            padding: 3px 6px;
+            border-radius: 3px;
+            margin-top: 3px;
+            display: block;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border: none;
+            color: white;
+        }
+        
+        .process-btn {
+            background: linear-gradient(to right, #1a6dcc, #0d4d9c);
+        }
+        
+        .export-excel {
+            background: linear-gradient(to right, #217346, #1a5c38);
+        }
+        
+        .export-pdf {
+            background: linear-gradient(to right, #d32f2f, #b71c1c);
+        }
+        
+        .export-png {
+            background: linear-gradient(to right, #1976d2, #0d47a1);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to right, #7f8c8d, #636e72);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e1e8f0;
+            background-color: #f9fbfd;
+        }
+        
+        /* No Data */
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        /* Highlighted Row */
+        .highlighted-row {
+            background-color: #fffacd !important;
+        }
+        
+        /* Amount Change Indicator */
+        .amount-change-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 5px;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .amount-change-up {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .amount-change-down {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        @media (max-width: 1200px) {
+            .import-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-actions {
+                grid-column: span 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .upload-card, .mapping-section, .filter-section, .dashboard-section {
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .date-filter-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> Sales vs Purchase Comparison Dashboard</h1>
+            <p class="subtitle">Import sales and purchase data with enhanced display</p>
+        </header>
+        
+        <div class="content">
+            <!-- Import Section -->
+            <div class="import-section">
+                <!-- Sales Import Card -->
+                <div class="upload-card sales-card">
+                    <div class="card-header">
+                        <i class="fas fa-shopping-cart sales-icon"></i>
+                        <h2>Import Sales Data</h2>
+                    </div>
+                    
+                    <div class="upload-area">
+                        <input type="file" id="sales-file-input" class="file-input" accept=".xlsx, .xls, .csv">
+                        <label for="sales-file-input" class="upload-btn sales-btn">
+                            <i class="fas fa-upload"></i> Upload Sales Data
+                        </label>
+                        
+                        <div class="file-type-info">
+                            <span>.XLSX</span>
+                            <span>.XLS</span>
+                            <span>.CSV</span>
+                        </div>
+                        
+                        <div class="file-name" id="sales-file-name">No file selected</div>
+                        
+                        <button class="download-sample-btn download-sales-sample" id="download-sales-sample">
+                            <i class="fas fa-download"></i> Download Sales
+                        </button>
+                    </div>
+                    
+                    <div class="data-status sales-status" id="sales-status">
+                        No sales data loaded
+                    </div>
+                </div>
+                
+                <!-- Purchase Import Card -->
+                <div class="upload-card purchase-card">
+                    <div class="card-header">
+                        <i class="fas fa-truck purchase-icon"></i>
+                        <h2>Import Purchase Data</h2>
+                    </div>
+                    
+                    <div class="upload-area">
+                        <input type="file" id="purchase-file-input" class="file-input" accept=".xlsx, .xls, .csv">
+                        <label for="purchase-file-input" class="upload-btn purchase-btn">
+                            <i class="fas fa-upload"></i> Upload Purchase Data
+                        </label>
+                        
+                        <div class="file-type-info">
+                            <span>.XLSX</span>
+                            <span>.XLS</span>
+                            <span>.CSV</span>
+                        </div>
+                        
+                        <div class="file-name" id="purchase-file-name">No file selected</div>
+                        
+                        <button class="download-sample-btn download-purchase-sample" id="download-purchase-sample">
+                            <i class="fas fa-download"></i> Download Purchase
+                        </button>
+                    </div>
+                    
+                    <div class="data-status purchase-status" id="purchase-status">
+                        No purchase data loaded
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mapping Section -->
+            <section class="mapping-section">
+                <h2 class="section-title"><i class="fas fa-map-marked-alt"></i> Column Mapping</h2>
+                
+                <div class="mapping-tabs">
+                    <div class="mapping-tab active" data-target="sales-mapping">Sales Data Mapping</div>
+                    <div class="mapping-tab" data-target="purchase-mapping">Purchase Data Mapping</div>
+                </div>
+                
+                <!-- Sales Mapping Content -->
+                <div class="mapping-content active" id="sales-mapping">
+                    <table class="mapping-table">
+                        <thead>
+                            <tr>
+                                <th width="25%">Required Field</th>
+                                <th width="35%">Description</th>
+                                <th width="40%">Map to Sales File Column</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-mapping-body">
+                            <!-- Sales mapping rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Purchase Mapping Content -->
+                <div class="mapping-content" id="purchase-mapping">
+                    <table class="mapping-table">
+                        <thead>
+                            <tr>
+                                <th width="25%">Required Field</th>
+                                <th width="35%">Description</th>
+                                <th width="40%">Map to Purchase File Column</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchase-mapping-body">
+                            <!-- Purchase mapping rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn process-btn" id="process-all-btn">
+                        <i class="fas fa-cogs"></i> Process & Compare Data
+                    </button>
+                    <button class="action-btn reset-btn" id="reset-all-btn">
+                        <i class="fas fa-redo"></i> Reset All Data
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Search & Filter Section -->
+            <section class="filter-section">
+                <h2 class="section-title"><i class="fas fa-search"></i> Search & Filter Data</h2>
+                
+                <div class="filter-controls">
+                    <!-- Search Box with Auto-Suggestions -->
+                    <div class="search-container">
+                        <input type="text" id="search-sku" class="search-box" placeholder="Search SKU Name or Code...">
+                        <i class="fas fa-search search-icon"></i>
+                        <div id="suggestions-box" class="suggestions-box"></div>
+                    </div>
+                    
+                    <!-- Separate Month Filter -->
+                    <div class="date-filter-container">
+                        <label style="font-size: 13px; font-weight: 600; color: #555; margin-bottom: 5px;">Filter by Month</label>
+                        <select id="filter-month" class="date-select">
+                            <option value="">All Months</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Separate Year Filter -->
+                    <div class="date-filter-container">
+                        <label style="font-size: 13px; font-weight: 600; color: #555; margin-bottom: 5px;">Filter by Year</label>
+                        <select id="filter-year" class="date-select">
+                            <option value="">All Years</option>
+                            <!-- Years will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="filter-btn" id="apply-filter-btn">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="reset-filter-btn" id="reset-filter-btn">
+                            <i class="fas fa-redo"></i> Reset Filters
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Dashboard Section -->
+            <section class="dashboard-section">
+                <div class="dashboard-header">
+                    <h2 class="section-title"><i class="fas fa-tachometer-alt"></i> Comparison Dashboard</h2>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn export-excel" id="export-excel-btn">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
+                        <button class="action-btn export-pdf" id="export-pdf-btn">
+                            <i class="fas fa-file-pdf"></i> Export to PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon sales-stat">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Avg. Sales Price</h3>
+                            <div class="value sales-value" id="avg-sales-price">Rs. 0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon purchase-stat">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Avg. Purchase Cost</h3>
+                            <div class="value purchase-value" id="avg-purchase-cost">Rs. 0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon profit-stat">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Avg. Per Unit Profit</h3>
+                            <div class="value positive-value" id="avg-per-unit-profit">Rs. 0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon margin-stat">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Avg. Per Unit Margin</h3>
+                            <div class="value margin-value" id="avg-per-unit-margin">0.00%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Profit Margin Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="marginChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Top 10 SKUs by Profit Margin</h3>
+                        <div class="chart-container">
+                            <canvas id="topSkusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comparison Table -->
+                <h3 class="section-title" style="margin-bottom: 15px;"><i class="fas fa-table"></i> SKU Comparison</h3>
+                
+                <div class="comparison-table-container">
+                    <table class="comparison-table" id="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>SKU Code</th>
+                                <th>SKU Name</th>
+                                <th>UOM (Sales)</th>
+                                <th>UOM (Purchase)</th>
+                                <th>Invoice Date (Month-Year)</th>
+                                <th>Per Unit (Sales)</th>
+                                <th>Per Unit (Purchase)</th>
+                                <th>Change Amount (Sales)</th>
+                                <th>Change Amount (Purchase)</th>
+                                <th>Per Unit Profit (Rs.)</th>
+                                <th>Per Unit Margin (%)</th>
+                                <th>Total Quantity (Sales)</th>
+                                <th>Total Quantity (Purchase)</th>
+                                <th>Total Value (Sales)</th>
+                                <th>Total Value (Purchase)</th>
+                                <th>Total Profit (Rs.)</th>
+                                <th>Total Profit Margin (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-body">
+                            <tr id="no-comparison-data">
+                                <td colspan="17" class="no-data">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    Import both sales and purchase data to see comparison
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        
+        <div class="footer">
+            <p>dbareh copyright &copy; 2026 @all right reserved</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const salesFileInput = document.getElementById('sales-file-input');
+        const purchaseFileInput = document.getElementById('purchase-file-input');
+        const salesFileName = document.getElementById('sales-file-name');
+        const purchaseFileName = document.getElementById('purchase-file-name');
+        const salesStatus = document.getElementById('sales-status');
+        const purchaseStatus = document.getElementById('purchase-status');
+        const salesMappingBody = document.getElementById('sales-mapping-body');
+        const purchaseMappingBody = document.getElementById('purchase-mapping-body');
+        const mappingTabs = document.querySelectorAll('.mapping-tab');
+        const mappingContents = document.querySelectorAll('.mapping-content');
+        const processAllBtn = document.getElementById('process-all-btn');
+        const resetAllBtn = document.getElementById('reset-all-btn');
+        const exportExcelBtn = document.getElementById('export-excel-btn');
+        const exportPdfBtn = document.getElementById('export-pdf-btn');
+        const exportPngBtn = document.getElementById('export-png-btn');
+        const comparisonBody = document.getElementById('comparison-body');
+        const noComparisonData = document.getElementById('no-comparison-data');
+        
+        // New download buttons
+        const downloadSalesSampleBtn = document.getElementById('download-sales-sample');
+        const downloadPurchaseSampleBtn = document.getElementById('download-purchase-sample');
+        
+        // Filter elements
+        const searchSku = document.getElementById('search-sku');
+        const suggestionsBox = document.getElementById('suggestions-box');
+        const filterMonth = document.getElementById('filter-month');
+        const filterYear = document.getElementById('filter-year');
+        const applyFilterBtn = document.getElementById('apply-filter-btn');
+        const resetFilterBtn = document.getElementById('reset-filter-btn');
+        
+        // Stats elements
+        const avgSalesPrice = document.getElementById('avg-sales-price');
+        const avgPurchaseCost = document.getElementById('avg-purchase-cost');
+        const avgPerUnitProfit = document.getElementById('avg-per-unit-profit');
+        const avgPerUnitMargin = document.getElementById('avg-per-unit-margin');
+        
+        // Chart variables
+        let marginChart = null;
+        let topSkusChart = null;
+        
+        // Global variables
+        let salesData = [];
+        let purchaseData = [];
+        let salesHeaders = [];
+        let purchaseHeaders = [];
+        let comparisonData = [];
+        let allComparisonData = []; // Store unfiltered data for filtering
+        let skuSuggestions = [];
+        let availableYears = new Set();
+        
+        let salesMapping = {
+            'SKU Code': '',
+            'SKU Name': '',
+            'UOM': '',
+            'Invoice Date': '',
+            'Quantity (Numbers)': '',
+            'Invoice Value (Rs.)': ''
+        };
+        
+        let purchaseMapping = {
+            'SKU Code': '',
+            'SKU Name': '',
+            'UOM': '',
+            'Invoice Date': '',
+            'Quantity (Numbers)': '',
+            'Invoice Value (Rs.)': ''
+        };
+        
+        // Month names for display
+        const monthNames = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        
+        // Full month names for filter
+        const fullMonthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        
+        // Initialize mapping tables
+        function initMappingTables() {
+            const requiredFields = [
+                { field: 'SKU Code', description: 'Unique identifier for the product' },
+                { field: 'SKU Name', description: 'Name or description of the product' },
+                { field: 'UOM', description: 'Unit of Measure (e.g., Case, Buc, Barrel) - Will be looked up, not summed' },
+                { field: 'Invoice Date', description: 'Date of the invoice (will be formatted to month-year)' },
+                { field: 'Quantity (Numbers)', description: 'Number of units sold/purchased' },
+                { field: 'Invoice Value (Rs.)', description: 'Total value of the invoice in Rupees' }
+            ];
+            
+            // Initialize sales mapping table
+            salesMappingBody.innerHTML = '';
+            requiredFields.forEach(field => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${field.field}</strong></td>
+                    <td>${field.description}</td>
+                    <td>
+                        <select id="sales-map-${field.field.replace(/\s+/g, '-')}" class="sales-map-select">
+                            <option value="">-- Select Column --</option>
+                        </select>
+                    </td>
+                `;
+                salesMappingBody.appendChild(row);
+            });
+            
+            // Initialize purchase mapping table
+            purchaseMappingBody.innerHTML = '';
+            requiredFields.forEach(field => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${field.field}</strong></td>
+                    <td>${field.description}</td>
+                    <td>
+                        <select id="purchase-map-${field.field.replace(/\s+/g, '-')}" class="purchase-map-select">
+                            <option value="">-- Select Column --</option>
+                        </select>
+                    </td>
+                `;
+                purchaseMappingBody.appendChild(row);
+            });
+        }
+        
+        // Improved date parsing function
+        function parseDateString(dateStr) {
+            if (!dateStr || dateStr === '') return null;
+            
+            // If it's already a Date object
+            if (dateStr instanceof Date) {
+                return isNaN(dateStr.getTime()) ? null : dateStr;
+            }
+            
+            // Convert to string
+            const str = String(dateStr).trim();
+            
+            // Try parsing as Excel serial number first (common in Excel exports)
+            const excelSerial = parseFloat(str);
+            if (!isNaN(excelSerial) && excelSerial > 0) {
+                // Excel date to JavaScript date (Excel's epoch is 1899-12-30)
+                const excelEpoch = new Date(1899, 11, 30);
+                const date = new Date(excelEpoch.getTime() + excelSerial * 86400000);
+                if (!isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100) {
+                    return date;
+                }
+            }
+            
+            // Try parsing as standard date formats
+            const formats = [
+                // YYYY-MM-DD
+                () => {
+                    const match = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+                    if (match) {
+                        const year = parseInt(match[1], 10);
+                        const month = parseInt(match[2], 10) - 1;
+                        const day = parseInt(match[3], 10);
+                        return new Date(year, month, day);
+                    }
+                    return null;
+                },
+                // DD/MM/YYYY or DD-MM-YYYY
+                () => {
+                    const match = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+                    if (match) {
+                        const day = parseInt(match[1], 10);
+                        const month = parseInt(match[2], 10) - 1;
+                        const year = parseInt(match[3], 10);
+                        return new Date(year, month, day);
+                    }
+                    return null;
+                },
+                // MM/DD/YYYY or MM-DD-YYYY
+                () => {
+                    const match = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+                    if (match) {
+                        const month = parseInt(match[1], 10) - 1;
+                        const day = parseInt(match[2], 10);
+                        const year = parseInt(match[3], 10);
+                        return new Date(year, month, day);
+                    }
+                    return null;
+                },
+                // Direct Date parsing
+                () => {
+                    const date = new Date(str);
+                    return isNaN(date.getTime()) ? null : date;
+                }
+            ];
+            
+            for (const format of formats) {
+                try {
+                    const date = format();
+                    if (date && !isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100) {
+                        return date;
+                    }
+                } catch (e) {
+                    // Continue to next format
+                }
+            }
+            
+            return null;
+        }
+        
+        // Populate year filter dropdown
+        function populateYearFilter() {
+            const yearSelect = document.getElementById('filter-year');
+            const currentSelection = yearSelect.value;
+            
+            // Clear existing options except the first one
+            while (yearSelect.options.length > 1) {
+                yearSelect.remove(1);
+            }
+            
+            // Get unique years and ensure they're 4-digit
+            const years = Array.from(availableYears)
+                .map(yearStr => {
+                    // Convert to number and handle different formats
+                    let yearNum;
+                    
+                    if (typeof yearStr === 'string') {
+                        // Remove any non-digit characters
+                        const cleaned = yearStr.replace(/\D/g, '');
+                        if (cleaned.length >= 4) {
+                            // Take last 4 digits if longer than 4
+                            yearNum = parseInt(cleaned.slice(-4), 10);
+                        } else if (cleaned.length === 2) {
+                            // Handle 2-digit years (assume 2000s)
+                            yearNum = 2000 + parseInt(cleaned, 10);
+                        } else {
+                            yearNum = parseInt(cleaned, 10);
+                        }
+                    } else {
+                        yearNum = parseInt(yearStr, 10);
+                    }
+                    
+                    // Validate it's a reasonable year
+                    if (!isNaN(yearNum) && yearNum > 1900 && yearNum < 2100) {
+                        return yearNum.toString();
+                    }
+                    return null;
+                })
+                .filter(year => year !== null);
+            
+            // Remove duplicates and sort descending
+            const uniqueYears = [...new Set(years)].sort((a, b) => parseInt(b) - parseInt(a));
+            
+            // Add years to dropdown
+            uniqueYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            });
+            
+            // Restore previous selection if it still exists
+            if (currentSelection && uniqueYears.includes(currentSelection)) {
+                yearSelect.value = currentSelection;
+            }
+        }
+        
+        // Handle sales file upload
+        salesFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                salesFileName.textContent = `Selected: ${file.name}`;
+                readFile(file, 'sales');
+            }
+        });
+        
+        // Handle purchase file upload
+        purchaseFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                purchaseFileName.textContent = `Selected: ${file.name}`;
+                readFile(file, 'purchase');
+            }
+        });
+        
+        // Read uploaded file
+        function readFile(file, type) {
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const data = event.target.result;
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+                    parseXLSX(data, type);
+                } else if (fileExtension === 'csv') {
+                    parseCSV(data, type);
+                } else {
+                    alert('Unsupported file format. Please upload XLSX, XLS, or CSV files.');
+                }
+            };
+            
+            reader.readAsBinaryString(file);
+        }
+        
+        // Parse XLSX data - PROCESS ALL ROWS WITHOUT LIMIT
+        function parseXLSX(data, type) {
+            try {
+                const workbook = XLSX.read(data, { type: 'binary' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                if (jsonData.length === 0) {
+                    alert(`${type === 'sales' ? 'Sales' : 'Purchase'} file is empty`);
+                    return;
+                }
+                
+                // Extract headers
+                const headers = jsonData[0].map(header => String(header).trim());
+                
+                // Extract data rows - PROCESS ALL ROWS
+                const dataRows = [];
+                for (let i = 1; i < jsonData.length; i++) {
+                    // Skip empty rows
+                    if (jsonData[i].length === 0 || jsonData[i].every(cell => !cell || String(cell).trim() === '')) {
+                        continue;
+                    }
+                    
+                    const row = {};
+                    const values = jsonData[i];
+                    
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] !== undefined ? String(values[index]).trim() : '';
+                    });
+                    
+                    dataRows.push(row);
+                }
+                
+                console.log(`${type.toUpperCase()}: Total rows in file: ${jsonData.length - 1}, Processed: ${dataRows.length}`);
+                
+                // Store data based on type
+                if (type === 'sales') {
+                    salesData = dataRows;
+                    salesHeaders = headers;
+                    salesStatus.textContent = `${salesData.length} records loaded`;
+                    salesStatus.className = 'data-status sales-status';
+                    updateMappingDropdowns('sales', salesHeaders);
+                    autoMapColumns('sales', salesHeaders);
+                } else {
+                    purchaseData = dataRows;
+                    purchaseHeaders = headers;
+                    purchaseStatus.textContent = `${purchaseData.length} records loaded`;
+                    purchaseStatus.className = 'data-status purchase-status';
+                    updateMappingDropdowns('purchase', purchaseHeaders);
+                    autoMapColumns('purchase', purchaseHeaders);
+                }
+                
+            } catch (error) {
+                alert(`Error reading ${type} file: ${error.message}`);
+            }
+        }
+        
+        // Parse CSV data - PROCESS ALL ROWS WITHOUT LIMIT
+        function parseCSV(data, type) {
+            const lines = data.split('\n').filter(line => line.trim() !== '');
+            
+            if (lines.length === 0) {
+                alert(`${type === 'sales' ? 'Sales' : 'Purchase'} file is empty`);
+                return;
+            }
+            
+            // Extract headers
+            const headers = lines[0].split(',').map(header => header.trim());
+            
+            // Extract data rows - PROCESS ALL ROWS
+            const dataRows = [];
+            for (let i = 1; i < lines.length; i++) {
+                // Skip empty lines
+                if (lines[i].trim() === '') {
+                    continue;
+                }
+                
+                const values = lines[i].split(',');
+                const row = {};
+                
+                headers.forEach((header, index) => {
+                    row[header] = values[index] !== undefined ? values[index].trim() : '';
+                });
+                
+                dataRows.push(row);
+            }
+            
+            console.log(`${type.toUpperCase()}: Total lines in file: ${lines.length - 1}, Processed: ${dataRows.length}`);
+            
+            // Store data based on type
+            if (type === 'sales') {
+                salesData = dataRows;
+                salesHeaders = headers;
+                salesStatus.textContent = `${salesData.length} records loaded`;
+                salesStatus.className = 'data-status sales-status';
+                updateMappingDropdowns('sales', salesHeaders);
+                autoMapColumns('sales', salesHeaders);
+            } else {
+                purchaseData = dataRows;
+                purchaseHeaders = headers;
+                purchaseStatus.textContent = `${purchaseData.length} records loaded`;
+                purchaseStatus.className = 'data-status purchase-status';
+                updateMappingDropdowns('purchase', purchaseHeaders);
+                autoMapColumns('purchase', purchaseHeaders);
+            }
+        }
+        
+        // Update mapping dropdowns
+        function updateMappingDropdowns(type, headers) {
+            const prefix = type === 'sales' ? 'sales-map' : 'purchase-map';
+            const selects = document.querySelectorAll(`.${type}-map-select`);
+            
+            selects.forEach(select => {
+                // Keep the first option, remove others
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                
+                // Add current headers
+                headers.forEach(header => {
+                    const option = document.createElement('option');
+                    option.value = header;
+                    option.textContent = header;
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        // Auto-map columns based on header names
+        function autoMapColumns(type, headers) {
+            const mappingSuggestions = {
+                'SKU Code': ['sku', 'code', 'product code', 'item code', 'sku code', 'product id', 'item id'],
+                'SKU Name': ['name', 'product', 'item', 'description', 'sku name', 'product name', 'item name'],
+                'UOM': ['uom', 'unit', 'unit of measure', 'measure', 'unit type', 'packing'],
+                'Invoice Date': ['date', 'invoice date', 'date of invoice', 'transaction date', 'order date'],
+                'Quantity (Numbers)': ['quantity', 'qty', 'amount', 'number', 'units', 'count', 'total quantity'],
+                'Invoice Value (Rs.)': ['value', 'amount', 'price', 'total', 'invoice value', 'cost', 'invoice amount', 'total amount']
+            };
+            
+            // Reset mapping for the type
+            if (type === 'sales') {
+                salesMapping = {
+                    'SKU Code': '',
+                    'SKU Name': '',
+                    'UOM': '',
+                    'Invoice Date': '',
+                    'Quantity (Numbers)': '',
+                    'Invoice Value (Rs.)': ''
+                };
+            } else {
+                purchaseMapping = {
+                    'SKU Code': '',
+                    'SKU Name': '',
+                    'UOM': '',
+                    'Invoice Date': '',
+                    'Quantity (Numbers)': '',
+                    'Invoice Value (Rs.)': ''
+                };
+            }
+            
+            // For each required field, find the best matching header
+            Object.keys(mappingSuggestions).forEach(field => {
+                const possibleNames = mappingSuggestions[field];
+                
+                for (const header of headers) {
+                    const headerLower = header.toLowerCase();
+                    
+                    for (const possibleName of possibleNames) {
+                        if (headerLower.includes(possibleName)) {
+                            // Found a match
+                            if (type === 'sales') {
+                                salesMapping[field] = header;
+                                const select = document.getElementById(`sales-map-${field.replace(/\s+/g, '-')}`);
+                                if (select) select.value = header;
+                            } else {
+                                purchaseMapping[field] = header;
+                                const select = document.getElementById(`purchase-map-${field.replace(/\s+/g, '-')}`);
+                                if (select) select.value = header;
+                            }
+                            break;
+                        }
+                    }
+                    
+                    if ((type === 'sales' && salesMapping[field]) || (type === 'purchase' && purchaseMapping[field])) break;
+                }
+            });
+        }
+        
+        // Process and compare data - FIXED VERSION with proper SKU code summation
+        function processAndCompare() {
+            // Get mapping from UI
+            updateMappingsFromUI();
+            
+            // Check if both datasets have mappings
+            const salesUnmapped = Object.keys(salesMapping).filter(field => !salesMapping[field]);
+            const purchaseUnmapped = Object.keys(purchaseMapping).filter(field => !purchaseMapping[field]);
+            
+            if (salesUnmapped.length > 0 || purchaseUnmapped.length > 0) {
+                alert(`Please map all required fields.\nSales unmapped: ${salesUnmapped.length > 0 ? salesUnmapped.join(', ') : 'None'}\nPurchase unmapped: ${purchaseUnmapped.length > 0 ? purchaseUnmapped.join(', ') : 'None'}`);
+                return;
+            }
+            
+            if (salesData.length === 0 || purchaseData.length === 0) {
+                alert('Please import both sales and purchase data before processing.');
+                return;
+            }
+            
+            console.log('Processing sales data...');
+            console.log('Sales data count:', salesData.length);
+            console.log('Purchase data count:', purchaseData.length);
+            
+            // Process sales data - group by SKU Code and sum quantities and values
+            const salesBySku = {};
+            availableYears.clear();
+            
+            let salesProcessedCount = 0;
+            let salesSkippedCount = 0;
+            
+            salesData.forEach((row, index) => {
+                const skuCode = row[salesMapping['SKU Code']] || '';
+                const skuName = row[salesMapping['SKU Name']] || '';
+                const uom = row[salesMapping['UOM']] || '';
+                const invoiceDateStr = row[salesMapping['Invoice Date']] || '';
+                const quantityStr = row[salesMapping['Quantity (Numbers)']] || '0';
+                const invoiceValueStr = row[salesMapping['Invoice Value (Rs.)']] || '0';
+                
+                // Parse quantities and values - handle commas and other non-numeric characters
+                const quantity = parseFloat(quantityStr.toString().replace(/,/g, '')) || 0;
+                const invoiceValue = parseFloat(invoiceValueStr.toString().replace(/,/g, '')) || 0;
+                
+                // Skip rows with invalid SKU or zero quantity/value
+                if (!skuCode || skuCode.trim() === '' || (quantity === 0 && invoiceValue === 0)) {
+                    salesSkippedCount++;
+                    return;
+                }
+                
+                salesProcessedCount++;
+                
+                // Extract month-year from invoice date using improved parsing
+                let monthYear = '';
+                let month = '';
+                let year = '';
+                let formattedDate = '';
+                
+                const invoiceDate = parseDateString(invoiceDateStr);
+                if (invoiceDate) {
+                    month = (invoiceDate.getMonth() + 1).toString().padStart(2, '0');
+                    year = invoiceDate.getFullYear().toString();
+                    monthYear = monthNames[invoiceDate.getMonth()] + '-' + year;
+                    formattedDate = monthYear;
+                    
+                    // Add year to available years
+                    if (year && year.length === 4) {
+                        availableYears.add(year);
+                    }
+                }
+                
+                // Clean SKU code: remove all non-alphanumeric characters except dash and underscore, then uppercase
+                const cleanedSkuCode = skuCode.toString().trim().replace(/[^a-zA-Z0-9-_]/g, '').toUpperCase();
+                
+                if (!salesBySku[cleanedSkuCode]) {
+                    salesBySku[cleanedSkuCode] = {
+                        skuCode: skuCode, // Store original SKU code for display
+                        skuName: skuName,
+                        uom: uom, // Store UOM (vlookup style - first occurrence)
+                        totalQuantity: quantity,
+                        totalValue: invoiceValue,
+                        perUnit: quantity > 0 ? invoiceValue / quantity : 0,
+                        invoiceDates: formattedDate ? [formattedDate] : [],
+                        months: month ? [month] : [],
+                        years: year ? [year] : [],
+                        transactionCount: 1,
+                        transactions: [{
+                            quantity: quantity,
+                            value: invoiceValue,
+                            perUnit: quantity > 0 ? invoiceValue / quantity : 0,
+                            date: formattedDate,
+                            uom: uom
+                        }],
+                        originalSkuCodes: [skuCode] // Track all original SKU codes for debugging
+                    };
+                } else {
+                    // Update totals - PROPERLY SUM QUANTITIES AND VALUES
+                    salesBySku[cleanedSkuCode].totalQuantity += quantity;
+                    salesBySku[cleanedSkuCode].totalValue += invoiceValue;
+                    salesBySku[cleanedSkuCode].transactionCount += 1;
+                    
+                    // Recalculate average per unit based on total values
+                    if (salesBySku[cleanedSkuCode].totalQuantity > 0) {
+                        salesBySku[cleanedSkuCode].perUnit = salesBySku[cleanedSkuCode].totalValue / salesBySku[cleanedSkuCode].totalQuantity;
+                    }
+                    
+                    if (formattedDate && !salesBySku[cleanedSkuCode].invoiceDates.includes(formattedDate)) {
+                        salesBySku[cleanedSkuCode].invoiceDates.push(formattedDate);
+                    }
+                    if (month && !salesBySku[cleanedSkuCode].months.includes(month)) {
+                        salesBySku[cleanedSkuCode].months.push(month);
+                    }
+                    if (year && !salesBySku[cleanedSkuCode].years.includes(year)) {
+                        salesBySku[cleanedSkuCode].years.push(year);
+                    }
+                    salesBySku[cleanedSkuCode].transactions.push({
+                        quantity: quantity,
+                        value: invoiceValue,
+                        perUnit: quantity > 0 ? invoiceValue / quantity : 0,
+                        date: formattedDate,
+                        uom: uom
+                    });
+                    salesBySku[cleanedSkuCode].originalSkuCodes.push(skuCode);
+                }
+            });
+            
+            console.log(`Sales: Processed ${salesProcessedCount} rows, Skipped ${salesSkippedCount} rows`);
+            console.log('Sales grouped by SKU:', Object.keys(salesBySku).length);
+            
+            // Process purchase data - group by SKU Code and sum quantities and values
+            const purchaseBySku = {};
+            
+            let purchaseProcessedCount = 0;
+            let purchaseSkippedCount = 0;
+            
+            purchaseData.forEach(row => {
+                const skuCode = row[purchaseMapping['SKU Code']] || '';
+                const skuName = row[purchaseMapping['SKU Name']] || '';
+                const uom = row[purchaseMapping['UOM']] || '';
+                const invoiceDateStr = row[purchaseMapping['Invoice Date']] || '';
+                const quantityStr = row[purchaseMapping['Quantity (Numbers)']] || '0';
+                const invoiceValueStr = row[purchaseMapping['Invoice Value (Rs.)']] || '0';
+                
+                // Parse quantities and values - handle commas and other non-numeric characters
+                const quantity = parseFloat(quantityStr.toString().replace(/,/g, '')) || 0;
+                const invoiceValue = parseFloat(invoiceValueStr.toString().replace(/,/g, '')) || 0;
+                
+                // Skip rows with invalid SKU or zero quantity/value
+                if (!skuCode || skuCode.trim() === '' || (quantity === 0 && invoiceValue === 0)) {
+                    purchaseSkippedCount++;
+                    return;
+                }
+                
+                purchaseProcessedCount++;
+                
+                // Extract month-year from invoice date using improved parsing
+                let monthYear = '';
+                let month = '';
+                let year = '';
+                let formattedDate = '';
+                
+                const invoiceDate = parseDateString(invoiceDateStr);
+                if (invoiceDate) {
+                    month = (invoiceDate.getMonth() + 1).toString().padStart(2, '0');
+                    year = invoiceDate.getFullYear().toString();
+                    monthYear = monthNames[invoiceDate.getMonth()] + '-' + year;
+                    formattedDate = monthYear;
+                    
+                    // Add year to available years
+                    if (year && year.length === 4) {
+                        availableYears.add(year);
+                    }
+                }
+                
+                // Clean SKU code: remove all non-alphanumeric characters except dash and underscore, then uppercase
+                const cleanedSkuCode = skuCode.toString().trim().replace(/[^a-zA-Z0-9-_]/g, '').toUpperCase();
+                
+                if (!purchaseBySku[cleanedSkuCode]) {
+                    purchaseBySku[cleanedSkuCode] = {
+                        skuCode: skuCode, // Store original SKU code for display
+                        skuName: skuName,
+                        uom: uom, // Store UOM (vlookup style - first occurrence)
+                        totalQuantity: quantity,
+                        totalValue: invoiceValue,
+                        perUnit: quantity > 0 ? invoiceValue / quantity : 0,
+                        invoiceDates: formattedDate ? [formattedDate] : [],
+                        months: month ? [month] : [],
+                        years: year ? [year] : [],
+                        transactionCount: 1,
+                        transactions: [{
+                            quantity: quantity,
+                            value: invoiceValue,
+                            perUnit: quantity > 0 ? invoiceValue / quantity : 0,
+                            date: formattedDate,
+                            uom: uom
+                        }],
+                        originalSkuCodes: [skuCode]
+                    };
+                } else {
+                    // Update totals - PROPERLY SUM QUANTITIES AND VALUES
+                    purchaseBySku[cleanedSkuCode].totalQuantity += quantity;
+                    purchaseBySku[cleanedSkuCode].totalValue += invoiceValue;
+                    purchaseBySku[cleanedSkuCode].transactionCount += 1;
+                    
+                    // Recalculate average per unit based on total values
+                    if (purchaseBySku[cleanedSkuCode].totalQuantity > 0) {
+                        purchaseBySku[cleanedSkuCode].perUnit = purchaseBySku[cleanedSkuCode].totalValue / purchaseBySku[cleanedSkuCode].totalQuantity;
+                    }
+                    
+                    if (formattedDate && !purchaseBySku[cleanedSkuCode].invoiceDates.includes(formattedDate)) {
+                        purchaseBySku[cleanedSkuCode].invoiceDates.push(formattedDate);
+                    }
+                    if (month && !purchaseBySku[cleanedSkuCode].months.includes(month)) {
+                        purchaseBySku[cleanedSkuCode].months.push(month);
+                    }
+                    if (year && !purchaseBySku[cleanedSkuCode].years.includes(year)) {
+                        purchaseBySku[cleanedSkuCode].years.push(year);
+                    }
+                    purchaseBySku[cleanedSkuCode].transactions.push({
+                        quantity: quantity,
+                        value: invoiceValue,
+                        perUnit: quantity > 0 ? invoiceValue / quantity : 0,
+                        date: formattedDate,
+                        uom: uom
+                    });
+                    purchaseBySku[cleanedSkuCode].originalSkuCodes.push(skuCode);
+                }
+            });
+            
+            console.log(`Purchase: Processed ${purchaseProcessedCount} rows, Skipped ${purchaseSkippedCount} rows`);
+            console.log('Purchase grouped by SKU:', Object.keys(purchaseBySku).length);
+            
+            // Combine data for SKUs that exist in both sales and purchase
+            comparisonData = [];
+            skuSuggestions = [];
+            
+            // Get all unique SKU codes (cleaned)
+            const allSkuCodes = new Set([
+                ...Object.keys(salesBySku),
+                ...Object.keys(purchaseBySku)
+            ]);
+            
+            console.log('Total unique SKUs:', allSkuCodes.size);
+            
+            allSkuCodes.forEach(cleanedSkuCode => {
+                const salesItem = salesBySku[cleanedSkuCode];
+                const purchaseItem = purchaseBySku[cleanedSkuCode];
+                
+                // Collect SKU names for suggestions
+                if (salesItem && salesItem.skuName) {
+                    skuSuggestions.push({
+                        code: salesItem.skuCode,
+                        name: salesItem.skuName,
+                        type: 'sales'
+                    });
+                }
+                
+                if (purchaseItem && purchaseItem.skuName) {
+                    skuSuggestions.push({
+                        code: purchaseItem.skuCode,
+                        name: purchaseItem.skuName,
+                        type: 'purchase'
+                    });
+                }
+                
+                // Get the most recent invoice date
+                let latestInvoiceDate = '';
+                let displayMonthYear = '';
+                
+                // Combine all invoice dates from sales and purchase
+                const allInvoiceDates = [];
+                if (salesItem && salesItem.invoiceDates) {
+                    allInvoiceDates.push(...salesItem.invoiceDates);
+                }
+                if (purchaseItem && purchaseItem.invoiceDates) {
+                    allInvoiceDates.push(...purchaseItem.invoiceDates);
+                }
+                
+                // Get unique dates and sort them (newest first)
+                const uniqueDates = [...new Set(allInvoiceDates)].sort().reverse();
+                if (uniqueDates.length > 0) {
+                    latestInvoiceDate = uniqueDates[0];
+                    displayMonthYear = latestInvoiceDate;
+                }
+                
+                // Combine months and years for filtering
+                const allMonths = [];
+                const allYears = [];
+                
+                if (salesItem) {
+                    if (salesItem.months) allMonths.push(...salesItem.months);
+                    if (salesItem.years) allYears.push(...salesItem.years);
+                }
+                
+                if (purchaseItem) {
+                    if (purchaseItem.months) allMonths.push(...purchaseItem.months);
+                    if (purchaseItem.years) allYears.push(...purchaseItem.years);
+                }
+                
+                const uniqueMonths = [...new Set(allMonths)];
+                const uniqueYears = [...new Set(allYears)];
+                
+                // Calculate per unit values
+                const salesPerUnit = salesItem ? salesItem.perUnit : 0;
+                const purchasePerUnit = purchaseItem ? purchaseItem.perUnit : 0;
+                const perUnitProfit = salesPerUnit - purchasePerUnit;
+                
+                // Calculate per unit margin
+                let perUnitMargin = 0;
+                if (purchasePerUnit > 0) {
+                    perUnitMargin = (perUnitProfit / purchasePerUnit) * 100;
+                } else if (salesPerUnit > 0) {
+                    perUnitMargin = 100; // Only sales, no purchase cost
+                }
+                
+                // Calculate total profit based on total values
+                const totalSalesValue = salesItem ? salesItem.totalValue : 0;
+                const totalPurchaseValue = purchaseItem ? purchaseItem.totalValue : 0;
+                const totalProfit = totalSalesValue - totalPurchaseValue;
+                
+                // Calculate total profit margin
+                let totalProfitMargin = 0;
+                if (totalPurchaseValue > 0) {
+                    totalProfitMargin = (totalProfit / totalPurchaseValue) * 100;
+                } else if (totalSalesValue > 0) {
+                    totalProfitMargin = 100; // Only sales, no purchase cost
+                }
+                
+                // Calculate change amounts for sales
+                let salesChangeAmount = 0;
+                let salesPriceRange = '--';
+                let hasSalesChanges = false;
+                let salesChangeDirection = '';
+                
+                if (salesItem && salesItem.transactions && salesItem.transactions.length > 1) {
+                    const firstPrice = salesItem.transactions[0].perUnit;
+                    const lastPrice = salesItem.transactions[salesItem.transactions.length - 1].perUnit;
+                    salesChangeAmount = lastPrice - firstPrice;
+                    hasSalesChanges = Math.abs(salesChangeAmount) > 0.01;
+                    salesChangeDirection = salesChangeAmount > 0 ? 'up' : 'down';
+                    
+                    // Calculate price range
+                    const prices = salesItem.transactions.map(t => t.perUnit);
+                    const minPrice = Math.min(...prices);
+                    const maxPrice = Math.max(...prices);
+                    salesPriceRange = `Rs. ${minPrice.toFixed(2)} - ${maxPrice.toFixed(2)}`;
+                }
+                
+                // Calculate change amounts for purchase
+                let purchaseChangeAmount = 0;
+                let purchasePriceRange = '--';
+                let hasPurchaseChanges = false;
+                let purchaseChangeDirection = '';
+                
+                if (purchaseItem && purchaseItem.transactions && purchaseItem.transactions.length > 1) {
+                    const firstPrice = purchaseItem.transactions[0].perUnit;
+                    const lastPrice = purchaseItem.transactions[purchaseItem.transactions.length - 1].perUnit;
+                    purchaseChangeAmount = lastPrice - firstPrice;
+                    hasPurchaseChanges = Math.abs(purchaseChangeAmount) > 0.01;
+                    purchaseChangeDirection = purchaseChangeAmount > 0 ? 'up' : 'down';
+                    
+                    // Calculate price range
+                    const prices = purchaseItem.transactions.map(t => t.perUnit);
+                    const minPrice = Math.min(...prices);
+                    const maxPrice = Math.max(...prices);
+                    purchasePriceRange = `Rs. ${minPrice.toFixed(2)} - ${maxPrice.toFixed(2)}`;
+                }
+                
+                // Check for amount changes in transactions
+                let hasAmountChanges = hasSalesChanges || hasPurchaseChanges;
+                let amountChangeDirection = salesChangeDirection || purchaseChangeDirection;
+                
+                // Store comparison data
+                comparisonData.push({
+                    skuCode: salesItem ? salesItem.skuCode : (purchaseItem ? purchaseItem.skuCode : cleanedSkuCode),
+                    skuName: salesItem ? salesItem.skuName : (purchaseItem ? purchaseItem.skuName : ''),
+                    salesUom: salesItem ? salesItem.uom : '',
+                    purchaseUom: purchaseItem ? purchaseItem.uom : '',
+                    salesPerUnit: salesPerUnit,
+                    purchasePerUnit: purchasePerUnit,
+                    perUnitProfit: perUnitProfit,
+                    perUnitMargin: perUnitMargin,
+                    totalSalesQuantity: salesItem ? salesItem.totalQuantity : 0,
+                    totalPurchaseQuantity: purchaseItem ? purchaseItem.totalQuantity : 0,
+                    totalSalesValue: totalSalesValue,
+                    totalPurchaseValue: totalPurchaseValue,
+                    totalProfit: totalProfit,
+                    totalProfitMargin: totalProfitMargin,
+                    invoiceDate: latestInvoiceDate,
+                    displayMonthYear: displayMonthYear,
+                    months: uniqueMonths,
+                    years: uniqueYears,
+                    hasAmountChanges: hasAmountChanges,
+                    amountChangeDirection: amountChangeDirection,
+                    salesChangeAmount: salesChangeAmount,
+                    purchaseChangeAmount: purchaseChangeAmount,
+                    salesPriceRange: salesPriceRange,
+                    purchasePriceRange: purchasePriceRange,
+                    salesTransactionCount: salesItem ? salesItem.transactionCount : 0,
+                    purchaseTransactionCount: purchaseItem ? purchaseItem.transactionCount : 0,
+                    cleanedSkuCode: cleanedSkuCode,
+                    debugInfo: {
+                        salesOriginalSkuCodes: salesItem ? salesItem.originalSkuCodes : [],
+                        purchaseOriginalSkuCodes: purchaseItem ? purchaseItem.originalSkuCodes : []
+                    }
+                });
+            });
+            
+            // Sort by total profit margin descending
+            comparisonData.sort((a, b) => b.totalProfitMargin - a.totalProfitMargin);
+            
+            // Store unfiltered data for filtering
+            allComparisonData = [...comparisonData];
+            
+            // Populate year filter
+            populateYearFilter();
+            
+            // Update comparison table
+            updateComparisonTable();
+            
+            // Update stats
+            updateStats();
+            
+            // Update charts
+            updateCharts();
+            
+            console.log('Comparison data count:', comparisonData.length);
+            
+            // Show summary of summation
+            let totalSalesQty = 0;
+            let totalSalesValue = 0;
+            let totalPurchaseQty = 0;
+            let totalPurchaseValue = 0;
+            
+            comparisonData.forEach(item => {
+                totalSalesQty += item.totalSalesQuantity;
+                totalSalesValue += item.totalSalesValue;
+                totalPurchaseQty += item.totalPurchaseQuantity;
+                totalPurchaseValue += item.totalPurchaseValue;
+            });
+            
+            console.log('Total Sales Quantity:', totalSalesQty);
+            console.log('Total Sales Value:', totalSalesValue);
+            console.log('Total Purchase Quantity:', totalPurchaseQty);
+            console.log('Total Purchase Value:', totalPurchaseValue);
+            
+            alert(`Data processed successfully! Compared ${comparisonData.length} SKUs.\nTotal Sales Quantity: ${totalSalesQty.toFixed(0)}\nTotal Sales Value: Rs. ${totalSalesValue.toFixed(2)}\nTotal Purchase Quantity: ${totalPurchaseQty.toFixed(0)}\nTotal Purchase Value: Rs. ${totalPurchaseValue.toFixed(2)}`);
+        }
+        
+        // Update mappings from UI
+        function updateMappingsFromUI() {
+            // Update sales mapping
+            Object.keys(salesMapping).forEach(field => {
+                const select = document.getElementById(`sales-map-${field.replace(/\s+/g, '-')}`);
+                if (select) {
+                    salesMapping[field] = select.value;
+                }
+            });
+            
+            // Update purchase mapping
+            Object.keys(purchaseMapping).forEach(field => {
+                const select = document.getElementById(`purchase-map-${field.replace(/\s+/g, '-')}`);
+                if (select) {
+                    purchaseMapping[field] = select.value;
+                }
+            });
+        }
+        
+        // Update comparison table with aggregated data
+        function updateComparisonTable() {
+            comparisonBody.innerHTML = '';
+            
+            if (comparisonData.length === 0) {
+                comparisonBody.appendChild(noComparisonData.cloneNode(true));
+                return;
+            }
+            
+            noComparisonData.style.display = 'none';
+            
+            comparisonData.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // Determine per unit margin class
+                let perUnitMarginClass = 'per-unit-margin-neutral';
+                if (item.perUnitMargin > 20) {
+                    perUnitMarginClass = 'per-unit-margin-positive';
+                } else if (item.perUnitMargin < 0) {
+                    perUnitMarginClass = 'per-unit-margin-negative';
+                }
+                
+                // Determine total margin class
+                let totalMarginClass = 'margin-neutral';
+                if (item.totalProfitMargin > 20) {
+                    totalMarginClass = 'margin-positive';
+                } else if (item.totalProfitMargin < 0) {
+                    totalMarginClass = 'margin-negative';
+                }
+                
+                // Determine per unit profit color class
+                let perUnitProfitClass = item.perUnitProfit >= 0 ? 'positive-value' : 'negative-value';
+                
+                // Determine total profit amount color class
+                let totalProfitClass = item.totalProfit >= 0 ? 'positive-value' : 'negative-value';
+                
+                // Determine sales change amount class
+                let salesChangeClass = 'change-amount-neutral';
+                if (Math.abs(item.salesChangeAmount) > 0.01) {
+                    salesChangeClass = item.salesChangeAmount > 0 ? 'change-amount-positive' : 'change-amount-negative';
+                }
+                
+                // Determine purchase change amount class
+                let purchaseChangeClass = 'change-amount-neutral';
+                if (Math.abs(item.purchaseChangeAmount) > 0.01) {
+                    purchaseChangeClass = item.purchaseChangeAmount > 0 ? 'change-amount-positive' : 'change-amount-negative';
+                }
+                
+                // Add amount change indicator if applicable
+                let amountChangeIndicator = '';
+                if (item.hasAmountChanges) {
+                    const changeClass = item.amountChangeDirection === 'up' ? 'amount-change-up' : 'amount-change-down';
+                    const changeSymbol = item.amountChangeDirection === 'up' ? '↑' : '↓';
+                    amountChangeIndicator = `<span class="amount-change-indicator ${changeClass}" title="Price changed: Sales: Rs. ${item.salesChangeAmount.toFixed(2)}, Purchase: Rs. ${item.purchaseChangeAmount.toFixed(2)}">${changeSymbol}</span>`;
+                }
+                
+                // Add transaction count indicator
+                let transactionIndicator = '';
+                if (item.salesTransactionCount > 1 || item.purchaseTransactionCount > 1) {
+                    transactionIndicator = `<span title="${item.salesTransactionCount} sales transactions, ${item.purchaseTransactionCount} purchase transactions" style="font-size: 11px; color: #666;"> (S:${item.salesTransactionCount}/P:${item.purchaseTransactionCount})</span>`;
+                }
+                
+                tr.innerHTML = `
+                    <td class="sku-code">${item.skuCode}${amountChangeIndicator}${transactionIndicator}</td>
+                    <td class="sku-name">${item.skuName || '--'}</td>
+                    <td><span class="uom-cell">${item.salesUom || '--'}</span></td>
+                    <td><span class="uom-cell">${item.purchaseUom || '--'}</span></td>
+                    <td class="invoice-date">${item.displayMonthYear || '--'}</td>
+                    <td class="per-unit-sales">
+                        ${item.salesPerUnit > 0 ? 'Rs. ' + item.salesPerUnit.toFixed(2) : '--'}
+                        ${item.salesPriceRange !== '--' ? `<span class="price-range-sales">${item.salesPriceRange}</span>` : ''}
+                    </td>
+                    <td class="per-unit-purchase">
+                        ${item.purchasePerUnit > 0 ? 'Rs. ' + item.purchasePerUnit.toFixed(2) : '--'}
+                        ${item.purchasePriceRange !== '--' ? `<span class="price-range-purchase">${item.purchasePriceRange}</span>` : ''}
+                    </td>
+                    <td>
+                        <span class="change-amount-sales ${salesChangeClass}" title="${item.salesTransactionCount > 1 ? `Change across ${item.salesTransactionCount} transactions` : 'Single transaction'}">
+                            ${Math.abs(item.salesChangeAmount) > 0.01 ? 'Rs. ' + item.salesChangeAmount.toFixed(2) : '--'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="change-amount-purchase ${purchaseChangeClass}" title="${item.purchaseTransactionCount > 1 ? `Change across ${item.purchaseTransactionCount} transactions` : 'Single transaction'}">
+                            ${Math.abs(item.purchaseChangeAmount) > 0.01 ? 'Rs. ' + item.purchaseChangeAmount.toFixed(2) : '--'}
+                        </span>
+                    </td>
+                    <td class="per-unit-profit ${perUnitProfitClass}">${item.salesPerUnit > 0 || item.purchasePerUnit > 0 ? 'Rs. ' + item.perUnitProfit.toFixed(2) : '--'}</td>
+                    <td><span class="per-unit-margin ${perUnitMarginClass}">${item.perUnitMargin.toFixed(2)}%</span></td>
+                    <td>${item.totalSalesQuantity > 0 ? item.totalSalesQuantity.toFixed(0) : '--'}</td>
+                    <td>${item.totalPurchaseQuantity > 0 ? item.totalPurchaseQuantity.toFixed(0) : '--'}</td>
+                    <td>${item.totalSalesValue > 0 ? 'Rs. ' + item.totalSalesValue.toFixed(2) : '--'}</td>
+                    <td>${item.totalPurchaseValue > 0 ? 'Rs. ' + item.totalPurchaseValue.toFixed(2) : '--'}</td>
+                    <td class="profit-amount ${totalProfitClass}">${item.totalProfit !== 0 ? 'Rs. ' + item.totalProfit.toFixed(2) : 'Rs. 0.00'}</td>
+                    <td><span class="profit-margin ${totalMarginClass}">${item.totalProfitMargin.toFixed(2)}%</span></td>
+                `;
+                
+                comparisonBody.appendChild(tr);
+            });
+        }
+        
+        // Update stats with aggregated data
+        function updateStats() {
+            if (comparisonData.length === 0) {
+                avgSalesPrice.textContent = 'Rs. 0.00';
+                avgPurchaseCost.textContent = 'Rs. 0.00';
+                avgPerUnitProfit.textContent = 'Rs. 0.00';
+                avgPerUnitMargin.textContent = '0.00%';
+                return;
+            }
+            
+            // Calculate totals from aggregated data
+            let totalSalesPerUnit = 0;
+            let totalPurchasePerUnit = 0;
+            let totalPerUnitProfit = 0;
+            let totalPerUnitMargin = 0;
+            let countWithSales = 0;
+            let countWithPurchase = 0;
+            let countWithBoth = 0;
+            
+            // Also calculate average change amounts
+            let totalSalesChange = 0;
+            let totalPurchaseChange = 0;
+            let countWithSalesChanges = 0;
+            let countWithPurchaseChanges = 0;
+            
+            comparisonData.forEach(item => {
+                if (item.salesPerUnit > 0) {
+                    totalSalesPerUnit += item.salesPerUnit;
+                    countWithSales++;
+                }
+                
+                if (item.purchasePerUnit > 0) {
+                    totalPurchasePerUnit += item.purchasePerUnit;
+                    countWithPurchase++;
+                }
+                
+                if (item.salesPerUnit > 0 && item.purchasePerUnit > 0) {
+                    totalPerUnitProfit += item.perUnitProfit;
+                    totalPerUnitMargin += item.perUnitMargin;
+                    countWithBoth++;
+                }
+                
+                if (Math.abs(item.salesChangeAmount) > 0.01) {
+                    totalSalesChange += item.salesChangeAmount;
+                    countWithSalesChanges++;
+                }
+                
+                if (Math.abs(item.purchaseChangeAmount) > 0.01) {
+                    totalPurchaseChange += item.purchaseChangeAmount;
+                    countWithPurchaseChanges++;
+                }
+            });
+            
+            const avgSales = countWithSales > 0 ? totalSalesPerUnit / countWithSales : 0;
+            const avgPurchase = countWithPurchase > 0 ? totalPurchasePerUnit / countWithPurchase : 0;
+            const avgPerUnitProf = countWithBoth > 0 ? totalPerUnitProfit / countWithBoth : 0;
+            const avgPerUnitMarg = countWithBoth > 0 ? totalPerUnitMargin / countWithBoth : 0;
+            
+            // Update display
+            avgSalesPrice.textContent = `Rs. ${avgSales.toFixed(2)}`;
+            avgPurchaseCost.textContent = `Rs. ${avgPurchase.toFixed(2)}`;
+            avgPerUnitProfit.textContent = `Rs. ${avgPerUnitProf.toFixed(2)}`;
+            avgPerUnitProfit.className = avgPerUnitProf >= 0 ? 'value positive-value' : 'value negative-value';
+            avgPerUnitMargin.textContent = `${avgPerUnitMarg.toFixed(2)}%`;
+            
+            // Log change amounts for debugging
+            console.log(`Average sales change: ${countWithSalesChanges > 0 ? totalSalesChange / countWithSalesChanges : 0}`);
+            console.log(`Average purchase change: ${countWithPurchaseChanges > 0 ? totalPurchaseChange / countWithPurchaseChanges : 0}`);
+        }
+        
+        // Update charts
+        function updateCharts() {
+            if (comparisonData.length === 0) return;
+            
+            // Destroy existing charts
+            if (marginChart) {
+                marginChart.destroy();
+            }
+            if (topSkusChart) {
+                topSkusChart.destroy();
+            }
+            
+            // Prepare data for margin distribution chart (using per unit margin)
+            const marginRanges = {
+                'High Loss (< -20%)': 0,
+                'Loss (-20% to 0%)': 0,
+                'Low Margin (0% to 10%)': 0,
+                'Medium Margin (10% to 30%)': 0,
+                'High Margin (> 30%)': 0
+            };
+            
+            comparisonData.forEach(item => {
+                const margin = item.perUnitMargin;
+                
+                if (margin < -20) {
+                    marginRanges['High Loss (< -20%)']++;
+                } else if (margin < 0) {
+                    marginRanges['Loss (-20% to 0%)']++;
+                } else if (margin < 10) {
+                    marginRanges['Low Margin (0% to 10%)']++;
+                } else if (margin < 30) {
+                    marginRanges['Medium Margin (10% to 30%)']++;
+                } else {
+                    marginRanges['High Margin (> 30%)']++;
+                }
+            });
+            
+            // Create margin distribution chart
+            const marginCtx = document.getElementById('marginChart').getContext('2d');
+            marginChart = new Chart(marginCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(marginRanges),
+                    datasets: [{
+                        data: Object.values(marginRanges),
+                        backgroundColor: [
+                            '#e74c3c',
+                            '#f39c12',
+                            '#3498db',
+                            '#2ecc71',
+                            '#27ae60'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} SKUs (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Prepare data for top SKUs chart (using per unit margin)
+            const topSkus = comparisonData
+                .filter(item => item.perUnitMargin > 0)
+                .sort((a, b) => b.perUnitMargin - a.perUnitMargin)
+                .slice(0, 10);
+            
+            const topSkuLabels = topSkus.map(item => item.skuCode.substring(0, 10) + (item.skuCode.length > 10 ? '...' : ''));
+            const topSkuMargins = topSkus.map(item => item.perUnitMargin);
+            const topSkuColors = topSkus.map(item => {
+                if (item.perUnitMargin > 30) return '#27ae60';
+                if (item.perUnitMargin > 10) return '#2ecc71';
+                return '#3498db';
+            });
+            
+            // Create top SKUs chart
+            const topSkusCtx = document.getElementById('topSkusChart').getContext('2d');
+            topSkusChart = new Chart(topSkusCtx, {
+                type: 'bar',
+                data: {
+                    labels: topSkuLabels,
+                    datasets: [{
+                        label: 'Per Unit Profit Margin (%)',
+                        data: topSkuMargins,
+                        backgroundColor: topSkuColors,
+                        borderColor: topSkuColors.map(color => color.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const sku = comparisonData.find(item => 
+                                        item.skuCode.startsWith(context.label.replace('...', '')) || 
+                                        item.skuCode === context.label
+                                    );
+                                    const skuName = sku ? sku.skuName : '';
+                                    return [
+                                        `SKU: ${sku ? sku.skuCode : context.label}`,
+                                        `Name: ${skuName || 'N/A'}`,
+                                        `Per Unit Margin: ${context.raw.toFixed(2)}%`,
+                                        `Per Unit Profit: Rs. ${sku ? sku.perUnitProfit.toFixed(2) : '0.00'}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Per Unit Margin (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'SKU Code'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Auto-suggestion for SKU search
+        function setupSearchSuggestions() {
+            searchSku.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                suggestionsBox.innerHTML = '';
+                
+                if (searchTerm.length < 2) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                
+                // Filter suggestions
+                const filteredSuggestions = skuSuggestions.filter(suggestion => 
+                    suggestion.code.toLowerCase().includes(searchTerm) || 
+                    (suggestion.name && suggestion.name.toLowerCase().includes(searchTerm))
+                );
+                
+                // Remove duplicates
+                const uniqueSuggestions = [];
+                const seen = new Set();
+                
+                filteredSuggestions.forEach(suggestion => {
+                    const key = suggestion.code + '|' + suggestion.name;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        uniqueSuggestions.push(suggestion);
+                    }
+                });
+                
+                // Show suggestions
+                if (uniqueSuggestions.length > 0) {
+                    uniqueSuggestions.slice(0, 10).forEach(suggestion => {
+                        const item = document.createElement('div');
+                        item.className = 'suggestion-item';
+                        item.innerHTML = `
+                            <div><strong>${highlightMatch(suggestion.code, searchTerm)}</strong></div>
+                            <div style="font-size: 12px; color: #666;">${highlightMatch(suggestion.name, searchTerm)}</div>
+                        `;
+                        
+                        item.addEventListener('click', function() {
+                            searchSku.value = suggestion.name;
+                            suggestionsBox.style.display = 'none';
+                            // Apply filter automatically when suggestion is selected
+                            applyFilters();
+                        });
+                        
+                        suggestionsBox.appendChild(item);
+                    });
+                    
+                    suggestionsBox.style.display = 'block';
+                } else {
+                    suggestionsBox.style.display = 'none';
+                }
+            });
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchSku.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                    suggestionsBox.style.display = 'none';
+                }
+            });
+            
+            // Apply filter on Enter key
+            searchSku.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    suggestionsBox.style.display = 'none';
+                    applyFilters();
+                }
+            });
+        }
+        
+        // Highlight matching text in suggestions
+        function highlightMatch(text, searchTerm) {
+            if (!searchTerm) return text;
+            
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="suggestion-highlight">$1</span>');
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            const searchTerm = searchSku.value.toLowerCase().trim();
+            const selectedMonth = filterMonth.value;
+            const selectedYear = filterYear.value;
+            
+            // Reset comparison data to all data
+            comparisonData = [...allComparisonData];
+            
+            // Apply search filter
+            if (searchTerm) {
+                comparisonData = comparisonData.filter(item => 
+                    item.skuCode.toLowerCase().includes(searchTerm) || 
+                    (item.skuName && item.skuName.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply month filter
+            if (selectedMonth) {
+                comparisonData = comparisonData.filter(item => {
+                    return item.months && item.months.includes(selectedMonth);
+                });
+            }
+            
+            // Apply year filter
+            if (selectedYear) {
+                comparisonData = comparisonData.filter(item => {
+                    return item.years && item.years.includes(selectedYear);
+                });
+            }
+            
+            // Update comparison table
+            updateComparisonTable();
+            
+            // Highlight search results
+            if (searchTerm) {
+                highlightSearchResults(searchTerm);
+            }
+            
+            // Update stats
+            updateStats();
+            
+            // Update charts with filtered data
+            updateCharts();
+            
+            // Show filter status
+            let filterStatus = '';
+            if (searchTerm) filterStatus += `Search: "${searchTerm}" `;
+            if (selectedMonth) filterStatus += `Month: ${fullMonthNames[parseInt(selectedMonth) - 1]} `;
+            if (selectedYear) filterStatus += `Year: ${selectedYear}`;
+            
+            if (filterStatus) {
+                console.log(`Filters applied: ${filterStatus.trim()}\nShowing ${comparisonData.length} of ${allComparisonData.length} SKUs.`);
+            }
+        }
+        
+        // Highlight search results in the table
+        function highlightSearchResults(searchTerm) {
+            const rows = document.querySelectorAll('#comparison-body tr');
+            
+            rows.forEach(row => {
+                // Remove previous highlighting
+                row.classList.remove('highlighted-row');
+                
+                // Check if row contains search term
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchTerm)) {
+                    row.classList.add('highlighted-row');
+                }
+            });
+        }
+        
+        // Reset filters
+        function resetFilters() {
+            searchSku.value = '';
+            filterMonth.value = '';
+            filterYear.value = '';
+            
+            // Reset comparison data to all data
+            comparisonData = [...allComparisonData];
+            
+            // Update comparison table
+            updateComparisonTable();
+            
+            // Remove highlighting
+            const rows = document.querySelectorAll('#comparison-body tr');
+            rows.forEach(row => row.classList.remove('highlighted-row'));
+            
+            // Update stats and charts
+            updateStats();
+            updateCharts();
+        }
+        
+        // Export to Excel
+        function exportToExcel() {
+            if (comparisonData.length === 0) {
+                alert('No comparison data to export. Please process data first.');
+                return;
+            }
+            
+            try {
+                // Prepare data for export
+                const exportData = comparisonData.map(item => ({
+                    'SKU Code': item.skuCode,
+                    'SKU Name': item.skuName || '',
+                    'UOM (Sales)': item.salesUom || '',
+                    'UOM (Purchase)': item.purchaseUom || '',
+                    'Invoice Date (Month-Year)': item.displayMonthYear || '',
+                    'Per Unit (Sales)': item.salesPerUnit > 0 ? item.salesPerUnit : '',
+                    'Per Unit (Purchase)': item.purchasePerUnit > 0 ? item.purchasePerUnit : '',
+                    'Change Amount (Sales)': item.salesChangeAmount,
+                    'Change Amount (Purchase)': item.purchaseChangeAmount,
+                    'Price Range (Sales)': item.salesPriceRange,
+                    'Price Range (Purchase)': item.purchasePriceRange,
+                    'Per Unit Profit (Rs.)': item.perUnitProfit,
+                    'Per Unit Margin (%)': item.perUnitMargin,
+                    'Total Quantity (Sales)': item.totalSalesQuantity,
+                    'Total Quantity (Purchase)': item.totalPurchaseQuantity,
+                    'Total Value (Sales)': item.totalSalesValue,
+                    'Total Value (Purchase)': item.totalPurchaseValue,
+                    'Total Profit (Rs.)': item.totalProfit,
+                    'Total Profit Margin (%)': item.totalProfitMargin,
+                    'Has Amount Changes': item.hasAmountChanges ? 'Yes' : 'No',
+                    'Sales Transaction Count': item.salesTransactionCount,
+                    'Purchase Transaction Count': item.purchaseTransactionCount
+                }));
+                
+                // Create worksheet
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Comparison Data");
+                
+                // Generate file name
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+                const fileName = `sales_purchase_comparison_${timestamp}.xlsx`;
+                
+                // Save the file
+                XLSX.writeFile(wb, fileName);
+                
+                alert(`Exported ${comparisonData.length} SKU comparisons to ${fileName}`);
+            } catch (error) {
+                alert('Error exporting to Excel: ' + error.message);
+            }
+        }
+        
+        // Export to PDF
+        function exportToPDF() {
+            if (comparisonData.length === 0) {
+                alert('No comparison data to export. Please process data first.');
+                return;
+            }
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('l', 'mm', 'a4'); // Landscape mode for wider table
+                
+                // Calculate page dimensions
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 10;
+                const contentWidth = pageWidth - (margin * 2);
+                
+                // Add title
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Sales vs Purchase Comparison Report', pageWidth / 2, 15, { align: 'center' });
+                
+                // Add filter info
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                let filterInfo = 'All Data';
+                if (searchSku.value) filterInfo = `Search: "${searchSku.value}"`;
+                if (filterMonth.value) {
+                    const monthName = fullMonthNames[parseInt(filterMonth.value) - 1];
+                    filterInfo += filterInfo === 'All Data' ? `Month: ${monthName}` : `, Month: ${monthName}`;
+                }
+                if (filterYear.value) {
+                    filterInfo += filterInfo === 'All Data' ? `Year: ${filterYear.value}` : `, Year: ${filterYear.value}`;
+                }
+                
+                // Split long filter info into multiple lines if needed
+                const filterLines = doc.splitTextToSize(`Filters: ${filterInfo}`, contentWidth);
+                doc.text(filterLines, margin, 25);
+                
+                // Add export info
+                const exportInfo = `Exported: ${new Date().toLocaleString()} | Total SKUs: ${comparisonData.length}`;
+                const exportLines = doc.splitTextToSize(exportInfo, contentWidth);
+                doc.text(exportLines, margin, 35);
+                
+                // Prepare table data
+                const tableData = comparisonData.map(item => [
+                    item.skuCode,
+                    item.skuName || '',
+                    item.salesUom || '--',
+                    item.purchaseUom || '--',
+                    item.displayMonthYear || '--',
+                    item.salesPerUnit > 0 ? `Rs. ${item.salesPerUnit.toFixed(2)}` : '--',
+                    item.purchasePerUnit > 0 ? `Rs. ${item.purchasePerUnit.toFixed(2)}` : '--',
+                    `Rs. ${item.salesChangeAmount.toFixed(2)}`,
+                    `Rs. ${item.purchaseChangeAmount.toFixed(2)}`,
+                    `Rs. ${item.perUnitProfit.toFixed(2)}`,
+                    `${item.perUnitMargin.toFixed(2)}%`,
+                    item.totalSalesQuantity.toFixed(0),
+                    item.totalPurchaseQuantity.toFixed(0),
+                    `Rs. ${item.totalSalesValue.toFixed(2)}`,
+                    `Rs. ${item.totalPurchaseValue.toFixed(2)}`,
+                    `Rs. ${item.totalProfit.toFixed(2)}`,
+                    `${item.totalProfitMargin.toFixed(2)}%`
+                ]);
+                
+                // Define table headers
+                const headers = [
+                    'SKU Code',
+                    'SKU Name',
+                    'UOM (S)',
+                    'UOM (P)',
+                    'Invoice Date',
+                    'Per Unit (S)',
+                    'Per Unit (P)',
+                    'Change (S)',
+                    'Change (P)',
+                    'Per Unit Profit',
+                    'Per Unit Margin',
+                    'Qty (S)',
+                    'Qty (P)',
+                    'Total Sales',
+                    'Total Purchase',
+                    'Total Profit',
+                    'Total Margin'
+                ];
+                
+                // Calculate column widths
+                const columnWidths = [15, 20, 8, 8, 12, 12, 12, 10, 10, 12, 12, 8, 8, 12, 12, 12, 12];
+                
+                // Adjust column widths to fit page
+                const totalWidth = columnWidths.reduce((sum, width) => sum + width, 0);
+                const scaleFactor = contentWidth / totalWidth;
+                const scaledColumnWidths = columnWidths.map(width => width * scaleFactor * 0.95);
+                
+                // Add table
+                doc.autoTable({
+                    head: [headers],
+                    body: tableData,
+                    startY: 45,
+                    theme: 'grid',
+                    headStyles: { 
+                        fillColor: [26, 109, 204],
+                        textColor: [255, 255, 255],
+                        fontSize: 6,
+                        fontStyle: 'bold'
+                    },
+                    bodyStyles: { fontSize: 5 },
+                    alternateRowStyles: { fillColor: [245, 247, 250] },
+                    margin: { top: 10, left: margin, right: margin },
+                    columnStyles: {
+                        0: { cellWidth: scaledColumnWidths[0], overflow: 'linebreak' },
+                        1: { cellWidth: scaledColumnWidths[1], overflow: 'linebreak' },
+                        2: { cellWidth: scaledColumnWidths[2], overflow: 'linebreak' },
+                        3: { cellWidth: scaledColumnWidths[3], overflow: 'linebreak' },
+                        4: { cellWidth: scaledColumnWidths[4], overflow: 'linebreak' },
+                        5: { cellWidth: scaledColumnWidths[5], overflow: 'linebreak' },
+                        6: { cellWidth: scaledColumnWidths[6], overflow: 'linebreak' },
+                        7: { cellWidth: scaledColumnWidths[7], overflow: 'linebreak' },
+                        8: { cellWidth: scaledColumnWidths[8], overflow: 'linebreak' },
+                        9: { cellWidth: scaledColumnWidths[9], overflow: 'linebreak' },
+                        10: { cellWidth: scaledColumnWidths[10], overflow: 'linebreak' },
+                        11: { cellWidth: scaledColumnWidths[11], overflow: 'linebreak' },
+                        12: { cellWidth: scaledColumnWidths[12], overflow: 'linebreak' },
+                        13: { cellWidth: scaledColumnWidths[13], overflow: 'linebreak' },
+                        14: { cellWidth: scaledColumnWidths[14], overflow: 'linebreak' },
+                        15: { cellWidth: scaledColumnWidths[15], overflow: 'linebreak' },
+                        16: { cellWidth: scaledColumnWidths[16], overflow: 'linebreak' }
+                    },
+                    styles: { 
+                        fontSize: 5,
+                        cellPadding: 1,
+                        lineColor: [200, 200, 200],
+                        lineWidth: 0.1
+                    },
+                    didDrawPage: function(data) {
+                        // Add page number
+                        const pageCount = doc.internal.getNumberOfPages();
+                        doc.setFontSize(8);
+                        doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
+                    }
+                });
+                
+                // Generate file name
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+                const fileName = `sales_purchase_comparison_${timestamp}.pdf`;
+                
+                // Save the PDF
+                doc.save(fileName);
+                
+                alert(`Exported ${comparisonData.length} SKU comparisons to ${fileName}`);
+            } catch (error) {
+                alert('Error exporting to PDF: ' + error.message);
+            }
+        }
+        
+        // Export to PNG
+        function exportToPNG() {
+            if (comparisonData.length === 0) {
+                alert('No comparison data to export. Please process data first.');
+                return;
+            }
+            
+            try {
+                // Create a temporary container for the dashboard
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '-10000px';
+                tempContainer.style.left = '-10000px';
+                tempContainer.style.backgroundColor = 'white';
+                tempContainer.style.padding = '30px';
+                tempContainer.style.borderRadius = '12px';
+                tempContainer.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
+                tempContainer.style.width = '1800px';
+                tempContainer.style.maxWidth = '1800px';
+                tempContainer.style.zIndex = '99999';
+                
+                // Clone the dashboard section
+                const dashboardClone = document.querySelector('.dashboard-section').cloneNode(true);
+                
+                // Remove action buttons from clone
+                const actionButtons = dashboardClone.querySelector('.action-buttons');
+                if (actionButtons) actionButtons.remove();
+                
+                // Add title
+                const title = document.createElement('h1');
+                title.textContent = 'Sales vs Purchase Comparison Dashboard';
+                title.style.marginBottom = '10px';
+                title.style.color = '#0d4d9c';
+                title.style.fontSize = '24px';
+                tempContainer.insertBefore(title, tempContainer.firstChild);
+                
+                // Add filter info
+                const filterInfo = document.createElement('div');
+                filterInfo.style.marginBottom = '20px';
+                filterInfo.style.padding = '15px';
+                filterInfo.style.backgroundColor = '#f9fbfd';
+                filterInfo.style.borderRadius = '8px';
+                filterInfo.style.border = '1px solid #e1e8f0';
+                
+                let filterText = 'All Data';
+                if (searchSku.value) filterText = `Search: "${searchSku.value}"`;
+                if (filterMonth.value) {
+                    const monthName = fullMonthNames[parseInt(filterMonth.value) - 1];
+                    filterText += filterText === 'All Data' ? `Month: ${monthName}` : `, Month: ${monthName}`;
+                }
+                if (filterYear.value) {
+                    filterText += filterText === 'All Data' ? `Year: ${filterYear.value}` : `, Year: ${filterYear.value}`;
+                }
+                
+                filterInfo.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 5px; color: #0d4d9c;">Filter Information:</div>
+                    <div style="color: #666;">${filterText}</div>
+                    <div style="color: #666; margin-top: 5px;">Exported: ${new Date().toLocaleString()} | Total SKUs: ${comparisonData.length}</div>
+                `;
+                
+                tempContainer.insertBefore(filterInfo, tempContainer.children[1]);
+                
+                // Add the cloned dashboard
+                tempContainer.appendChild(dashboardClone);
+                
+                // Add to document
+                document.body.appendChild(tempContainer);
+                
+                // Use html2canvas to capture the container as PNG
+                html2canvas(tempContainer, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true
+                }).then(canvas => {
+                    // Convert canvas to image data URL
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // Create a temporary link to download the image
+                    const link = document.createElement('a');
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+                    const fileName = `sales_purchase_comparison_${timestamp}.png`;
+                    
+                    link.download = fileName;
+                    link.href = imgData;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Clean up
+                    document.body.removeChild(tempContainer);
+                    
+                    alert(`Exported ${comparisonData.length} SKU comparisons to ${fileName}`);
+                }).catch(error => {
+                    document.body.removeChild(tempContainer);
+                    alert('Error exporting to PNG: ' + error.message);
+                });
+                
+            } catch (error) {
+                alert('Error exporting to PNG: ' + error.message);
+            }
+        }
+        
+        // Reset all data
+        function resetAll() {
+            salesFileInput.value = '';
+            purchaseFileInput.value = '';
+            salesFileName.textContent = 'No file selected';
+            purchaseFileName.textContent = 'No file selected';
+            salesStatus.textContent = 'No sales data loaded';
+            purchaseStatus.textContent = 'No purchase data loaded';
+            
+            salesData = [];
+            purchaseData = [];
+            salesHeaders = [];
+            purchaseHeaders = [];
+            comparisonData = [];
+            allComparisonData = [];
+            skuSuggestions = [];
+            availableYears.clear();
+            
+            salesMapping = {
+                'SKU Code': '',
+                'SKU Name': '',
+                'UOM': '',
+                'Invoice Date': '',
+                'Quantity (Numbers)': '',
+                'Invoice Value (Rs.)': ''
+            };
+            
+            purchaseMapping = {
+                'SKU Code': '',
+                'SKU Name': '',
+                'UOM': '',
+                'Invoice Date': '',
+                'Quantity (Numbers)': '',
+                'Invoice Value (Rs.)': ''
+            };
+            
+            // Reset mapping dropdowns
+            document.querySelectorAll('.sales-map-select, .purchase-map-select').forEach(select => {
+                select.value = '';
+                // Clear options except the first
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+            });
+            
+            // Reset search and filters
+            searchSku.value = '';
+            filterMonth.value = '';
+            filterYear.value = '';
+            suggestionsBox.innerHTML = '';
+            suggestionsBox.style.display = 'none';
+            
+            // Reset comparison table
+            comparisonBody.innerHTML = '';
+            comparisonBody.appendChild(noComparisonData.cloneNode(true));
+            noComparisonData.style.display = '';
+            
+            // Reset stats
+            avgSalesPrice.textContent = 'Rs. 0.00';
+            avgPurchaseCost.textContent = 'Rs. 0.00';
+            avgPerUnitProfit.textContent = 'Rs. 0.00';
+            avgPerUnitMargin.textContent = '0.00%';
+            
+            // Reset year filter dropdown
+            const yearSelect = document.getElementById('filter-year');
+            while (yearSelect.options.length > 1) {
+                yearSelect.remove(1);
+            }
+            
+            // Destroy charts
+            if (marginChart) {
+                marginChart.destroy();
+                marginChart = null;
+            }
+            if (topSkusChart) {
+                topSkusChart.destroy();
+                topSkusChart = null;
+            }
+        }
+        
+        // Load data from URLs
+        async function loadDataFromURLs() {
+            try {
+                // Show loading status
+                salesStatus.textContent = 'Loading sales data...';
+                purchaseStatus.textContent = 'Loading purchase data...';
+                
+                // Sales data URL
+                const salesUrl = 'https://alh-5.github.io/alh/data/sales2526.xlsx';
+                // Purchase data URL
+                const purchaseUrl = 'https://alh-5.github.io/alh/data/purchase2526.xlsx';
+                
+                // Fetch and parse sales data
+                const salesResponse = await fetch(salesUrl);
+                const salesBlob = await salesResponse.blob();
+                const salesReader = new FileReader();
+                
+                salesReader.onload = function(event) {
+                    const data = event.target.result;
+                    parseXLSX(data, 'sales');
+                    salesFileName.textContent = `Loaded: sales2526.xlsx`;
+                    
+                    // Fetch and parse purchase data after sales is loaded
+                    fetch(purchaseUrl)
+                        .then(purchaseResponse => purchaseResponse.blob())
+                        .then(purchaseBlob => {
+                            const purchaseReader = new FileReader();
+                            purchaseReader.onload = function(event) {
+                                const data = event.target.result;
+                                parseXLSX(data, 'purchase');
+                                purchaseFileName.textContent = `Loaded: purchase2526.xlsx`;
+                                
+                                // Auto-process the data after both are loaded
+                                setTimeout(() => {
+                                    processAndCompare();
+                                }, 500);
+                            };
+                            purchaseReader.readAsBinaryString(purchaseBlob);
+                        })
+                        .catch(error => {
+                            console.error('Error loading purchase data:', error);
+                            purchaseStatus.textContent = 'Error loading purchase data';
+                        });
+                };
+                
+                salesReader.readAsBinaryString(salesBlob);
+                
+            } catch (error) {
+                console.error('Error loading data from URLs:', error);
+                alert('Error loading initial data. Please upload files manually.');
+            }
+        }
+        
+        // Download sample files
+        function downloadSalesSample() {
+            window.location.href = 'https://alh-5.github.io/alh/data/sales2526.xlsx';
+        }
+        
+        function downloadPurchaseSample() {
+            window.location.href = 'https://alh-5.github.io/alh/data/purchase2526.xlsx';
+        }
+        
+        // Initialize mapping tabs
+        mappingTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.dataset.target;
+                
+                // Update active tab
+                mappingTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show target content
+                mappingContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === target) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            initMappingTables();
+            setupSearchSuggestions();
+            
+            // Load data from URLs automatically
+            loadDataFromURLs();
+            
+            // Add event listeners for download buttons
+            downloadSalesSampleBtn.addEventListener('click', downloadSalesSample);
+            downloadPurchaseSampleBtn.addEventListener('click', downloadPurchaseSample);
+        });
+        
+        // Event Listeners
+        processAllBtn.addEventListener('click', processAndCompare);
+        resetAllBtn.addEventListener('click', resetAll);
+        exportExcelBtn.addEventListener('click', exportToExcel);
+        exportPdfBtn.addEventListener('click', exportToPDF);
+        exportPngBtn.addEventListener('click', exportToPNG);
+        applyFilterBtn.addEventListener('click', applyFilters);
+        resetFilterBtn.addEventListener('click', resetFilters);
+    </script>
+</body>
+</html>

@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Lube House Challan</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.4;
+            font-size: 12px;
+            padding: 15px;
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        /* Screen Styles */
+        .screen-only {
+            display: block;
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .company-info h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        
+        .company-info p {
+            opacity: 0.9;
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+        
+        .challan-details {
+            text-align: right;
+        }
+        
+        .challan-details h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .challan-details div {
+            margin-bottom: 3px;
+            font-size: 11px;
+        }
+        
+        .import-section {
+            padding: 12px 20px;
+            background-color: #e8f4fc;
+            border-bottom: 1px solid #cce7ff;
+        }
+        
+        .import-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .file-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .client-info {
+            display: flex;
+            padding: 12px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .bill-to {
+            flex: 1;
+            margin-right: 20px;
+        }
+        
+        .ship-to {
+            flex: 1;
+        }
+        
+        .info-section h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 4px;
+        }
+        
+        .editable {
+            padding: 3px 5px;
+            border-radius: 3px;
+            transition: all 0.2s;
+            cursor: text;
+            min-height: 18px;
+            font-size: 11px;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .editable:hover {
+            background-color: #0000;
+        }
+        
+        .editable:focus {
+            outline: 2px solid #3498db;
+            background-color: #0000;
+        }
+        
+        .table-container {
+            padding: 0 20px 15px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            table-layout: fixed;
+        }
+        
+        thead {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        th {
+            padding: 8px 6px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            border-right: 1px solid #3a506b;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        th:last-child {
+            border-right: none;
+            width: 45px !important;
+        }
+        
+        /* Updated Column widths for 14 columns */
+        th:nth-child(1) { width: 4%; }   /* SL No */
+        th:nth-child(2) { width: 20%; }  /* SKU Name */
+        th:nth-child(3) { width: 7%; }   /* SKU # */
+        th:nth-child(4) { width: 6%; }   /* MRP */
+        th:nth-child(5) { width: 7%; }   /* Qnty (Ltrs/Kg) */
+        th:nth-child(6) { width: 4%; }   /* Qnty */
+        th:nth-child(7) { width: 9%; }   /* Rate */
+        th:nth-child(8) { width: 9%; }   /* Net Total */
+        th:nth-child(9) { width: 7%; }   /* Disc (₹) */
+        th:nth-child(10) { width: 9%; }  /* Total Disc (₹) */
+        th:nth-child(11) { width: 9%; }  /* Taxable Value */
+        th:nth-child(12) { width: 9%; }  /* GST 18% */
+        th:nth-child(13) { width: 9%; }  /* Net Amt */
+        th:nth-child(14) { width: 3%; }  /* Del */
+        
+        /* CENTER ALIGNMENT FOR SPECIFIC COLUMNS */
+        /* Qnty (Column 6) */
+        th:nth-child(6), 
+        td:nth-child(6),
+        tfoot td:nth-child(6) {
+            text-align: center !important;
+        }
+        
+        /* Rate (Column 7) */
+        th:nth-child(7), 
+        td:nth-child(7),
+        tfoot td:nth-child(7) {
+            text-align: center !important;
+        }
+        
+        /* Net Total (Column 8) */
+        th:nth-child(8), 
+        td:nth-child(8),
+        tfoot td:nth-child(8) {
+            text-align: center !important;
+        }
+        
+        /* Disc (Column 9) */
+        th:nth-child(9), 
+        td:nth-child(9),
+        tfoot td:nth-child(9) {
+            text-align: center !important;
+        }
+        
+        /* Total Disc (Column 10) */
+        th:nth-child(10), 
+        td:nth-child(10),
+        tfoot td:nth-child(10) {
+            text-align: center !important;
+        }
+        
+        /* Taxable Value (Column 11) */
+        th:nth-child(11), 
+        td:nth-child(11),
+        tfoot td:nth-child(11) {
+            text-align: center !important;
+        }
+        
+        /* GST 18% (Column 12) */
+        th:nth-child(12), 
+        td:nth-child(12),
+        tfoot td:nth-child(12) {
+            text-align: center !important;
+        }
+        
+        /* Net Amt (Column 13) */
+        th:nth-child(13), 
+        td:nth-child(13),
+        tfoot td:nth-child(13) {
+            text-align: center !important;
+        }
+        
+        /* Also align MRP and Qnty (Ltrs/Kg) */
+        th:nth-child(4), 
+        td:nth-child(4),
+        tfoot td:nth-child(4) {
+            text-align: center !important;
+        }
+        
+        th:nth-child(5), 
+        td:nth-child(5),
+        tfoot td:nth-child(5) {
+            text-align: center !important;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        tfoot tr {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            border-top: 2px solid #2c3e50;
+        }
+        
+        td {
+            padding: 6px;
+            text-align: left;
+            font-size: 11px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            vertical-align: middle;
+        }
+        
+        /* FIXED: SKU Name input with proper text wrapping */
+        .sku-name-input {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+            white-space: pre-wrap !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            height: auto !important;
+            min-height: 30px;
+            resize: vertical;
+            line-height: 1.3;
+            overflow-y: auto;
+            max-height: 80px;
+        }
+        
+        .sku-input, .rate-input {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+            text-align: center;
+        }
+        
+        .sku-input:focus, .sku-name-input:focus, .rate-input:focus {
+            outline: 2px solid #3498db;
+            border-color: #3498db;
+        }
+        
+        .editable-cell {
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            min-height: 20px;
+            font-size: 11px;
+        }
+        
+        .editable-cell:focus {
+            outline: 2px solid #3498db;
+            border-color: #3498db;
+        }
+        
+        .non-editable {
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 4px 6px;
+            border: 1px solid #eee;
+            border-radius: 3px;
+            text-align: center !important;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center !important;
+        }
+        
+        .text-left {
+            text-align: left !important;
+        }
+        
+        .discount-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+            text-align: center;
+        }
+        
+        .discount-input:focus {
+            outline: 2px solid #3498db;
+            border-color: #3498db;
+        }
+        
+        .delete-btn {
+            background-color: transparent;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-width: 30px;
+            height: 30px;
+            margin: 0 auto;
+        }
+        
+        .delete-btn:hover {
+            background-color: #ffeaea;
+            color: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px;
+        }
+        
+        .total-box {
+            width: 350px;
+            border: 1px solid #eaeaea;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #ddd;
+            font-size: 11px;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            min-width: 100%;
+        }
+        
+        .total-row.amount-words {
+           white-space: normal !important;
+           word-wrap: break-word !important;
+           overflow-wrap: break-word !important;
+           display: block !important;
+        }
+        
+        .total-row.amount-words {
+            font-style: italic;
+            border-bottom: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .footer {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            padding-right: 15px;
+        }
+        
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-size: 11px;
+        }
+        
+        .actions {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .print-btn {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .print-btn:hover {
+            background-color: #1a252f;
+        }
+        
+        .add-item-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .add-item-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .save-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .import-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .import-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .export-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background-color: #d68910;
+        }
+        
+        button i {
+            font-size: 12px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            font-size: 12px;
+            max-width: 300px;
+        }
+        
+        .notification.error {
+            background-color: #e74c3c;
+        }
+        
+        .notification.warning {
+            background-color: #f39c12;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .sku-search {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 300px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+        
+        .sku-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 11px;
+        }
+        
+        .sku-item:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+        }
+        
+        /* PRINT STYLES - FIXED FOR SINGLE PAGE */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 5mm !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 9pt !important;
+                line-height: 1.1 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            
+            .screen-only {
+                display: none !important;
+            }
+            
+            .print-only {
+                display: block !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .import-section {
+                display: none !important;
+            }
+            
+            .header {
+                background: #2c3e50 !important;
+                color: white !important;
+                padding: 8px 10px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                page-break-inside: avoid;
+            }
+            
+            .company-info h1 {
+                font-size: 14pt !important;
+                margin-bottom: 2px !important;
+                color: white !important;
+            }
+            
+            .company-info p {
+                font-size: 7pt !important;
+                margin-bottom: 1px !important;
+                color: rgba(255, 255, 255, 0.9) !important;
+            }
+            
+            .challan-details h2 {
+                font-size: 12pt !important;
+                margin-bottom: 3px !important;
+                color: white !important;
+            }
+            
+            .challan-details div {
+                font-size: 7pt !important;
+                color: rgba(255, 255, 255, 0.9) !important;
+            }
+            
+            .client-info {
+                padding: 6px 8px !important;
+                border: 1px solid #ddd !important;
+                margin: 5px 0 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .info-section h3 {
+                font-size: 9pt !important;
+                margin-bottom: 3px !important;
+                border-bottom: 1px solid #ccc !important;
+            }
+            
+            .editable {
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+                min-height: auto !important;
+                font-size: 8pt !important;
+                cursor: default !important;
+            }
+            
+            .table-container {
+                padding: 0 8px 8px !important;
+                overflow: visible !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            table {
+                width: 100% !important;
+                margin-top: 8px !important;
+                border: 1px solid #000 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                font-size: 8pt !important;
+            }
+            
+            thead {
+                background: #2c3e50 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            th {
+                padding: 4px 3px !important;
+                font-size: 8pt !important;
+                font-weight: bold !important;
+                color: white !important;
+                border: 1px solid #3a506b !important;
+                text-align: center !important;
+            }
+            
+            th:first-child,
+            th:nth-child(2),
+            th:nth-child(3) {
+                text-align: left !important;
+            }
+            
+            th:last-child {
+                display: none !important;
+            }
+            
+            td {
+                padding: 3px !important;
+                font-size: 8pt !important;
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                text-align: center !important;
+            }
+            
+            td:first-child,
+            td:nth-child(2),
+            td:nth-child(3) {
+                text-align: left !important;
+            }
+            
+            td:last-child {
+                display: none !important;
+            }
+            
+            tbody tr {
+                border-bottom: 1px solid #ddd !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            tfoot tr {
+                border-top: 2px solid #000 !important;
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            tfoot td {
+                text-align: center !important;
+            }
+            
+            tfoot td:first-child,
+            tfoot td:nth-child(2),
+            tfoot td:nth-child(3) {
+                text-align: left !important;
+            }
+            
+            .sku-input, .sku-name-input, .rate-input, .th:nth-child(6), .discount-input {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                font-size: 8pt !important;
+                text-align: Left !important;
+            }
+            
+            .sku-name-input {
+                text-align: left !important;
+            }
+            
+            .delete-btn {
+                display: none !important;
+            }
+            
+            .total-section {
+                padding: 8px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .total-box {
+                width: 250px !important;
+                padding: 8px !important;
+                border: 1px solid #000 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .total-row {
+                font-size: 8pt !important;
+                margin-bottom: 3px !important;
+            }
+            
+            .total-row.final {
+                font-size: 9pt !important;
+            }
+            
+            .total-row.amount-words {
+                font-size: 7pt !important;
+            }
+            
+            .footer {
+                padding: 6px 8px !important;
+                border-top: 1px solid #000 !important;
+                font-size: 6pt !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .footer-section {
+                padding-right: 8px !important;
+            }
+            
+            .footer-section h4 {
+                font-size: 7pt !important;
+            }
+            
+            .actions {
+                display: none !important;
+            }
+            
+            .notification, .sku-search {
+                display: none !important;
+            }
+            
+            /* Prevent page breaks inside critical elements */
+            .header, .client-info, .table-container, .total-section, .footer {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 0;
+                max-width: 100%;
+            }
+            
+            .header {
+                flex-direction: column;
+                padding: 12px;
+            }
+            
+            .challan-details {
+                text-align: left;
+                margin-top: 12px;
+            }
+            
+            .client-info {
+                flex-direction: column;
+                padding: 10px 12px;
+            }
+            
+            .bill-to, .ship-to {
+                margin-bottom: 15px;
+                margin-right: 0;
+            }
+            
+            .table-container {
+                padding: 0 12px 12px;
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 1200px;
+            }
+            
+            .total-box {
+                width: 100%;
+            }
+            
+            .footer {
+                flex-direction: column;
+                padding: 12px;
+            }
+            
+            .footer-section {
+                margin-bottom: 15px;
+                padding-right: 0;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            button {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    
+    <!-- SKU Search Dropdown -->
+    <div class="sku-search" id="sku-search"></div>
+    
+    <!-- Print Header -->
+    <div class="print-only" style="text-align: center; margin-bottom: 5px; font-size: 8pt; color: #666;">
+        Auto Lube House | Printed on: <span id="print-date"></span>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="company-info">
+                <h1 contenteditable="False" class="editable">AUTO LUBE HOUSE</h1>
+                <p contenteditable="False" class="editable">Iewduh, Bara Bazaar, Shillong,East Khasi Hills,Bara Bazaar, EAST KHASI HILLS, Meghalaya(17)-793002 </p>
+                <p contenteditable="False" class="editable">Phone: (+91) 9402134892 | E-Mail : autolubehouse@gmail.com</p>
+                <p contenteditable="False" class="editable">GSTIN: 17ACHFA1117F1ZW | PAN: ACHFA1117F</p>
+            </div>
+            <div class="challan-details">
+                <h2 contenteditable="False" class="editable">Invoice</h2>
+                <div><strong>Challan No:</strong> <span contenteditable="true" class="editable">ALH-</span></div>
+                <div><strong>Date:</strong> <span contenteditable="true" class="editable" id="date-field"></span></div>
+                <div><strong>Reference:</strong> <span contenteditable="true" class="editable">Challan Invoice</span></div>
+            </div>
+        </div>
+        
+        <!-- XLSX Import Section -->
+        <div class="import-section screen-only">
+            <div class="import-controls">
+                <div class="file-input-wrapper">
+                    <button class="file-btn import-btn">
+                        <i class="fas fa-file-import"></i> Import Price List (XLSX)
+                    </button>
+                    <input type="file" id="xlsx-file" accept=".xlsx,.xls" />
+                </div>
+                <span id="file-info" style="font-size: 12px; color: #666;">
+                    No file selected.
+                </span>
+                
+                <button class="file-btn" id="download-template" onclick="window.location.href='https://alh-5.github.io/alh/Challan_Pricelist/Challan_PriceList.xlsx';">
+                    <i class="fas fa-chart-pie"></i> Challan_Price
+                </button>
+				 <button class="add-item-btn" id="add-item-btn">
+                    <i class="fas fa-plus-circle"></i> Add Item
+                </button>
+            </div>
+        </div>
+        
+        <div class="client-info">
+            <div class="bill-to info-section">
+                <h3>Bill To</h3>
+                <p contenteditable="true" class="editable"><strong>Customer Name:<strong>&nbsp;</strong></strong></p>
+                <p contenteditable="true" class="editable">Address:&nbsp;</p>
+                <p contenteditable="true" class="editable">Phone No:&nbsp;</p>
+                <p contenteditable="true" class="editable">GSTIN:&nbsp;</p>
+            </div>
+            <div class="ship-to info-section">
+                <h3>Ship To</h3>
+                <p contenteditable="true" class="editable"><strong>Shipping Name<strong>&nbsp;</strong></strong></p>
+                <p contenteditable="true" class="editable">Address:&nbsp;</p>
+                <p contenteditable="true" class="editable">Phone No:&nbsp;</p>
+                <p contenteditable="true" class="editable">Contact:&nbsp;</p>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="text-center">SL No</th>
+                        <th class="text-left">SKU Name</th>
+                        <th class="text-left">SKU #</th>
+                        <th class="text-center">MRP</th>
+                        <th class="text-center">Qnty (Ltrs/Kg)</th>
+                        <th class="text-center">Qnty</th>
+                        <th class="text-center">Rate</th>
+                        <th class="text-center">Net Total</th>
+                        <th class="text-center">Disc (₹)</th>
+                        <th class="text-center">Total Disc (₹)</th>
+                        <th class="text-center">Taxable Value</th>
+                        <th class="text-center">GST 18%</th>
+                        <th class="text-center">Net Amt</th>
+                        <th class="text-center screen-only">Del</th>
+                    </tr>
+                </thead>
+                <tbody id="items-table">
+                    <!-- Rows will be added here dynamically -->
+                </tbody>
+                <tfoot id="table-footer">
+                    <!-- Totals row will be added here dynamically -->
+                </tfoot>
+            </table>
+        </div>
+        
+        <div class="total-section">
+            <div class="total-box">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Total Discount:</span>
+                    <span id="total-discount">-₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Taxable Value:</span>
+                    <span id="taxable-value">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>CGST (9%):</span>
+                    <span id="cgst">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>SGST/UTGST (9%):</span>
+                    <span id="sgst">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Shipping Charges:</span>
+                    <span contenteditable="true" class="editable" id="shipping-charges">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Round Off:</span>
+                    <span id="round-off">₹0.00</span>
+                </div>
+                <div class="total-row final">
+                    <span>Total Amount:</span>
+                    <span id="final-total">₹0.00</span>
+                </div>
+                <div class="total-row amount-words">
+                    <span>Amount in Words:</span>
+                    <span id="amount-words"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-section">
+                <h4>Payment Information</h4>
+                <p contenteditable="False" class="editable">Account Name: Auto Lube House</p>
+                <p contenteditable="False" class="editable">Bank: Kotak Mahindra Bank</p>
+                <p contenteditable="False" class="editable">Account No: 7350335349</p>
+                <p contenteditable="False" class="editable">IFSC: KKBK0000340</p>
+            </div>
+            <div class="footer-section">
+                <h4>Terms & Conditions</h4>
+                <p contenteditable="true" class="editable">1. Goods once sold will not be taken back.</p>
+                <p contenteditable="true" class="editable">2. Payment due within 30 days from invoice date.</p>
+                <p contenteditable="true" class="editable">3. Interest @5% p.a. on overdue payments.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Authorized Signatory</h4>
+                <p contenteditable="False" class="editable" style="margin-top: 15px; min-height: 25px;">_________________________</p>
+                <p contenteditable="False" class="editable">For Auto Lube House</p>
+            </div>
+        </div>
+        
+        <div class="actions screen-only">
+            <div class="action-buttons">
+                <button class="save-btn" id="save-changes">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="reset-btn" id="reset-btn">
+                    <i class="fas fa-redo"></i> Clear All
+                </button>
+            </div>
+            <div class="action-buttons">
+                <button class="export-btn" id="export-excel-btn">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
+                <button class="print-btn" onclick="printChallan()">
+                    <i class="fas fa-print"></i> Print Challan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let priceListData = {};
+        let currentInput = null;
+        let searchType = null; // 'sku' or 'name'
+        let debounceTimer = null;
+        
+        // Initialize the table with 1 empty row
+        function initializeTable() {
+            const tableBody = document.getElementById('items-table');
+            tableBody.innerHTML = '';
+            
+            for (let i = 1; i <= 1; i++) {
+                addTableRow(i);
+            }
+            
+            updateSerialNumbers();
+            updateTableFooter();
+            calculateOverallTotals();
+        }
+        
+        // Add a new row to the table
+        function addTableRow(slNo) {
+            const tableBody = document.getElementById('items-table');
+            const newRow = document.createElement('tr');
+            const rowId = 'row-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            
+            newRow.innerHTML = `
+                <td class="text-center">${slNo}</td>
+                <td class="text-left">
+                    <textarea class="sku-name-input" placeholder="Type SKU Name" data-row="${slNo}" data-rowid="${rowId}" autocomplete="off" rows="2"></textarea>
+                </td>
+                <td class="text-left">
+                    <input type="text" class="sku-input" placeholder="Type SKU #" data-row="${slNo}" data-rowid="${rowId}" autocomplete="off">
+                </td>
+                <td class="text-center non-editable mrp">₹0.00</td>
+                <td class="text-center non-editable total-qnty-unit">-</td>
+                <td class="text-Left">
+                    <input type="number" class="editable-cell qnty" value="0" min="0" step="1" data-row="${slNo}" data-rowid="${rowId}" style="text-align: Left;">
+                </td>
+                <td class="text-center">
+                    <input type="number" class="rate-input" value="0" min="0" step="0.01" data-row="${slNo}" data-rowid="${rowId}" placeholder="0.00" style="text-align: center;">
+                </td>
+                <td class="text-center non-editable net-total">₹0.00</td>
+                <td class="text-center">
+                    <input type="text" class="discount-input" value="0" data-row="${slNo}" data-rowid="${rowId}" placeholder="0 or 0%" style="text-align: center;">
+                </td>
+                <td class="text-center non-editable total-discount">₹0.00</td>
+                <td class="text-center non-editable taxable-value">₹0.00</td>
+                <td class="text-center non-editable gst">₹0.00</td>
+                <td class="text-center non-editable net-amt">₹0.00</td>
+                <td class="text-center screen-only">
+                    <button class="delete-btn" data-rowid="${rowId}" title="Delete this item">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(newRow);
+            
+            // Add event listeners
+            const skuInput = newRow.querySelector('.sku-input');
+            const skuNameInput = newRow.querySelector('.sku-name-input');
+            const qntyInput = newRow.querySelector('.qnty');
+            const rateInput = newRow.querySelector('.rate-input');
+            const discountInput = newRow.querySelector('.discount-input');
+            const deleteBtn = newRow.querySelector('.delete-btn');
+            
+            // SKU # input events
+            skuInput.addEventListener('input', function(e) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    searchType = 'sku';
+                    handleSkuSearch(e.target.value, skuInput);
+                }, 150);
+            });
+            
+            skuInput.addEventListener('focus', function(e) {
+                searchType = 'sku';
+                handleSkuFocus(e.target);
+            });
+            
+            skuInput.addEventListener('keydown', handleSkuKeydown);
+            
+            // SKU Name textarea events
+            skuNameInput.addEventListener('input', function(e) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    searchType = 'name';
+                    handleSkuSearch(e.target.value, skuNameInput);
+                }, 150);
+            });
+            
+            skuNameInput.addEventListener('focus', function(e) {
+                searchType = 'name';
+                handleSkuFocus(e.target);
+            });
+            
+            skuNameInput.addEventListener('keydown', handleSkuKeydown);
+            
+            // Auto-resize textarea
+            skuNameInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Quantity, rate and discount events
+            qntyInput.addEventListener('input', calculateRowTotal);
+            qntyInput.addEventListener('blur', calculateRowTotal);
+            
+            rateInput.addEventListener('input', calculateRowTotal);
+            rateInput.addEventListener('blur', calculateRowTotal);
+            
+            discountInput.addEventListener('input', calculateRowTotal);
+            discountInput.addEventListener('blur', calculateRowTotal);
+            
+            // Delete button event
+            deleteBtn.addEventListener('click', function() {
+                const rowId = this.dataset.rowid;
+                deleteRow(rowId);
+            });
+            
+            // Add blur event to hide SKU search
+            skuInput.addEventListener('blur', hideSearchDropdown);
+            skuNameInput.addEventListener('blur', hideSearchDropdown);
+            
+            return newRow;
+        }
+        
+        // Update table footer with totals
+        function updateTableFooter() {
+            const tfoot = document.getElementById('table-footer');
+            tfoot.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center"><strong>TOTAL</strong></td>
+                    <td class="text-center" id="total-qnty-unit-foot">-</td>
+                    <td class="text-center" id="total-qnty-foot">0</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center" id="total-net-total-foot">₹0.00</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center" id="total-disc-foot">₹0.00</td>
+                    <td class="text-center" id="total-taxable-foot">₹0.00</td>
+                    <td class="text-center" id="total-gst-foot">₹0.00</td>
+                    <td class="text-center" id="total-net-amt-foot">₹0.00</td>
+                    <td></td>
+                </tr>
+            `;
+        }
+        
+        // Hide search dropdown
+        function hideSearchDropdown() {
+            setTimeout(() => {
+                const searchDiv = document.getElementById('sku-search');
+                if (searchDiv.style.display === 'block') {
+                    searchDiv.style.display = 'none';
+                }
+            }, 200);
+        }
+        
+        // Handle SKU search
+        function handleSkuSearch(value, inputElement) {
+            currentInput = inputElement;
+            const searchValue = value.trim().toUpperCase();
+            
+            if (searchValue.length < 1) {
+                document.getElementById('sku-search').style.display = 'none';
+                return;
+            }
+            
+            let matchingItems = [];
+            
+            if (searchType === 'sku') {
+                // Search by SKU #
+                Object.keys(priceListData).forEach(sku => {
+                    if (sku.toUpperCase().includes(searchValue)) {
+                        matchingItems.push({
+                            sku: sku,
+                            name: priceListData[sku].name,
+                            type: 'sku'
+                        });
+                    }
+                });
+            } else {
+                // Search by SKU Name
+                Object.keys(priceListData).forEach(sku => {
+                    const name = priceListData[sku].name || '';
+                    if (name.toUpperCase().includes(searchValue)) {
+                        matchingItems.push({
+                            sku: sku,
+                            name: priceListData[sku].name,
+                            type: 'name'
+                        });
+                    }
+                });
+            }
+            
+            showSkuSearch(matchingItems, inputElement, searchValue);
+        }
+        
+        // Handle SKU focus
+        function handleSkuFocus(inputElement) {
+            currentInput = inputElement;
+            
+            if (Object.keys(priceListData).length === 0) {
+                return;
+            }
+            
+            let allItems = [];
+            Object.keys(priceListData).forEach(sku => {
+                allItems.push({
+                    sku: sku,
+                    name: priceListData[sku].name,
+                    type: 'all'
+                });
+            });
+            
+            showSkuSearch(allItems.slice(0, 10), inputElement, '');
+        }
+        
+        // Show SKU search dropdown
+        function showSkuSearch(items, inputElement, searchTerm) {
+            const searchDiv = document.getElementById('sku-search');
+            
+            if (items.length === 0) {
+                searchDiv.style.display = 'none';
+                return;
+            }
+            
+            // Position the dropdown
+            const rect = inputElement.getBoundingClientRect();
+            searchDiv.style.top = (rect.bottom + window.scrollY) + 'px';
+            searchDiv.style.left = (rect.left + window.scrollX) + 'px';
+            searchDiv.style.width = Math.max(rect.width * 1.5, 250) + 'px';
+            
+            // Populate with matching items
+            searchDiv.innerHTML = '';
+            
+            items.slice(0, 10).forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'sku-item';
+                
+                // Highlight matching text
+                let displaySku = item.sku;
+                let displayName = item.name;
+                
+                if (searchTerm && searchTerm.length > 0) {
+                    if (searchType === 'sku') {
+                        displaySku = highlightText(item.sku, searchTerm);
+                    } else {
+                        displayName = highlightText(item.name, searchTerm);
+                    }
+                }
+                
+                itemDiv.innerHTML = `
+                    <div><strong>${displaySku}</strong> - ${displayName}</div>
+                `;
+                
+                itemDiv.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    selectSku(item.sku, currentInput);
+                });
+                
+                searchDiv.appendChild(itemDiv);
+            });
+            
+            searchDiv.style.display = 'block';
+        }
+        
+        // Highlight matching text
+        function highlightText(text, searchTerm) {
+            if (!searchTerm || searchTerm.length === 0) return text;
+            
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+        
+        // Handle keyboard navigation
+        function handleSkuKeydown(event) {
+            const searchDiv = document.getElementById('sku-search');
+            if (searchDiv.style.display !== 'block') return;
+            
+            const items = searchDiv.querySelectorAll('.sku-item');
+            let currentIndex = -1;
+            
+            items.forEach((item, index) => {
+                if (item.style.backgroundColor === 'rgb(240, 248, 255)') {
+                    currentIndex = index;
+                }
+            });
+            
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                currentIndex = (currentIndex + 1) % items.length;
+                updateSkuSelection(items, currentIndex);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                updateSkuSelection(items, currentIndex);
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                if (currentIndex >= 0) {
+                    const skuText = items[currentIndex].querySelector('strong').textContent;
+                    selectSku(skuText, currentInput);
+                }
+            } else if (event.key === 'Escape') {
+                searchDiv.style.display = 'none';
+            }
+        }
+        
+        // Update SKU selection
+        function updateSkuSelection(items, index) {
+            items.forEach(item => {
+                item.style.backgroundColor = '';
+                item.style.color = '';
+            });
+            
+            if (index >= 0 && index < items.length) {
+                items[index].style.backgroundColor = '#3498db';
+                items[index].style.color = 'white';
+            }
+        }
+        
+        // Select a SKU
+        function selectSku(sku, inputElement) {
+            const rowIndex = parseInt(inputElement.dataset.row) - 1;
+            
+            const rows = document.querySelectorAll('#items-table tr');
+            if (rowIndex >= rows.length) return;
+            
+            const row = rows[rowIndex];
+            const skuInput = row.querySelector('.sku-input');
+            const skuNameInput = row.querySelector('.sku-name-input');
+            
+            if (searchType === 'sku' || searchType === 'all') {
+                skuInput.value = sku;
+                skuNameInput.value = priceListData[sku]?.name || '';
+            } else {
+                skuNameInput.value = priceListData[sku]?.name || '';
+                skuInput.value = sku;
+            }
+            
+            document.getElementById('sku-search').style.display = 'none';
+            
+            // Auto-resize textarea
+            if (skuNameInput.value) {
+                skuNameInput.style.height = 'auto';
+                skuNameInput.style.height = (skuNameInput.scrollHeight) + 'px';
+            }
+            
+            // Fill row data from SKU
+            fillRowDataFromSku(rowIndex, sku);
+        }
+        
+        // Delete a row
+        function deleteRow(rowId) {
+            const rows = document.querySelectorAll('#items-table tr');
+            let rowToDelete = null;
+            
+            rows.forEach(row => {
+                const skuInput = row.querySelector('.sku-input');
+                if (skuInput && skuInput.dataset.rowid === rowId) {
+                    rowToDelete = row;
+                }
+            });
+            
+            if (!rowToDelete) return;
+            
+            const skuName = rowToDelete.querySelector('.sku-name-input').value;
+            const skuCode = rowToDelete.querySelector('.sku-input').value;
+            
+            if (confirm(`Delete "${skuName}" (${skuCode})?`)) {
+                rowToDelete.remove();
+                updateSerialNumbers();
+                calculateOverallTotals();
+                showNotification(`Item deleted`, 'warning');
+                
+                if (document.querySelectorAll('#items-table tr').length === 0) {
+                    addTableRow(1);
+                    updateSerialNumbers();
+                }
+            }
+        }
+        
+        // Update serial numbers
+        function updateSerialNumbers() {
+            const rows = document.querySelectorAll('#items-table tr');
+            rows.forEach((row, index) => {
+                row.querySelector('td:first-child').textContent = index + 1;
+                const inputs = row.querySelectorAll('.sku-input, .sku-name-input, .qnty, .rate-input, .discount-input');
+                inputs.forEach(input => {
+                    input.dataset.row = index + 1;
+                });
+            });
+        }
+        
+        // Fill row data from SKU
+        function fillRowDataFromSku(rowIndex, sku) {
+            const rows = document.querySelectorAll('#items-table tr');
+            if (rowIndex >= rows.length) return;
+            
+            const row = rows[rowIndex];
+            const skuData = priceListData[sku];
+            
+            if (!skuData) {
+                showNotification(`SKU ${sku} not found`, 'error');
+                return;
+            }
+            
+            const skuNameInput = row.querySelector('.sku-name-input');
+            if (!skuNameInput.value) {
+                skuNameInput.value = skuData.name || '-';
+            }
+            
+            row.querySelector('.mrp').textContent = skuData.mrp ? '₹' + parseFloat(skuData.mrp).toFixed(2) : '₹0.00';
+            
+            // Set rate input value from price list, but keep it editable
+            const rateInput = row.querySelector('.rate-input');
+            if (rateInput.value === '0' || rateInput.value === '') {
+                rateInput.value = skuData.rate ? parseFloat(skuData.rate).toFixed(2) : '0.00';
+            }
+            
+            const discountInput = row.querySelector('.discount-input');
+            discountInput.value = skuData.discount ? parseFloat(skuData.discount).toFixed(2) : '0.00';
+            
+            row.dataset.unitQty = skuData.unitQty || 1;
+            row.dataset.unit = skuData.unit || '';
+            
+            const qntyInput = row.querySelector('.qnty');
+            if (parseFloat(qntyInput.value) === 0) {
+                qntyInput.value = 1;
+            }
+            
+            updateTotalQuantityDisplay(row);
+            calculateRowTotalForRow(rowIndex);
+            
+            setTimeout(() => {
+                qntyInput.focus();
+                qntyInput.select();
+            }, 50);
+        }
+        
+        // Update total quantity display
+        function updateTotalQuantityDisplay(row) {
+            const unitQty = parseFloat(row.dataset.unitQty) || 0;
+            const qnty = parseFloat(row.querySelector('.qnty').value) || 0;
+            const unit = row.dataset.unit || '';
+            
+            if (unitQty > 0 && qnty > 0 && unit) {
+                const totalQnty = unitQty * qnty;
+                row.querySelector('.total-qnty-unit').textContent = totalQnty.toFixed(2) + ' ' + unit;
+            } else if (unit) {
+                row.querySelector('.total-qnty-unit').textContent = unit;
+            } else {
+                row.querySelector('.total-qnty-unit').textContent = '-';
+            }
+        }
+        
+        // Calculate row total for a specific row
+        function calculateRowTotalForRow(rowIndex) {
+            const rows = document.querySelectorAll('#items-table tr');
+            if (rowIndex >= rows.length) return;
+            
+            const row = rows[rowIndex];
+            const qnty = parseFloat(row.querySelector('.qnty').value) || 0;
+            const rate = parseFloat(row.querySelector('.rate-input').value) || 0;
+            const discountInput = row.querySelector('.discount-input');
+            const discountStr = discountInput.value.trim();
+            let discount = 0;
+            let discountPerUnit = 0;
+            
+            // Handle discount input (can be absolute value or percentage)
+            if (discountStr.endsWith('%')) {
+                // Percentage discount - calculate per unit percentage discount
+                const percentage = parseFloat(discountStr) / 100;
+                // For percentage, discount per unit = rate * percentage
+                discountPerUnit = rate * percentage;
+                // Total discount = discount per unit * quantity
+                discount = discountPerUnit * qnty;
+            } else {
+                // Absolute discount - treat as discount per unit
+                discountPerUnit = parseFloat(discountStr) || 0;
+                // Total discount = discount per unit * quantity
+                discount = discountPerUnit * qnty;
+            }
+            
+            updateTotalQuantityDisplay(row);
+            
+            const netTotal = qnty * rate;
+            row.querySelector('.net-total').textContent = '₹' + netTotal.toFixed(2);
+            
+            // Display total discount
+            row.querySelector('.total-discount').textContent = '₹' + discount.toFixed(2);
+            
+            const taxableValue = Math.max(0, netTotal - discount);
+            row.querySelector('.taxable-value').textContent = '₹' + taxableValue.toFixed(2);
+            
+            const gst = taxableValue * 0.18;
+            row.querySelector('.gst').textContent = '₹' + gst.toFixed(2);
+            
+            const netAmount = taxableValue + gst;
+            row.querySelector('.net-amt').textContent = '₹' + netAmount.toFixed(2);
+            
+            calculateOverallTotals();
+        }
+        
+        // Calculate row total when input changes
+        function calculateRowTotal(event) {
+            const input = event.target;
+            const rowIndex = parseInt(input.dataset.row) - 1;
+            calculateRowTotalForRow(rowIndex);
+        }
+        
+        // Calculate overall totals
+        function calculateOverallTotals() {
+            const rows = document.querySelectorAll('#items-table tr');
+            let totalQntyUnit = 0;
+            let totalQnty = 0;
+            let subtotal = 0;
+            let totalDiscount = 0;
+            let taxableValue = 0;
+            let gstTotal = 0;
+            let netAmtTotal = 0;
+            
+            rows.forEach(row => {
+                const netTotalText = row.querySelector('.net-total').textContent.replace('₹', '').replace(/,/g, '');
+                const totalDiscountText = row.querySelector('.total-discount').textContent.replace('₹', '').replace(/,/g, '');
+                const taxableValueText = row.querySelector('.taxable-value').textContent.replace('₹', '').replace(/,/g, '');
+                const gstText = row.querySelector('.gst').textContent.replace('₹', '').replace(/,/g, '');
+                const netAmtText = row.querySelector('.net-amt').textContent.replace('₹', '').replace(/,/g, '');
+                const qntyValue = parseFloat(row.querySelector('.qnty').value) || 0;
+                const rateValue = parseFloat(row.querySelector('.rate-input').value) || 0;
+                const discountInput = row.querySelector('.discount-input');
+                const discountStr = discountInput.value.trim();
+                
+                // Calculate discount amount
+                let discount = 0;
+                if (discountStr.endsWith('%')) {
+                    // Percentage discount
+                    const percentage = parseFloat(discountStr) / 100;
+                    const discountPerUnit = rateValue * percentage;
+                    discount = discountPerUnit * qntyValue;
+                } else {
+                    // Absolute discount per unit
+                    const discountPerUnit = parseFloat(discountStr) || 0;
+                    discount = discountPerUnit * qntyValue;
+                }
+                
+                const netTotal = parseFloat(netTotalText) || 0;
+                const rowTotalDiscount = parseFloat(totalDiscountText) || 0;
+                const rowTaxableValue = parseFloat(taxableValueText) || 0;
+                const rowGst = parseFloat(gstText) || 0;
+                const rowNetAmt = parseFloat(netAmtText) || 0;
+                
+                // Calculate total quantity in units
+                const unitQty = parseFloat(row.dataset.unitQty) || 0;
+                if (unitQty > 0) {
+                    totalQntyUnit += unitQty * qntyValue;
+                }
+                
+                totalQnty += qntyValue;
+                subtotal += netTotal;
+                totalDiscount += rowTotalDiscount;
+                taxableValue += rowTaxableValue;
+                gstTotal += rowGst;
+                netAmtTotal += rowNetAmt;
+            });
+            
+            // Update table footer totals
+            document.getElementById('total-qnty-unit-foot').textContent = totalQntyUnit > 0 ? totalQntyUnit.toFixed(2) : '-';
+            document.getElementById('total-qnty-foot').textContent = totalQnty;
+            document.getElementById('total-net-total-foot').textContent = '₹' + subtotal.toFixed(2);
+            document.getElementById('total-disc-foot').textContent = '₹' + totalDiscount.toFixed(2);
+            document.getElementById('total-taxable-foot').textContent = '₹' + taxableValue.toFixed(2);
+            document.getElementById('total-gst-foot').textContent = '₹' + gstTotal.toFixed(2);
+            document.getElementById('total-net-amt-foot').textContent = '₹' + netAmtTotal.toFixed(2);
+            
+            // Calculate CGST and SGST (9% each)
+            const cgst = taxableValue * 0.09;
+            const sgst = taxableValue * 0.09;
+            
+            const shippingCharges = parseFloat(document.getElementById('shipping-charges').textContent.replace('₹', '').replace(/,/g, '')) || 0;
+            
+            // Calculate final total before round off
+            let finalTotal = taxableValue + cgst + sgst + shippingCharges;
+            
+            // Calculate round off
+            const roundedTotal = Math.round(finalTotal);
+            const roundOff = roundedTotal - finalTotal;
+            
+            // Update final total with round off
+            finalTotal = roundedTotal;
+            
+            // Update the display
+            document.getElementById('subtotal').textContent = '₹' + subtotal.toFixed(2);
+            document.getElementById('total-discount').textContent = '-₹' + totalDiscount.toFixed(2);
+            document.getElementById('taxable-value').textContent = '₹' + taxableValue.toFixed(2);
+            document.getElementById('cgst').textContent = '₹' + cgst.toFixed(2);
+            document.getElementById('sgst').textContent = '₹' + sgst.toFixed(2);
+            document.getElementById('round-off').textContent = '₹' + roundOff.toFixed(2);
+            document.getElementById('final-total').textContent = '₹' + finalTotal.toFixed(2);
+            
+            // Update amount in words
+            document.getElementById('amount-words').textContent = convertToWords(finalTotal);
+        }
+        
+        // Convert number to words
+        function convertToWords(num) {
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            
+            if (num === 0) return '';
+            
+            let words = '';
+            
+            // Handle lakhs
+            if (num >= 100000) {
+                words += convertToWords(Math.floor(num / 100000)) + ' Lakh ';
+                num %= 100000;
+            }
+            
+            // Handle thousands
+            if (num >= 1000) {
+                words += convertToWords(Math.floor(num / 1000)) + ' Thousand ';
+                num %= 1000;
+            }
+            
+            // Handle hundreds
+            if (num >= 100) {
+                words += ones[Math.floor(num / 100)] + ' Hundred ';
+                num %= 100;
+            }
+            
+            // Handle tens and ones
+            if (num > 0) {
+                if (num < 20) {
+                    words += ones[num];
+                } else {
+                    words += tens[Math.floor(num / 10)];
+                    if (num % 10 > 0) {
+                        words += ' ' + ones[num % 10];
+                    }
+                }
+            }
+            
+            return words.trim() + ' ';
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + (type === 'error' ? 'error' : type === 'warning' ? 'warning' : '');
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2500);
+        }
+        
+        // Handle XLSX file import
+        document.getElementById('xlsx-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    processPriceListData(jsonData);
+                    
+                    document.getElementById('file-info').innerHTML = 
+                        `<strong>${file.name}</strong> loaded with ${jsonData.length} SKUs`;
+                    
+                    showNotification(`Price list imported successfully`);
+                } catch (error) {
+                    showNotification('Error reading XLSX file: ' + error.message, 'error');
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        });
+        
+        // Process imported data
+        function processPriceListData(jsonData) {
+            priceListData = {};
+            
+            jsonData.forEach(item => {
+                let sku = '';
+                let name = '';
+                let mrp = '';
+                let unitQty = '';
+                let unit = '';
+                let rate = '';
+                let discount = '';
+                
+                for (let key in item) {
+                    const lowerKey = key.toLowerCase();
+                    
+                    if (lowerKey.includes('sku') || lowerKey.includes('code') || lowerKey.includes('id')) {
+                        sku = String(item[key]).trim().toUpperCase();
+                    }
+                    else if (lowerKey.includes('name') || lowerKey.includes('product') || lowerKey.includes('item')) {
+                        name = String(item[key]).trim();
+                    }
+                    else if (lowerKey.includes('mrp') || lowerKey.includes('max price')) {
+                        mrp = String(item[key]).trim();
+                    }
+                    else if (lowerKey.includes('unit qty') || lowerKey.includes('unit quantity') || lowerKey.includes('pack qty')) {
+                        unitQty = String(item[key]).trim();
+                    }
+                    else if (lowerKey.includes('unit') && !lowerKey.includes('qty') && !lowerKey.includes('price')) {
+                        unit = String(item[key]).trim();
+                    }
+                    else if (lowerKey.includes('rate') || lowerKey.includes('selling') || lowerKey.includes('cost') || lowerKey.includes('price')) {
+                        rate = String(item[key]).trim();
+                    }
+                    else if (lowerKey.includes('disc') || lowerKey.includes('discount')) {
+                        discount = String(item[key]).trim();
+                    }
+                }
+                
+                if (sku) {
+                    priceListData[sku] = {
+                        name: name || sku,
+                        mrp: parseFloat(mrp) || 0,
+                        unitQty: parseFloat(unitQty) || 1,
+                        unit: unit || 'Pc',
+                        rate: parseFloat(rate) || 0,
+                        discount: parseFloat(discount) || 0
+                    };
+                }
+            });
+            
+            console.log('Price list loaded:', priceListData);
+        }
+        
+        // NEW FUNCTION: Export to Excel
+        function exportToExcel() {
+            try {
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Prepare data for export
+                const exportData = [];
+                
+                // Add header information
+                exportData.push(['AUTO LUBE HOUSE INVOICE']);
+                exportData.push([]);
+                exportData.push(['Invoice No:', document.querySelector('.challan-details div:nth-child(2) span').textContent]);
+                exportData.push(['Date:', document.querySelector('.challan-details div:nth-child(3) span').textContent]);
+                exportData.push([]);
+                
+                // Add customer information
+                exportData.push(['BILL TO:']);
+                const billToText = document.querySelector('.bill-to').innerText;
+                billToText.split('\n').forEach(line => {
+                    if (line.trim()) exportData.push([line.trim()]);
+                });
+                
+                exportData.push([]);
+                exportData.push(['SHIP TO:']);
+                const shipToText = document.querySelector('.ship-to').innerText;
+                shipToText.split('\n').forEach(line => {
+                    if (line.trim()) exportData.push([line.trim()]);
+                });
+                
+                exportData.push([]);
+                exportData.push([]);
+                
+                // Add table headers
+                const headers = [
+                    'SL No', 'SKU Name', 'SKU #', 'MRP', 'Qnty (Ltrs/Kg)', 
+                    'Qnty', 'Rate', 'Net Total', 'Disc (₹)', 'Total Disc (₹)', 
+                    'Taxable Value', 'GST 18%', 'Net Amt'
+                ];
+                exportData.push(headers);
+                
+                // Add items data
+                document.querySelectorAll('#items-table tr').forEach((row, index) => {
+                    const rowData = [];
+                    rowData.push(index + 1);
+                    rowData.push(row.querySelector('.sku-name-input').value);
+                    rowData.push(row.querySelector('.sku-input').value);
+                    rowData.push(row.querySelector('.mrp').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.total-qnty-unit').textContent);
+                    rowData.push(row.querySelector('.qnty').value);
+                    rowData.push(row.querySelector('.rate-input').value);
+                    rowData.push(row.querySelector('.net-total').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.discount-input').value);
+                    rowData.push(row.querySelector('.total-discount').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.taxable-value').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.gst').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.net-amt').textContent.replace('₹', ''));
+                    exportData.push(rowData);
+                });
+                
+                exportData.push([]);
+                exportData.push([]);
+                
+                // Add totals
+                exportData.push(['Subtotal:', document.getElementById('subtotal').textContent.replace('₹', '')]);
+                exportData.push(['Total Discount:', document.getElementById('total-discount').textContent.replace('-₹', '-')]);
+                exportData.push(['Taxable Value:', document.getElementById('taxable-value').textContent.replace('₹', '')]);
+                exportData.push(['CGST (9%):', document.getElementById('cgst').textContent.replace('₹', '')]);
+                exportData.push(['SGST/UTGST (9%):', document.getElementById('sgst').textContent.replace('₹', '')]);
+                exportData.push(['Shipping Charges:', document.getElementById('shipping-charges').textContent.replace('₹', '')]);
+                exportData.push(['Round Off:', document.getElementById('round-off').textContent.replace('₹', '')]);
+                exportData.push(['TOTAL AMOUNT:', document.getElementById('final-total').textContent.replace('₹', '')]);
+                exportData.push(['Amount in Words:', document.getElementById('amount-words').textContent]);
+                
+                exportData.push([]);
+                exportData.push([]);
+                
+                // Add footer information
+                exportData.push(['Payment Information:']);
+                exportData.push(['Account Name: Auto Lube House']);
+                exportData.push(['Bank: Kotak Mahindra Bank']);
+                exportData.push(['Account No: 7350335349']);
+                exportData.push(['IFSC: KKBK0000340']);
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                
+                // Set column widths
+                const wscols = [
+                    {wch: 8},   // SL No
+                    {wch: 40},  // SKU Name (wider for text wrapping)
+                    {wch: 12},  // SKU #
+                    {wch: 10},  // MRP
+                    {wch: 15},  // Qnty (Ltrs/Kg)
+                    {wch: 8},   // Qnty
+                    {wch: 10},  // Rate
+                    {wch: 12},  // Net Total
+                    {wch: 10},  // Disc (₹)
+                    {wch: 15},  // Total Disc (₹)
+                    {wch: 15},  // Taxable Value
+                    {wch: 12},  // GST 18%
+                    {wch: 12},  // Net Amt
+                ];
+                ws['!cols'] = wscols;
+                
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, "Invoice");
+                
+                // Generate filename with invoice number and date
+                const invoiceNo = document.querySelector('.challan-details div:nth-child(2) span').textContent || 'ALH-INVOICE';
+                const date = document.querySelector('.challan-details div:nth-child(3) span').textContent || new Date().toISOString().slice(0, 10);
+                const filename = `${invoiceNo}_${date}.xlsx`;
+                
+                // Save file
+                XLSX.writeFile(wb, filename);
+                
+                showNotification('Invoice exported to Excel successfully');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Error exporting to Excel: ' + error.message, 'error');
+            }
+        }
+        
+        // Add item button
+        document.getElementById('add-item-btn').addEventListener('click', function() {
+            const tableBody = document.getElementById('items-table');
+            const rowCount = tableBody.querySelectorAll('tr').length;
+            
+            const newRow = addTableRow(rowCount + 1);
+            updateSerialNumbers();
+            
+            const skuNameInput = newRow.querySelector('.sku-name-input');
+            setTimeout(() => {
+                skuNameInput.focus();
+            }, 50);
+            
+            showNotification("New item row added");
+        });
+        
+        // Save changes
+        document.getElementById('save-changes').addEventListener('click', function() {
+            const challanData = {
+                company: document.querySelector('.company-info h1').textContent,
+                challanNo: document.querySelector('.challan-details div:nth-child(2) span').textContent,
+                date: document.querySelector('.challan-details div:nth-child(3) span').textContent,
+                billTo: document.querySelector('.bill-to').innerText,
+                shipTo: document.querySelector('.ship-to').innerText,
+                items: [],
+                totals: {
+                    subtotal: document.getElementById('subtotal').textContent,
+                    totalDiscount: document.getElementById('total-discount').textContent,
+                    taxableValue: document.getElementById('taxable-value').textContent,
+                    cgst: document.getElementById('cgst').textContent,
+                    sgst: document.getElementById('sgst').textContent,
+                    shipping: document.getElementById('shipping-charges').textContent,
+                    roundOff: document.getElementById('round-off').textContent,
+                    finalTotal: document.getElementById('final-total').textContent,
+                    amountWords: document.getElementById('amount-words').textContent
+                }
+            };
+            
+            document.querySelectorAll('#items-table tr').forEach(row => {
+                const sku = row.querySelector('.sku-input').value;
+                const skuName = row.querySelector('.sku-name-input').value;
+                if (sku || skuName) {
+                    challanData.items.push({
+                        slNo: row.querySelector('td:first-child').textContent,
+                        skuName: skuName,
+                        sku: sku,
+                        mrp: row.querySelector('.mrp').textContent,
+                        totalQntyUnit: row.querySelector('.total-qnty-unit').textContent,
+                        qnty: row.querySelector('.qnty').value,
+                        rate: row.querySelector('.rate-input').value,
+                        netTotal: row.querySelector('.net-total').textContent,
+                        disc: row.querySelector('.discount-input').value,
+                        totalDisc: row.querySelector('.total-discount').textContent,
+                        taxableValue: row.querySelector('.taxable-value').textContent,
+                        gst: row.querySelector('.gst').textContent,
+                        netAmt: row.querySelector('.net-amt').textContent
+                    });
+                }
+            });
+            
+            localStorage.setItem('challanData', JSON.stringify(challanData));
+            localStorage.setItem('priceListData', JSON.stringify(priceListData));
+            
+            showNotification("Challan data saved");
+        });
+        
+        // Reset button
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            if (confirm("Clear all items?")) {
+                initializeTable();
+                showNotification("All items cleared", 'warning');
+            }
+        });
+        
+        // Export to Excel button
+        document.getElementById('export-excel-btn').addEventListener('click', exportToExcel);
+        
+        // Shipping charges
+        document.getElementById('shipping-charges').addEventListener('input', calculateOverallTotals);
+        document.getElementById('shipping-charges').addEventListener('blur', calculateOverallTotals);
+        
+        // Print function
+        function printChallan() {
+            document.getElementById('print-date').textContent = new Date().toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            document.getElementById('sku-search').style.display = 'none';
+            window.print();
+        }
+        
+        // Set print date
+        document.getElementById('print-date').textContent = new Date().toLocaleDateString('en-IN', {
+            day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+        });
+        
+        // Initialize
+        initializeTable();
+        updateTableFooter();
+        
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Sample price list data
+            priceListData = {
+                "MOBIL1": {
+                    name: "Mobil Super 3000 X1 5W-30 (1L)",
+                    mrp: 950,
+                    unitQty: 1,
+                    unit: "Ltr",
+                    rate: 850,
+                    discount: 25
+                },
+                "CAST1": {
+                    name: "Castrol MAGNATEC 5W-30 (1L)",
+                    mrp: 920,
+                    unitQty: 1,
+                    unit: "Ltr",
+                    rate: 820,
+                    discount: 20
+                },
+                "SHELL1": {
+                    name: "Shell HELIX HX7 10W-40 (1L)",
+                    mrp: 850,
+                    unitQty: 1,
+                    unit: "Ltr",
+                    rate: 780,
+                    discount: 15
+                }
+            };
+            
+            try {
+                const savedPriceList = localStorage.getItem('priceListData');
+                if (savedPriceList) {
+                    priceListData = JSON.parse(savedPriceList);
+                }
+            } catch (e) {
+                console.log("No saved data found");
+            }
+            
+            // Auto-fill sample data for demonstration
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#items-table tr');
+                if (rows.length >= 2) {
+                    fillRowDataFromSku(0, "MOBIL1");
+                    rows[0].querySelector('.qnty').value = 5;
+                    rows[0].querySelector('.discount-input').value = "10"; // ₹10 per unit discount
+                    calculateRowTotalForRow(0);
+                    
+                    fillRowDataFromSku(1, "CAST1");
+                    rows[1].querySelector('.qnty').value = 3;
+                    rows[1].querySelector('.discount-input').value = "5%"; // 5% per unit discount
+                    calculateRowTotalForRow(1);
+                }
+                
+                // Set shipping charges
+                document.getElementById('shipping-charges').textContent = "₹0.00";
+                calculateOverallTotals();
+                
+                showNotification("Auto Lube House Challan Generator Ready");
+                
+                const firstSkuNameInput = document.querySelector('.sku-name-input');
+                if (firstSkuNameInput) {
+                    setTimeout(() => {
+                        firstSkuNameInput.focus();
+                    }, 300);
+                }
+            }, 300);
+        });
+        
+        // Close search dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const searchDiv = document.getElementById('sku-search');
+            if (searchDiv.style.display === 'block' && !searchDiv.contains(event.target)) {
+                if (!event.target.classList.contains('sku-input') && !event.target.classList.contains('.sku-name-input')) {
+                    searchDiv.style.display = 'none';
+                }
+            }
+        });
+		
+		//Nabynta ka Tarik
+		document.addEventListener('DOMContentLoaded', function() {
+    const dateSpan = document.getElementById('date-field');
+    const now = new Date();
+    
+    // Format options
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        weekday: 'short' // Optional: add day of week
+    };
+    
+    // Set the date
+   dateSpan.textContent = now.toLocaleDateString('en-GB', options);
+    
+    // OR use a simpler format:
+    // dateSpan.textContent = now.toLocaleDateString();
+});
+
+    </script>
+</body>
+</html>

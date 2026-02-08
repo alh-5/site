@@ -1,0 +1,435 @@
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!-- inactivity -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="5000;url=https://alh-5.github.io/alh/">  <!-- Refresh every seconds if 2 min is "120" -->
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/" rel="preconnect">
+<link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin="">
+<link href="../portal_files/css2" rel="stylesheet">
+
+<!-- Vendor CSS Files -->
+<link href="../portal_files/bootstrap.min.css" rel="stylesheet">
+<link href="../portal_files/bootstrap-icons.css" rel="stylesheet">
+<link href="../portal_files/glightbox.min.css" rel="stylesheet">
+<link href="../portal_files/swiper-bundle.min.css" rel="stylesheet">
+
+<!-- Main CSS File -->
+<link href="../portal_files/style2.css" rel="stylesheet">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barrel Price</title>
+<link rel="stylesheet" href="../portal_files/style2.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+/* Golden magnetic wave background */
+body {
+    background: linear-gradient(45deg, 
+        #FFD700 0%, 
+        #FFEC8B 25%, 
+        #FFFACD 50%, 
+        #FFEC8B 75%, 
+        #FFD700 100%);
+    background-size: 400% 400%;
+    animation: goldenWave 15s ease infinite;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 0;
+}
+
+@keyframes goldenWave {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Navigation styles */
+nav {
+    background: linear-gradient(135deg, #8B7355 0%, #D4AF37 100%);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin: 0 auto 20px;
+    max-width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    color: white;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 1.5rem;
+}
+
+#menuList {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    gap: 15px;
+}
+
+#menuList li {
+    margin: 0;
+}
+
+#menuList a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#menuList a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Button styles */
+.btn {
+    background: linear-gradient(135deg, #D4AF37 0%, #8B7355 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.menu-icon {
+    display: none;
+    cursor: pointer;
+}
+
+.menu-icon i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Search container */
+.search-container {
+    max-width: 600px;
+    margin: 20px auto;
+    position: relative;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    border: 2px solid #D4AF37;
+    border-radius: 50px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+    outline: none;
+    border-color: #8B7355;
+    box-shadow: 0 4px 20px rgba(139, 115, 85, 0.4);
+}
+
+.search-container::before {
+    content: '\f002';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #D4AF37;
+    font-size: 18px;
+}
+
+/* Table styles */
+table {
+    width: 95%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background: linear-gradient(135deg, #8B7355 0%, #D4AF37 100%);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+tr {
+    transition: all 0.3s ease;
+}
+
+tr:hover {
+    background-color: #FFF8DC;
+    transform: scale(1.005);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .menu-icon {
+        display: block;
+    }
+    
+    #menuList {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #8B7355 0%, #D4AF37 100%);
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        z-index: 1000;
+    }
+    
+    #menuList.active {
+        display: flex;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px;
+    }
+    
+    nav {
+        flex-wrap: wrap;
+        padding: 1rem;
+    }
+    
+    .logo h1 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #D4AF37 0%, #8B7355 100%);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #8B7355 0%, #D4AF37 100%);
+}
+</style>
+
+<body class="index-page" data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-delay="0">
+    <nav>
+        <div class="logo">
+            <h1>Barrel Price List</h1>
+        </div>
+        <ul id="menuList">
+            <li><a href="smlp.html">Small Pack</a></li>
+            <li><button class="btn" onclick="downloadPDF()">Download PDF</button></li>
+            <li><a href="alhhome.html" class="btn">Home</a></li>
+        </ul>
+        <div class="menu-icon">
+            <i class="fas fa-bars" onclick="toggleMenu()"></i>
+        </div>
+    </nav>
+
+    <div class="search-container">
+        <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for any data...)">
+    </div>
+
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>Mat code</th>
+                <th>Mat Description</th>
+                <th>Item Size in L</th>
+                <th>RSP/L</th>
+                <th>Disc/L</th>
+                <th>Market Support /L</th>
+                <th>MSS/L</th>
+                <th>Invoice rate/L</th>
+                <th>Invoice rate/Item</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>2960401</td><td>SERVO FUTURA SYNTH 0W-40-210 L BRL</td><td>210</td><td>595</td><td>0</td><td>0</td><td>0</td><td>702.1</td><td>147441</td></tr>
+            <tr><td>7427401</td><td>ECSTAR PETROL 0W-20-210 L</td><td>210</td><td>300</td><td>0</td><td>0</td><td>0</td><td>354</td><td>74340</td></tr>
+            <tr><td>7428401</td><td>ECSTAR DIESEL 5W-30-210 L</td><td>210</td><td>333</td><td>0</td><td>0</td><td>0</td><td>392.94</td><td>82517.4</td></tr>
+            <tr><td>7670401</td><td>MGDO 15W-40 - 210 L BRL</td><td>210</td><td>220</td><td>0</td><td>0</td><td>0</td><td>259.6</td><td>54516</td></tr>
+            <tr><td>7688401</td><td>MGO 5W-30-210 L BRL</td><td>210</td><td>233</td><td>0</td><td>0</td><td>0</td><td>274.94</td><td>57737.4</td></tr>
+            <tr><td>2968401</td><td>HY.SERVO ENGINE OIL 5W-30-210 L BRL</td><td>210</td><td>260</td><td>0</td><td>0</td><td>0</td><td>306.8</td><td>64428</td></tr>
+            <tr><td>7205401</td><td>HYUNDAI SERVO SUPERIOR 0W30-210 L</td><td>210</td><td>345</td><td>0</td><td>0</td><td>0</td><td>407.1</td><td>85491</td></tr>
+            <tr><td>7420401</td><td>HY SERVO PETROL EO SN PLUS-210 L</td><td>210</td><td>322</td><td>0</td><td>0</td><td>0</td><td>379.96</td><td>79791.6</td></tr>
+            <tr><td>7421401</td><td>HYUNDAI SERVO DEO ACEA C5-210 L</td><td>210</td><td>364</td><td>0</td><td>0</td><td>0</td><td>429.52</td><td>90199.2</td></tr>
+            <tr><td>7477401</td><td>HY.SERVO PRM.EO SM 5W-30-210 L BRL</td><td>210</td><td>269</td><td>0</td><td>0</td><td>0</td><td>317.42</td><td>66658.2</td></tr>
+            <tr><td>7209401</td><td>HYUNDAI SERVO SYNTH 0W-30 API SP/ ACEA C3</td><td>210</td><td>779</td><td>0</td><td>0</td><td>0</td><td>919.22</td><td>193036.2</td></tr>
+            <tr><td>7202271</td><td>SERVO SUPERIOR EO 0W30 ACEA C2-50 L</td><td>50</td><td>307.5</td><td>0</td><td>0</td><td>0</td><td>362.85</td><td>18142.5</td></tr>
+            <tr><td>7206271</td><td>SERVO SUPERIOR EO 0W20 ACEA C5-50 L</td><td>50</td><td>289.8</td><td>0</td><td>0</td><td>0</td><td>341.964</td><td>17098.2</td></tr>
+            <tr><td>7207271</td><td>SERVO SUPERIOR EO 5W30 ACEA A5/B5-50 L</td><td>50</td><td>263.7</td><td>0</td><td>0</td><td>0</td><td>311.166</td><td>15558.3</td></tr>
+            <tr><td>7208271</td><td>SERVO SUPERIOR EO 0W20 SN PLUS-50 L</td><td>50</td><td>284</td><td>0</td><td>0</td><td>0</td><td>335.12</td><td>16756</td></tr>
+            <tr><td>7202401</td><td>SERVO SUPERIOR EO 0W30 ACEA C2-210 L</td><td>210</td><td>307.5</td><td>0</td><td>0</td><td>0</td><td>362.85</td><td>76198.5</td></tr>
+            <tr><td>7206401</td><td>SERVO SUPERIOR EO 0W20 ACEA C5-210 L</td><td>210</td><td>289.8</td><td>0</td><td>0</td><td>0</td><td>341.964</td><td>71812.44</td></tr>
+            <tr><td>7207401</td><td>SERVO SUPERIOR EO 5W30 ACEA A5/B5-210 L</td><td>210</td><td>263.7</td><td>0</td><td>0</td><td>0</td><td>311.166</td><td>65344.86</td></tr>
+            <tr><td>7208401</td><td>SERVO SUPERIOR EO 0W20 SN PLUS-210 L</td><td>210</td><td>284</td><td>0</td><td>0</td><td>0</td><td>335.12</td><td>70375.2</td></tr>
+            <tr><td>7264401</td><td>SERVO MG HECTOR PETROL ENGINE OIL-210 L</td><td>210</td><td>304</td><td>14</td><td>0</td><td>0</td><td>342.2</td><td>71862</td></tr>
+            <tr><td>7267401</td><td>SERVO MG HECTOR DIESEL ENGINE OIL-210 L</td><td>210</td><td>693</td><td>20</td><td>0</td><td>0</td><td>794.14</td><td>166769.4</td></tr>
+            <tr><td>7265401</td><td>SERVO MG GLOSTER DIESEL EO-210 L</td><td>210</td><td>443</td><td>20</td><td>0</td><td>0</td><td>499.14</td><td>104819.4</td></tr>
+            <tr><td>1301401</td><td>SERVO ULTRA 10W - 210L BRL</td><td>210</td><td>191</td><td>6</td><td>0</td><td>0</td><td>218.3</td><td>45843</td></tr>
+            <tr><td>1404401</td><td>SERVO PRIDE 40 - 210L BRL</td><td>210</td><td>228</td><td>6</td><td>0</td><td>0</td><td>261.96</td><td>55011.6</td></tr>
+            <tr><td>7436401</td><td>SERVO PRIDE NXT CK4 15W40-210 L BRL</td><td>210</td><td>255</td><td>16</td><td>0</td><td>0</td><td>282.02</td><td>59224.2</td></tr>
+            <tr><td>7470401</td><td>SERVO FLEET SUPREME CI4 PLUS 15W-40- 210 L</td><td>210</td><td>199</td><td>10</td><td>0</td><td>0</td><td>223.02</td><td>46834.2</td></tr>
+            <tr><td>7472401</td><td>SERVO FLT CF4 15W-40-210 L BRL</td><td>210</td><td>195</td><td>8</td><td>0</td><td>0</td><td>220.66</td><td>46338.6</td></tr>
+            <tr><td>7485401</td><td>SERVO SUPER 20W-40 MG-210 L BRL</td><td>210</td><td>192</td><td>18</td><td>0</td><td>0</td><td>205.32</td><td>43117.2</td></tr>
+            <tr><td>7489271</td><td>SERVO PRIDE XL PLUS 15W40-50 L</td><td>50</td><td>251</td><td>26</td><td>0</td><td>0</td><td>265.5</td><td>13275</td></tr>
+            <tr><td>7489401</td><td>SERVO PRIDE XL PLUS 15W40-210 L BRL</td><td>210</td><td>249</td><td>26</td><td>0</td><td>0</td><td>263.14</td><td>55259.4</td></tr>
+            <tr><td>7494401</td><td>SERVO SUP.MULT.GRD 20W-40-210 L BRL</td><td>210</td><td>214</td><td>0</td><td>0</td><td>0</td><td>252.52</td><td>53029.2</td></tr>
+            <tr><td>7577271</td><td>SERVO PREMIUM CF-4 15W-40-50L HDPE DRUM</td><td>50</td><td>218</td><td>16</td><td>0</td><td>0</td><td>238.36</td><td>11918</td></tr>
+            <tr><td>7577401</td><td>SERVO PREMIUM CF-4 15W-40 - 210L BRL</td><td>210</td><td>217</td><td>16</td><td>0</td><td>0</td><td>237.18</td><td>49807.8</td></tr>
+            <tr><td>7612401</td><td>SERVO PRIDE XL 15W-40 - 210L BRL</td><td>210</td><td>224</td><td>20</td><td>0</td><td>0</td><td>240.72</td><td>50551.2</td></tr>
+            <tr><td>2502401</td><td>SERVO GEAR HP 90 - 210L BRL</td><td>210</td><td>229</td><td>21</td><td>0</td><td>0</td><td>245.44</td><td>51542.4</td></tr>
+            <tr><td>2503401</td><td>SERVO GEAR HP 140-210L BRL</td><td>210</td><td>245</td><td>16</td><td>0</td><td>0</td><td>270.22</td><td>56746.2</td></tr>
+            <tr><td>4906401</td><td>SERVO TRANSFLUID A - 210L BRL</td><td>210</td><td>188</td><td>16</td><td>0</td><td>0</td><td>202.96</td><td>42621.6</td></tr>
+            <tr><td>4925401</td><td>SERVO TRANSMISSION C4 SAE 30-210L BRL</td><td>210</td><td>200</td><td>6</td><td>0</td><td>0</td><td>228.92</td><td>48073.2</td></tr>
+            <tr><td>7511401</td><td>SERVO GEAR SUPER 80W-90 - 210L BRL</td><td>210</td><td>238</td><td>21</td><td>0</td><td>0</td><td>256.06</td><td>53772.6</td></tr>
+            <tr><td>7515401</td><td>SERVO GEAR SUPER 85W-140-210L BRL</td><td>210</td><td>251</td><td>26</td><td>0</td><td>0</td><td>265.5</td><td>55755</td></tr>
+            <tr><td>4950288</td><td>SERVO OIB OIL-26 L</td><td>26</td><td>212</td><td>46</td><td>0</td><td>0</td><td>195.88</td><td>5092.88</td></tr>
+            <tr><td>4950401</td><td>SERVO OIB OIL-210 L BRL</td><td>210</td><td>198</td><td>0</td><td>0</td><td>0</td><td>233.64</td><td>49064.4</td></tr>
+            <tr><td>7651401</td><td>SERVO AGROSPRAY T - 210L BRL</td><td>210</td><td>158</td><td>0</td><td>0</td><td>0</td><td>186.44</td><td>39152.4</td></tr>
+            <tr><td>2900401</td><td>SERVO 2T SUPREME-210 L BRL</td><td>210</td><td>238.98</td><td>0</td><td>0</td><td>0</td><td>238.98</td><td>50185.8</td></tr>
+            <tr><td>2900403</td><td>SERVO 2T SUPREME-210 L HD</td><td>210</td><td>238.98</td><td>0</td><td>0</td><td>0</td><td>238.98</td><td>50185.8</td></tr>
+            <tr><td>7701451</td><td>SERVO GREASE MP-182 KG DRM</td><td>182</td><td>260</td><td>26</td><td>0</td><td>0</td><td>276.12</td><td>50253.84</td></tr>
+            <tr><td>7705451</td><td>SERVOGREASE MP 3 - 182 KG DRM</td><td>182</td><td>270</td><td>35</td><td>0</td><td>0</td><td>277.3</td><td>50468.6</td></tr>
+            <tr><td>7727451</td><td>SERVO GEM RR 3-182 KG DRM</td><td>182</td><td>370</td><td>55</td><td>0</td><td>0</td><td>371.7</td><td>67649.4</td></tr>
+            <tr><td>7849451</td><td>SERVO LONG LIFE GREASE-182 KG DRM</td><td>182</td><td>355</td><td>23</td><td>0</td><td>0</td><td>391.76</td><td>71300.32</td></tr>
+            <tr><td>7903451</td><td>SERVOGREASE MIRACLE 3-182 KG</td><td>182</td><td>355</td><td>28</td><td>0</td><td>0</td><td>385.86</td><td>70226.52</td></tr>
+            <tr><td>7584401</td><td>SERVO KOOL PLUS -210L BRL</td><td>210</td><td>204</td><td>0</td><td>0</td><td>0</td><td>240.72</td><td>50551.2</td></tr>
+            <tr><td>2909401</td><td>SERVO BRAKE FLUID SUPER HD - 210L BRL</td><td>210</td><td>256</td><td>0</td><td>0</td><td>0</td><td>302.08</td><td>63436.8</td></tr>
+            <tr><td>7742451</td><td>SERVOGEM EP 2-182 KG DRM</td><td>182</td><td>280</td><td>44</td><td>0</td><td>0</td><td>278.48</td><td>50683.36</td></tr>
+            <tr><td>3040288</td><td>SERVOHYDRASHAKTI 68-26 L</td><td>26</td><td>143</td><td>34</td><td>0</td><td>0</td><td>128.62</td><td>3344.12</td></tr>
+            <tr><td>3006271</td><td>SERVOSYSTEM 68 - 50L HDPE</td><td>50</td><td>208</td><td>75</td><td>0</td><td>0</td><td>156.94</td><td>7847</td></tr>
+            <tr><td>3006288</td><td>SERVOSYSTEM 68-26 L</td><td>26</td><td>209</td><td>75</td><td>0</td><td>0</td><td>158.12</td><td>4111.12</td></tr>
+            <tr><td>3001401</td><td>SERVOSYSTEM 32 - 210L BRL</td><td>210</td><td>160</td><td>37</td><td>0</td><td>0</td><td>145.14</td><td>30479.4</td></tr>
+            <tr><td>3002401</td><td>SERVOSYSTEM 46 - 210L BRL</td><td>210</td><td>165</td><td>36</td><td>0</td><td>0</td><td>152.22</td><td>31966.2</td></tr>
+            <tr><td>3006401</td><td>SERVOSYSTEM 68 - 210L BRL</td><td>210</td><td>175</td><td>44</td><td>0</td><td>0</td><td>154.58</td><td>32461.8</td></tr>
+            <tr><td>3007403</td><td>SERVOSYSTEM 100-210 L HD</td><td>210</td><td>210</td><td>53</td><td>0</td><td>0</td><td>185.26</td><td>38904.6</td></tr>
+            <tr><td>3020401</td><td>SERVOSYSTEM 220 - 210L BRL</td><td>210</td><td>198</td><td>23</td><td>0</td><td>0</td><td>206.5</td><td>43365</td></tr>
+            <tr><td>3017401</td><td>SERVOSYSTEM 320 - 210L BRL</td><td>210</td><td>207</td><td>16</td><td>0</td><td>0</td><td>225.38</td><td>47329.8</td></tr>
+            <tr><td>3019401</td><td>SERVOSYSTEM 150 - 210L BRL</td><td>210</td><td>191</td><td>27</td><td>0</td><td>0</td><td>193.52</td><td>40639.2</td></tr>
+            <tr><td>3064401</td><td>SERVOHYDREX TH 46-210L BRL</td><td>210</td><td>187</td><td>6</td><td>0</td><td>0</td><td>213.58</td><td>44851.8</td></tr>
+            <tr><td>3081401</td><td>SERVOSYSTEM HLP 32 - 210L BRL</td><td>210</td><td>196</td><td>0</td><td>0</td><td>0</td><td>231.28</td><td>48568.8</td></tr>
+            <tr><td>3082401</td><td>SERVOSYSTEM HLP 46 - 210L BRL</td><td>210</td><td>201</td><td>56</td><td>0</td><td>0</td><td>171.1</td><td>35931</td></tr>
+            <tr><td>3084401</td><td>SERVOSYSTEM HLP 68 - 210L BRL</td><td>210</td><td>211</td><td>68</td><td>0</td><td>0</td><td>168.74</td><td>35435.4</td></tr>
+            <tr><td>3121401</td><td>SERVOPRIME 46 - 210L BRL</td><td>210</td><td>200</td><td>0</td><td>0</td><td>0</td><td>236</td><td>49560</td></tr>
+            <tr><td>3122401</td><td>SERVOPRIME 57 - 210L BRL</td><td>210</td><td>205</td><td>0</td><td>0</td><td>0</td><td>241.9</td><td>50799</td></tr>
+            <tr><td>3614401</td><td>SERVOMESH SP 320 - 210L BRL</td><td>210</td><td>217</td><td>48</td><td>0</td><td>0</td><td>199.42</td><td>41878.2</td></tr>
+            <tr><td>3617401</td><td>SERVOMESH SP 220 - 210L BRL</td><td>210</td><td>209</td><td>35</td><td>0</td><td>0</td><td>205.32</td><td>43117.2</td></tr>
+            <tr><td>3923401</td><td>SERVOFRIZ NH 68 - 210 L BRL</td><td>210</td><td>171</td><td>22</td><td>0</td><td>0</td><td>175.82</td><td>36922.2</td></tr>
+            <tr><td>4803401</td><td>SERVOTHERM SPECIAL-210L BRL</td><td>210</td><td>177</td><td>57</td><td>0</td><td>0</td><td>141.6</td><td>29736</td></tr>
+            <tr><td>4811401</td><td>SERVOTHERM S SPECIAL-210 L BRL</td><td>210</td><td>190</td><td>50</td><td>0</td><td>0</td><td>165.2</td><td>34692</td></tr>
+            <tr><td>4501401</td><td>SERVOCUT S - 210L BRL</td><td>210</td><td>190</td><td>57</td><td>0</td><td>0</td><td>156.94</td><td>32957.4</td></tr>
+            <tr><td>7403401</td><td>SERVOELECTRA - 210L BRL</td><td>210</td><td>120</td><td>0</td><td>0</td><td>0</td><td>141.6</td><td>29736</td></tr>
+            <tr><td>7330403</td><td>IOC CLEARBLUE-210 L HD</td><td>210</td><td>44</td><td>0</td><td>0</td><td>0</td><td>51.92</td><td>10903.2</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Menu toggle function
+        function toggleMenu() {
+            const menuList = document.getElementById("menuList");
+            if (menuList.style.maxHeight === "0px" || menuList.style.maxHeight === "") {
+                menuList.style.maxHeight = menuList.scrollHeight + "px";
+                menuList.classList.add("active");
+            } else {
+                menuList.style.maxHeight = "0px";
+                menuList.classList.remove("active");
+            }
+        }
+
+        // Search function
+        function searchTable() {
+            const input = document.getElementById("myInput");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("myTable");
+            const tr = table.getElementsByTagName("tr");
+            
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName("td");
+                let found = false;
+                
+                for (let j = 0; j < td.length; j++) {
+                    const cell = td[j];
+                    if (cell) {
+                        const textValue = cell.textContent || cell.innerText;
+                        if (textValue.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                tr[i].style.display = found ? "" : "none";
+            }
+        }
+
+        // PDF download function
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            const table = document.getElementById('myTable');
+            
+            html2canvas(table).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 280;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                doc.save('Barrel-Price-List.pdf');
+            });
+        }
+    </script>
+</body>
+</html>

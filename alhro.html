@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R/O Management System</title>
+    <style>
+        /* All your existing CSS styles remain the same */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            grid-column: 1 / -1;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        
+        .sap-code-container, .sku-code-container, .uom-container {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .submit-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .add-btn {
+            background-color: #2ecc71;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .add-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .info-text {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .sku-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .sku-table th, .sku-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .sku-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .sku-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .search-box {
+            margin-bottom: 15px;
+        }
+        
+        .file-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .file-input-group input[type="file"] {
+            flex: 1;
+        }
+        
+        .plus-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .plus-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        
+        .product-entry {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+        
+        .product-entry:first-child {
+            border-color: #3498db;
+        }
+        
+        .remove-product-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .remove-product-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .entry-count {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .delete-all-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .delete-all-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .delete-all-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-cancel-btn {
+            background-color: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .modal-cancel-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .modal-delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .modal-delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* New styles for toggle button and hidden storage */
+        .toggle-storage-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .toggle-storage-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .storage-container {
+            display: none;
+        }
+        
+        .storage-container.visible {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .file-input-group {
+                flex-direction: column;
+            }
+            
+            .delete-all-container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>R/O Management System</h1>
+        
+        <div class="panel">
+            <h2>Product Entry Form</h2>
+            
+            <form id="skuForm">
+                <!-- Added SAP Code field here -->
+                <div class="form-group">
+                    <label for="sapCode">SAP Code</label>
+                    <div class="sap-code-container" id="sapCodeDisplay"></div>
+                    <input type="hidden" id="sapCode" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName" placeholder="Type customer name" list="customerSuggestions" required>
+                    <datalist id="customerSuggestions"></datalist>
+                    <div class="info-text">SAP Code will be auto-filled when customer is selected</div>
+                </div>
+                
+                <!-- Added Group dropdown here -->
+                <div class="form-group">
+                    <label for="customerGroup">Group</label>
+                    <select id="customerGroup" required>
+                        <option value="R/O">R/O</option>
+                        </select>
+                </div>
+                
+                <div id="productEntries">
+                    <div class="product-entry">
+                        <span class="entry-count">1</span>
+                        <div class="form-group">
+                            <label for="skuName">SKU Name</label>
+                            <input type="text" class="skuName" placeholder="Enter product name" list="skuSuggestions" required>
+                            <datalist id="skuSuggestions"></datalist>
+                            <div class="info-text">Start typing to see matching SKU names. SKU Code and UOM will be filled automatically.</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="skuCode">SKU Code</label>
+                            <div class="sku-code-container skuCodeDisplay">0</div>
+                            <input type="hidden" class="skuCode" value="">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="uom">UOM (Unit of Measure)</label>
+                            <div class="uom-container uomDisplay">0</div>
+                            <input type="hidden" class="uom" value="">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" class="quantity" min="1" value="" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="plus-btn" id="addProductBtn">+</button>
+                <div class="info-text">Click the plus button to add more products for this customer</div>
+                
+                <div class="buttons">
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit Entry</button>
+                </div>
+            </form>
+            
+            <div class="success-message" id="successMessage" style="display: none;">All SKUs have been deleted</div>
+            <div class="error-message" id="errorMessage" style="display: none;"></div>
+        </div>
+        
+        <button class="toggle-storage-btn" id="toggleStorageBtn">Show SKU Storage</button>
+        
+        <div class="panel storage-container" id="storageContainer">
+            <h2>SKU Storage</h2>
+            
+            <div class="form-group">
+                <label for="newSkuName">SKU Name</label>
+                <input type="text" id="newSkuName" placeholder="Enter SKU name">
+            </div>
+            
+            <div class="form-group">
+                <label for="newSkuCode">SKU Code</label>
+                <input type="text" id="newSkuCode" placeholder="Enter SKU code">
+            </div>
+            
+            <div class="form-group">
+                <label for="newUom">UOM (Unit of Measure)</label>
+                <input type="text" id="newUom" placeholder="Enter UOM (exact value)">
+                <div class="info-text">Enter exact UOM value (can be decimal or whole number)</div>
+            </div>
+            
+            <button class="add-btn" id="addSkuBtn">Add SKU to Storage</button>
+            
+            <!-- Added Delete All Container -->
+            <div class="delete-all-container">
+                <button class="delete-all-btn" id="deleteAllBtn">Delete All SKUs</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Import SKUs from Excel (CSV)</label>
+                <div class="file-input-group">
+                    <input type="file" id="csvFileInput" accept=".csv">
+                    <button type="button" id="importCsvBtn" class="submit-btn">Import</button>
+                </div>
+                <div class="info-text">CSV format: SKU Name,SKU Code,UOM (one per line)</div>
+            </div>
+            
+            <div class="form-group search-box">
+                <label for="searchSku">Search SKU</label>
+                <input type="text" id="searchSku" placeholder="Search by SKU name or code">
+            </div>
+            
+            <table class="sku-table">
+                <thead>
+                    <tr>
+                        <th>SKU Name</th>
+                        <th>SKU Code</th>
+                        <th>UOM</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="skuTableBody"><tr><td colspan="4" style="text-align: center;">No SKUs found</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="deleteAllModal" style="display: none;">
+        <div class="modal-content">
+            <h3>Confirm Delete All SKUs</h3>
+            <p>Are you sure you want to delete all SKUs from storage? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="modal-cancel-btn" id="modalCancelBtn">Cancel</button>
+                <button class="modal-delete-btn" id="modalDeleteBtn">Delete All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // IMPORTANT: Replace this with your actual Google Apps Script Web App URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwltEZKIjHEjxZ4i4zM__gwo6i7CDZAZoV-s8mPc8-ufSLRfGZGcrvad_GubBgL_AgApA/exec';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const submitBtn = document.getElementById('submitBtn');
+            const skuForm = document.getElementById('skuForm');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const addSkuBtn = document.getElementById('addSkuBtn');
+            const newSkuNameInput = document.getElementById('newSkuName');
+            const newSkuCodeInput = document.getElementById('newSkuCode');
+            const newUomInput = document.getElementById('newUom');
+            const skuTableBody = document.getElementById('skuTableBody');
+            const searchSkuInput = document.getElementById('searchSku');
+            const skuSuggestions = document.getElementById('skuSuggestions');
+            const csvFileInput = document.getElementById('csvFileInput');
+            const importCsvBtn = document.getElementById('importCsvBtn');
+            const addProductBtn = document.getElementById('addProductBtn');
+            const productEntries = document.getElementById('productEntries');
+            
+            // New elements for SAP Code
+            const sapCodeDisplay = document.getElementById('sapCodeDisplay');
+            const sapCodeInput = document.getElementById('sapCode');
+            const customerNameInput = document.getElementById('customerName');
+            const customerSuggestions = document.getElementById('customerSuggestions');
+            
+            // New elements for toggle functionality
+            const toggleStorageBtn = document.getElementById('toggleStorageBtn');
+            const storageContainer = document.getElementById('storageContainer');
+            
+            // New elements for Delete All functionality
+            const deleteAllBtn = document.getElementById('deleteAllBtn');
+            const deleteAllModal = document.getElementById('deleteAllModal');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            const modalDeleteBtn = document.getElementById('modalDeleteBtn');
+            
+            // Initialize SKU storage
+            let skuStorage = JSON.parse(localStorage.getItem('skuStorage')) || [];
+            
+            // Customer data
+            const customerData = [
+                { name: "ABIGAIL SERVICE STATION", sapCode: "159829" },
+                { name: "ALTA FILLING STATION", sapCode: "182060" },
+                { name: "AMLAREM PETROL SERVICE STATION", sapCode: "373024" },
+                { name: "ARKIWAN SERVICE STATION", sapCode: "207870" },
+                { name: "ASHOK AUTO SERVICE (BARIDUA)", sapCode: "525024" },
+                { name: "ASHOK AUTO SERVICE (BARIDUA)", sapCode: "159588" },
+                { name: "ASHOK AUTO SERVICE (SHILLONG)", sapCode: "159828" },
+                { name: "ASSAM AUTO AGENCIES (JAIL ROAD", sapCode: "161557" },
+                { name: "ASSAM AUTO AGENCIES (LAITUMUKHRAH)", sapCode: "161558" },
+                { name: "AUTO FUEL SERVICE CENTRE", sapCode: "160683" },
+                { name: "B. SHYLLA FILLING STATION", sapCode: "190726" },
+                { name: "BA-MAN SERVICE STATION", sapCode: "273383" },
+                { name: "BAMON FILLING", sapCode: "347327" },
+                { name: "BAMON SERVICE STATION", sapCode: "220249" },
+                { name: "BANALARI FUEL STATION", sapCode: "160684" },
+                { name: "BHOLLAGUNJ REFILL CENTRE", sapCode: "292421" },
+                { name: "BILSINA PASSAH REF. STATION", sapCode: "220202" },
+                { name: "BLACK DIAMOND REFILL CENTRE", sapCode: "183469" },
+                { name: "BMS FUEL STATION", sapCode: "354421" },
+                { name: "BURNIHAT SERVICE STATION", sapCode: "159605" },
+                { name: "BYRNIHAT A.WARJRI FUEL STOP", sapCode: "285724" },
+                { name: "CHERRA MIDWAY FILLING STATION", sapCode: "344248" },
+                { name: "D MERCY REFILL CENTRE(ADHOC)", sapCode: "355848" },
+                { name: "D S REFILL STATION", sapCode: "373736" },
+                { name: "DHAR SERVICE STATION (MIHMYNTDU)", sapCode: "190724" },
+                { name: "DKHIAH SERVICE STATION", sapCode: "220203" },
+                { name: "D'MERCY REFILL CENTRE", sapCode: "231175" },
+                { name: "DONBOK SERVICE STATION", sapCode: "160680" },
+                { name: "DUNN AUTO AGENCY", sapCode: "160659" },
+                { name: "EAST JAINTIA FILLING CENTRE", sapCode: "292383" },
+                { name: "EASTERN BORDER SERVICE STATION", sapCode: "205986" },
+                { name: "GREEN HILL SERVICE STATION", sapCode: "160685" },
+                { name: "HARLIE V SERVICE STATION", sapCode: "224759" },
+                { name: "HEIMON FILLING STATION", sapCode: "204762" },
+                { name: "HIGHLAND SERVICE STATION", sapCode: "185003" },
+                { name: "HIGHWAY CARRIERS' REFILLING", sapCode: "265943" },
+                { name: "HIGHWAY REFILL CENTRE", sapCode: "160386" },
+                { name: "HOSLIN SERVICE STATION", sapCode: "278340" },
+				{ name: "J K REFILLING CENTRE", sapCode: "383368" },
+                { name: "J M FUELS", sapCode: "378690" },
+                { name: "J MARBANIANG", sapCode: "159653" },
+                { name: "JAINTIA AUTO AGENCIES", sapCode: "159834" },
+                { name: "JAINTIA SERVICE STATION", sapCode: "160670" },
+                { name: "K LANGBAI FUEL STATION", sapCode: "339074" },
+                { name: "K. RYMBAI & CO.", sapCode: "160671" },
+                { name: "KARGIL MARTYR'S SER STN.", sapCode: "165966" },
+                { name: "KHARNAIRI SERVICE CENTRE", sapCode: "207872" },
+                { name: "KHASI HILL PETROLEUM SUPPLY CO.", sapCode: "160668" },
+                { name: "KHONGWIR SERVICE STATION", sapCode: "159668" },
+                { name: "KURBAH SERVICE STATION", sapCode: "159664" },
+                { name: "KYNTANG FILLING STATION", sapCode: "377571" },
+                { name: "LAITYRKE SERVICE STATION", sapCode: "295652" },
+                { name: "LUMSHNONG FUELS", sapCode: "356753" },
+                { name: "LUMSHNONG SERVICE STATION", sapCode: "160677" },
+                { name: "M/S.HIGHWAY PLAZA FILLING CENTRE", sapCode: "323675" },
+                { name: "MAHARI & SONS", sapCode: "159836" },
+                { name: "MAHAVIR & CO.", sapCode: "160672" },
+                { name: "MAIRANG SERVICE STATION", sapCode: "345026" },
+                { name: "MAN-TEI SERVICE STATION", sapCode: "356774" },
+                { name: "MARWET OIL SERVICES PVT. LTD.", sapCode: "234341" },
+                { name: "MARWET PETROLEUM AGENCY", sapCode: "160342" },
+                { name: "MATTI i PA ENERGY MOTORS SIEJLIEH", sapCode: "356670" },
+                { name: "MAWKHANU SERVICE STATION", sapCode: "292180" },
+                { name: "MAWLAI AIBOR ROY THANGKHIEW SERVICE", sapCode: "292412" },
+                { name: "MAWLAI BANALARI SERVICE STATION", sapCode: "159830" },
+                { name: "MAWLAI BYPASS FILLING STATION", sapCode: "356785" },
+                { name: "MAWLONG FUEL STATION", sapCode: "378710" },
+                { name: "MEERA SERVICE STATION", sapCode: "160360" },
+                { name: "MEGHALAYA SERVICE STN", sapCode: "159685" },
+                { name: "MEI RI LUM ENERGY HUB", sapCode: "378866" },
+                { name: "MIHMYNTDU SERVICE STATION", sapCode: "205988" },
+                { name: "MILDA ENERGY POINT", sapCode: "345624" },
+                { name: "MOOKHEP FUEL STATION", sapCode: "378867" },
+                { name: "MOOLAMYLLIANG SERVICE STATION", sapCode: "295145" },
+                { name: "MORE ENERGY STATION", sapCode: "198914" },
+                { name: "MYLLIEM WAHLYNGDOH REFILL CENTRE", sapCode: "296129" },
+                { name: "NANGKYRSOI FUEL STATION", sapCode: "274397" },
+                { name: "NAYABUNGLOW SERVICE STN", sapCode: "159693" },
+                { name: "NONGPLUH UMROI SERVICE STATION", sapCode: "288093" },
+                { name: "NONGPOH FILLING CENTRE", sapCode: "159695" },
+                { name: "NONGPOH HIGHWAY SERVICE STATION", sapCode: "324328" },
+                { name: "NONGPOH SERVICE STATION", sapCode: "160348" },
+                { name: "NONGRUM ENERGY STATION", sapCode: "325536" },
+                { name: "NONGSHILLONG SERVICE STATION", sapCode: "360879" },
+                { name: "NONGSTOIN HIGHWAY SERVICE STAT", sapCode: "279567" },
+                { name: "NONGTDU FILLING STATION", sapCode: "190725" },
+                { name: "NONGTDU SERVICE STATION", sapCode: "183237" },
+                { name: "NONGTLUH - MATHAN PETROL PUMP", sapCode: "356793" },
+                { name: "PEAK SERVICE STATION (SHILLONG)", sapCode: "525030" },
+                { name: "PEAK SERVICE STATION(LAITKOR)", sapCode: "220492" },
+                { name: "PERFECT SERVICE STATION", sapCode: "183032" },
+                { name: "PETROL & & AUTO DIESEL F STATION", sapCode: "220250" },
+                { name: "PJ REFILLING CENTRE", sapCode: "379677" },
+                { name: "PNAR SERVICE STATION (LADRYMBAI)", sapCode: "160678" },
+                { name: "PNAR SERVICE STATION (MUKHLA)", sapCode: "159838" },
+                { name: "POLO SERVICE STATION", sapCode: "195028" },
+                { name: "PREMIER MEGA HUB", sapCode: "365048" },
+                { name: "PYNBIANGLANG REFILLING STATION", sapCode: "190723" },
+                { name: "PYNGROPE SERVICE STATION", sapCode: "197704" },
+                { name: "RAJ FILLING CENTRE", sapCode: "160368" },
+                { name: "RAJA FUEL SERVICE", sapCode: "197703" },
+                { name: "RALIANG FUELS", sapCode: "347353" },
+                { name: "RANI SERVICE STATION", sapCode: "161569" },
+                { name: "RI BHOI SERVICE STATION", sapCode: "372030" },
+                { name: "RIDA LANGRIN FILLING CENTER", sapCode: "268475" },
+                { name: "RIVER KYNSHI BKS SERVICE STATION", sapCode: "345654" },
+                { name: "RIVER UMTREW SERVICE STATION", sapCode: "180730" },
+                { name: "ROIBHA FUEL STATION", sapCode: "225749" },
+                { name: "RS FILLING STATION", sapCode: "378709" },
+                { name: "SAINT JOSEPH REFILL CENTRE", sapCode: "380847" },
+                { name: "SHALLAM SYNGKON (JOWAI)", sapCode: "159839" },
+                { name: "SHALLAM SYNGKON (WAPUNG)", sapCode: "525025" },
+                { name: "SHANGPUNG SERVICE STATION", sapCode: "198493" },
+                { name: "SHIBAI SHIBOO SERVICE STATION", sapCode: "217541" },
+                { name: "SHILLONG HIGHWAY SERVICE STN", sapCode: "159840" },
+                { name: "SOHRA REFILLING CENTRE", sapCode: "159837" },
+                { name: "Sohra Refilling Centre", sapCode: "570936" },
+                { name: "SOUTHERN HILLS SERVICE STATION", sapCode: "183194" },
+                { name: "STAR ENERGY POINT", sapCode: "269675" },
+                { name: "SWER SERVICE STATION", sapCode: "190727" },
+                { name: "TUBER AUTO AGENCIES", sapCode: "224005" },
+                { name: "TUBER SERVICE STATION", sapCode: "362530" },
+                { name: "TYRSHI FILLING STATION", sapCode: "328716" },
+                { name: "UMKRUKRU SERVICE STATION", sapCode: "279044" },
+                { name: "UMRAN FUELS", sapCode: "292212" },
+                { name: "UMSNING FUEL STATION", sapCode: "356735" },
+                { name: "UNITED HILLS SUPER SERVICE STN", sapCode: "159842" },
+                { name: "UPPER SHILLONG PETROL SERVICE STN.", sapCode: "160660" },
+                { name: "WEST JAINTIA FILLING POINT", sapCode: "367891" },
+                { name: "RI-LYNGNGAM SERVICE STATION", sapCode: "160365" },
+                { name: "SHALLANG LYNMAR FUEL STATION", sapCode: "282690" },
+                { name: "JIRANG FILLING STATION", sapCode: "346930" }
+            ];
+            
+             // Load initial data if empty
+            if (skuStorage.length === 0) {
+skuStorage = [
+{ name: "SERVO PRIDE 40 - 20x1L - HDPE", code:"1404184", uom:20},
+{ name: "SERVO PRIDE 40 - 4x5L - HDPE", code:"1404234", uom:20},
+{ name: "SERVO GEAR HP 90-40X1/2L-HDPE", code:"2502174", uom:20},
+{ name: "SERVO GEAR HP 90-20X1L-HDPE", code:"2502184", uom:20},
+{ name: "SERVO GEAR HP 90 - 4x5L - HDPE", code:"2502234", uom:20},
+{ name: "SERVO GEAR HP 90-20L BUC", code:"2502265", uom:20},
+{ name: "SERVO GEAR HP 90 - 210L BRL", code:"2502401", uom:210},
+{ name: "MGGO 80W-90 - 4 X 2.1 L", code:"2540199", uom:8.4},
+{ name: "HYUNDAI S.GEAR OIL 75W-85-4X2.5L-HDPE", code:"2557195", uom:10},
+{ name: "SERVO 4T XTRA 10W-30-20 X 0.9 L PROMO", code:"2829230", uom:18},
+{ name: "SERVO SCOOTOMATIC 4ST 10W-30-20 X 0.8 L", code:"2889156", uom:16},
+{ name: "SERVO 2T SUPREME-600 X 20 ML", code:"2900103", uom:12},
+{ name: "SERVO 2T SUPREME(JFC)-300x40ML - POU", code:"2900125", uom:12},
+{ name: "SERVO 2T SUPREME (JFC) - 200X60ML - POU", code:"2900145", uom:12},
+{ name: "SERVO 2T SUPREME-20X1/2 L", code:"2900175", uom:10},
+{ name: "SERVO 2T SUPREME-20 X 1 L", code:"2900184", uom:20},
+{ name: "SERVO BRAKE FLUID SUPER HD - 20X1/4L-HDP", code:"2909165", uom:5},
+{ name: "SERVO BRAKE FLUID SUPER HD -20X1/2L-HDPE", code:"2909175", uom:10},
+{ name: "SERVO BRAKE FLUID DOT 4-20 X 1/4 L", code:"2914165", uom:5},
+{ name: "SERVO BRAKE FLUID DOT 4-20 X 1/2 L", code:"2914175", uom:10},
+{ name: "SERVO 4T - 20 X 1 L HDPE PROMO", code:"2924229", uom:20},
+{ name: "SERVO HONDA JOSH-20 X 0.9 L", code:"2927152", uom:18},
+{ name: "SERVO HONDA SCOOTONXT-20 X 0.8 L", code:"2933156", uom:16},
+{ name: "SERVO FUTURA G PLUS 5W-30-4X3.5 L PROMO", code:"2967111", uom:14},
+{ name: "SERVO FUTURA G PLUS 5W-30-4 X 3 L PROMO", code:"2967204", uom:12},
+{ name: "HY.SERVO ENGINE OIL 5W-30-4x3.5L", code:"2968213", uom:14},
+{ name: "SERVOSYSTEM 32-20L BUC", code:"3001265", uom:20},
+{ name: "SERVOSYSTEM 46 - 20L BUC", code:"3002265", uom:20},
+{ name: "SERVOSYSTEM 68-4x5L - HDPE", code:"3006234", uom:20},
+{ name: "SERVOSYSTEM 68-20L BUC", code:"3006265", uom:20},
+{ name: "SERVOSYSTEM 68 - 210L BRL", code:"3006401", uom:210},
+{ name: "SERVOSYSTEM 68-210 L HD", code:"3006403", uom:210},
+{ name: "SERVOHYDRASHAKTI 68-20 L", code:"3040265", uom:20},
+{ name: "SERVOSYSTEM HLP 68 - 210L BRL", code:"3084401", uom:210},
+{ name: "SERVO TRANSFLUID A-20X1/2 L", code:"4906175", uom:10},
+{ name: "SERVO TRANSFLUID A-20X1L-HDPE", code:"4906184", uom:20},
+{ name: "ECSTAR PETROL 0W-16 FE-210 L", code:"7079401", uom:210},
+{ name: "HYUNDAI SERVO SUPERIOR 0W30-4 X 4 L", code:"7205222", uom:16},
+{ name: "SERVO SUPERIOR EO 0W20 SN PLUS-50 L", code:"7208271", uom:50},
+{ name: "HY SERVO SYNTH 0W-30 SP/C3-4 X 3.5 L", code:"7209213", uom:14},
+{ name: "SERVO GREENMILE-4 X 3.5 L LUBE", code:"7211213", uom:14},
+{ name: "HYUNDAI SERVO COOLANT 50-20 X 1 L", code:"7232184", uom:20},
+{ name: "SERVO FUTURA NXT 0W-16-4X3.5 L PROMO LUBE", code:"7271111", uom:14},
+{ name: "IOC CLEARBLUE-10 L", code:"7330242", uom:10},
+{ name: "IOC CLEARBLUE-20 L", code:"7330265", uom:20},
+{ name: "HY SERVO PETROL EO SN PLUS-4 X 3.5 L", code:"7420213", uom:14},
+{ name: "ECSTAR PETROL 0W-20-4 X 3.5 L", code:"7427213", uom:14},
+{ name: "ECSTAR PETROL 0W-20-210 L", code:"7427401", uom:210},
+{ name: "S FLEET SUPREME CI4PLUS 15W-40-210 L", code:"7470401", uom:210},
+{ name: "SERVO FLEET CF4 15W-40 - 20 X 1 L", code:"7472184", uom:20},
+{ name: "SERVO SUPER 20W-40 MG-40X1/2L", code:"7485174", uom:20},
+{ name: "SERVO SUPER 20W-40 MG-20 X 1 L", code:"7485184", uom:20},
+{ name: "SERVO SUPER 20W-40 MG-4x5L - HDPE", code:"7485234", uom:20},
+{ name: "SERVO SUPER 20W-40 MG-10 L", code:"7485242", uom:10},
+{ name: "SERVO SUPER 20W-40 MG-7.5 L", code:"7485251", uom:7.50000000000001},
+{ name: "SERVO SUPER 20W-40 MG-20 L", code:"7485265", uom:20},
+{ name: "SERVO PRIDE XL PLUS 15W40-20 X 1 L", code:"7489184", uom:20},
+{ name: "SERVO PRIDE XL PLUS 15W40-4x5L - HDPE", code:"7489234", uom:20},
+{ name: "SERVO PRIDE XL PLUS 15W40-15L PROMO", code:"7489253", uom:15},
+{ name: "SERVO PRIDE XL PLUS 15W40-20 L", code:"7489265", uom:20},
+{ name: "SERVO GEAR SUPER 80W-90 - 20 X 1 L HDPE", code:"7511184", uom:20},
+{ name: "SERVO GEAR SUPER 80W-90 - 210L BRL", code:"7511401", uom:210},
+{ name: "SERVO PRIDE TC 15W40 - 20X1L-HDPE", code:"7556184", uom:20},
+{ name: "SERVO PRIDE NXT CK4 15W-40-20 X 1 L", code:"7436184", uom:20},
+{ name: "SERVO PRIDE NXT CK4 15W-40-7.5 L PROMO", code:"7436250", uom:7.5},
+{ name: "SERVO PRIDE NXT CK4 15W-40-15 L PROMO", code:"7436253", uom:15},
+{ name: "SERVO PRIDE TC 15W-40- 4 X 5L", code:"7556234", uom:20},
+{ name: "SERVO PRIDE TC 15W40-10L PROMO", code:"7556241", uom:10},
+{ name: "SERVO PRIDE TC 15W40-15L PROMO", code:"7556253", uom:15},
+{ name: "SERVO PREMIUM CF-4 15W-40-40X1/2L-HDPE", code:"7577174", uom:20},
+{ name: "SERVO PREMIUM CF-4 15W-40-20X1L-HDPE", code:"7577184", uom:20},
+{ name: "SERVO PREMIUM CF-4 15W-40-4X5L-HDPE", code:"7577234", uom:20},
+{ name: "SERVO PREMIUM CF-4 15W-40-4x5L - PROMO", code:"7577240", uom:20},
+{ name: "SERVO PREMIUM CF-4 15W-40-15 L", code:"7577256", uom:15},
+{ name: "SERVO PREMIUM CF 4 15W 40-20L BUC", code:"7577265", uom:20},
+{ name: "SERVO PREMIUM CF-4 15W-40 - 210L BRL", code:"7577401", uom:210},
+{ name: "SERVO KOOL PLUS-20X1/2L-HDPE", code:"7584175", uom:10},
+{ name: "SERVO KOOL PLUS-20X1L-HDPE", code:"7584184", uom:20},
+{ name: "SERVO KOOL PLUS -210L BRL", code:"7584401", uom:210},
+{ name: "MGO 20W-40 - 20 X 1 L", code:"7600184", uom:20},
+{ name: "MGO 20W-40 - 4 X 3 L", code:"7600203", uom:12},
+{ name: "HYUNDAI SERVO CRDi PREM.ENG.OIL 4X5L-HDP", code:"7638234", uom:20},
+{ name: "MGDO 15W-40 - 4 X 3.5 L", code:"7670213", uom:14},
+{ name: "MGO 5W-30-4 X 3 L", code:"7688203", uom:12},
+{ name: "MGO 5W-30-4x3.5L HDPE", code:"7688213", uom:14},
+{ name: "SERVO GREASE MP-20 KG BUC", code:"7701341", uom:20},
+{ name: "SERVO GREASE MP 3 - 20 X 1/2 KG CTN", code:"7705303", uom:10},
+{ name: "SERVO GREASE MP 3 - 10 X 1 KG CTN", code:"7705313", uom:10},
+{ name: "SERVOGREASE MP 3-4X3 KG", code:"7705337", uom:12},
+{ name: "SERVOGREASE MP 3 - 5 KG BUC", code:"7705339", uom:5},
+{ name: "SERVOGREASE MP 3 -20 KG BUC", code:"7705341", uom:20},
+{ name: "SERVOGREASE MP 3 - 182 KG DRM", code:"7705451", uom:182}
+
+
+
+
+                ];
+                saveSkuStorage();
+				}
+				
+				 				
+            
+            // Initialize customer suggestions
+            updateCustomerSuggestions();
+            
+            // Render SKU table
+            renderSkuTable();
+            
+            // Update SKU suggestions
+            updateSkuSuggestions();
+            
+            // Function to save SKU storage to localStorage
+            function saveSkuStorage() {
+                localStorage.setItem('skuStorage', JSON.stringify(skuStorage));
+            }
+            
+            // Function to render SKU table
+            function renderSkuTable() {
+                const searchTerm = searchSkuInput.value.toLowerCase();
+                let filteredSkus = skuStorage;
+                
+                if (searchTerm) {
+                    filteredSkus = skuStorage.filter(sku => 
+                        sku.name.toLowerCase().includes(searchTerm) || 
+                        sku.code.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                skuTableBody.innerHTML = '';
+                
+                if (filteredSkus.length === 0) {
+                    skuTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No SKUs found</td></tr>';
+                    return;
+                }
+                
+                filteredSkus.forEach((sku, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${sku.name}</td>
+                        <td>${sku.code}</td>
+                        <td>${sku.uom}</td>
+                        <td><button class="delete-btn" data-index="${index}">Delete</button></td>
+                    `;
+                    skuTableBody.appendChild(row);
+                });
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        deleteSku(index);
+                    });
+                });
+            }
+            
+            // Function to update SKU suggestions
+            function updateSkuSuggestions() {
+                skuSuggestions.innerHTML = '';
+                skuStorage.forEach(sku => {
+                    const option = document.createElement('option');
+                    option.value = sku.name;
+                    skuSuggestions.appendChild(option);
+                });
+            }
+            
+            // Function to update customer suggestions
+            function updateCustomerSuggestions() {
+                customerSuggestions.innerHTML = '';
+                customerData.forEach(customer => {
+                    const option = document.createElement('option');
+                    option.value = customer.name;
+                    customerSuggestions.appendChild(option);
+                });
+            }
+            
+            // Function to get SAP code from customer name
+            function getSapCode(customerName) {
+                const customer = customerData.find(c => c.name === customerName);
+                return customer ? customer.sapCode : '0';
+            }
+            
+            // Function to delete SKU
+            function deleteSku(index) {
+                skuStorage.splice(index, 1);
+                saveSkuStorage();
+                renderSkuTable();
+                updateSkuSuggestions();
+                showMessage('SKU deleted successfully', 'success');
+            }
+            
+            // Function to delete all SKUs
+            function deleteAllSkus() {
+                skuStorage = [];
+                saveSkuStorage();
+                renderSkuTable();
+                updateSkuSuggestions();
+                showMessage('All SKUs have been deleted', 'success');
+                deleteAllModal.style.display = 'none';
+            }
+            
+            // Function to add SKU
+            function addSku() {
+                const name = newSkuNameInput.value.trim();
+                const code = newSkuCodeInput.value.trim();
+                const uom = newUomInput.value.trim();
+                
+                if (!name || !code || !uom) {
+                    showMessage('Please enter SKU name, code and UOM', 'error');
+                    return;
+                }
+                
+                // Validate UOM is a valid number (can be decimal)
+                if (isNaN(parseFloat(uom)) || !isFinite(uom)) {
+                    showMessage('UOM must be a valid number', 'error');
+                    return;
+                }
+                
+                // Check if SKU name already exists
+                if (skuStorage.some(sku => sku.name === name)) {
+                    showMessage('SKU name already exists', 'error');
+                    return;
+                }
+                
+                // Check if SKU code already exists
+                if (skuStorage.some(sku => sku.code === code)) {
+                    showMessage('SKU code already exists', 'error');
+                    return;
+                }
+                
+                // Store UOM as exact string value to preserve decimals
+                skuStorage.push({ name, code, uom });
+                saveSkuStorage();
+                renderSkuTable();
+                updateSkuSuggestions();
+                
+                newSkuNameInput.value = '';
+                newSkuCodeInput.value = '';
+                newUomInput.value = '';
+                
+                showMessage('SKU added successfully', 'success');
+            }
+            
+            // Function to find SKU details by name
+            function findSkuDetails(skuName) {
+                const sku = skuStorage.find(item => item.name === skuName);
+                return sku ? { code: sku.code, uom: sku.uom } : null;
+            }
+            
+            // Function to show message
+            function showMessage(message, type) {
+                if (type === 'success') {
+                    successMessage.textContent = message;
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    errorMessage.textContent = message;
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 5000);
+                }
+            }
+            
+            // Function to import SKUs from CSV file
+            function importFromCSV(file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    const lines = content.split('\n');
+                    let importedCount = 0;
+                    let skippedCount = 0;
+                    
+                    for (let i = 0; i < lines.length; i++) {
+                        const line = lines[i].trim();
+                        
+                        // Skip empty lines and header
+                        if (!line || i === 0 && line.toLowerCase().includes('name') && line.toLowerCase().includes('code')) {
+                            continue;
+                        }
+                        
+                        const parts = line.split(',');
+                        
+                        if (parts.length >= 3) {
+                            const name = parts[0].trim();
+                            const code = parts[1].trim();
+                            const uom = parts[2].trim(); // Keep as string to preserve exact value
+                            
+                            // Validate UOM is a valid number
+                            if (isNaN(parseFloat(uom)) || !isFinite(uom)) {
+                                skippedCount++;
+                                continue; // Skip this entry if UOM is not a valid number
+                            }
+                            
+                            if (name && code) {
+                                // Check if SKU already exists
+                                const exists = skuStorage.some(sku => 
+                                    sku.name === name || sku.code === code
+                                );
+                                
+                                if (!exists) {
+                                    skuStorage.push({ name, code, uom });
+                                    importedCount++;
+                                } else {
+                                    skippedCount++;
+                                }
+                            }
+                        } else if (parts.length >= 2) {
+                            // Handle old CSV format without UOM
+                            const name = parts[0].trim();
+                            const code = parts[1].trim();
+                            const uom = "1"; // Default UOM as string
+                            
+                            if (name && code) {
+                                // Check if SKU already exists
+                                const exists = skuStorage.some(sku => 
+                                    sku.name === name || sku.code === code
+                                );
+                                
+                                if (!exists) {
+                                    skuStorage.push({ name, code, uom });
+                                    importedCount++;
+                                } else {
+                                    skippedCount++;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (importedCount > 0) {
+                        saveSkuStorage();
+                        renderSkuTable();
+                        updateSkuSuggestions();
+                        showMessage(`Imported ${importedCount} SKUs. ${skippedCount} entries skipped.`, 'success');
+                    } else if (skippedCount > 0) {
+                        showMessage(`No new SKUs imported. ${skippedCount} entries skipped (duplicates or invalid UOM).`, 'error');
+                    } else {
+                        showMessage('No valid SKU data found in the file.', 'error');
+                    }
+                };
+                
+                reader.onerror = function() {
+                    showMessage('Error reading the file', 'error');
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            // Function to add a new product entry
+            function addProductEntry() {
+                const entryCount = document.querySelectorAll('.product-entry').length + 1;
+                
+                const productEntry = document.createElement('div');
+                productEntry.className = 'product-entry';
+                productEntry.innerHTML = `
+                    <span class="entry-count">${entryCount}</span>
+                    <button type="button" class="remove-product-btn">×</button>
+                    <div class="form-group">
+                        <label>SKU Name</label>
+                        <input type="text" class="skuName" placeholder="Enter product name" list="skuSuggestions" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SKU Code</label>
+                        <div class="sku-code-container skuCodeDisplay">0</div>
+                        <input type="hidden" class="skuCode">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>UOM (Unit of Measure)</label>
+                        <div class="uom-container uomDisplay">0</div>
+                        <input type="hidden" class="uom">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" class="quantity" min="1" value="" required>
+                    </div>
+                `;
+                
+                productEntries.appendChild(productEntry);
+                
+                // Add event listener to the remove button
+                productEntry.querySelector('.remove-product-btn').addEventListener('click', function() {
+                    if (document.querySelectorAll('.product-entry').length > 1) {
+                        productEntry.remove();
+                        updateEntryNumbers();
+                    } else {
+                        showMessage('You need at least one product entry', 'error');
+                    }
+                });
+                
+                // Add event listener to SKU name input for auto-complete
+                productEntry.querySelector('.skuName').addEventListener('input', function() {
+                    const skuName = this.value;
+                    const skuDetails = findSkuDetails(skuName);
+                    const skuCodeDisplay = productEntry.querySelector('.skuCodeDisplay');
+                    const skuCodeInput = productEntry.querySelector('.skuCode');
+                    const uomDisplay = productEntry.querySelector('.uomDisplay');
+                    const uomInput = productEntry.querySelector('.uom');
+                    
+                    if (skuDetails) {
+                        skuCodeDisplay.textContent = skuDetails.code;
+                        skuCodeInput.value = skuDetails.code;
+                        uomDisplay.textContent = skuDetails.uom;
+                        uomInput.value = skuDetails.uom;
+                    } else {
+                        skuCodeDisplay.textContent = '0';
+                        skuCodeInput.value = '';
+                        uomDisplay.textContent = '0';
+                        uomInput.value = '';
+                    }
+                });
+            }
+            
+            // Function to update entry numbers
+            function updateEntryNumbers() {
+                const entries = document.querySelectorAll('.product-entry');
+                entries.forEach((entry, index) => {
+                    entry.querySelector('.entry-count').textContent = index + 1;
+                });
+            }
+            
+            // Function to send data to Google Sheets
+            function sendToGoogleSheets(formData) {
+                // Disable submit button to prevent double submission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+                
+                // Show loading message
+                showMessage('Sending data to Google Sheets...', 'success');
+                
+                // Create a FormData object to send to Google Apps Script
+                const formDataToSend = new FormData();
+                formDataToSend.append('customerName', formData.customerName);
+                formDataToSend.append('customerGroup', formData.customerGroup);
+                formDataToSend.append('sapCode', formData.sapCode);
+                formDataToSend.append('products', JSON.stringify(formData.products));
+                formDataToSend.append('timestamp', new Date().toISOString());
+                
+                // Send data to Google Apps Script
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formDataToSend
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        showMessage('Data successfully saved! Page will refresh in 2 seconds.', 'success');
+                        // Refresh page after 2 seconds
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        throw new Error('Failed to save data');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error saving data to Google Sheets. Please try again.', 'error');
+                    // Re-enable submit button on error
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Entry';
+                });
+            }
+            
+            // Function to reset the form
+            function resetForm() {
+                skuForm.reset();
+                
+                // Reset product entries to just one
+                productEntries.innerHTML = `
+                    <div class="product-entry">
+                        <span class="entry-count">1</span>
+                        <div class="form-group">
+                            <label for="skuName">SKU Name</label>
+                            <input type="text" class="skuName" placeholder="Enter product name" list="skuSuggestions" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="skuCode">SKU Code</label>
+                            <div class="sku-code-container skuCodeDisplay">0</div>
+                            <input type="hidden" class="skuCode">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="uom">UOM (Unit of Measure)</label>
+                            <div class="uom-container uomDisplay">0</div>
+                            <input type="hidden" class="uom">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" class="quantity" min="1" value="" required>
+                        </div>
+                    </div>
+                `;
+                
+                // Reattach event listener to the first SKU name input
+                document.querySelector('.skuName').addEventListener('input', function() {
+                    const skuName = this.value;
+                    const skuDetails = findSkuDetails(skuName);
+                    const skuCodeDisplay = document.querySelector('.skuCodeDisplay');
+                    const skuCodeInput = document.querySelector('.skuCode');
+                    const uomDisplay = document.querySelector('.uomDisplay');
+                    const uomInput = document.querySelector('.uom');
+                    
+                    if (skuDetails) {
+                        skuCodeDisplay.textContent = skuDetails.code;
+                        skuCodeInput.value = skuDetails.code;
+                        uomDisplay.textContent = skuDetails.uom;
+                        uomInput.value = skuDetails.uom;
+                    } else {
+                        skuCodeDisplay.textContent = '0';
+                        skuCodeInput.value = '';
+                        uomDisplay.textContent = '0';
+                        uomInput.value = '';
+                    }
+                });
+                
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+            }
+            
+            // Update SAP Code when customer name changes
+            customerNameInput.addEventListener('input', function() {
+                const customerName = this.value;
+                
+                // Check if the input matches a known customer
+                const matchingCustomer = customerData.find(customer => 
+                    customer.name.toLowerCase() === customerName.toLowerCase()
+                );
+                
+                if (matchingCustomer) {
+                    sapCodeDisplay.textContent = matchingCustomer.sapCode;
+                    sapCodeInput.value = matchingCustomer.sapCode;
+                } else {
+                    sapCodeDisplay.textContent = '0';
+                    sapCodeInput.value = '';
+                }
+            });
+            
+            // Update SKU code and UOM when product name changes for the first entry
+            document.querySelector('.skuName').addEventListener('input', function() {
+                const skuName = this.value;
+                const skuDetails = findSkuDetails(skuName);
+                const skuCodeDisplay = document.querySelector('.skuCodeDisplay');
+                const skuCodeInput = document.querySelector('.skuCode');
+                const uomDisplay = document.querySelector('.uomDisplay');
+                const uomInput = document.querySelector('.uom');
+                
+                if (skuDetails) {
+                    skuCodeDisplay.textContent = skuDetails.code;
+                    skuCodeInput.value = skuDetails.code;
+                    uomDisplay.textContent = skuDetails.uom;
+                    uomInput.value = skuDetails.uom;
+                } else {
+                    skuCodeDisplay.textContent = '0';
+                    skuCodeInput.value = '';
+                    uomDisplay.textContent = '0';
+                    uomInput.value = '';
+                }
+            });
+            
+            // Handle form submission
+            skuForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const customerName = document.getElementById('customerName').value;
+                const customerGroup = document.getElementById('customerGroup').value;
+                const sapCode = document.getElementById('sapCode').value;
+                const productEntries = document.querySelectorAll('.product-entry');
+                
+                // Collect all product data
+                const products = [];
+                let hasErrors = false;
+                
+                productEntries.forEach((entry, index) => {
+                    const skuName = entry.querySelector('.skuName').value;
+                    const skuCode = entry.querySelector('.skuCode').value;
+                    const uom = entry.querySelector('.uom').value;
+                    const quantity = entry.querySelector('.quantity').value;
+                    
+                    if (!skuCode) {
+                        showMessage(`Please select a valid SKU name for product ${index + 1}`, 'error');
+                        hasErrors = true;
+                        return;
+                    }
+                    
+                    products.push({
+                        skuName,
+                        skuCode,
+                        uom,
+                        quantity
+                    });
+                });
+                
+                if (hasErrors) return;
+                
+                // Prepare data for Google Sheets
+                const formData = {
+                    customerName,
+                    customerGroup,
+                    sapCode,
+                    products
+                };
+                
+                // Send data to Google Sheets
+                sendToGoogleSheets(formData);
+            });
+            
+            // Add SKU button event
+            addSkuBtn.addEventListener('click', addSku);
+            
+            // Search SKU event
+            searchSkuInput.addEventListener('input', renderSkuTable);
+            
+            // Import CSV button event
+            importCsvBtn.addEventListener('click', function() {
+                const file = csvFileInput.files[0];
+                
+                if (!file) {
+                    showMessage('Please select a CSV file', 'error');
+                    return;
+                }
+                
+                if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                    showMessage('Please select a valid CSV file', 'error');
+                    return;
+                }
+                
+                importFromCSV(file);
+                csvFileInput.value = '';
+            });
+            
+            // Add product entry button event
+            addProductBtn.addEventListener('click', addProductEntry);
+            
+            // Toggle Storage button event
+            toggleStorageBtn.addEventListener('click', function() {
+                storageContainer.classList.toggle('visible');
+                toggleStorageBtn.textContent = storageContainer.classList.contains('visible') ? 
+                    'Hide SKU Storage' : 'Show SKU Storage';
+            });
+            
+            // Delete All button event
+            deleteAllBtn.addEventListener('click', function() {
+                deleteAllModal.style.display = 'flex';
+            });
+            
+            // Modal cancel button event
+            modalCancelBtn.addEventListener('click', function() {
+                deleteAllModal.style.display = 'none';
+            });
+            
+            // Modal delete button event
+            modalDeleteBtn.addEventListener('click', deleteAllSkus);
+            
+            // Close modal when clicking outside
+            deleteAllModal.addEventListener('click', function(e) {
+                if (e.target === deleteAllModal) {
+                    deleteAllModal.style.display = 'none';
+                }
+            });
+            
+            // Allow pressing Enter to add SKU
+            newSkuNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addSku();
+                }
+            });
+            
+            newSkuCodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addSku();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

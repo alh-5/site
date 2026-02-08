@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFA Requirement Stock</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --order: #9b59b6;
+            --uom: #1abc9c;
+            --mapping: #e67e22;
+            --ro: #e74c3c;
+            --bazaar: #3498db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header h1 i {
+            color: var(--warning);
+        }
+
+        .main-content {
+            padding: 30px;
+            display: grid;
+            gap: 30px;
+        }
+
+        /* Template Download Section */
+        .template-download-section {
+            margin-bottom: 20px;
+        }
+
+        .template-download-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .template-download-header {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .template-download-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .template-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .template-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            min-width: 180px;
+            justify-content: center;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .template-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .template-btn.uom-btn {
+            background: linear-gradient(135deg, var(--uom), #16a085);
+            color: white;
+        }
+
+        .template-btn.ro-btn {
+            background: linear-gradient(135deg, var(--ro), #c0392b);
+            color: white;
+        }
+
+        .template-btn.bazaar-btn {
+            background: linear-gradient(135deg, var(--bazaar), #2980b9);
+            color: white;
+        }
+
+        .template-btn i {
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--light);
+            padding: 20px;
+            border-bottom: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-header h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .upload-card {
+            border: 3px dashed;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: #f8fafc;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .upload-card.cfa {
+            border-color: var(--secondary);
+        }
+
+        .upload-card.current {
+            border-color: var(--success);
+        }
+
+        .upload-card.order {
+            border-color: var(--order);
+        }
+
+        .upload-card.uom {
+            border-color: var(--uom);
+        }
+
+        .upload-card.mapping {
+            border-color: var(--mapping);
+        }
+
+        .upload-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .upload-card.cfa i { color: var(--secondary); }
+        .upload-card.current i { color: var(--success); }
+        .upload-card.order i { color: var(--order); }
+        .upload-card.uom i { color: var(--uom); }
+        .upload-card.mapping i { color: var(--mapping); }
+
+        .upload-card h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .upload-card p {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            display: none;
+        }
+
+        .upload-card label {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .file-info {
+            margin-top: auto;
+            padding: 6px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .download-btn {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: var(--uom);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #148f77;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #219a52);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+        }
+
+        .btn-order {
+            background: linear-gradient(135deg, var(--order), #8e44ad);
+            color: white;
+        }
+
+        .btn-uom {
+            background: linear-gradient(135deg, var(--uom), #16a085);
+            color: white;
+        }
+
+        .btn-mapping {
+            background: linear-gradient(135deg, var(--mapping), #d35400);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .status-bar {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--light);
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 130px;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.3s;
+            position: relative;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--secondary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        .tab-pane {
+            display: none;
+            padding: 15px;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .data-table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .data-table thead {
+            position: sticky;
+            top: 0;
+            background: var(--primary);
+            color: white;
+            z-index: 10;
+        }
+
+        .data-table th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .data-table td {
+            padding: 10px 8px;
+            border-right: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-high {
+            background-color: #ffeaea !important;
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .status-medium {
+            background-color: #fff4e6 !important;
+            font-weight: bold;
+            color: var(--warning);
+        }
+
+        .status-low {
+            background-color: #e8f7ef !important;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .order-cell {
+            background-color: #f3e8ff !important;
+            font-weight: bold;
+            color: var(--order);
+        }
+
+        .uom-cell {
+            background-color: #e8f6f3 !important;
+            color: var(--uom);
+            font-weight: bold;
+        }
+
+        .intransit-cell {
+            background-color: #e8f4fc !important;
+            color: var(--secondary);
+        }
+
+        .mapping-cell {
+            background-color: #fef5e7 !important;
+            color: var(--mapping);
+            font-weight: bold;
+        }
+
+        .positive {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .negative {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .stat-card.cfa { border-color: var(--secondary); }
+        .stat-card.current { border-color: var(--success); }
+        .stat-card.order { border-color: var(--order); }
+        .stat-card.uom { border-color: var(--uom); }
+        .stat-card.combined { border-color: var(--warning); }
+        .stat-card.mapping { border-color: var(--mapping); }
+
+        .stat-card h5 {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: var(--mapping);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .mapping-instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--mapping);
+        }
+
+        .mapping-instructions p {
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .mapping-table th {
+            background: var(--light);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid #ddd;
+        }
+
+        .mapping-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mapping-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .mapping-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mapping-select:hover {
+            border-color: var(--mapping);
+        }
+
+        .mapping-select:focus {
+            outline: none;
+            border-color: var(--mapping);
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+
+        .required-column {
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .optional-column {
+            font-style: italic;
+            color: #666;
+        }
+
+        .sample-data {
+            margin-top: 25px;
+        }
+
+        .sample-data h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sample-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .sample-table th {
+            background: #f1f8ff;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            font-weight: 600;
+        }
+
+        .sample-table td {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .preview-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .preview-container h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .preview-text {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            border: 1px solid #e0e0e0;
+        }
+
+        .file-header-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 0.8rem;
+        }
+
+        .header-badge {
+            background: #e8f4fc;
+            color: var(--secondary);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .download-template-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: var(--uom);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .download-template-btn:hover {
+            background: #148f77;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .template-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .template-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .tab-btn {
+                min-width: 110px;
+                padding: 12px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-boxes"></i> Servo Advanced Stock Management</h1>
+            <p>Import CFA, Current Stock, Order Requirements & UOM Data | Auto Lube House</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Template Download Section -->
+            <div class="template-download-section">
+                <div class="template-download-card">
+                    <div class="template-download-header">
+                        <i class="fas fa-download"></i>
+                        <h3>Download Files</h3>
+                    </div>
+                    <div class="template-buttons">
+                        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTbNbnyjUNDjhYoRtaO_CS76zmYFhlVii5U9B3monkgWvQe1DLapRSd_LPxNigKekRAnJyvPs6jRUxS/pub?output=xlsx" class="template-btn ro-btn" target="_blank">
+                            <i class="fas fa-file-excel"></i> Download RO Requirement
+                        </a>
+                        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQXzOaktr9KUZFyptM_hBblGuPuZAYiFCBuDEWy07Ph-CZPjTghFxw_PKlgtz-X815VSWGLiHDKHayn/pub?output=xlsx" class="template-btn bazaar-btn" target="_blank">
+                            <i class="fas fa-file-excel"></i> Download Bazaar Requirement
+                        </a>
+						<a href="https://alh-5.github.io/alh/Advance Stock/UOM.xlsx" class="template-btn uom-btn" target="_blank">
+                            <i class="fas fa-file-excel"></i> Download UOM
+                        </a>
+						<a href="https://alh-5.github.io/alh/Stock Available from Not Received physical product/Current Stock.xlsx" class="template-btn uom-btn" target="_blank">
+                            <i class="fas fa-file-excel"></i> Download Current Stock
+                        </a>
+												
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-file-upload"></i>
+                    <h3>Upload Excel Files</h3>
+                </div>
+                <div class="upload-grid">
+                    <div class="upload-card cfa" id="cfaUploadArea">
+                        <i class="fas fa-warehouse"></i>
+                        <h4>CFA Stock Data</h4>
+                        <p>SKU Code, SKU Name, Location, Unrestricted, Intransit</p>
+                        <div class="file-info" id="cfaFileInfo">
+                            <i class="fas fa-info-circle"></i> No file
+                        </div>
+                        <input type="file" id="cfaUpload" class="file-input" accept=".xlsx, .xls, .csv">
+                        <label for="cfaUpload"></label>
+                    </div>
+
+                    <div class="upload-card current" id="currentUploadArea">
+                        <i class="fas fa-box-open"></i>
+                        <h4>Current Stock Data</h4>
+                        <p>SKU Code, SKU Name, Quantity (duplicates will be summed)</p>
+                        <div class="file-info" id="currentFileInfo">
+                            <i class="fas fa-info-circle"></i> No file
+                        </div>
+                        <input type="file" id="currentUpload" class="file-input" accept=".xlsx, .xls, .csv">
+                        <label for="currentUpload"></label>
+                    </div>
+
+                    <div class="upload-card order" id="orderUploadArea">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>Order Requirements</h4>
+                        <p>SKU Code, SKU Name, Order Requirement (duplicates will be summed)</p>
+                        <div class="file-info" id="orderFileInfo">
+                            <i class="fas fa-info-circle"></i> No file
+                        </div>
+                        <input type="file" id="orderUpload" class="file-input" accept=".xlsx, .xls, .csv">
+                        <label for="orderUpload"></label>
+                    </div>
+
+                    <div class="upload-card uom" id="uomUploadArea">
+                        <i class="fas fa-balance-scale"></i>
+                        <h4>UOM Data</h4>
+                        <p>SKU Code, SKU Name, UOM</p>
+                        <div class="file-info" id="uomFileInfo">
+                            <i class="fas fa-info-circle"></i> No file
+                        </div>
+                        <input type="file" id="uomUpload" class="file-input" accept=".xlsx, .xls, .csv">
+                        <label for="uomUpload"></label>
+                    </div>
+
+                    <div class="upload-card mapping" id="mappingCard">
+                        <i class="fas fa-exchange-alt"></i>
+                        <h4>Column Mapping</h4>
+                        <p>Map your Excel columns to required fields</p>
+                        <button class="btn btn-mapping" onclick="showMappingModal('all')" style="margin-top: 10px; padding: 8px 16px; font-size: 0.9rem;">
+                            <i class="fas fa-map-marked-alt"></i> Configure Mapping
+                        </button>
+                        <div class="file-info" id="mappingStatus">
+                            <i class="fas fa-info-circle"></i> No mapping configured
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="statsSection" style="display: none;">
+                <div class="stat-card cfa">
+                    <h5><i class="fas fa-warehouse"></i> CFA Stock</h5>
+                    <div class="stat-value" id="cfaStats">0</div>
+                </div>
+                <div class="stat-card current">
+                    <h5><i class="fas fa-box-open"></i> Current Stock</h5>
+                    <div class="stat-value" id="currentStats">0</div>
+                </div>
+                <div class="stat-card order">
+                    <h5><i class="fas fa-shopping-cart"></i> Order Requirements</h5>
+                    <div class="stat-value" id="orderStats">0</div>
+                </div>
+                <div class="stat-card uom">
+                    <h5><i class="fas fa-balance-scale"></i> UOM Data</h5>
+                    <div class="stat-value" id="uomStats">0</div>
+                </div>
+                <div class="stat-card mapping">
+                    <h5><i class="fas fa-exchange-alt"></i> Mapping</h5>
+                    <div class="stat-value" id="mappingStats">Default</div>
+                </div>
+                <div class="stat-card combined">
+                    <h5><i class="fas fa-calculator"></i> Purchase Items</h5>
+                    <div class="stat-value" id="purchaseStats">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="combineBtn" class="btn btn-primary" onclick="combineAndCalculate()" disabled>
+                    <i class="fas fa-calculator"></i> Combine & Calculate
+                </button>
+                <button id="exportBtn" class="btn btn-success" onclick="exportToExcel()" disabled>
+                    <i class="fas fa-file-export"></i> Export Full Report
+                </button>
+                <button class="btn btn-mapping" onclick="showMappingModal('all')">
+                    <i class="fas fa-map-marked-alt"></i> Edit Mapping
+                </button>
+                <button class="btn btn-uom" onclick="viewUOMData()" id="viewUOMBtn" disabled>
+                    <i class="fas fa-eye"></i> View UOM Data
+                </button>
+                <button class="btn btn-danger" onclick="clearAllData()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+
+            <div class="status-bar">
+                <i class="fas fa-info-circle status-icon"></i>
+                <div class="status-text" id="statusMessage">
+                    Upload Excel files and map columns if needed
+                </div>
+            </div>
+
+            <div class="data-display card" style="display: none;" id="dataDisplay">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('combined')">
+                        <i class="fas fa-layer-group"></i> Combined Analysis
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('order-analysis')">
+                        <i class="fas fa-shopping-cart"></i> Order Analysis
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('purchase')">
+                        <i class="fas fa-truck"></i> Purchase Requirements
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('cfa')">
+                        <i class="fas fa-warehouse"></i> CFA Stock
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('current')">
+                        <i class="fas fa-box-open"></i> Current Stock
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('orders')">
+                        <i class="fas fa-list-alt"></i> Order Data
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('uom')">
+                        <i class="fas fa-balance-scale"></i> UOM Data
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('mapping')">
+                        <i class="fas fa-exchange-alt"></i> Current Mapping
+                    </button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="combined-tab" class="tab-pane active">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>Location</th>
+                                        <th>UOM</th>
+                                        <th>Unrestricted</th>
+                                        <th>Intransit</th>
+                                        <th>CFA Total</th>
+                                        <th>Current Stock</th>
+                                        <th>Order Requirement</th>
+                                        <th>Stock Deficit</th>
+                                        <th>Fulfillment %</th>
+                                        <th>Priority</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="combinedTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="order-analysis-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>UOM</th>
+                                        <th>Total CFA Stock</th>
+                                        <th>Total Current Stock</th>
+                                        <th>Order Requirement</th>
+                                        <th>Stock Deficit</th>
+                                        <th>Fulfillment %</th>
+                                        <th>Priority</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderAnalysisTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="purchase-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>Location</th>
+                                        <th>UOM</th>
+                                        <th>Current Stock</th>
+                                        <th>Order Requirement</th>
+                                        <th>Required Purchase</th>
+                                        <th>Suggested Order Qty</th>
+                                        <th>Lead Time Days</th>
+                                        <th>Action Required</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchaseTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="cfa-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>Location</th>
+                                        <th>Unrestricted</th>
+                                        <th>Intransit</th>
+                                        <th>Total CFA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cfaTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="current-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>Quantity</th>
+                                        <th>Status</th>
+                                        <th>Original Lines</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="currentTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="orders-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>Order Requirement</th>
+                                        <th>Order Status</th>
+                                        <th>Original Lines</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="uom-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU Code</th>
+                                        <th>SKU Name</th>
+                                        <th>UOM</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="uomTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="mapping-tab" class="tab-pane">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>File Type</th>
+                                        <th>Required Field</th>
+                                        <th>Mapped Column</th>
+                                        <th>Sample Value</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mappingTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="controls" style="margin-top: 20px;">
+                            <button class="btn btn-mapping" onclick="showMappingModal('all')">
+                                <i class="fas fa-edit"></i> Edit Mapping
+                            </button>
+                            <button class="btn btn-primary" onclick="applyCurrentMapping()">
+                                <i class="fas fa-sync-alt"></i> Re-apply Mapping
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mapping Modal -->
+        <div id="mappingModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-map-marked-alt"></i> Column Mapping</h3>
+                    <button class="close-modal" onclick="closeMappingModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                                        
+                    <div id="mappingTabs" style="margin-bottom: 20px;">
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 15px;">
+                            <button class="tab-btn" onclick="showMappingTab('cfa')" style="min-width: 100px; padding: 10px;">
+                                <i class="fas fa-warehouse"></i> CFA
+                            </button>
+                            <button class="tab-btn" onclick="showMappingTab('current')" style="min-width: 100px; padding: 10px;">
+                                <i class="fas fa-box-open"></i> Current
+                            </button>
+                            <button class="tab-btn" onclick="showMappingTab('order')" style="min-width: 100px; padding: 10px;">
+                                <i class="fas fa-shopping-cart"></i> Order
+                            </button>
+                            <button class="tab-btn" onclick="showMappingTab('uom')" style="min-width: 100px; padding: 10px;">
+                                <i class="fas fa-balance-scale"></i> UOM
+                            </button>
+                        </div>
+                        
+                        <div id="cfa-mapping-tab" class="mapping-tab">
+                            <h4><i class="fas fa-warehouse"></i> CFA Stock Mapping</h4>
+                            <div class="file-header-info" id="cfaHeadersInfo">
+                                No CFA file uploaded yet
+                            </div>
+                            <table class="mapping-table">
+                                <thead>
+                                    <tr>
+                                        <th width="30%">Required Field</th>
+                                        <th width="40%">Map to Column</th>
+                                        <th width="30%">Sample Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cfaMappingTable"></tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="current-mapping-tab" class="mapping-tab" style="display: none;">
+                            <h4><i class="fas fa-box-open"></i> Current Stock Mapping</h4>
+                            <div class="file-header-info" id="currentHeadersInfo">
+                                No Current file uploaded yet
+                            </div>
+                            <table class="mapping-table">
+                                <thead>
+                                    <tr>
+                                        <th width="30%">Required Field</th>
+                                        <th width="40%">Map to Column</th>
+                                        <th width="30%">Sample Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="currentMappingTable"></tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="order-mapping-tab" class="mapping-tab" style="display: none;">
+                            <h4><i class="fas fa-shopping-cart"></i> Order Requirements Mapping</h4>
+                            <div class="file-header-info" id="orderHeadersInfo">
+                                No Order file uploaded yet
+                            </div>
+                            <table class="mapping-table">
+                                <thead>
+                                    <tr>
+                                        <th width="30%">Required Field</th>
+                                        <th width="40%">Map to Column</th>
+                                        <th width="30%">Sample Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderMappingTable"></tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="uom-mapping-tab" class="mapping-tab" style="display: none;">
+                            <h4><i class="fas fa-balance-scale"></i> UOM Data Mapping</h4>
+                            <div class="file-header-info" id="uomHeadersInfo">
+                                No UOM file uploaded yet
+                            </div>
+                            <table class="mapping-table">
+                                <thead>
+                                    <tr>
+                                        <th width="30%">Required Field</th>
+                                        <th width="40%">Map to Column</th>
+                                        <th width="30%">Sample Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="uomMappingTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-container">
+                        <h4><i class="fas fa-eye"></i> Mapping Preview</h4>
+                        <div class="preview-text" id="mappingPreview">
+                            No mapping configuration yet. Upload files and map columns.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" onclick="resetMapping()">
+                        <i class="fas fa-undo"></i> Reset to Default
+                    </button>
+                    <button class="btn btn-primary" onclick="saveMapping()">
+                        <i class="fas fa-save"></i> Save & Apply Mapping
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Stock & Order Management System &copy; 2026 | Complete Purchase Planning Solution with SKU Code</p>
+        </div>
+    </div>
+
+    <script>
+        let cfaData = [];
+        let currentData = [];
+        let currentRawData = [];
+        let orderData = [];
+        let orderRawData = [];
+        let uomData = [];
+        let combinedData = [];
+        let purchaseData = [];
+        let orderAnalysisData = [];
+        let fileDialogOpen = false;
+        
+        // Mapping configuration
+        let mappingConfig = {
+            cfa: {
+                'sku code': 'sku code',
+                'sku name': 'sku name',
+                'location': 'location',
+                'unrestricted': 'unrestricted',
+                'intransit': 'intransit'
+            },
+            current: {
+                'sku code': 'sku code',
+                'sku name': 'sku name',
+                'quantity': 'quantity'
+            },
+            order: {
+                'sku code': 'sku code',
+                'sku name': 'sku name',
+                'order requirement': 'order requirement'
+            },
+            uom: {
+                'sku code': 'sku code',
+                'sku name': 'sku name',
+                'uom': 'uom'
+            }
+        };
+        
+        // Store raw uploaded data before mapping
+        let rawCFAData = [];
+        let rawCurrentData = [];
+        let rawOrderData = [];
+        let rawUOMData = [];
+        
+        // Store file headers
+        let cfaHeaders = [];
+        let currentHeaders = [];
+        let orderHeaders = [];
+        let uomHeaders = [];
+
+        function updateStatus(message, type = 'info') {
+            const statusElement = document.getElementById('statusMessage');
+            const iconElement = statusElement.parentElement.querySelector('.status-icon');
+            
+            statusElement.textContent = message;
+            
+            const icons = {
+                'info': 'fa-info-circle',
+                'success': 'fa-check-circle',
+                'warning': 'fa-exclamation-triangle',
+                'error': 'fa-exclamation-circle'
+            };
+            
+            const colors = {
+                'info': '#3498db',
+                'success': '#27ae60',
+                'warning': '#f39c12',
+                'error': '#e74c3c'
+            };
+            
+            iconElement.className = `fas ${icons[type]} status-icon`;
+            iconElement.style.color = colors[type];
+        }
+
+        function updateStats() {
+            document.getElementById('cfaStats').textContent = cfaData.length;
+            document.getElementById('currentStats').textContent = currentData.length;
+            document.getElementById('orderStats').textContent = orderData.length;
+            document.getElementById('uomStats').textContent = uomData.length;
+            document.getElementById('purchaseStats').textContent = purchaseData.length;
+            
+            // Update mapping stats
+            let customMappings = 0;
+            for (const fileType in mappingConfig) {
+                for (const field in mappingConfig[fileType]) {
+                    if (mappingConfig[fileType][field] !== field) {
+                        customMappings++;
+                    }
+                }
+            }
+            document.getElementById('mappingStats').textContent = customMappings > 0 ? `${customMappings} custom` : 'Default';
+            
+            if (cfaData.length > 0 || currentData.length > 0 || orderData.length > 0 || uomData.length > 0) {
+                document.getElementById('statsSection').style.display = 'grid';
+            }
+        }
+
+        function formatDecimal(value) {
+            const num = parseFloat(value) || 0;
+            return Math.round(num * 10) / 10;
+        }
+
+        function formatDecimalDisplay(value) {
+            const num = parseFloat(value) || 0;
+            return num.toFixed(1);
+        }
+
+        function readExcelFile(file, callback) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Get all data including headers
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (jsonData.length === 0) {
+                        callback(new Error('File is empty'), null, null);
+                        return;
+                    }
+                    
+                    // Get headers (first row)
+                    const headers = jsonData[0]?.map(h => h ? h.toString().trim() : '') || [];
+                    
+                    // Convert to array of objects
+                    const rows = [];
+                    for (let i = 1; i < jsonData.length; i++) {
+                        const row = jsonData[i];
+                        if (!row || row.length === 0) continue;
+                        
+                        const obj = {};
+                        headers.forEach((header, index) => {
+                            if (header && row[index] !== undefined && row[index] !== null) {
+                                obj[header] = row[index];
+                            }
+                        });
+                        
+                        // Only add if there's any data
+                        if (Object.keys(obj).length > 0) {
+                            rows.push(obj);
+                        }
+                    }
+                    
+                    callback(null, rows, headers);
+                } catch (error) {
+                    callback(error, null, null);
+                }
+            };
+            
+            reader.onerror = function(error) {
+                callback(error, null, null);
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function applyMapping(data, fileType) {
+            const mapping = mappingConfig[fileType];
+            const mappedData = [];
+            
+            data.forEach(row => {
+                const mappedRow = {};
+                
+                for (const requiredField in mapping) {
+                    const sourceColumn = mapping[requiredField];
+                    if (sourceColumn in row) {
+                        mappedRow[requiredField] = row[sourceColumn];
+                    } else {
+                        // If mapped column doesn't exist, try to find by case-insensitive match
+                        const lowerSource = sourceColumn.toLowerCase();
+                        let found = false;
+                        for (const actualCol in row) {
+                            if (actualCol.toLowerCase() === lowerSource) {
+                                mappedRow[requiredField] = row[actualCol];
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            mappedRow[requiredField] = '';
+                        }
+                    }
+                }
+                
+                // Only add if SKU Code exists
+                if (mappedRow['sku code'] && mappedRow['sku code'].toString().trim() !== '') {
+                    mappedData.push(mappedRow);
+                }
+            });
+            
+            return mappedData;
+        }
+
+        function combineDuplicateSKUs(data, quantityField) {
+            const combinedMap = new Map();
+            const originalLinesCount = new Map();
+            
+            data.forEach(item => {
+                const skuCode = item['sku code'].toString().trim();
+                const quantity = formatDecimal(item[quantityField] || 0);
+                const skuName = item['sku name'];
+                
+                if (combinedMap.has(skuCode)) {
+                    const existing = combinedMap.get(skuCode);
+                    existing[quantityField] += quantity;
+                    originalLinesCount.set(skuCode, originalLinesCount.get(skuCode) + 1);
+                    
+                    if (existing['sku name'] !== skuName) {
+                        console.log(`Warning: SKU ${skuCode} has different names: "${existing['sku name']}" and "${skuName}"`);
+                    }
+                } else {
+                    combinedMap.set(skuCode, {
+                        'sku code': skuCode,
+                        'sku name': skuName,
+                        [quantityField]: quantity
+                    });
+                    originalLinesCount.set(skuCode, 1);
+                }
+            });
+            
+            const combinedArray = Array.from(combinedMap.values());
+            combinedArray.forEach(item => {
+                item.originalLines = originalLinesCount.get(item['sku code']);
+            });
+            
+            return combinedArray;
+        }
+
+        function handleCFAUpload(event) {
+            if (fileDialogOpen) return;
+            fileDialogOpen = true;
+            
+            const file = event.target.files[0];
+            if (!file) {
+                fileDialogOpen = false;
+                return;
+            }
+            
+            const fileInfo = document.getElementById('cfaFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Reading...`;
+            
+            readExcelFile(file, (error, data, headers) => {
+                fileDialogOpen = false;
+                
+                if (error) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> Error`;
+                    updateStatus(`Error reading CFA file: ${error.message}`, 'error');
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> No data`;
+                    updateStatus('CFA file is empty', 'error');
+                    return;
+                }
+                
+                // Store raw data and headers
+                rawCFAData = data;
+                cfaHeaders = headers;
+                
+                // Show mapping modal for CFA
+                showMappingModal('cfa');
+                
+                updateStatus(`CFA file loaded: ${data.length} rows, ${headers.length} columns`, 'success');
+            });
+        }
+
+        function handleCurrentUpload(event) {
+            if (fileDialogOpen) return;
+            fileDialogOpen = true;
+            
+            const file = event.target.files[0];
+            if (!file) {
+                fileDialogOpen = false;
+                return;
+            }
+            
+            const fileInfo = document.getElementById('currentFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Reading...`;
+            
+            readExcelFile(file, (error, data, headers) => {
+                fileDialogOpen = false;
+                
+                if (error) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> Error`;
+                    updateStatus(`Error reading Current file: ${error.message}`, 'error');
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> No data`;
+                    updateStatus('Current file is empty', 'error');
+                    return;
+                }
+                
+                // Store raw data and headers
+                rawCurrentData = data;
+                currentHeaders = headers;
+                
+                // Show mapping modal for Current
+                showMappingModal('current');
+                
+                updateStatus(`Current file loaded: ${data.length} rows, ${headers.length} columns`, 'success');
+            });
+        }
+
+        function handleOrderUpload(event) {
+            if (fileDialogOpen) return;
+            fileDialogOpen = true;
+            
+            const file = event.target.files[0];
+            if (!file) {
+                fileDialogOpen = false;
+                return;
+            }
+            
+            const fileInfo = document.getElementById('orderFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Reading...`;
+            
+            readExcelFile(file, (error, data, headers) => {
+                fileDialogOpen = false;
+                
+                if (error) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> Error`;
+                    updateStatus(`Error reading Order file: ${error.message}`, 'error');
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> No data`;
+                    updateStatus('Order file is empty', 'error');
+                    return;
+                }
+                
+                // Store raw data and headers
+                rawOrderData = data;
+                orderHeaders = headers;
+                
+                // Show mapping modal for Order
+                showMappingModal('order');
+                
+                updateStatus(`Order file loaded: ${data.length} rows, ${headers.length} columns`, 'success');
+            });
+        }
+
+        function handleUOMUpload(event) {
+            if (fileDialogOpen) return;
+            fileDialogOpen = true;
+            
+            const file = event.target.files[0];
+            if (!file) {
+                fileDialogOpen = false;
+                return;
+            }
+            
+            const fileInfo = document.getElementById('uomFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Reading...`;
+            
+            readExcelFile(file, (error, data, headers) => {
+                fileDialogOpen = false;
+                
+                if (error) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> Error`;
+                    updateStatus(`Error reading UOM file: ${error.message}`, 'error');
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    fileInfo.innerHTML = `<i class="fas fa-times-circle" style="color: #e74c3c;"></i> No data`;
+                    updateStatus('UOM file is empty', 'error');
+                    return;
+                }
+                
+                // Store raw data and headers
+                rawUOMData = data;
+                uomHeaders = headers;
+                
+                // Show mapping modal for UOM
+                showMappingModal('uom');
+                
+                updateStatus(`UOM file loaded: ${data.length} rows, ${headers.length} columns`, 'success');
+            });
+        }
+
+        function processCFAData() {
+            if (rawCFAData.length === 0) return;
+            
+            // Apply mapping
+            const mappedData = applyMapping(rawCFAData, 'cfa');
+            
+            // Combine data by location (same logic as before but using mapped data)
+            const combinedMap = new Map();
+            
+            mappedData.forEach(item => {
+                const key = `${item['sku code']}_${item['location']}`;
+                const unrestricted = formatDecimal(item.unrestricted);
+                const intransit = formatDecimal(item.intransit);
+                
+                if (combinedMap.has(key)) {
+                    const existing = combinedMap.get(key);
+                    existing.unrestricted += unrestricted;
+                    existing.intransit += intransit;
+                } else {
+                    combinedMap.set(key, {
+                        'sku code': item['sku code'].toString().trim(),
+                        'sku name': item['sku name'],
+                        'location': item['location'],
+                        'unrestricted': unrestricted,
+                        'intransit': intransit
+                    });
+                }
+            });
+            
+            cfaData = Array.from(combinedMap.values());
+            
+            const fileInfo = document.getElementById('cfaFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-check-circle" style="color: #27ae60;"></i> ${cfaData.length} items`;
+            
+            updateStats();
+            displayCFAData();
+            checkReadyState();
+            
+            updateStatus(`CFA Stock processed: ${cfaData.length} items`, 'success');
+        }
+
+        function processCurrentData() {
+            if (rawCurrentData.length === 0) return;
+            
+            // Apply mapping
+            const mappedData = applyMapping(rawCurrentData, 'current');
+            
+            // Store raw mapped data
+            currentRawData = mappedData.map(item => ({
+                'sku code': item['sku code'].toString().trim(),
+                'sku name': item['sku name'],
+                'quantity': formatDecimal(item.quantity)
+            }));
+            
+            // Combine duplicate SKUs
+            currentData = combineDuplicateSKUs(currentRawData, 'quantity');
+            
+            const fileInfo = document.getElementById('currentFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-check-circle" style="color: #27ae60;"></i> ${currentData.length} items (from ${currentRawData.length} lines)`;
+            
+            updateStats();
+            displayCurrentData();
+            checkReadyState();
+            
+            updateStatus(`Current Stock processed: ${currentData.length} unique SKUs`, 'success');
+        }
+
+        function processOrderData() {
+            if (rawOrderData.length === 0) return;
+            
+            // Apply mapping
+            const mappedData = applyMapping(rawOrderData, 'order');
+            
+            // Store raw mapped data
+            orderRawData = mappedData.map(item => ({
+                'sku code': item['sku code'].toString().trim(),
+                'sku name': item['sku name'],
+                'order requirement': formatDecimal(item['order requirement'])
+            }));
+            
+            // Combine duplicate SKUs
+            orderData = combineDuplicateSKUs(orderRawData, 'order requirement');
+            
+            const fileInfo = document.getElementById('orderFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-check-circle" style="color: #27ae60;"></i> ${orderData.length} items (from ${orderRawData.length} lines)`;
+            
+            updateStats();
+            displayOrderData();
+            checkReadyState();
+            
+            updateStatus(`Order Requirements processed: ${orderData.length} unique SKUs`, 'success');
+        }
+
+        function processUOMData() {
+            if (rawUOMData.length === 0) return;
+            
+            // Apply mapping
+            const mappedData = applyMapping(rawUOMData, 'uom');
+            
+            uomData = mappedData.map(item => ({
+                'sku code': item['sku code'].toString().trim(),
+                'sku name': item['sku name'],
+                'uom': item.uom ? item.uom.toString().trim() : 'PCS'
+            }));
+            
+            const fileInfo = document.getElementById('uomFileInfo');
+            fileInfo.innerHTML = `<i class="fas fa-check-circle" style="color: #27ae60;"></i> ${uomData.length} items`;
+            
+            updateStats();
+            displayUOMData();
+            checkReadyState();
+            
+            updateStatus(`UOM Data processed: ${uomData.length} items`, 'success');
+        }
+
+        function showMappingModal(fileType = 'all') {
+            const modal = document.getElementById('mappingModal');
+            modal.style.display = 'flex';
+            
+            // Update headers info
+            updateHeadersInfo();
+            
+            // Build mapping tables
+            buildMappingTable('cfa', cfaHeaders);
+            buildMappingTable('current', currentHeaders);
+            buildMappingTable('order', orderHeaders);
+            buildMappingTable('uom', uomHeaders);
+            
+            // Show the requested tab
+            showMappingTab(fileType);
+            
+            // Update preview
+            updateMappingPreview();
+        }
+
+        function closeMappingModal() {
+            const modal = document.getElementById('mappingModal');
+            modal.style.display = 'none';
+        }
+
+        function showMappingTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.mapping-tab').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Show selected tab
+            const tabId = `${tabName}-mapping-tab`;
+            const tab = document.getElementById(tabId);
+            if (tab) {
+                tab.style.display = 'block';
+            }
+            
+            // Update tab buttons
+            document.querySelectorAll('[onclick^="showMappingTab"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeBtn = document.querySelector(`[onclick="showMappingTab('${tabName}')"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+
+        function updateHeadersInfo() {
+            document.getElementById('cfaHeadersInfo').innerHTML = 
+                cfaHeaders.length > 0 ? 
+                `File headers: ${cfaHeaders.map(h => `<span class="header-badge">${h}</span>`).join(' ')}` :
+                'No CFA file uploaded yet';
+                
+            document.getElementById('currentHeadersInfo').innerHTML = 
+                currentHeaders.length > 0 ? 
+                `File headers: ${currentHeaders.map(h => `<span class="header-badge">${h}</span>`).join(' ')}` :
+                'No Current file uploaded yet';
+                
+            document.getElementById('orderHeadersInfo').innerHTML = 
+                orderHeaders.length > 0 ? 
+                `File headers: ${orderHeaders.map(h => `<span class="header-badge">${h}</span>`).join(' ')}` :
+                'No Order file uploaded yet';
+                
+            document.getElementById('uomHeadersInfo').innerHTML = 
+                uomHeaders.length > 0 ? 
+                `File headers: ${uomHeaders.map(h => `<span class="header-badge">${h}</span>`).join(' ')}` :
+                'No UOM file uploaded yet';
+        }
+
+        function buildMappingTable(fileType, headers) {
+            const tableBody = document.getElementById(`${fileType}MappingTable`);
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            const mapping = mappingConfig[fileType];
+            const sampleData = getSampleData(fileType);
+            
+            for (const requiredField in mapping) {
+                const row = document.createElement('tr');
+                
+                // Required field name
+                const fieldCell = document.createElement('td');
+                fieldCell.innerHTML = `${requiredField} <span class="required-column">*</span>`;
+                
+                // Dropdown for mapping
+                const mapCell = document.createElement('td');
+                const select = document.createElement('select');
+                select.className = 'mapping-select';
+                select.dataset.fileType = fileType;
+                select.dataset.field = requiredField;
+                
+                // Add empty option
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = '-- Select Column --';
+                select.appendChild(emptyOption);
+                
+                // Add options from headers
+                headers.forEach(header => {
+                    if (header && header.trim() !== '') {
+                        const option = document.createElement('option');
+                        option.value = header;
+                        option.textContent = header;
+                        if (mapping[requiredField] === header) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    }
+                });
+                
+                // Also add the field itself as an option (for default)
+                if (!headers.includes(requiredField) && !headers.includes(mapping[requiredField])) {
+                    const option = document.createElement('option');
+                    option.value = requiredField;
+                    option.textContent = `${requiredField} (default)`;
+                    if (mapping[requiredField] === requiredField) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                }
+                
+                select.onchange = function() {
+                    mappingConfig[fileType][requiredField] = this.value;
+                    updateMappingPreview();
+                };
+                
+                mapCell.appendChild(select);
+                
+                // Sample value
+                const sampleCell = document.createElement('td');
+                if (sampleData && sampleData[requiredField] !== undefined) {
+                    sampleCell.textContent = sampleData[requiredField];
+                    sampleCell.title = sampleData[requiredField];
+                } else {
+                    sampleCell.textContent = 'No sample';
+                    sampleCell.className = 'optional-column';
+                }
+                
+                row.appendChild(fieldCell);
+                row.appendChild(mapCell);
+                row.appendChild(sampleCell);
+                tableBody.appendChild(row);
+            }
+        }
+
+        function getSampleData(fileType) {
+            let data = [];
+            switch(fileType) {
+                case 'cfa': data = rawCFAData; break;
+                case 'current': data = rawCurrentData; break;
+                case 'order': data = rawOrderData; break;
+                case 'uom': data = rawUOMData; break;
+            }
+            
+            if (data.length === 0) return null;
+            
+            // Return first non-empty row
+            return data[0];
+        }
+
+        function updateMappingPreview() {
+            const preview = document.getElementById('mappingPreview');
+            let previewText = '';
+            
+            for (const fileType in mappingConfig) {
+                previewText += `${fileType.toUpperCase()} MAPPING:\n`;
+                const mapping = mappingConfig[fileType];
+                for (const field in mapping) {
+                    previewText += `  ${field} → ${mapping[field]}\n`;
+                }
+                previewText += '\n';
+            }
+            
+            preview.textContent = previewText;
+        }
+
+        function saveMapping() {
+            // Process all data with new mapping
+            processCFAData();
+            processCurrentData();
+            processOrderData();
+            processUOMData();
+            
+            // Update mapping status
+            let customCount = 0;
+            for (const fileType in mappingConfig) {
+                for (const field in mappingConfig[fileType]) {
+                    if (mappingConfig[fileType][field] !== field) {
+                        customCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('mappingStatus').innerHTML = 
+                customCount > 0 ? 
+                `<i class="fas fa-check-circle" style="color: #27ae60;"></i> ${customCount} custom mappings` :
+                `<i class="fas fa-info-circle"></i> Using default mapping`;
+            
+            updateStats();
+            displayCurrentMapping();
+            
+            closeMappingModal();
+            updateStatus('Mapping applied successfully', 'success');
+        }
+
+        function resetMapping() {
+            if (confirm('Reset all mappings to default?')) {
+                mappingConfig = {
+                    cfa: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'location': 'location',
+                        'unrestricted': 'unrestricted',
+                        'intransit': 'intransit'
+                    },
+                    current: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'quantity': 'quantity'
+                    },
+                    order: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'order requirement': 'order requirement'
+                    },
+                    uom: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'uom': 'uom'
+                    }
+                };
+                
+                // Rebuild mapping tables
+                buildMappingTable('cfa', cfaHeaders);
+                buildMappingTable('current', currentHeaders);
+                buildMappingTable('order', orderHeaders);
+                buildMappingTable('uom', uomHeaders);
+                
+                updateMappingPreview();
+                updateStatus('Mapping reset to default', 'info');
+            }
+        }
+
+        function displayCurrentMapping() {
+            const tbody = document.getElementById('mappingTableBody');
+            tbody.innerHTML = '';
+            
+            const fileTypes = [
+                { type: 'cfa', name: 'CFA Stock', icon: 'fa-warehouse' },
+                { type: 'current', name: 'Current Stock', icon: 'fa-box-open' },
+                { type: 'order', name: 'Order Requirements', icon: 'fa-shopping-cart' },
+                { type: 'uom', name: 'UOM Data', icon: 'fa-balance-scale' }
+            ];
+            
+            fileTypes.forEach(fileType => {
+                const mapping = mappingConfig[fileType.type];
+                for (const field in mapping) {
+                    const row = document.createElement('tr');
+                    
+                    const isCustom = mapping[field] !== field;
+                    
+                    row.innerHTML = `
+                        <td><i class="fas ${fileType.icon}"></i> ${fileType.name}</td>
+                        <td>${field}</td>
+                        <td class="${isCustom ? 'mapping-cell' : ''}">${mapping[field]}</td>
+                        <td>${getSampleValue(fileType.type, field)}</td>
+                        <td class="${isCustom ? 'status-medium' : 'status-low'}">
+                            ${isCustom ? 'Custom' : 'Default'}
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function getSampleValue(fileType, field) {
+            let data = [];
+            switch(fileType) {
+                case 'cfa': data = rawCFAData; break;
+                case 'current': data = rawCurrentData; break;
+                case 'order': data = rawOrderData; break;
+                case 'uom': data = rawUOMData; break;
+            }
+            
+            if (data.length === 0) return 'N/A';
+            
+            const sample = data[0];
+            const mappedField = mappingConfig[fileType][field];
+            
+            if (sample && mappedField in sample) {
+                const value = sample[mappedField];
+                return value !== undefined && value !== null ? value.toString().substring(0, 20) : 'Empty';
+            }
+            
+            return 'Not found';
+        }
+
+        function applyCurrentMapping() {
+            // Reprocess all data with current mapping
+            processCFAData();
+            processCurrentData();
+            processOrderData();
+            processUOMData();
+            
+            updateStatus('Current mapping re-applied to all data', 'success');
+        }
+
+        // Existing functions (keep them but they will use the processed data)
+        function checkReadyState() {
+            const hasCFA = cfaData.length > 0;
+            const hasCurrent = currentData.length > 0;
+            const hasOrders = orderData.length > 0;
+            const hasUOM = uomData.length > 0;
+            
+            if (hasCFA && hasCurrent && hasOrders) {
+                document.getElementById('combineBtn').disabled = false;
+                document.getElementById('exportBtn').disabled = false;
+            }
+            
+            if (hasUOM) {
+                document.getElementById('viewUOMBtn').disabled = false;
+            }
+            
+            if (hasCFA || hasCurrent || hasOrders || hasUOM) {
+                document.getElementById('dataDisplay').style.display = 'block';
+            }
+        }
+
+        function displayCFAData() {
+            const tbody = document.getElementById('cfaTableBody');
+            tbody.innerHTML = '';
+            
+            cfaData.forEach(item => {
+                const total = (item.unrestricted || 0) + (item.intransit || 0);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item['sku code']}</td>
+                    <td>${item['sku name']}</td>
+                    <td>${item['location']}</td>
+                    <td>${formatDecimalDisplay(item.unrestricted || 0)}</td>
+                    <td>${formatDecimalDisplay(item.intransit || 0)}</td>
+                    <td><strong>${formatDecimalDisplay(total)}</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayCurrentData() {
+            const tbody = document.getElementById('currentTableBody');
+            tbody.innerHTML = '';
+            
+            currentData.forEach(item => {
+                const quantity = item.quantity || 0;
+                const status = quantity <= 0 ? 'Out of Stock' : 
+                             quantity < 10 ? 'Low Stock' : 'In Stock';
+                const statusClass = quantity <= 0 ? 'status-high' : 
+                                  quantity < 10 ? 'status-medium' : 'status-low';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item['sku code']}</td>
+                    <td>${item['sku name']}</td>
+                    <td><strong>${formatDecimalDisplay(quantity)}</strong></td>
+                    <td class="${statusClass}">${status}</td>
+                    <td>${item.originalLines || 1}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayOrderData() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            orderData.forEach(item => {
+                const orderQty = item['order requirement'] || 0;
+                const status = orderQty <= 0 ? 'No Order' : 
+                             orderQty < 10 ? 'Small Order' : 
+                             orderQty < 50 ? 'Medium Order' : 'Large Order';
+                const statusClass = orderQty <= 0 ? 'status-low' : 
+                                  orderQty < 10 ? 'status-medium' : 'status-high';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item['sku code']}</td>
+                    <td>${item['sku name']}</td>
+                    <td class="order-cell"><strong>${formatDecimalDisplay(orderQty)}</strong></td>
+                    <td class="${statusClass}">${status}</td>
+                    <td>${item.originalLines || 1}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayUOMData() {
+            const tbody = document.getElementById('uomTableBody');
+            tbody.innerHTML = '';
+            
+            uomData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item['sku code']}</td>
+                    <td>${item['sku name']}</td>
+                    <td class="uom-cell"><strong>${item.uom}</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewUOMData() {
+            if (uomData.length === 0) {
+                updateStatus('Please upload UOM file first', 'warning');
+                return;
+            }
+            
+            switchTab('uom');
+            updateStatus(`Viewing UOM data for ${uomData.length} items`, 'info');
+        }
+
+        function combineAndCalculate() {
+            if (cfaData.length === 0 || currentData.length === 0 || orderData.length === 0) {
+                updateStatus('Please upload CFA, Current, and Order files first', 'warning');
+                return;
+            }
+            
+            updateStatus('Performing comprehensive analysis...', 'info');
+            
+            const currentStockMap = new Map();
+            currentData.forEach(item => {
+                const skuCode = item['sku code'].toString().trim();
+                currentStockMap.set(skuCode, {
+                    name: item['sku name'],
+                    quantity: formatDecimal(item.quantity)
+                });
+            });
+            
+            const orderRequirementMap = new Map();
+            orderData.forEach(item => {
+                const skuCode = item['sku code'].toString().trim();
+                orderRequirementMap.set(skuCode, {
+                    name: item['sku name'],
+                    requirement: formatDecimal(item['order requirement'])
+                });
+            });
+            
+            const uomMap = new Map();
+            uomData.forEach(item => {
+                const skuCode = item['sku code'].toString().trim();
+                uomMap.set(skuCode, item.uom);
+            });
+            
+            combinedData = cfaData.map(cfaItem => {
+                const skuCode = cfaItem['sku code'].toString().trim();
+                const currentStock = currentStockMap.get(skuCode);
+                const orderRequirement = orderRequirementMap.get(skuCode);
+                const uom = uomMap.get(skuCode) || 'PCS';
+                
+                const unrestricted = formatDecimal(cfaItem.unrestricted);
+                const intransit = formatDecimal(cfaItem.intransit);
+                const cfaTotal = unrestricted + intransit;
+                const currentQuantity = currentStock ? formatDecimal(currentStock.quantity) : 0;
+                const orderQty = orderRequirement ? formatDecimal(orderRequirement.requirement) : 0;
+                
+                const stockDeficit = Math.max(0, orderQty - currentQuantity);
+                
+                let fulfillmentPercent = 0;
+                if (orderQty > 0) {
+                    fulfillmentPercent = Math.min(100, (currentQuantity / orderQty) * 100);
+                }
+                
+                let priority = 'Low';
+                if (orderQty > 0) {
+                    const deficitPercent = (stockDeficit / orderQty) * 100;
+                    if (deficitPercent > 50) priority = 'High';
+                    else if (deficitPercent > 20) priority = 'Medium';
+                }
+                
+                return {
+                    'SKU Code': skuCode,
+                    'SKU Name': cfaItem['sku name'],
+                    'Location': cfaItem['location'],
+                    'UOM': uom,
+                    'Unrestricted': unrestricted,
+                    'Intransit': intransit,
+                    'CFA Total': cfaTotal,
+                    'Current Stock': currentQuantity,
+                    'Order Requirement': orderQty,
+                    'Stock Deficit': stockDeficit,
+                    'Fulfillment %': fulfillmentPercent.toFixed(1),
+                    'Priority': priority
+                };
+            });
+            
+            generatePurchaseData();
+            generateOrderAnalysis();
+            
+            displayCombinedData();
+            displayPurchaseData();
+            displayOrderAnalysis();
+            displayCurrentMapping();
+            
+            updateStats();
+            
+            updateStatus(`Analysis complete! ${purchaseData.length} items require purchase`, 'success');
+        }
+
+        function generatePurchaseData() {
+            purchaseData = combinedData
+                .filter(item => item['Stock Deficit'] > 0)
+                .map(item => {
+                    const requiredPurchase = formatDecimal(item['Stock Deficit']);
+                    const suggestedOrder = formatDecimal(Math.ceil(requiredPurchase * 1.2));
+                    
+                    let leadTime = 7;
+                    if (requiredPurchase > 100) leadTime = 14;
+                    else if (requiredPurchase > 50) leadTime = 10;
+                    
+                    let action = 'Normal Procurement';
+                    if (item['Priority'] === 'High') action = 'Urgent - Expedite';
+                    else if (item['Priority'] === 'Medium') action = 'Priority Order';
+                    
+                    return {
+                        'SKU Code': item['SKU Code'],
+                        'SKU Name': item['SKU Name'],
+                        'Location': item['Location'],
+                        'UOM': item['UOM'],
+                        'Current Stock': item['Current Stock'],
+                        'Order Requirement': item['Order Requirement'],
+                        'Required Purchase': requiredPurchase,
+                        'Suggested Order Qty': suggestedOrder,
+                        'Lead Time Days': leadTime,
+                        'Action Required': action
+                    };
+                })
+                .sort((a, b) => {
+                    const priorityOrder = { 'Urgent - Expedite': 3, 'Priority Order': 2, 'Normal Procurement': 1 };
+                    if (priorityOrder[b['Action Required']] !== priorityOrder[a['Action Required']]) {
+                        return priorityOrder[b['Action Required']] - priorityOrder[a['Action Required']];
+                    }
+                    return b['Required Purchase'] - a['Required Purchase'];
+                });
+        }
+
+        function generateOrderAnalysis() {
+            const skuMap = new Map();
+            
+            combinedData.forEach(item => {
+                const skuCode = item['SKU Code'];
+                const cfaStock = formatDecimal(item['CFA Total']);
+                const currentStock = formatDecimal(item['Current Stock']);
+                const orderRequirement = formatDecimal(item['Order Requirement']);
+                
+                if (!skuMap.has(skuCode)) {
+                    skuMap.set(skuCode, {
+                        'SKU Code': skuCode,
+                        'SKU Name': item['SKU Name'],
+                        'UOM': item['UOM'],
+                        'Total CFA Stock': 0,
+                        'Total Current Stock': 0,
+                        'Order Requirement': 0,
+                        locations: []
+                    });
+                }
+                
+                const skuInfo = skuMap.get(skuCode);
+                skuInfo['Total CFA Stock'] += cfaStock;
+                skuInfo['Total Current Stock'] += currentStock;
+                skuInfo['Order Requirement'] = Math.max(skuInfo['Order Requirement'], orderRequirement);
+                skuInfo.locations.push(item['Location']);
+            });
+            
+            orderAnalysisData = Array.from(skuMap.values()).map(skuInfo => {
+                const totalCFAStock = formatDecimal(skuInfo['Total CFA Stock']);
+                const totalCurrentStock = formatDecimal(skuInfo['Total Current Stock']);
+                const orderRequirement = formatDecimal(skuInfo['Order Requirement']);
+                
+                const stockDeficit = Math.max(0, orderRequirement - totalCurrentStock);
+                
+                let fulfillmentPercent = 0;
+                if (orderRequirement > 0) {
+                    fulfillmentPercent = Math.min(100, (totalCurrentStock / orderRequirement) * 100);
+                }
+                
+                let priority = 'Low';
+                if (orderRequirement > 0) {
+                    const deficitPercent = (stockDeficit / orderRequirement) * 100;
+                    if (deficitPercent > 50) priority = 'High';
+                    else if (deficitPercent > 20) priority = 'Medium';
+                }
+                
+                return {
+                    'SKU Code': skuInfo['SKU Code'],
+                    'SKU Name': skuInfo['SKU Name'],
+                    'UOM': skuInfo['UOM'],
+                    'Total CFA Stock': totalCFAStock,
+                    'Total Current Stock': totalCurrentStock,
+                    'Order Requirement': orderRequirement,
+                    'Stock Deficit': stockDeficit,
+                    'Fulfillment %': fulfillmentPercent.toFixed(1),
+                    'Priority': priority
+                };
+            })
+            .filter(item => item['Order Requirement'] > 0)
+            .sort((a, b) => b['Order Requirement'] - a['Order Requirement']);
+        }
+
+        function displayCombinedData() {
+            const tbody = document.getElementById('combinedTableBody');
+            tbody.innerHTML = '';
+            
+            combinedData.forEach(item => {
+                const row = document.createElement('tr');
+                const priorityClass = `status-${item['Priority'].toLowerCase()}`;
+                const fulfillmentColor = item['Fulfillment %'] >= 80 ? 'positive' : 
+                                       item['Fulfillment %'] >= 50 ? 'warning' : 'negative';
+                
+                row.innerHTML = `
+                    <td>${item['SKU Code']}</td>
+                    <td>${item['SKU Name']}</td>
+                    <td>${item['Location']}</td>
+                    <td class="uom-cell"><strong>${item['UOM']}</strong></td>
+                    <td>${formatDecimalDisplay(item['Unrestricted'] || 0)}</td>
+                    <td class="intransit-cell">${formatDecimalDisplay(item['Intransit'] || 0)}</td>
+                    <td><strong>${formatDecimalDisplay(item['CFA Total'] || 0)}</strong></td>
+                    <td>${formatDecimalDisplay(item['Current Stock'] || 0)}</td>
+                    <td class="order-cell">${formatDecimalDisplay(item['Order Requirement'] || 0)}</td>
+                    <td class="${priorityClass}">${formatDecimalDisplay(item['Stock Deficit'] || 0)}</td>
+                    <td class="${fulfillmentColor}">${item['Fulfillment %']}%</td>
+                    <td class="${priorityClass}">${item['Priority']}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayPurchaseData() {
+            const tbody = document.getElementById('purchaseTableBody');
+            tbody.innerHTML = '';
+            
+            if (purchaseData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="10" style="text-align: center; padding: 40px; color: #666;">
+                        <i class="fas fa-check-circle" style="color: #27ae60; font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+                        All order requirements can be fulfilled with current stock! No purchase needed.
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            purchaseData.forEach(item => {
+                const row = document.createElement('tr');
+                const actionClass = item['Action Required'].includes('Urgent') ? 'status-high' : 
+                                  item['Action Required'].includes('Priority') ? 'status-medium' : 'status-low';
+                
+                row.innerHTML = `
+                    <td>${item['SKU Code']}</td>
+                    <td>${item['SKU Name']}</td>
+                    <td>${item['Location']}</td>
+                    <td class="uom-cell"><strong>${item['UOM']}</strong></td>
+                    <td>${formatDecimalDisplay(item['Current Stock'] || 0)}</td>
+                    <td class="order-cell">${formatDecimalDisplay(item['Order Requirement'] || 0)}</td>
+                    <td class="status-high">${formatDecimalDisplay(item['Required Purchase'] || 0)}</td>
+                    <td><strong>${formatDecimalDisplay(item['Suggested Order Qty'] || 0)}</strong></td>
+                    <td>${item['Lead Time Days']}</td>
+                    <td class="${actionClass}">${item['Action Required']}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayOrderAnalysis() {
+            const tbody = document.getElementById('orderAnalysisTableBody');
+            tbody.innerHTML = '';
+            
+            if (orderAnalysisData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="9" style="text-align: center; padding: 40px; color: #666;">
+                        <i class="fas fa-info-circle" style="color: #3498db; font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+                        No order requirement data available.
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            orderAnalysisData.forEach(item => {
+                const row = document.createElement('tr');
+                const priorityClass = `status-${item['Priority'].toLowerCase()}`;
+                const fulfillmentColor = item['Fulfillment %'] >= 80 ? 'positive' : 
+                                       item['Fulfillment %'] >= 50 ? 'warning' : 'negative';
+                
+                row.innerHTML = `
+                    <td>${item['SKU Code']}</td>
+                    <td>${item['SKU Name']}</td>
+                    <td class="uom-cell"><strong>${item['UOM']}</strong></td>
+                    <td>${formatDecimalDisplay(item['Total CFA Stock'] || 0)}</td>
+                    <td>${formatDecimalDisplay(item['Total Current Stock'] || 0)}</td>
+                    <td class="order-cell">${formatDecimalDisplay(item['Order Requirement'] || 0)}</td>
+                    <td class="${priorityClass}">${formatDecimalDisplay(item['Stock Deficit'] || 0)}</td>
+                    <td class="${fulfillmentColor}">${item['Fulfillment %']}%</td>
+                    <td class="${priorityClass}">${item['Priority']}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            
+            const tabBtn = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            if (tabBtn) {
+                tabBtn.classList.add('active');
+            }
+            
+            const tabPane = document.getElementById(`${tabName}-tab`);
+            if (tabPane) {
+                tabPane.classList.add('active');
+            }
+        }
+
+        function exportToExcel() {
+            if (combinedData.length === 0) {
+                updateStatus('No data to export. Please analyze data first.', 'warning');
+                return;
+            }
+            
+            updateStatus('Preparing comprehensive report...', 'info');
+            
+            try {
+                const wb = XLSX.utils.book_new();
+                
+                const combinedWS = XLSX.utils.json_to_sheet(combinedData);
+                XLSX.utils.book_append_sheet(wb, combinedWS, "Combined Analysis");
+                
+                const purchaseWS = XLSX.utils.json_to_sheet(purchaseData);
+                XLSX.utils.book_append_sheet(wb, purchaseWS, "Purchase Requirements");
+                
+                const orderAnalysisWS = XLSX.utils.json_to_sheet(orderAnalysisData);
+                XLSX.utils.book_append_sheet(wb, orderAnalysisWS, "Order Analysis");
+                
+                // Add mapping configuration sheet
+                const mappingData = [];
+                mappingData.push(["MAPPING CONFIGURATION", "", "", ""]);
+                mappingData.push(["Generated on", new Date().toLocaleString(), "", ""]);
+                mappingData.push([]);
+                
+                for (const fileType in mappingConfig) {
+                    mappingData.push([`${fileType.toUpperCase()} MAPPING`, "", "", ""]);
+                    const mapping = mappingConfig[fileType];
+                    for (const field in mapping) {
+                        mappingData.push(["", field, mapping[field], mapping[field] !== field ? "Custom" : "Default"]);
+                    }
+                    mappingData.push([]);
+                }
+                
+                const mappingWS = XLSX.utils.aoa_to_sheet(mappingData);
+                XLSX.utils.book_append_sheet(wb, mappingWS, "Mapping Configuration");
+                
+                const totalOrders = orderData.reduce((sum, item) => sum + (formatDecimal(item['order requirement']) || 0), 0);
+                const totalPurchase = purchaseData.reduce((sum, item) => sum + (formatDecimal(item['Required Purchase']) || 0), 0);
+                const urgentOrders = purchaseData.filter(item => item['Action Required'].includes('Urgent')).length;
+                const totalStockDeficit = combinedData.reduce((sum, item) => sum + (formatDecimal(item['Stock Deficit']) || 0), 0);
+                const totalIntransit = combinedData.reduce((sum, item) => sum + (formatDecimal(item['Intransit']) || 0), 0);
+                
+                const summaryData = [
+                    ["COMPREHENSIVE STOCK & ORDER REPORT", "", "", "", ""],
+                    ["Generated on", new Date().toLocaleString(), "", "", ""],
+                    ["", "", "", "", ""],
+                    ["SUMMARY STATISTICS", "", "", "", ""],
+                    ["Total CFA SKU-Locations", cfaData.length, "", "", ""],
+                    ["Total Current SKUs (combined)", currentData.length, "", "", ""],
+                    ["Total Current Lines (raw)", currentRawData.length, "", "", ""],
+                    ["Total Order Items (combined)", orderData.length, "", "", ""],
+                    ["Total Order Lines (raw)", orderRawData.length, "", "", ""],
+                    ["Total UOM Items", uomData.length, "", "", ""],
+                    ["Total Order Quantity", formatDecimalDisplay(totalOrders), "", "", ""],
+                    ["Total Intransit Stock", formatDecimalDisplay(totalIntransit), "", "", ""],
+                    ["", "", "", "", ""],
+                    ["STOCK DEFICIT ANALYSIS", "", "", "", ""],
+                    ["Total Stock Deficit", formatDecimalDisplay(totalStockDeficit), "", "", ""],
+                    ["Items requiring purchase", purchaseData.length, "", "", ""],
+                    ["Urgent purchases needed", urgentOrders, "", "", ""],
+                    ["Total purchase quantity needed", formatDecimalDisplay(totalPurchase), "", "", ""],
+                    ["", "", "", "", ""],
+                    ["ORDER FULFILLMENT", "", "", "", ""],
+                    ["High priority orders", orderAnalysisData.filter(item => item.Priority === 'High').length, "", "", ""],
+                    ["Medium priority orders", orderAnalysisData.filter(item => item.Priority === 'Medium').length, "", "", ""],
+                    ["Low priority orders", orderAnalysisData.filter(item => item.Priority === 'Low').length, "", "", ""],
+                    ["", "", "", "", ""],
+                    ["MAPPING USED", "", "", "", ""],
+                    ["CFA Mapping", JSON.stringify(mappingConfig.cfa), "", "", ""],
+                    ["Current Mapping", JSON.stringify(mappingConfig.current), "", "", ""],
+                    ["Order Mapping", JSON.stringify(mappingConfig.order), "", "", ""],
+                    ["UOM Mapping", JSON.stringify(mappingConfig.uom), "", "", ""]
+                ];
+                
+                const summaryWS = XLSX.utils.aoa_to_sheet(summaryData);
+                XLSX.utils.book_append_sheet(wb, summaryWS, "Summary");
+                
+                const rawCFAWS = XLSX.utils.json_to_sheet(cfaData);
+                XLSX.utils.book_append_sheet(wb, rawCFAWS, "Raw CFA Data");
+                
+                const rawCurrentWS = XLSX.utils.json_to_sheet(currentRawData);
+                XLSX.utils.book_append_sheet(wb, rawCurrentWS, "Raw Current Data");
+                
+                const rawCurrentCombinedWS = XLSX.utils.json_to_sheet(currentData);
+                XLSX.utils.book_append_sheet(wb, rawCurrentCombinedWS, "Current Data Combined");
+                
+                const rawOrderWS = XLSX.utils.json_to_sheet(orderRawData);
+                XLSX.utils.book_append_sheet(wb, rawOrderWS, "Raw Order Data");
+                
+                const rawOrderCombinedWS = XLSX.utils.json_to_sheet(orderData);
+                XLSX.utils.book_append_sheet(wb, rawOrderCombinedWS, "Order Data Combined");
+                
+                const rawUOMWS = XLSX.utils.json_to_sheet(uomData);
+                XLSX.utils.book_append_sheet(wb, rawUOMWS, "Raw UOM Data");
+                
+                const timestamp = new Date().toISOString().slice(0,19).replace(/[:]/g, '-');
+                const filename = `stock_order_uom_report_${timestamp}.xlsx`;
+                
+                XLSX.writeFile(wb, filename);
+                
+                updateStatus(`Comprehensive report exported: ${filename}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                updateStatus(`Error exporting: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Clear all uploaded data, mapping, and analysis?')) {
+                cfaData = [];
+                currentData = [];
+                currentRawData = [];
+                orderData = [];
+                orderRawData = [];
+                uomData = [];
+                combinedData = [];
+                purchaseData = [];
+                orderAnalysisData = [];
+                
+                rawCFAData = [];
+                rawCurrentData = [];
+                rawOrderData = [];
+                rawUOMData = [];
+                
+                cfaHeaders = [];
+                currentHeaders = [];
+                orderHeaders = [];
+                uomHeaders = [];
+                
+                // Reset mapping to default
+                mappingConfig = {
+                    cfa: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'location': 'location',
+                        'unrestricted': 'unrestricted',
+                        'intransit': 'intransit'
+                    },
+                    current: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'quantity': 'quantity'
+                    },
+                    order: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'order requirement': 'order requirement'
+                    },
+                    uom: {
+                        'sku code': 'sku code',
+                        'sku name': 'sku name',
+                        'uom': 'uom'
+                    }
+                };
+                
+                document.getElementById('cfaUpload').value = '';
+                document.getElementById('currentUpload').value = '';
+                document.getElementById('orderUpload').value = '';
+                document.getElementById('uomUpload').value = '';
+                
+                document.getElementById('cfaFileInfo').innerHTML = '<i class="fas fa-info-circle"></i> No file';
+                document.getElementById('currentFileInfo').innerHTML = '<i class="fas fa-info-circle"></i> No file';
+                document.getElementById('orderFileInfo').innerHTML = '<i class="fas fa-info-circle"></i> No file';
+                document.getElementById('uomFileInfo').innerHTML = '<i class="fas fa-info-circle"></i> No file';
+                document.getElementById('mappingStatus').innerHTML = '<i class="fas fa-info-circle"></i> No mapping configured';
+                
+                document.getElementById('cfaTableBody').innerHTML = '';
+                document.getElementById('currentTableBody').innerHTML = '';
+                document.getElementById('ordersTableBody').innerHTML = '';
+                document.getElementById('uomTableBody').innerHTML = '';
+                document.getElementById('combinedTableBody').innerHTML = '';
+                document.getElementById('purchaseTableBody').innerHTML = '';
+                document.getElementById('orderAnalysisTableBody').innerHTML = '';
+                document.getElementById('mappingTableBody').innerHTML = '';
+                
+                document.getElementById('dataDisplay').style.display = 'none';
+                document.getElementById('statsSection').style.display = 'none';
+                document.getElementById('combineBtn').disabled = true;
+                document.getElementById('exportBtn').disabled = true;
+                document.getElementById('viewUOMBtn').disabled = true;
+                
+                updateStatus('All data cleared. Ready for new uploads.', 'info');
+            }
+        }
+
+        window.onload = function() {
+            updateStatus('Upload Excel files and configure column mapping if needed', 'info');
+            
+            document.getElementById('cfaUploadArea').addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    document.getElementById('cfaUpload').click();
+                }
+            });
+            
+            document.getElementById('currentUploadArea').addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    document.getElementById('currentUpload').click();
+                }
+            });
+            
+            document.getElementById('orderUploadArea').addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    document.getElementById('orderUpload').click();
+                }
+            });
+            
+            document.getElementById('uomUploadArea').addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    document.getElementById('uomUpload').click();
+                }
+            });
+            
+            document.getElementById('cfaUpload').addEventListener('change', handleCFAUpload);
+            document.getElementById('currentUpload').addEventListener('change', handleCurrentUpload);
+            document.getElementById('orderUpload').addEventListener('change', handleOrderUpload);
+            document.getElementById('uomUpload').addEventListener('change', handleUOMUpload);
+            
+            // Close modal when clicking outside
+            document.getElementById('mappingModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeMappingModal();
+                }
+            });
+            
+            // Display initial mapping
+            displayCurrentMapping();
+        };
+    </script>
+</body>
+</html>
