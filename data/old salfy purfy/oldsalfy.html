@@ -1324,7 +1324,6 @@
                                 <th>Customer District</th>
                                 <th>Invoice Number</th>
                                 <th>Invoice Date</th>
-                                <th>SKU Code</th>
                                 <th>SKU Name</th>
                                 <th>Quantity (Numbers)</th>
                                 <th>Product Quantity(L/Kg)</th>
@@ -1333,7 +1332,7 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="10" class="no-data">
+                                <td colspan="9" class="no-data">
                                     <i class="fas fa-file-import"></i>
                                     <p>Upload an Excel file to see your data here</p>
                                 </td>
@@ -1362,7 +1361,7 @@
                 <div class="ai-suggestion" id="aiSuggestion">
                     <div class="ai-suggestion-header">
                         <i class="fas fa-robot"></i>
-                        <h4>Market Insights</h4>
+                        <h4>AI Market Insights</h4>
                     </div>
                     <p id="aiInsightText">This Sakes AI will analyze trends, identify opportunities, and provide actionable recommendations.</p>
                 </div>
@@ -1910,7 +1909,7 @@
             }
         }
         
-        // Smart column detection from Excel data - UPDATED WITH SKU CODE
+        // Smart column detection from Excel data
         function detectColumns(headers) {
             const columnPatterns = {
                 'Customer Name': /customer.*name|client.*name|cust.*name|customer|client|cust/i,
@@ -1918,7 +1917,6 @@
                 'Customer District': /customer.*district|client.*district|district|region|area|location/i,
                 'Invoice Number': /invoice.*no|inv.*no|invoice.*number|inv.*number|invoice.*id|inv.*id/i,
                 'Invoice Date': /invoice.*date|inv.*date|date.*invoice|date|transaction.*date/i,
-                'SKU Code': /sku.*code|product.*code|item.*code|material.*code|article.*code|code|item.*no|product.*id|material.*no|part.*number/i,
                 'SKU Name': /sku.*name|product.*name|item.*name|sku|product|item|description|material|goods|commodity|article/i,
                 'Quantity (Numbers)': /quantity.*number|qty.*number|quantity|qty|number|count|units|pieces|pcs|nos/i,
                 'Product Quantity(L/Kg)': /product.*quantity.*\(l\/kg\)|prod.*qty.*\(l\/kg\)|product.*quantity|prod.*qty|weight.*\(l\/kg\)|volume.*\(l\/kg\)|net.*weight|gross.*weight|weight|volume|kg|l|litre|kilogram|liter/i,
@@ -1972,32 +1970,14 @@
                 }
             });
             
-            // Special handling for SKU Code
-            if (!matchedColumns.has('SKU Code')) {
-                for (const [header, idx] of Object.entries(headerIndexMap)) {
-                    if (header.includes('code') || header.includes('sku') || 
-                        header.includes('item') && (header.includes('no') || header.includes('id') || header.includes('num'))) {
-                        // Make sure it's not already mapped to SKU Name
-                        if (mapping['SKU Name'] !== idx) {
-                            mapping['SKU Code'] = idx;
-                            matchedColumns.add('SKU Code');
-                            break;
-                        }
-                    }
-                }
-            }
-            
             // Special handling for SKU Name
             if (!matchedColumns.has('SKU Name')) {
                 for (const [header, idx] of Object.entries(headerIndexMap)) {
                     if (header.includes('prod') || header.includes('item') || header.includes('sku') || 
                         header.includes('desc') || header.includes('name') && !header.includes('customer')) {
-                        // Make sure it's not already mapped to SKU Code
-                        if (mapping['SKU Code'] !== idx) {
-                            mapping['SKU Name'] = idx;
-                            matchedColumns.add('SKU Name');
-                            break;
-                        }
+                        mapping['SKU Name'] = idx;
+                        matchedColumns.add('SKU Name');
+                        break;
                     }
                 }
             }
@@ -2033,7 +2013,7 @@
             // If still missing columns, assign by position
             const defaultOrder = [
                 'Customer Name', 'Customer Group', 'Customer District', 
-                'Invoice Number', 'Invoice Date', 'SKU Code', 'SKU Name',
+                'Invoice Number', 'Invoice Date', 'SKU Name',
                 'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
             ];
             
@@ -2054,7 +2034,7 @@
             return mapping;
         }
         
-        // Process Excel data with smart detection - UPDATED FOR SKU CODE
+        // Process Excel data with smart detection
         function processExcelData(jsonData) {
             if (!jsonData || jsonData.length < 2) {
                 alert('Dbareh Smart Bot Says "upload data required".');
@@ -2788,12 +2768,12 @@
             return 1 - Math.pow(1 - t, 3);
         }
         
-        // Render data to table with pagination - UPDATED FOR SKU CODE
+        // Render data to table with pagination
         function renderData() {
             if (filteredData.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="10" class="no-data">
+                        <td colspan="9" class="no-data">
                             <i class="fas fa-search"></i>
                             <p>No data matches your filters. Try adjusting filter criteria.</p>
                         </td>
@@ -2847,7 +2827,6 @@
                         <td>${row['Customer District'] || ''}</td>
                         <td>${row['Invoice Number'] || ''}</td>
                         <td>${row['Invoice Date'] || ''}</td>
-                        <td><strong>${row['SKU Code'] || ''}</strong></td>
                         <td>${row['SKU Name'] || ''}</td>
                         <td>${quantity.toLocaleString()}</td>
                         <td>${productQty.toLocaleString()}</td>
@@ -2995,7 +2974,7 @@
             aiInsightText.innerHTML = insights.map(insight => `• ${insight}`).join('<br>');
         }
         
-        // Download as Excel - UPDATED FOR SKU CODE
+        // Download as Excel
         function downloadAsExcel() {
             if (filteredData.length === 0) {
                 alert('No data to download. Please upload and filter data first.');
@@ -3009,7 +2988,7 @@
                 // Add headers
                 const headers = [
                     'Customer Name', 'Customer Group', 'Customer District',
-                    'Invoice Number', 'Invoice Date', 'SKU Code', 'SKU Name',
+                    'Invoice Number', 'Invoice Date', 'SKU Name',
                     'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
                 ];
                 wsData.push(headers);
@@ -3022,7 +3001,6 @@
                         row['Customer District'] || '',
                         row['Invoice Number'] || '',
                         row['Invoice Date'] || '',
-                        row['SKU Code'] || '',
                         row['SKU Name'] || '',
                         row['Quantity (Numbers)'] || 0,
                         row['Product Quantity(L/Kg)'] || 0,
@@ -3112,7 +3090,7 @@
             showDownloadSuccess('Charts downloaded as PNG image!');
         }
         
-        // Download full report - UPDATED FOR SKU CODE
+        // Download full report
         function downloadFullReport() {
             if (filteredData.length === 0) {
                 alert('No data to create report. Please upload and filter data first.');
@@ -3138,9 +3116,9 @@ TOP CUSTOMERS
 -------------
 ${getTopCustomers(5).map((cust, i) => `${i+1}. ${cust.name}: ${formatCurrency(cust.value)}`).join('\n')}
 
-TOP PRODUCTS (BY SKU)
----------------------
-${getTopProducts(5).map((prod, i) => `${i+1}. ${prod.code ? prod.code + ' - ' : ''}${prod.name}: ${prod.quantity} units`).join('\n')}
+TOP PRODUCTS
+------------
+${getTopProducts(5).map((prod, i) => `${i+1}. ${prod.name}: ${prod.quantity} units`).join('\n')}
 
 MARKET INSIGHTS
 ---------------
@@ -3149,7 +3127,7 @@ ${aiInsightText.textContent}
 DATA SAMPLE (First 10 Records)
 ------------------------------
 ${getDataSample(10).map(row => 
-    `${row['Customer Name'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Code'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
+    `${row['Customer Name'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
 ).join('\n')}
 
 FILTERS APPLIED
@@ -3196,25 +3174,21 @@ Generated by Auto Lube House Smart Dashboard
                 .map(([name, value]) => ({ name, value }));
         }
         
-        // Helper function to get top products - UPDATED FOR SKU CODE
+        // Helper function to get top products
         function getTopProducts(count) {
             const productTotals = {};
             filteredData.forEach(row => {
                 const product = row['SKU Name'];
-                const code = row['SKU Code'];
                 const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
                 if (product) {
-                    productTotals[product] = {
-                        name: product,
-                        code: code,
-                        quantity: (productTotals[product]?.quantity || 0) + quantity
-                    };
+                    productTotals[product] = (productTotals[product] || 0) + quantity;
                 }
             });
             
-            return Object.values(productTotals)
-                .sort((a, b) => b.quantity - a.quantity)
-                .slice(0, count);
+            return Object.entries(productTotals)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, count)
+                .map(([name, quantity]) => ({ name, quantity }));
         }
         
         // Helper function to get date range

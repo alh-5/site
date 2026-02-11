@@ -687,7 +687,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 1100px;
         }
         
         thead {
@@ -1166,15 +1166,14 @@
                     </button>
                     
                     <div class="file-name" id="fileName">No file selected</div>
-					
-					<button class="upload-btn" id="uploadBtn" onclick="window.location.href='https://alh-5.github.io/site/data/purchase2526.xlsx';">
+                    
+                    <button class="upload-btn" id="downloadSample" onclick="window.location.href='https://alh-5.github.io/site/data/purchase2526.xlsx';">
                         <i class="fas fa-chart-pie"></i> Purchase Report
                     </button>
-					
-					                    
+                                        
                     <div class="detection-info" id="detectionInfo">
                         <i class="fas fa-info-circle"></i>
-                        <span>This Pirchase AI will automatically detect from your Excel file.</span>
+                        <span>This Purchase AI will automatically detect columns from your Excel file.</span>
                     </div>
                     
                     <div class="column-mapping-info" id="columnMappingInfo">
@@ -1401,6 +1400,7 @@
                                 <th>Truck Number</th>
                                 <th>Invoice Number</th>
                                 <th>Invoice Date</th>
+                                <th>SKU Code</th>
                                 <th>SKU Name</th>
                                 <th>Quantity (Numbers)</th>
                                 <th>Product Quantity(L/Kg)</th>
@@ -1409,7 +1409,7 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="9" class="no-data">
+                                <td colspan="10" class="no-data">
                                     <i class="fas fa-file-import"></i>
                                     <p>Upload an Excel file to see your data here</p>
                                 </td>
@@ -1441,7 +1441,7 @@
                 <div class="ai-suggestion" id="aiSuggestion">
                     <div class="ai-suggestion-header">
                         <i class="fas fa-robot"></i>
-                        <h4>AI Market Insights</h4>
+                        <h4>Market Insights</h4>
                     </div>
                     <p id="aiInsightText">Upload your Excel file to get intelligent market insights about your data. The AI will analyze trends, identify opportunities, and provide actionable recommendations.</p>
                 </div>
@@ -1756,6 +1756,7 @@
                 'Truck Number': /truck.*number|vehicle.*number|truck|vehicle|customer.*district|client.*district|district|region|area|location/i,
                 'Invoice Number': /invoice.*no|inv.*no|invoice.*number|inv.*number|invoice.*id|inv.*id/i,
                 'Invoice Date': /invoice.*date|inv.*date|date.*invoice|date|transaction.*date/i,
+                'SKU Code': /sku.*code|product.*code|item.*code|material.*code|code|part.*no|part.*number|product.*id|item.*id/i,
                 'SKU Name': /sku.*name|product.*name|item.*name|sku|product|item|description|material|goods|commodity|article/i,
                 'Quantity (Numbers)': /quantity.*number|qty.*number|quantity|qty|number|count|units|pieces|pcs|nos/i,
                 'Product Quantity(L/Kg)': /product.*quantity.*\(l\/kg\)|prod.*qty.*\(l\/kg\)|product.*quantity|prod.*qty|weight.*\(l\/kg\)|volume.*\(l\/kg\)|net.*weight|gross.*weight|weight|volume|kg|l|litre|kilogram|liter/i,
@@ -1809,7 +1810,17 @@
                 }
             });
             
-            // Special handling for SKU Name
+            // Special handling for SKU Code and SKU Name
+            if (!matchedColumns.has('SKU Code')) {
+                for (const [header, idx] of Object.entries(headerIndexMap)) {
+                    if (header.includes('code') || header.includes('id') || header.includes('part')) {
+                        mapping['SKU Code'] = idx;
+                        matchedColumns.add('SKU Code');
+                        break;
+                    }
+                }
+            }
+            
             if (!matchedColumns.has('SKU Name')) {
                 for (const [header, idx] of Object.entries(headerIndexMap)) {
                     if (header.includes('prod') || header.includes('item') || header.includes('sku') || 
@@ -1852,7 +1863,7 @@
             // If still missing columns, assign by position
             const defaultOrder = [
                 'State Office', 'Supply Location', 'Truck Number', 
-                'Invoice Number', 'Invoice Date', 'SKU Name',
+                'Invoice Number', 'Invoice Date', 'SKU Code', 'SKU Name',
                 'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
             ];
             
@@ -2642,7 +2653,7 @@
             if (filteredData.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="9" class="no-data">
+                        <td colspan="10" class="no-data">
                             <i class="fas fa-search"></i>
                             <p>No data matches your filters. Try adjusting filter criteria.</p>
                         </td>
@@ -2671,6 +2682,7 @@
                         <td>${row['Truck Number'] || ''}</td>
                         <td>${row['Invoice Number'] || ''}</td>
                         <td>${row['Invoice Date'] || ''}</td>
+                        <td>${row['SKU Code'] || ''}</td>
                         <td>${row['SKU Name'] || ''}</td>
                         <td>${quantity.toLocaleString()}</td>
                         <td>${productQty.toLocaleString()}</td>
@@ -3089,7 +3101,7 @@
                 // Add headers
                 const headers = [
                     'State Office', 'Supply Location', 'Truck Number',
-                    'Invoice Number', 'Invoice Date', 'SKU Name',
+                    'Invoice Number', 'Invoice Date', 'SKU Code', 'SKU Name',
                     'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
                 ];
                 wsData.push(headers);
@@ -3102,6 +3114,7 @@
                         row['Truck Number'] || '',
                         row['Invoice Number'] || '',
                         row['Invoice Date'] || '',
+                        row['SKU Code'] || '',
                         row['SKU Name'] || '',
                         row['Quantity (Numbers)'] || 0,
                         row['Product Quantity(L/Kg)'] || 0,
@@ -3114,11 +3127,11 @@
                 
                 // Create workbook
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Market Data');
+                XLSX.utils.book_append_sheet(wb, ws, 'Purchase Data');
                 
                 // Generate and download file
                 const date = new Date().toISOString().split('T')[0];
-                XLSX.writeFile(wb, `Auto_Lube_House_Analysis_${date}.xlsx`);
+                XLSX.writeFile(wb, `Auto_Lube_House_Purchase_Analysis_${date}.xlsx`);
                 
                 // Show success message
                 showDownloadSuccess('Excel file downloaded successfully!');
@@ -3149,7 +3162,7 @@
             ctx.fillStyle = '#2c3e50';
             ctx.font = 'bold 24px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('Auto Lube House - Market Analysis Charts', combinedCanvas.width / 2, 40);
+            ctx.fillText('Auto Lube House - Purchase Analysis Charts', combinedCanvas.width / 2, 40);
             
             ctx.font = '14px Arial';
             ctx.fillStyle = '#7f8c8d';
@@ -3200,8 +3213,8 @@
             
             // Create comprehensive report
             const reportContent = `
-AUTO LUBE HOUSE - MARKET ANALYSIS REPORT
-=========================================
+AUTO LUBE HOUSE - PURCHASE ANALYSIS REPORT
+==========================================
 Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
 
 EXECUTIVE SUMMARY
@@ -3228,7 +3241,7 @@ ${aiInsightText.textContent}
 DATA SAMPLE (First 10 Records)
 ------------------------------
 ${getDataSample(10).map(row => 
-    `${row['State Office'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
+    `${row['State Office'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Code'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
 ).join('\n')}
 
 FILTERS APPLIED
@@ -3244,18 +3257,18 @@ RECOMMENDATIONS
 
 END OF REPORT
 -------------
-Generated by Auto Lube House Smart Dashboard
+Generated by Auto Lube House Purchase Dashboard
             `.trim();
             
             // Create and download text file
             const blob = new Blob([reportContent], { type: 'text/plain' });
             const link = document.createElement('a');
-            link.download = `Auto_Lube_House_Report_${new Date().toISOString().split('T')[0]}.txt`;
+            link.download = `Auto_Lube_House_Purchase_Report_${new Date().toISOString().split('T')[0]}.txt`;
             link.href = URL.createObjectURL(blob);
             link.click();
             
             // Show success message
-            showDownloadSuccess('Full market report downloaded!');
+            showDownloadSuccess('Full purchase report downloaded!');
         }
         
         // Helper function to get top state offices
@@ -3390,10 +3403,10 @@ Generated by Auto Lube House Smart Dashboard
             processExcelData(sampleData);
             
             // Update UI to show it's sample data
-            fileName.textContent = 'Download Purchase report';
-            detectionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Upload your own Excel file to analyze your market data.</span>`;
+            fileName.textContent = 'Sample data loaded';
+            detectionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Upload your own Excel file to analyze your purchase data.</span>`;
             
-            aiInsightText.innerHTML = 'Download Purchase report or Upload your own Excel file to get intelligent market insights, trend analysis, and actionable recommendations based on your actual business data.';
+            aiInsightText.innerHTML = 'Sample purchase data loaded. Upload your own Excel file to get intelligent market insights, trend analysis, and actionable recommendations based on your actual purchase data.';
         }
     </script>
 </body>

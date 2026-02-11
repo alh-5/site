@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Financial year report</title>
+    <title>Purchase Financial year report</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,8 +22,94 @@
             color: #333;
             line-height: 1.6;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(218, 165, 32, 0.25) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(184, 134, 11, 0.15) 0%, transparent 30%),
+                linear-gradient(135deg, 
+                    #FFD700 0%, 
+                    #FFEC8B 25%, 
+                    #DAA520 50%, 
+                    #B8860B 75%, 
+                    #8B6914 100%);
+            background-blend-mode: overlay, overlay, overlay, normal;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Add magnetic wave animation effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 215, 0, 0.05) 10px,
+                    rgba(255, 215, 0, 0.05) 20px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(218, 165, 32, 0.03) 10px,
+                    rgba(218, 165, 32, 0.03) 20px
+                );
+            animation: waveMove 20s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes waveMove {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Add subtle golden particles effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 20% 30%, rgba(255, 215, 0, 0.8) 1px, transparent 0),
+                radial-gradient(1px 1px at 40% 70%, rgba(255, 215, 0, 0.6) 1px, transparent 0),
+                radial-gradient(2px 2px at 50% 20%, rgba(255, 215, 0, 0.7) 2px, transparent 0),
+                radial-gradient(1px 1px at 60% 40%, rgba(255, 215, 0, 0.8) 1px, transparent 0),
+                radial-gradient(2px 2px at 70% 80%, rgba(255, 215, 0, 0.6) 2px, transparent 0),
+                radial-gradient(1px 1px at 80% 50%, rgba(255, 215, 0, 0.7) 1px, transparent 0),
+                radial-gradient(2px 2px at 90% 90%, rgba(255, 215, 0, 0.8) 2px, transparent 0),
+                radial-gradient(1px 1px at 10% 10%, rgba(255, 215, 0, 0.6) 1px, transparent 0),
+                radial-gradient(2px 2px at 30% 60%, rgba(255, 215, 0, 0.7) 2px, transparent 0),
+                radial-gradient(1px 1px at 95% 15%, rgba(255, 215, 0, 0.8) 1px, transparent 0);
+            background-size: 200px 200px;
+            animation: particleMove 30s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        @keyframes particleMove {
+            0% {
+                background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+            }
+            100% {
+                background-position: 200px 200px, -200px 200px, 200px -200px, -200px -200px, 
+                                     100px 100px, -100px 100px, 100px -100px, -100px -100px,
+                                     150px 150px, -150px 150px;
+            }
         }
         
         .container {
@@ -219,7 +305,7 @@
             position: relative;
         }
         
-        .customer-autocomplete {
+        .stateoffice-autocomplete {
             width: 100%;
             padding: 12px 40px 12px 15px;
             border: 1px solid #ddd;
@@ -229,13 +315,13 @@
             background: white;
         }
         
-        .customer-autocomplete:focus {
+        .stateoffice-autocomplete:focus {
             outline: none;
             border-color: #3498db;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
         
-        .clear-customer {
+        .clear-stateoffice {
             position: absolute;
             right: 10px;
             top: 50%;
@@ -248,7 +334,7 @@
             display: none;
         }
         
-        .clear-customer:hover {
+        .clear-stateoffice:hover {
             color: #c0392b;
         }
         
@@ -390,7 +476,7 @@
             font-weight: 600;
         }
         
-        /* NEW: Month Checkbox Filter */
+        /* Month Checkbox Filter */
         .month-checkbox-container {
             max-height: 200px;
             overflow-y: auto;
@@ -659,6 +745,68 @@
             color: #bdc3c7;
         }
         
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .pagination-button {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .pagination-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .pagination-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .pagination-info {
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 5px 15px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .page-size-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-size-selector select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+        
         /* Dashboard Charts Section */
         .charts-section {
             display: grid;
@@ -834,13 +982,18 @@
             color: white;
         }
         
-        .download-btn.chart {
+        .download-btn.home {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
             color: white;
         }
         
-        .download-btn.report {
+        .download-btn.chart {
             background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+        
+        .download-btn.report {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
         }
         
@@ -958,77 +1111,6 @@
             animation: spin 1s linear infinite;
         }
         
-        /* NEW: Pagination Styles */
-        .pagination-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            border-radius: 0 0 12px 12px;
-        }
-        
-        .pagination-info {
-            font-size: 0.95rem;
-            color: #34495e;
-        }
-        
-        .pagination-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .pagination-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .pagination-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-        }
-        
-        .pagination-btn:disabled {
-            background: #bdc3c7;
-            cursor: not-allowed;
-        }
-        
-        .page-numbers {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-        
-        .page-number {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        
-        .page-number:hover {
-            background-color: #f0f7ff;
-            border-color: #3498db;
-        }
-        
-        .page-number.active {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            border-color: #3498db;
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .totals-container {
@@ -1053,14 +1135,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .pagination-container {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
-            
-            .pagination-buttons {
-                justify-content: center;
+            .pagination {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -1068,8 +1144,8 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-chart-line"></i>Auto Lube House Smart Market Dashboard</h1>
-            <p class="subtitle">Upload an Excel file and get real-time market analysis with interactive charts, utility meters, and insights.</p>
+            <h1><i class="fas fa-chart-line"></i>Auto Lube House Purchase Dashboard</h1>
+            <p class="subtitle">Upload an Excel file and get Purchase market analysis with interactive charts, utility meters, and insights.</p>
         </header>
         
         <div class="dashboard-container">
@@ -1091,13 +1167,14 @@
                     
                     <div class="file-name" id="fileName">No file selected</div>
 					
-					<button class="upload-btn" id="uploadBtn" onclick="window.location.href='https://alh-5.github.io/site/data/sales2526.xlsx';">
-                        <i class="fas fa-chart-pie"></i> Sales Report
+					<button class="upload-btn" id="uploadBtn" onclick="window.location.href='https://alh-5.github.io/site/data/purchase2526.xlsx';">
+                        <i class="fas fa-chart-pie"></i> Purchase Report
                     </button>
-                    
+					
+					                    
                     <div class="detection-info" id="detectionInfo">
                         <i class="fas fa-info-circle"></i>
-                        <span>The Sales AI will automatically detect from your Excel file.</span>
+                        <span>This Pirchase AI will automatically detect from your Excel file.</span>
                     </div>
                     
                     <div class="column-mapping-info" id="columnMappingInfo">
@@ -1109,25 +1186,25 @@
                 <div class="filters-section">
                     <h3><i class="fas fa-filter"></i> Filters</h3>
                     
-                    <!-- Customer Name with autocomplete -->
+                    <!-- State Office with autocomplete -->
                     <div class="filter-group">
-                        <label for="customerAutocomplete">Customer Name</label>
+                        <label for="stateofficeAutocomplete">State Office</label>
                         <div class="autocomplete-container">
-                            <input type="text" id="customerAutocomplete" class="customer-autocomplete" 
-                                   placeholder="Type to search customers..." autocomplete="off">
-                            <button class="clear-customer" id="clearCustomer" title="Clear selection">
+                            <input type="text" id="stateofficeAutocomplete" class="stateoffice-autocomplete" 
+                                   placeholder="Type to search state offices..." autocomplete="off">
+                            <button class="clear-stateoffice" id="clearStateOffice" title="Clear selection">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <div class="autocomplete-dropdown" id="customerDropdown">
+                            <div class="autocomplete-dropdown" id="stateofficeDropdown">
                                 <!-- Autocomplete items will be populated here -->
                             </div>
                         </div>
                     </div>
                     
                     <div class="filter-group">
-                        <label for="groupFilter">Customer Group</label>
-                        <select id="groupFilter" class="filter-select">
-                            <option value="">All Groups</option>
+                        <label for="locationFilter">Supply Location</label>
+                        <select id="locationFilter" class="filter-select">
+                            <option value="">All Locations</option>
                         </select>
                     </div>
                     
@@ -1162,7 +1239,7 @@
                             </select>
                         </div>
                         
-                        <!-- NEW: Month Checkboxes -->
+                        <!-- Month Checkboxes -->
                         <div class="month-checkbox-container" id="monthCheckboxContainer">
                             <div class="month-checkbox-item">
                                 <input type="checkbox" id="month_01" value="01">
@@ -1271,17 +1348,17 @@
                         <span>High Demand <i class="fas fa-arrow-up"></i></span>
                     </div>
                 </div>
-				
-				<!-- Download Buttons -->
+                
+                <!-- Download Buttons -->
                 <div class="download-section">
-				<button class="download-btn chart" id="Purcahse Analys" onclick="window.location.href='purfy.html';">
-                        <i class="fas fa-chart-pie"></i> Purchase Analysis
+                    <!-- Home Button -->
+                    <button class="download-btn home" id="homeButton" onclick="window.location.href='alhhome.html';">
+                        <i class="fas fa-home"></i> Home
                     </button>
-				
+                    
                     <button class="download-btn excel" id="downloadExcel">
                         <i class="fas fa-file-excel"></i> Download as Excel
                     </button>
-                    
                     <button class="download-btn chart" id="downloadCharts">
                         <i class="fas fa-chart-line"></i> Download Charts
                     </button>
@@ -1289,14 +1366,14 @@
                         <i class="fas fa-download"></i> Full Report
                     </button>
                 </div>
-				
-				<div> &nbsp </div>
+                
+                <div> &nbsp </div>
                 
                 <!-- Charts Section -->
                 <div class="charts-section">
                     <div class="chart-container">
                         <div class="chart-header">
-                            <h3><i class="fas fa-chart-bar"></i> Sales Distribution by Customer</h3>
+                            <h3><i class="fas fa-chart-bar"></i> Sales Distribution by State Office</h3>
                             <span class="records-count" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">Top 10</span>
                         </div>
                         <div class="chart-wrapper">
@@ -1319,12 +1396,11 @@
                     <table id="dataTable">
                         <thead>
                             <tr>
-                                <th>Customer Name</th>
-                                <th>Customer Group</th>
-                                <th>Customer District</th>
+                                <th>State Office</th>
+                                <th>Supply Location</th>
+                                <th>Truck Number</th>
                                 <th>Invoice Number</th>
                                 <th>Invoice Date</th>
-                                <th>SKU Code</th>
                                 <th>SKU Name</th>
                                 <th>Quantity (Numbers)</th>
                                 <th>Product Quantity(L/Kg)</th>
@@ -1333,28 +1409,31 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="10" class="no-data">
+                                <td colspan="9" class="no-data">
                                     <i class="fas fa-file-import"></i>
                                     <p>Upload an Excel file to see your data here</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <!-- NEW: Pagination Controls -->
-                    <div class="pagination-container" id="paginationContainer" style="display: none;">
-                        <div class="pagination-info" id="paginationInfo">
-                            Showing 0 to 0 of 0 entries
-                        </div>
-                        <div class="pagination-buttons">
-                            <button class="pagination-btn" id="prevPage">
-                                <i class="fas fa-chevron-left"></i> Previous
-                            </button>
-                            <div class="page-numbers" id="pageNumbers">
-                                <!-- Page numbers will be generated here -->
-                            </div>
-                            <button class="pagination-btn" id="nextPage">
-                                Next <i class="fas fa-chevron-right"></i>
-                            </button>
+                    
+                    <!-- Pagination Controls -->
+                    <div class="pagination" id="paginationControls" style="display: none;">
+                        <button class="pagination-button" id="prevPage" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <div class="pagination-info" id="pageInfo">Page 1 of 1</div>
+                        <button class="pagination-button" id="nextPage" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <div class="page-size-selector">
+                            <span>Show:</span>
+                            <select id="pageSize">
+                                <option value="5" selected>5 rows</option>
+                                <option value="10">10 rows</option>
+                                <option value="25">25 rows</option>
+                                <option value="50">50 rows</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1362,9 +1441,9 @@
                 <div class="ai-suggestion" id="aiSuggestion">
                     <div class="ai-suggestion-header">
                         <i class="fas fa-robot"></i>
-                        <h4>Market Insights</h4>
+                        <h4>AI Market Insights</h4>
                     </div>
-                    <p id="aiInsightText">This Sakes AI will analyze trends, identify opportunities, and provide actionable recommendations.</p>
+                    <p id="aiInsightText">Upload your Excel file to get intelligent market insights about your data. The AI will analyze trends, identify opportunities, and provide actionable recommendations.</p>
                 </div>
                 
                 <div class="data-warning" id="dataWarning" style="display: none;">
@@ -1388,12 +1467,12 @@
         const totalProduct = document.getElementById('totalProduct');
         const totalValue = document.getElementById('totalValue');
         
-        // Customer elements
-        const customerAutocomplete = document.getElementById('customerAutocomplete');
-        const clearCustomerBtn = document.getElementById('clearCustomer');
-        const customerDropdown = document.getElementById('customerDropdown');
+        // State Office elements (renamed from Customer)
+        const stateofficeAutocomplete = document.getElementById('stateofficeAutocomplete');
+        const clearStateOfficeBtn = document.getElementById('clearStateOffice');
+        const stateofficeDropdown = document.getElementById('stateofficeDropdown');
         
-        const groupFilter = document.getElementById('groupFilter');
+        const locationFilter = document.getElementById('locationFilter');
         const skuSearch = document.getElementById('skuSearch');
         const skuMultiSelect = document.getElementById('skuMultiSelect');
         const selectAllSKU = document.getElementById('selectAllSKU');
@@ -1409,7 +1488,7 @@
         const loadingOverlay = document.getElementById('loadingOverlay');
         const aiInsightText = document.getElementById('aiInsightText');
         
-        // NEW: Month checkbox elements
+        // Month checkbox elements
         const monthCheckboxContainer = document.getElementById('monthCheckboxContainer');
         const monthSelectedCount = document.getElementById('monthSelectedCount');
         let monthCheckboxes = [];
@@ -1424,15 +1503,16 @@
         
         // Download buttons
         const downloadExcel = document.getElementById('downloadExcel');
+        const homeButton = document.getElementById('homeButton');
         const downloadCharts = document.getElementById('downloadCharts');
         const downloadReport = document.getElementById('downloadReport');
         
-        // NEW: Pagination elements
-        const paginationContainer = document.getElementById('paginationContainer');
-        const paginationInfo = document.getElementById('paginationInfo');
-        const prevPage = document.getElementById('prevPage');
-        const nextPage = document.getElementById('nextPage');
-        const pageNumbers = document.getElementById('pageNumbers');
+        // Pagination elements - FIXED
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+        const pageSizeSelect = document.getElementById('pageSize');
+        const paginationControls = document.getElementById('paginationControls');
         
         // Data storage
         let allData = [];
@@ -1443,15 +1523,15 @@
         let skuCheckboxes = [];
         let updateTimeout = null;
         
-        // NEW: Month selection storage
+        // Month selection storage
         let selectedMonths = new Set();
         let selectedYear = '';
         
-        // Customer autocomplete variables
-        let allCustomers = [];
-        let filteredCustomers = [];
+        // State Office autocomplete variables
+        let allStateOffices = [];
+        let filteredStateOffices = [];
         let highlightedIndex = -1;
-        let selectedCustomer = '';
+        let selectedStateOffice = '';
         
         // Chart instances
         let barChart = null;
@@ -1462,366 +1542,124 @@
         let utilityHistory = [];
         const utilityUpdateInterval = 3000;
         
-        // NEW: Pagination variables
+        // Pagination variables - FIXED
         let currentPage = 1;
-        const rowsPerPage = 5;
+        let pageSize = 5;
         let totalPages = 1;
         
-        // Event Listeners
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        uploadArea.addEventListener('click', () => fileInput.click());
-        uploadArea.addEventListener('dragover', (e) => {
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing application...');
+            
+            // Attach event listeners
+            attachEventListeners();
+            
+            // Initialize month checkboxes
+            initializeMonthCheckboxes();
+            
+            // Load sample data after a short delay
+            setTimeout(loadSampleData, 500);
+        });
+        
+        // Attach all event listeners
+        function attachEventListeners() {
+            // File upload events
+            uploadBtn.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            // State Office autocomplete events
+            stateofficeAutocomplete.addEventListener('input', handleStateOfficeInput);
+            stateofficeAutocomplete.addEventListener('focus', handleStateOfficeFocus);
+            stateofficeAutocomplete.addEventListener('blur', handleStateOfficeBlur);
+            stateofficeAutocomplete.addEventListener('keydown', handleStateOfficeKeydown);
+            clearStateOfficeBtn.addEventListener('click', clearStateOfficeSelection);
+            
+            // Filter events
+            locationFilter.addEventListener('change', handleFilterChange);
+            yearFilter.addEventListener('change', handleFilterChange);
+            skuSearch.addEventListener('input', filterSKUs);
+            selectAllSKU.addEventListener('change', handleSelectAllSKU);
+            applyFilters.addEventListener('click', applyDataFilters);
+            clearFilters.addEventListener('click', clearAllFilters);
+            
+            // Month checkbox events
+            monthCheckboxes = [];
+            const monthCheckboxElements = monthCheckboxContainer.querySelectorAll('input[type="checkbox"]');
+            monthCheckboxElements.forEach(checkbox => {
+                monthCheckboxes.push(checkbox);
+                checkbox.addEventListener('change', handleMonthCheckboxChange);
+            });
+            
+            // Pagination events - FIXED: Proper event listeners
+            prevPageBtn.addEventListener('click', goToPreviousPage);
+            nextPageBtn.addEventListener('click', goToNextPage);
+            pageSizeSelect.addEventListener('change', handlePageSizeChange);
+            
+            // Download button events
+            downloadExcel.addEventListener('click', downloadAsExcel);
+            downloadCharts.addEventListener('click', downloadChartsAsImage);
+            downloadReport.addEventListener('click', downloadFullReport);
+            
+            console.log('Event listeners attached successfully');
+        }
+        
+        // Handle drag over
+        function handleDragOver(e) {
             e.preventDefault();
             uploadArea.style.backgroundColor = '#f0f7ff';
-        });
-        uploadArea.addEventListener('dragleave', () => {
+        }
+        
+        // Handle drag leave
+        function handleDragLeave() {
             uploadArea.style.backgroundColor = 'white';
-        });
-        uploadArea.addEventListener('drop', (e) => {
+        }
+        
+        // Handle drop
+        function handleDrop(e) {
             e.preventDefault();
             uploadArea.style.backgroundColor = 'white';
             if (e.dataTransfer.files.length) {
                 fileInput.files = e.dataTransfer.files;
                 handleFileUpload();
             }
-        });
+        }
         
-        fileInput.addEventListener('change', handleFileUpload);
-        
-        // Customer autocomplete events
-        customerAutocomplete.addEventListener('input', handleCustomerInput);
-        customerAutocomplete.addEventListener('focus', handleCustomerFocus);
-        customerAutocomplete.addEventListener('blur', () => {
-            setTimeout(() => {
-                customerDropdown.style.display = 'none';
-            }, 200);
-        });
-        customerAutocomplete.addEventListener('keydown', handleCustomerKeydown);
-        
-        clearCustomerBtn.addEventListener('click', clearCustomerSelection);
-        
-        groupFilter.addEventListener('change', () => {
-            showFilterUpdateEffect(groupFilter);
+        // Handle filter change
+        function handleFilterChange() {
+            showFilterUpdateEffect(this);
             applyDataFiltersWithDebounce();
-        });
+        }
         
-        yearFilter.addEventListener('change', () => {
-            showFilterUpdateEffect(yearFilter);
-            selectedYear = yearFilter.value;
-            applyDataFiltersWithDebounce();
-        });
-        
-        skuSearch.addEventListener('input', filterSKUs);
-        
-        selectAllSKU.addEventListener('change', () => {
-            showFilterUpdateEffect(selectAllSKU);
+        // Handle select all SKU
+        function handleSelectAllSKU() {
+            showFilterUpdateEffect(this);
             toggleAllSKUs();
             applyDataFiltersWithDebounce();
-        });
-        
-        // NEW: Pagination event listeners
-        prevPage.addEventListener('click', goToPreviousPage);
-        nextPage.addEventListener('click', goToNextPage);
-        
-        // NEW: Month checkbox events
-        function initializeMonthCheckboxes() {
-            monthCheckboxes = [];
-            // Get all month checkboxes
-            const monthCheckboxElements = monthCheckboxContainer.querySelectorAll('input[type="checkbox"]');
-            monthCheckboxElements.forEach(checkbox => {
-                monthCheckboxes.push(checkbox);
-                checkbox.addEventListener('change', () => {
-                    updateMonthSelection();
-                    showFilterUpdateEffect(checkbox);
-                    applyDataFiltersWithDebounce();
-                });
-            });
         }
         
-        // NEW: Update month selection
-        function updateMonthSelection() {
-            selectedMonths.clear();
-            monthCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    selectedMonths.add(checkbox.value);
-                }
-            });
-            updateMonthSelectedCount();
+        // Handle month checkbox change
+        function handleMonthCheckboxChange() {
+            updateMonthSelection();
+            showFilterUpdateEffect(this);
+            applyDataFiltersWithDebounce();
         }
         
-        // NEW: Update month selected count
-        function updateMonthSelectedCount() {
-            const totalMonths = 12;
-            monthSelectedCount.textContent = `${selectedMonths.size} selected`;
-            
-            if (selectedMonths.size === totalMonths) {
-                monthSelectedCount.textContent = 'All selected';
-            }
-        }
-        
-        applyFilters.addEventListener('click', () => {
-            showFilterUpdateEffect(applyFilters);
+        // Handle page size change
+        function handlePageSizeChange() {
+            pageSize = parseInt(pageSizeSelect.value);
+            currentPage = 1;
             applyDataFilters();
-        });
-        
-        clearFilters.addEventListener('click', () => {
-            showFilterUpdateEffect(clearFilters);
-            clearAllFilters();
-        });
-        
-        // Download button events
-        downloadExcel.addEventListener('click', downloadAsExcel);
-        downloadCharts.addEventListener('click', downloadChartsAsImage);
-        downloadReport.addEventListener('click', downloadFullReport);
-        
-        // NEW: Pagination functions
-        function goToPreviousPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderData();
-                updatePaginationControls();
-            }
         }
         
-        function goToNextPage() {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderData();
-                updatePaginationControls();
-            }
-        }
-        
-        function goToPage(page) {
-            if (page >= 1 && page <= totalPages && page !== currentPage) {
-                currentPage = page;
-                renderData();
-                updatePaginationControls();
-            }
-        }
-        
-        function updatePaginationControls() {
-            // Update previous/next buttons
-            prevPage.disabled = currentPage === 1;
-            nextPage.disabled = currentPage === totalPages;
-            
-            // Update pagination info
-            const startIndex = (currentPage - 1) * rowsPerPage + 1;
-            const endIndex = Math.min(currentPage * rowsPerPage, filteredData.length);
-            paginationInfo.textContent = `Showing ${startIndex} to ${endIndex} of ${filteredData.length} entries`;
-            
-            // Update page numbers
-            pageNumbers.innerHTML = '';
-            
-            // Always show first page
-            addPageNumber(1);
-            
-            // Show ellipsis if needed
-            if (currentPage > 3) {
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.style.padding = '8px 12px';
-                pageNumbers.appendChild(ellipsis);
-            }
-            
-            // Show pages around current page
-            const startPage = Math.max(2, currentPage - 1);
-            const endPage = Math.min(totalPages - 1, currentPage + 1);
-            
-            for (let i = startPage; i <= endPage; i++) {
-                addPageNumber(i);
-            }
-            
-            // Show ellipsis if needed
-            if (currentPage < totalPages - 2) {
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.style.padding = '8px 12px';
-                pageNumbers.appendChild(ellipsis);
-            }
-            
-            // Always show last page if more than 1 page
-            if (totalPages > 1) {
-                addPageNumber(totalPages);
-            }
-        }
-        
-        function addPageNumber(page) {
-            const pageElement = document.createElement('span');
-            pageElement.className = 'page-number';
-            if (page === currentPage) {
-                pageElement.classList.add('active');
-            }
-            pageElement.textContent = page;
-            pageElement.addEventListener('click', () => goToPage(page));
-            pageNumbers.appendChild(pageElement);
-        }
-        
-        // Handle customer input for autocomplete
-        function handleCustomerInput() {
-            const searchTerm = customerAutocomplete.value.trim().toLowerCase();
-            selectedCustomer = customerAutocomplete.value;
-            
-            // Show/hide clear button
-            clearCustomerBtn.style.display = searchTerm ? 'block' : 'none';
-            
-            if (searchTerm.length === 0) {
-                customerDropdown.style.display = 'none';
-                applyDataFiltersWithDebounce();
-                return;
-            }
-            
-            // Filter customers based on search term
-            filteredCustomers = allCustomers.filter(customer => 
-                customer.toLowerCase().includes(searchTerm)
-            );
-            
-            // Show dropdown with results
-            showCustomerDropdown(filteredCustomers, searchTerm);
-            
-            // Apply filters if exact match found
-            if (filteredCustomers.length === 1 && 
-                filteredCustomers[0].toLowerCase() === searchTerm) {
-                setTimeout(() => {
-                    selectCustomer(filteredCustomers[0]);
-                }, 300);
-            } else {
-                applyDataFiltersWithDebounce();
-            }
-        }
-        
-        // Handle customer focus
-        function handleCustomerFocus() {
-            if (customerAutocomplete.value.trim().length > 0) {
-                const searchTerm = customerAutocomplete.value.trim().toLowerCase();
-                filteredCustomers = allCustomers.filter(customer => 
-                    customer.toLowerCase().includes(searchTerm)
-                );
-                showCustomerDropdown(filteredCustomers, searchTerm);
-            } else {
-                // Show all customers when clicking on empty field
-                filteredCustomers = [...allCustomers];
-                showCustomerDropdown(allCustomers, '');
-            }
-        }
-        
-        // Handle keyboard navigation in autocomplete
-        function handleCustomerKeydown(e) {
-            if (!customerDropdown.style.display || customerDropdown.style.display === 'none') {
-                return;
-            }
-            
-            const items = customerDropdown.querySelectorAll('.autocomplete-item');
-            
-            switch(e.key) {
-                case 'ArrowDown':
-                    e.preventDefault();
-                    highlightedIndex = (highlightedIndex + 1) % items.length;
-                    updateHighlightedItem(items);
-                    break;
-                    
-                case 'ArrowUp':
-                    e.preventDefault();
-                    highlightedIndex = highlightedIndex <= 0 ? items.length - 1 : highlightedIndex - 1;
-                    updateHighlightedItem(items);
-                    break;
-                    
-                case 'Enter':
-                    e.preventDefault();
-                    if (highlightedIndex >= 0 && highlightedIndex < items.length) {
-                        selectCustomer(items[highlightedIndex].textContent);
-                    }
-                    break;
-                    
-                case 'Escape':
-                    customerDropdown.style.display = 'none';
-                    highlightedIndex = -1;
-                    break;
-            }
-        }
-        
-        // Update highlighted item in dropdown
-        function updateHighlightedItem(items) {
-            items.forEach((item, index) => {
-                if (index === highlightedIndex) {
-                    item.classList.add('highlighted');
-                    item.scrollIntoView({ block: 'nearest' });
-                } else {
-                    item.classList.remove('highlighted');
-                }
-            });
-        }
-        
-        // Show customer dropdown
-        function showCustomerDropdown(customers, searchTerm) {
-            customerDropdown.innerHTML = '';
-            
-            if (customers.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.textContent = `No customers found matching "${searchTerm}"`;
-                customerDropdown.appendChild(noResults);
-            } else {
-                customers.forEach(customer => {
-                    const item = document.createElement('div');
-                    item.className = 'autocomplete-item';
-                    
-                    // Highlight matching text
-                    const lowerCustomer = customer.toLowerCase();
-                    const lowerSearch = searchTerm.toLowerCase();
-                    const matchIndex = lowerCustomer.indexOf(lowerSearch);
-                    
-                    if (matchIndex >= 0) {
-                        const beforeMatch = customer.substring(0, matchIndex);
-                        const match = customer.substring(matchIndex, matchIndex + searchTerm.length);
-                        const afterMatch = customer.substring(matchIndex + searchTerm.length);
-                        
-                        item.innerHTML = `
-                            <i class="fas fa-user"></i>
-                            ${beforeMatch}<strong>${match}</strong>${afterMatch}
-                        `;
-                    } else {
-                        item.innerHTML = `
-                            <i class="fas fa-user"></i>
-                            ${customer}
-                        `;
-                    }
-                    
-                    item.addEventListener('click', () => {
-                        selectCustomer(customer);
-                    });
-                    
-                    customerDropdown.appendChild(item);
-                });
-            }
-            
-            customerDropdown.style.display = 'block';
-            highlightedIndex = -1;
-        }
-        
-        // Select a customer from autocomplete
-        function selectCustomer(customer) {
-            customerAutocomplete.value = customer;
-            selectedCustomer = customer;
-            customerDropdown.style.display = 'none';
-            clearCustomerBtn.style.display = 'block';
-            highlightedIndex = -1;
-            
-            // Show update effect and apply filters
-            showFilterUpdateEffect(customerAutocomplete);
-            applyDataFiltersWithDebounce();
-        }
-        
-        // Clear customer selection
-        function clearCustomerSelection() {
-            customerAutocomplete.value = '';
-            selectedCustomer = '';
-            clearCustomerBtn.style.display = 'none';
-            customerDropdown.style.display = 'none';
-            highlightedIndex = -1;
-            
-            // Show update effect and apply filters
-            showFilterUpdateEffect(customerAutocomplete);
-            applyDataFiltersWithDebounce();
+        // Handle State Office blur
+        function handleStateOfficeBlur() {
+            setTimeout(() => {
+                stateofficeDropdown.style.display = 'none';
+            }, 200);
         }
         
         // Handle file upload
@@ -1910,15 +1748,14 @@
             }
         }
         
-        // Smart column detection from Excel data - UPDATED WITH SKU CODE
+        // Smart column detection from Excel data
         function detectColumns(headers) {
             const columnPatterns = {
-                'Customer Name': /customer.*name|client.*name|cust.*name|customer|client|cust/i,
-                'Customer Group': /customer.*group|client.*group|group|category|type/i,
-                'Customer District': /customer.*district|client.*district|district|region|area|location/i,
+                'State Office': /state.*office|office.*state|state|office|customer.*name|client.*name|cust.*name|customer|client|cust/i,
+                'Supply Location': /supply.*location|location.*supply|customer.*group|client.*group|group|category|type/i,
+                'Truck Number': /truck.*number|vehicle.*number|truck|vehicle|customer.*district|client.*district|district|region|area|location/i,
                 'Invoice Number': /invoice.*no|inv.*no|invoice.*number|inv.*number|invoice.*id|inv.*id/i,
                 'Invoice Date': /invoice.*date|inv.*date|date.*invoice|date|transaction.*date/i,
-                'SKU Code': /sku.*code|product.*code|item.*code|material.*code|article.*code|code|item.*no|product.*id|material.*no|part.*number/i,
                 'SKU Name': /sku.*name|product.*name|item.*name|sku|product|item|description|material|goods|commodity|article/i,
                 'Quantity (Numbers)': /quantity.*number|qty.*number|quantity|qty|number|count|units|pieces|pcs|nos/i,
                 'Product Quantity(L/Kg)': /product.*quantity.*\(l\/kg\)|prod.*qty.*\(l\/kg\)|product.*quantity|prod.*qty|weight.*\(l\/kg\)|volume.*\(l\/kg\)|net.*weight|gross.*weight|weight|volume|kg|l|litre|kilogram|liter/i,
@@ -1972,32 +1809,14 @@
                 }
             });
             
-            // Special handling for SKU Code
-            if (!matchedColumns.has('SKU Code')) {
-                for (const [header, idx] of Object.entries(headerIndexMap)) {
-                    if (header.includes('code') || header.includes('sku') || 
-                        header.includes('item') && (header.includes('no') || header.includes('id') || header.includes('num'))) {
-                        // Make sure it's not already mapped to SKU Name
-                        if (mapping['SKU Name'] !== idx) {
-                            mapping['SKU Code'] = idx;
-                            matchedColumns.add('SKU Code');
-                            break;
-                        }
-                    }
-                }
-            }
-            
             // Special handling for SKU Name
             if (!matchedColumns.has('SKU Name')) {
                 for (const [header, idx] of Object.entries(headerIndexMap)) {
                     if (header.includes('prod') || header.includes('item') || header.includes('sku') || 
-                        header.includes('desc') || header.includes('name') && !header.includes('customer')) {
-                        // Make sure it's not already mapped to SKU Code
-                        if (mapping['SKU Code'] !== idx) {
-                            mapping['SKU Name'] = idx;
-                            matchedColumns.add('SKU Name');
-                            break;
-                        }
+                        header.includes('desc') || header.includes('name') && !header.includes('state') && !header.includes('office')) {
+                        mapping['SKU Name'] = idx;
+                        matchedColumns.add('SKU Name');
+                        break;
                     }
                 }
             }
@@ -2032,8 +1851,8 @@
             
             // If still missing columns, assign by position
             const defaultOrder = [
-                'Customer Name', 'Customer Group', 'Customer District', 
-                'Invoice Number', 'Invoice Date', 'SKU Code', 'SKU Name',
+                'State Office', 'Supply Location', 'Truck Number', 
+                'Invoice Number', 'Invoice Date', 'SKU Name',
                 'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
             ];
             
@@ -2054,7 +1873,7 @@
             return mapping;
         }
         
-        // Process Excel data with smart detection - UPDATED FOR SKU CODE
+        // Process Excel data with smart detection
         function processExcelData(jsonData) {
             if (!jsonData || jsonData.length < 2) {
                 alert('Dbareh Smart Bot Says "upload data required".');
@@ -2185,7 +2004,7 @@
             // Show data warnings if needed
             showDataWarnings(missingSKUCount, missingQuantityCount, missingValueCount, allData.length);
             
-            // Update filters including customers for autocomplete
+            // Update filters including state offices for autocomplete
             updateFilterOptions(Array.from(uniqueYears).sort((a, b) => b - a));
             
             // Apply initial filters and render data
@@ -2233,13 +2052,13 @@
         // Update filter options with autocomplete support
         function updateFilterOptions(years) {
             // Get unique values for each filter
-            allCustomers = [...new Set(allData.map(row => {
-                const val = row['Customer Name'];
+            allStateOffices = [...new Set(allData.map(row => {
+                const val = row['State Office'];
                 return val ? val.toString().trim() : null;
             }).filter(Boolean))].sort();
             
-            const groups = [...new Set(allData.map(row => {
-                const val = row['Customer Group'];
+            const locations = [...new Set(allData.map(row => {
+                const val = row['Supply Location'];
                 return val ? val.toString().trim() : null;
             }).filter(Boolean))].sort();
             
@@ -2249,12 +2068,10 @@
                 return val ? val.toString().trim() : null;
             }).filter(Boolean))].sort();
             
-            // Customer filter is now handled by autocomplete
-            
-            // Populate group filter
-            groupFilter.innerHTML = '<option value="">All Groups</option>';
-            groups.forEach(group => {
-                groupFilter.innerHTML += `<option value="${group}">${group}</option>`;
+            // Populate location filter
+            locationFilter.innerHTML = '<option value="">All Locations</option>';
+            locations.forEach(location => {
+                locationFilter.innerHTML += `<option value="${location}">${location}</option>`;
             });
             
             // Populate year filter
@@ -2273,7 +2090,7 @@
             selectedSKUs.clear();
             selectedMonths.clear();
             selectedYear = '';
-            selectedCustomer = '';
+            selectedStateOffice = '';
             
             updateSKUSelectedCount();
             updateMonthSelectedCount();
@@ -2281,9 +2098,9 @@
             // Clear search
             skuSearch.value = '';
             
-            // Clear customer autocomplete
-            customerAutocomplete.value = '';
-            clearCustomerBtn.style.display = 'none';
+            // Clear state office autocomplete
+            stateofficeAutocomplete.value = '';
+            clearStateOfficeBtn.style.display = 'none';
         }
         
         // Update SKU multi-select checkboxes
@@ -2422,14 +2239,218 @@
             }
         }
         
+        // Initialize month checkboxes
+        function initializeMonthCheckboxes() {
+            monthCheckboxes = [];
+            // Get all month checkboxes
+            const monthCheckboxElements = monthCheckboxContainer.querySelectorAll('input[type="checkbox"]');
+            monthCheckboxElements.forEach(checkbox => {
+                monthCheckboxes.push(checkbox);
+                checkbox.addEventListener('change', () => {
+                    updateMonthSelection();
+                    showFilterUpdateEffect(checkbox);
+                    applyDataFiltersWithDebounce();
+                });
+            });
+        }
+        
+        // Update month selection
+        function updateMonthSelection() {
+            selectedMonths.clear();
+            monthCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedMonths.add(checkbox.value);
+                }
+            });
+            updateMonthSelectedCount();
+        }
+        
+        // Update month selected count
+        function updateMonthSelectedCount() {
+            const totalMonths = 12;
+            monthSelectedCount.textContent = `${selectedMonths.size} selected`;
+            
+            if (selectedMonths.size === totalMonths) {
+                monthSelectedCount.textContent = 'All selected';
+            }
+        }
+        
+        // Handle State Office input for autocomplete
+        function handleStateOfficeInput() {
+            const searchTerm = stateofficeAutocomplete.value.trim().toLowerCase();
+            selectedStateOffice = stateofficeAutocomplete.value;
+            
+            // Show/hide clear button
+            clearStateOfficeBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            if (searchTerm.length === 0) {
+                stateofficeDropdown.style.display = 'none';
+                applyDataFiltersWithDebounce();
+                return;
+            }
+            
+            // Filter state offices based on search term
+            filteredStateOffices = allStateOffices.filter(office => 
+                office.toLowerCase().includes(searchTerm)
+            );
+            
+            // Show dropdown with results
+            showStateOfficeDropdown(filteredStateOffices, searchTerm);
+            
+            // Apply filters if exact match found
+            if (filteredStateOffices.length === 1 && 
+                filteredStateOffices[0].toLowerCase() === searchTerm) {
+                setTimeout(() => {
+                    selectStateOffice(filteredStateOffices[0]);
+                }, 300);
+            } else {
+                applyDataFiltersWithDebounce();
+            }
+        }
+        
+        // Handle State Office focus
+        function handleStateOfficeFocus() {
+            if (stateofficeAutocomplete.value.trim().length > 0) {
+                const searchTerm = stateofficeAutocomplete.value.trim().toLowerCase();
+                filteredStateOffices = allStateOffices.filter(office => 
+                    office.toLowerCase().includes(searchTerm)
+                );
+                showStateOfficeDropdown(filteredStateOffices, searchTerm);
+            } else {
+                // Show all state offices when clicking on empty field
+                filteredStateOffices = [...allStateOffices];
+                showStateOfficeDropdown(allStateOffices, '');
+            }
+        }
+        
+        // Handle keyboard navigation in autocomplete
+        function handleStateOfficeKeydown(e) {
+            if (!stateofficeDropdown.style.display || stateofficeDropdown.style.display === 'none') {
+                return;
+            }
+            
+            const items = stateofficeDropdown.querySelectorAll('.autocomplete-item');
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    highlightedIndex = (highlightedIndex + 1) % items.length;
+                    updateHighlightedItem(items);
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    highlightedIndex = highlightedIndex <= 0 ? items.length - 1 : highlightedIndex - 1;
+                    updateHighlightedItem(items);
+                    break;
+                    
+                case 'Enter':
+                    e.preventDefault();
+                    if (highlightedIndex >= 0 && highlightedIndex < items.length) {
+                        selectStateOffice(items[highlightedIndex].textContent);
+                    }
+                    break;
+                    
+                case 'Escape':
+                    stateofficeDropdown.style.display = 'none';
+                    highlightedIndex = -1;
+                    break;
+            }
+        }
+        
+        // Update highlighted item in dropdown
+        function updateHighlightedItem(items) {
+            items.forEach((item, index) => {
+                if (index === highlightedIndex) {
+                    item.classList.add('highlighted');
+                    item.scrollIntoView({ block: 'nearest' });
+                } else {
+                    item.classList.remove('highlighted');
+                }
+            });
+        }
+        
+        // Show State Office dropdown
+        function showStateOfficeDropdown(offices, searchTerm) {
+            stateofficeDropdown.innerHTML = '';
+            
+            if (offices.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = `No state offices found matching "${searchTerm}"`;
+                stateofficeDropdown.appendChild(noResults);
+            } else {
+                offices.forEach(office => {
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    
+                    // Highlight matching text
+                    const lowerOffice = office.toLowerCase();
+                    const lowerSearch = searchTerm.toLowerCase();
+                    const matchIndex = lowerOffice.indexOf(lowerSearch);
+                    
+                    if (matchIndex >= 0) {
+                        const beforeMatch = office.substring(0, matchIndex);
+                        const match = office.substring(matchIndex, matchIndex + searchTerm.length);
+                        const afterMatch = office.substring(matchIndex + searchTerm.length);
+                        
+                        item.innerHTML = `
+                            <i class="fas fa-building"></i>
+                            ${beforeMatch}<strong>${match}</strong>${afterMatch}
+                        `;
+                    } else {
+                        item.innerHTML = `
+                            <i class="fas fa-building"></i>
+                            ${office}
+                        `;
+                    }
+                    
+                    item.addEventListener('click', () => {
+                        selectStateOffice(office);
+                    });
+                    
+                    stateofficeDropdown.appendChild(item);
+                });
+            }
+            
+            stateofficeDropdown.style.display = 'block';
+            highlightedIndex = -1;
+        }
+        
+        // Select a State Office from autocomplete
+        function selectStateOffice(office) {
+            stateofficeAutocomplete.value = office;
+            selectedStateOffice = office;
+            stateofficeDropdown.style.display = 'none';
+            clearStateOfficeBtn.style.display = 'block';
+            highlightedIndex = -1;
+            
+            // Show update effect and apply filters
+            showFilterUpdateEffect(stateofficeAutocomplete);
+            applyDataFiltersWithDebounce();
+        }
+        
+        // Clear State Office selection
+        function clearStateOfficeSelection() {
+            stateofficeAutocomplete.value = '';
+            selectedStateOffice = '';
+            clearStateOfficeBtn.style.display = 'none';
+            stateofficeDropdown.style.display = 'none';
+            highlightedIndex = -1;
+            
+            // Show update effect and apply filters
+            showFilterUpdateEffect(stateofficeAutocomplete);
+            applyDataFiltersWithDebounce();
+        }
+        
         // Clear all filters
         function clearAllFilters() {
-            // Clear customer autocomplete
-            customerAutocomplete.value = '';
-            selectedCustomer = '';
-            clearCustomerBtn.style.display = 'none';
+            // Clear state office autocomplete
+            stateofficeAutocomplete.value = '';
+            selectedStateOffice = '';
+            clearStateOfficeBtn.style.display = 'none';
             
-            groupFilter.value = '';
+            locationFilter.value = '';
             
             // Clear SKU selections
             skuCheckboxes.forEach(cb => cb.checked = false);
@@ -2449,11 +2470,14 @@
             skuSearch.value = '';
             filterSKUs();
             
+            // Reset pagination
+            currentPage = 1;
+            
             // Re-apply filters
             applyDataFilters();
         }
         
-        // Apply filters to data with autocomplete support
+        // Apply filters to data with autocomplete support - FIXED with pagination reset
         function applyDataFilters() {
             if (allData.length === 0) return;
             
@@ -2464,20 +2488,20 @@
             setTimeout(() => {
                 filteredData = [...allData];
                 
-                // Apply customer filter from autocomplete
-                if (selectedCustomer && selectedCustomer.trim() !== '') {
+                // Apply state office filter from autocomplete
+                if (selectedStateOffice && selectedStateOffice.trim() !== '') {
                     filteredData = filteredData.filter(row => {
-                        const customer = row['Customer Name'];
-                        return customer && customer.toString().trim().toLowerCase() === selectedCustomer.trim().toLowerCase();
+                        const office = row['State Office'];
+                        return office && office.toString().trim().toLowerCase() === selectedStateOffice.trim().toLowerCase();
                     });
                 }
                 
-                // Apply group filter
-                const selectedGroup = groupFilter.value;
-                if (selectedGroup) {
+                // Apply location filter
+                const selectedLocation = locationFilter.value;
+                if (selectedLocation) {
                     filteredData = filteredData.filter(row => {
-                        const group = row['Customer Group'];
-                        return group && group.toString().trim() === selectedGroup;
+                        const location = row['Supply Location'];
+                        return location && location.toString().trim() === selectedLocation;
                     });
                 }
                 
@@ -2505,11 +2529,17 @@
                     });
                 }
                 
+                // Calculate totals for summary
+                calculateTotals();
+                
                 // Reset to first page when filters change
                 currentPage = 1;
                 
-                // Render filtered data
-                renderData();
+                // Update pagination
+                updatePagination();
+                
+                // Render current page
+                renderCurrentPage();
                 
                 // Update charts with filtered data
                 updateCharts();
@@ -2520,6 +2550,142 @@
                 // Hide loading state
                 showLoadingState(false);
             }, 100);
+        }
+        
+        // Calculate totals for summary
+        function calculateTotals() {
+            let quantityTotal = 0;
+            let productTotal = 0;
+            let valueTotal = 0;
+            
+            filteredData.forEach(row => {
+                quantityTotal += parseFloat(row['Quantity (Numbers)']) || 0;
+                productTotal += parseFloat(row['Product Quantity(L/Kg)']) || 0;
+                valueTotal += parseFloat(row['Invoice Value (Rs.)']) || 0;
+            });
+            
+            // Update summary with animation
+            updateCounter(recordsCount, filteredData.length, 'records');
+            updateCounter(totalQuantity, quantityTotal, 'number');
+            updateCounter(totalProduct, productTotal, 'number');
+            updateCounter(totalValue, valueTotal, 'currency');
+            
+            // Update AI suggestion
+            updateAISuggestion();
+        }
+        
+        // Update pagination - FIXED
+        function updatePagination() {
+            totalPages = Math.ceil(filteredData.length / pageSize);
+            
+            if (filteredData.length === 0) {
+                paginationControls.style.display = 'none';
+                return;
+            }
+            
+            paginationControls.style.display = 'flex';
+            
+            // Update page info
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            
+            // Update button states
+            updatePaginationButtons();
+        }
+        
+        // Update pagination button states - FIXED
+        function updatePaginationButtons() {
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = currentPage >= totalPages;
+            
+            // Add visual feedback when disabled
+            if (prevPageBtn.disabled) {
+                prevPageBtn.style.opacity = '0.6';
+                prevPageBtn.style.cursor = 'not-allowed';
+            } else {
+                prevPageBtn.style.opacity = '1';
+                prevPageBtn.style.cursor = 'pointer';
+            }
+            
+            if (nextPageBtn.disabled) {
+                nextPageBtn.style.opacity = '0.6';
+                nextPageBtn.style.cursor = 'not-allowed';
+            } else {
+                nextPageBtn.style.opacity = '1';
+                nextPageBtn.style.cursor = 'pointer';
+            }
+        }
+        
+        // Go to previous page - FIXED
+        function goToPreviousPage() {
+            console.log('Previous button clicked', { currentPage, totalPages });
+            if (currentPage > 1) {
+                currentPage--;
+                console.log('Going to page:', currentPage);
+                renderCurrentPage();
+                updatePagination();
+            }
+        }
+        
+        // Go to next page - FIXED
+        function goToNextPage() {
+            console.log('Next button clicked', { currentPage, totalPages });
+            if (currentPage < totalPages) {
+                currentPage++;
+                console.log('Going to page:', currentPage);
+                renderCurrentPage();
+                updatePagination();
+            }
+        }
+        
+        // Render current page - FIXED
+        function renderCurrentPage() {
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="no-data">
+                            <i class="fas fa-search"></i>
+                            <p>No data matches your filters. Try adjusting filter criteria.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Calculate start and end index for current page
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, filteredData.length);
+            const pageData = filteredData.slice(startIndex, endIndex);
+            
+            // Build table rows for current page
+            let tableHTML = '';
+            
+            pageData.forEach(row => {
+                const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
+                const productQty = parseFloat(row['Product Quantity(L/Kg)']) || 0;
+                const invoiceValue = parseFloat(row['Invoice Value (Rs.)']) || 0;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${row['State Office'] || ''}</td>
+                        <td>${row['Supply Location'] || ''}</td>
+                        <td>${row['Truck Number'] || ''}</td>
+                        <td>${row['Invoice Number'] || ''}</td>
+                        <td>${row['Invoice Date'] || ''}</td>
+                        <td>${row['SKU Name'] || ''}</td>
+                        <td>${quantity.toLocaleString()}</td>
+                        <td>${productQty.toLocaleString()}</td>
+                        <td>${formatCurrency(invoiceValue)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = tableHTML;
+            
+            // Update page info
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            
+            // Update pagination buttons
+            updatePaginationButtons();
         }
         
         // Update market utility meter
@@ -2588,24 +2754,24 @@
         function updateCharts() {
             if (filteredData.length === 0) return;
             
-            // Prepare data for bar chart (top customers by value)
-            const customerSales = {};
+            // Prepare data for bar chart (top state offices by value)
+            const officeSales = {};
             filteredData.forEach(row => {
-                const customer = row['Customer Name'] || 'Unknown';
+                const office = row['State Office'] || 'Unknown';
                 const value = parseFloat(row['Invoice Value (Rs.)']) || 0;
-                customerSales[customer] = (customerSales[customer] || 0) + value;
+                officeSales[office] = (officeSales[office] || 0) + value;
             });
             
             // Sort and get top 10
-            const topCustomers = Object.entries(customerSales)
+            const topOffices = Object.entries(officeSales)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
             
-            const customerLabels = topCustomers.map(item => {
+            const officeLabels = topOffices.map(item => {
                 const name = item[0];
                 return name.length > 15 ? name.substring(0, 15) + '...' : name;
             });
-            const customerValues = topCustomers.map(item => item[1]);
+            const officeValues = topOffices.map(item => item[1]);
             
             // Prepare data for pie chart (top SKUs by quantity)
             const skuQuantities = {};
@@ -2627,7 +2793,7 @@
             const skuValues = topSkus.map(item => item[1]);
             
             // Define chart colors
-            const barColors = generateGradientColors('#3498db', '#2ecc71', customerLabels.length);
+            const barColors = generateGradientColors('#3498db', '#2ecc71', officeLabels.length);
             const pieColors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6'];
             
             // Destroy existing charts if they exist
@@ -2642,10 +2808,10 @@
             barChart = new Chart(barChartCtx, {
                 type: 'bar',
                 data: {
-                    labels: customerLabels,
+                    labels: officeLabels,
                     datasets: [{
                         label: 'Sales Value (₹)',
-                        data: customerValues,
+                        data: officeValues,
                         backgroundColor: barColors,
                         borderColor: barColors.map(color => color.replace('0.8', '1')),
                         borderWidth: 1,
@@ -2788,92 +2954,6 @@
             return 1 - Math.pow(1 - t, 3);
         }
         
-        // Render data to table with pagination - UPDATED FOR SKU CODE
-        function renderData() {
-            if (filteredData.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="no-data">
-                            <i class="fas fa-search"></i>
-                            <p>No data matches your filters. Try adjusting filter criteria.</p>
-                        </td>
-                    </tr>
-                `;
-                
-                recordsCount.textContent = '0 records';
-                totalQuantity.textContent = '0';
-                totalProduct.textContent = '0';
-                totalValue.textContent = '0';
-                
-                // Hide pagination
-                paginationContainer.style.display = 'none';
-                
-                // Update AI suggestion
-                aiInsightText.textContent = 'No data matches your current filters. Try clearing some filters or selecting different criteria to see market insights.';
-                
-                return;
-            }
-            
-            // Calculate totals
-            let quantityTotal = 0;
-            let productTotal = 0;
-            let valueTotal = 0;
-            
-            // Calculate totals from all filtered data (not just current page)
-            filteredData.forEach(row => {
-                quantityTotal += parseFloat(row['Quantity (Numbers)']) || 0;
-                productTotal += parseFloat(row['Product Quantity(L/Kg)']) || 0;
-                valueTotal += parseFloat(row['Invoice Value (Rs.)']) || 0;
-            });
-            
-            // Calculate pagination
-            totalPages = Math.ceil(filteredData.length / rowsPerPage);
-            const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
-            const currentPageData = filteredData.slice(startIndex, endIndex);
-            
-            // Build table rows for current page
-            let tableHTML = '';
-            
-            currentPageData.forEach(row => {
-                const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
-                const productQty = parseFloat(row['Product Quantity(L/Kg)']) || 0;
-                const invoiceValue = parseFloat(row['Invoice Value (Rs.)']) || 0;
-                
-                tableHTML += `
-                    <tr>
-                        <td>${row['Customer Name'] || ''}</td>
-                        <td>${row['Customer Group'] || ''}</td>
-                        <td>${row['Customer District'] || ''}</td>
-                        <td>${row['Invoice Number'] || ''}</td>
-                        <td>${row['Invoice Date'] || ''}</td>
-                        <td><strong>${row['SKU Code'] || ''}</strong></td>
-                        <td>${row['SKU Name'] || ''}</td>
-                        <td>${quantity.toLocaleString()}</td>
-                        <td>${productQty.toLocaleString()}</td>
-                        <td>${formatCurrency(invoiceValue)}</td>
-                    </tr>
-                `;
-            });
-            
-            tableBody.innerHTML = tableHTML;
-            
-            // Show pagination controls
-            paginationContainer.style.display = 'flex';
-            
-            // Update summary with animation
-            updateCounter(recordsCount, filteredData.length, 'records');
-            updateCounter(totalQuantity, quantityTotal, 'number');
-            updateCounter(totalProduct, productTotal, 'number');
-            updateCounter(totalValue, valueTotal, 'currency');
-            
-            // Update pagination controls
-            updatePaginationControls();
-            
-            // Update AI suggestion
-            updateAISuggestion();
-        }
-        
         // Animate counter updates
         function updateCounter(element, targetValue, type) {
             const currentValue = parseFloat(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
@@ -2928,24 +3008,24 @@
             const totalValue = parseFloat(document.getElementById('totalValue').textContent.replace(/[^0-9.-]+/g, '')) || 0;
             const totalQuantity = parseFloat(document.getElementById('totalQuantity').textContent.replace(/[^0-9.-]+/g, '')) || 0;
             
-            // Find top customer
-            const customerTotals = {};
+            // Find top state office
+            const officeTotals = {};
             filteredData.forEach(row => {
-                const customer = row['Customer Name'];
+                const office = row['State Office'];
                 const value = parseFloat(row['Invoice Value (Rs.)']) || 0;
                 
-                if (customer) {
-                    customerTotals[customer] = (customerTotals[customer] || 0) + value;
+                if (office) {
+                    officeTotals[office] = (officeTotals[office] || 0) + value;
                 }
             });
             
-            let topCustomer = '';
+            let topOffice = '';
             let topValue = 0;
             
-            for (const [customer, value] of Object.entries(customerTotals)) {
+            for (const [office, value] of Object.entries(officeTotals)) {
                 if (value > topValue) {
                     topValue = value;
-                    topCustomer = customer;
+                    topOffice = office;
                 }
             }
             
@@ -2986,7 +3066,7 @@
             // Generate AI insights
             const insights = [
                 `Market is currently <strong>${marketTrend}</strong> with ${Math.round(marketUtility)}% utility`,
-                `<strong>${topCustomer}</strong> is your top customer with ${formatCurrency(topValue)} in sales`,
+                `<strong>${topOffice}</strong> is your top performing state office with ${formatCurrency(topValue)} in sales`,
                 `<strong>${popularSku}</strong> is the most popular product (appears ${maxCount} times)`,
                 `Average order value: ${formatCurrency(avgInvoiceValue)}`,
                 `Total market volume: ${totalQuantity.toLocaleString()} units`
@@ -2995,7 +3075,7 @@
             aiInsightText.innerHTML = insights.map(insight => `• ${insight}`).join('<br>');
         }
         
-        // Download as Excel - UPDATED FOR SKU CODE
+        // Download as Excel
         function downloadAsExcel() {
             if (filteredData.length === 0) {
                 alert('No data to download. Please upload and filter data first.');
@@ -3008,8 +3088,8 @@
                 
                 // Add headers
                 const headers = [
-                    'Customer Name', 'Customer Group', 'Customer District',
-                    'Invoice Number', 'Invoice Date', 'SKU Code', 'SKU Name',
+                    'State Office', 'Supply Location', 'Truck Number',
+                    'Invoice Number', 'Invoice Date', 'SKU Name',
                     'Quantity (Numbers)', 'Product Quantity(L/Kg)', 'Invoice Value (Rs.)'
                 ];
                 wsData.push(headers);
@@ -3017,12 +3097,11 @@
                 // Add data rows
                 filteredData.forEach(row => {
                     wsData.push([
-                        row['Customer Name'] || '',
-                        row['Customer Group'] || '',
-                        row['Customer District'] || '',
+                        row['State Office'] || '',
+                        row['Supply Location'] || '',
+                        row['Truck Number'] || '',
                         row['Invoice Number'] || '',
                         row['Invoice Date'] || '',
-                        row['SKU Code'] || '',
                         row['SKU Name'] || '',
                         row['Quantity (Numbers)'] || 0,
                         row['Product Quantity(L/Kg)'] || 0,
@@ -3112,7 +3191,7 @@
             showDownloadSuccess('Charts downloaded as PNG image!');
         }
         
-        // Download full report - UPDATED FOR SKU CODE
+        // Download full report
         function downloadFullReport() {
             if (filteredData.length === 0) {
                 alert('No data to create report. Please upload and filter data first.');
@@ -3134,13 +3213,13 @@ Total Value: ${totalValue.textContent}
 Market Utility Indicator: ${utilityValue.textContent}
 Date Range: ${getDateRange()}
 
-TOP CUSTOMERS
--------------
-${getTopCustomers(5).map((cust, i) => `${i+1}. ${cust.name}: ${formatCurrency(cust.value)}`).join('\n')}
+TOP STATE OFFICES
+-----------------
+${getTopOffices(5).map((office, i) => `${i+1}. ${office.name}: ${formatCurrency(office.value)}`).join('\n')}
 
-TOP PRODUCTS (BY SKU)
----------------------
-${getTopProducts(5).map((prod, i) => `${i+1}. ${prod.code ? prod.code + ' - ' : ''}${prod.name}: ${prod.quantity} units`).join('\n')}
+TOP PRODUCTS
+------------
+${getTopProducts(5).map((prod, i) => `${i+1}. ${prod.name}: ${prod.quantity} units`).join('\n')}
 
 MARKET INSIGHTS
 ---------------
@@ -3149,7 +3228,7 @@ ${aiInsightText.textContent}
 DATA SAMPLE (First 10 Records)
 ------------------------------
 ${getDataSample(10).map(row => 
-    `${row['Customer Name'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Code'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
+    `${row['State Office'] || 'N/A'} | ${row['Invoice Date'] || 'N/A'} | ${row['SKU Name'] || 'N/A'} | ${row['Quantity (Numbers)'] || 0} | ${formatCurrency(row['Invoice Value (Rs.)'] || 0)}`
 ).join('\n')}
 
 FILTERS APPLIED
@@ -3158,7 +3237,7 @@ ${getActiveFilters().join('\n') || 'No filters applied'}
 
 RECOMMENDATIONS
 ---------------
-1. Focus on top performing customers for retention
+1. Focus on top performing state offices for retention
 2. Increase inventory for high-demand products
 3. Review underperforming products
 4. Monitor market utility trends regularly
@@ -3179,42 +3258,38 @@ Generated by Auto Lube House Smart Dashboard
             showDownloadSuccess('Full market report downloaded!');
         }
         
-        // Helper function to get top customers
-        function getTopCustomers(count) {
-            const customerTotals = {};
+        // Helper function to get top state offices
+        function getTopOffices(count) {
+            const officeTotals = {};
             filteredData.forEach(row => {
-                const customer = row['Customer Name'];
+                const office = row['State Office'];
                 const value = parseFloat(row['Invoice Value (Rs.)']) || 0;
-                if (customer) {
-                    customerTotals[customer] = (customerTotals[customer] || 0) + value;
+                if (office) {
+                    officeTotals[office] = (officeTotals[office] || 0) + value;
                 }
             });
             
-            return Object.entries(customerTotals)
+            return Object.entries(officeTotals)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, count)
                 .map(([name, value]) => ({ name, value }));
         }
         
-        // Helper function to get top products - UPDATED FOR SKU CODE
+        // Helper function to get top products
         function getTopProducts(count) {
             const productTotals = {};
             filteredData.forEach(row => {
                 const product = row['SKU Name'];
-                const code = row['SKU Code'];
                 const quantity = parseFloat(row['Quantity (Numbers)']) || 0;
                 if (product) {
-                    productTotals[product] = {
-                        name: product,
-                        code: code,
-                        quantity: (productTotals[product]?.quantity || 0) + quantity
-                    };
+                    productTotals[product] = (productTotals[product] || 0) + quantity;
                 }
             });
             
-            return Object.values(productTotals)
-                .sort((a, b) => b.quantity - a.quantity)
-                .slice(0, count);
+            return Object.entries(productTotals)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, count)
+                .map(([name, quantity]) => ({ name, quantity }));
         }
         
         // Helper function to get date range
@@ -3243,10 +3318,10 @@ Generated by Auto Lube House Smart Dashboard
         function getActiveFilters() {
             const filters = [];
             
-            if (selectedCustomer && selectedCustomer.trim() !== '') {
-                filters.push(`Customer: ${selectedCustomer}`);
+            if (selectedStateOffice && selectedStateOffice.trim() !== '') {
+                filters.push(`State Office: ${selectedStateOffice}`);
             }
-            if (groupFilter.value) filters.push(`Group: ${groupFilter.options[groupFilter.selectedIndex].text}`);
+            if (locationFilter.value) filters.push(`Location: ${locationFilter.options[locationFilter.selectedIndex].text}`);
             if (selectedSKUs.size > 0) filters.push(`SKUs: ${selectedSKUs.size} selected`);
             if (selectedMonths.size > 0) {
                 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
@@ -3307,7 +3382,6 @@ Generated by Auto Lube House Smart Dashboard
         
         // Sample data for demonstration
         function loadSampleData() {
-            // Generate realistic sample data
             const sampleData = [
                 
             ];
@@ -3316,16 +3390,11 @@ Generated by Auto Lube House Smart Dashboard
             processExcelData(sampleData);
             
             // Update UI to show it's sample data
-            fileName.textContent = 'Download Sales Report';
+            fileName.textContent = 'Download Purchase report';
             detectionInfo.innerHTML = `<i class="fas fa-info-circle"></i> <span>Upload your own Excel file to analyze your market data.</span>`;
             
-            aiInsightText.innerHTML = 'Download Sales Report or Upload your own Excel file to get intelligent market insights, trend analysis, and actionable recommendations based on your actual business data.';
+            aiInsightText.innerHTML = 'Download Purchase report or Upload your own Excel file to get intelligent market insights, trend analysis, and actionable recommendations based on your actual business data.';
         }
-        
-        // Load sample data on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(loadSampleData, 500);
-        });
     </script>
 </body>
 </html>
