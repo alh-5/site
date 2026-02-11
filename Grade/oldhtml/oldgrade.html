@@ -1,0 +1,2948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Grade Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            padding: 25px 30px;
+            border-bottom: 3px solid #daa520;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h1 i {
+            color: #333;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 600px;
+        }
+        
+        .panel {
+            padding: 25px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .left-panel {
+            background-color: #f9f9f9;
+            border-right: 1px solid #eee;
+        }
+        
+        .right-panel {
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: #daa520;
+        }
+        
+        .sku-list-container {
+            max-height: 250px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #fff;
+        }
+        
+        .sku-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sku-item.gold {
+            border-left: 4px solid #ffd700;
+            background-color: #fffef0;
+        }
+        
+        .sku-item.grease {
+            border-left: 4px solid #8B4513;
+            background-color: #f8f4f0;
+        }
+        
+        .sku-item.hydraulic {
+            border-left: 4px solid #0066cc;
+            background-color: #e6f0fa;
+        }
+        
+        .sku-item.def {
+            border-left: 4px solid #228B22;
+            background-color: #f0f8f0;
+        }
+        
+        .sku-item.green {
+            border-left: 4px solid #2E8B57;
+            background-color: #f0fff0;
+        }
+        
+        .sku-name {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        
+        .sku-count {
+            display: inline-block;
+            background-color: #ffd700;
+            color: #333;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #daa520;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #fffef5;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-area:hover {
+            background-color: #fffce6;
+            border-color: #c19500;
+        }
+        
+        .file-upload-area i {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-area h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .file-upload-area p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .mapping-section {
+            margin-top: 20px;
+        }
+        
+        .mapping-control {
+            margin-bottom: 12px;
+        }
+        
+        .mapping-control label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .mapping-control select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .filters-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .filters-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.9rem;
+        }
+        
+        .filter-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9rem;
+        }
+        
+        .reset-filters {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .reset-filters:hover {
+            background-color: #5a6268;
+        }
+        
+        .preview-table-container {
+            flex: 1;
+            overflow: auto;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .preview-table th {
+            background-color: #ffd700;
+            color: #333;
+            padding: 12px 15px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        .preview-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .preview-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .preview-table tr:hover {
+            background-color: #fff8dc;
+        }
+        
+        .preview-table tr.grease-row {
+            background-color: #f8f4f0;
+        }
+        
+        .preview-table tr.grease-row:hover {
+            background-color: #f0e8e0;
+        }
+        
+        .preview-table tr.hydraulic-row {
+            background-color: #e6f0fa;
+        }
+        
+        .preview-table tr.hydraulic-row:hover {
+            background-color: #d6e0f0;
+        }
+        
+        .preview-table tr.def-row {
+            background-color: #f0f8f0;
+        }
+        
+        .preview-table tr.def-row:hover {
+            background-color: #e0f0e0;
+        }
+        
+        .preview-table tr.green-row {
+            background-color: #f0fff0;
+        }
+        
+        .preview-table tr.green-row:hover {
+            background-color: #e0f0e0;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            min-width: 160px;
+        }
+        
+        .btn-primary {
+            background-color: #ffd700;
+            color: #333;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e6c200;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .btn-export {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-pdf {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-pdf:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-sales {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-sales:hover {
+            background-color: #0069d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        .btn-purchase {
+            background-color: #6f42c1;
+            color: white;
+        }
+        
+        .btn-purchase:hover {
+            background-color: #5e34b1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+        }
+        
+        .validation-result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .validation-result h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .validation-item {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .validation-item i {
+            color: #4CAF50;
+        }
+        
+        .validation-item.error i {
+            color: #f44336;
+        }
+        
+        .validation-item.warning i {
+            color: #ffc107;
+        }
+        
+        .totals-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .total-box {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .total-box.gold {
+            background-color: #fff8dc;
+            border-color: #ffd700;
+        }
+        
+        .total-box.grease {
+            background-color: #f8f4f0;
+            border-color: #8B4513;
+        }
+        
+        .total-box.hydraulic {
+            background-color: #e6f0fa;
+            border-color: #0066cc;
+        }
+        
+        .total-box.def {
+            background-color: #f0f8f0;
+            border-color: #228B22;
+        }
+        
+        .total-box.green {
+            background-color: #f0fff0;
+            border-color: #2E8B57;
+        }
+        
+        .total-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .total-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .total-value small {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        
+        .status-indicator {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-ready {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .sku-info-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .sku-info-container h4 {
+            margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sku-name-mapping {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            padding: 5px 10px;
+            background-color: #fff;
+            border-radius: 4px;
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .grade-info {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            padding: 5px 10px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        
+        .grade-info.gold {
+            border-left: 3px solid #ffd700;
+        }
+        
+        .grade-info.grease {
+            border-left: 3px solid #8B4513;
+        }
+        
+        .grade-info.hydraulic {
+            border-left: 3px solid #0066cc;
+        }
+        
+        .grade-info.def {
+            border-left: 3px solid #228B22;
+        }
+        
+        .grade-info.green {
+            border-left: 3px solid #2E8B57;
+        }
+        
+        .grade-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .grade-gold {
+            background-color: #fff8dc;
+            color: #b8860b;
+            border: 1px solid #ffd700;
+        }
+        
+        .grade-grease {
+            background-color: #f8f4f0;
+            color: #8B4513;
+            border: 1px solid #a0522d;
+        }
+        
+        .grade-hydraulic {
+            background-color: #e6f0fa;
+            color: #0066cc;
+            border: 1px solid #0066cc;
+        }
+        
+        .grade-def {
+            background-color: #f0f8f0;
+            color: #228B22;
+            border: 1px solid #228B22;
+        }
+        
+        .grade-green {
+            background-color: #f0fff0;
+            color: #2E8B57;
+            border: 1px solid #2E8B57;
+        }
+        
+        .grade-other {
+            background-color: #f0f0f0;
+            color: #666;
+            border: 1px solid #ccc;
+        }
+        
+        .district-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+        }
+        
+        .month-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            border: 1px solid #e1bee7;
+        }
+        
+        .customer-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .group-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffe0b2;
+        }
+        
+        /* Multi-select filter styles */
+        .multi-select-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .multi-select-header {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .multi-select-header:hover {
+            border-color: #aaa;
+        }
+        
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .multi-select-dropdown.show {
+            display: block;
+        }
+        
+        .multi-select-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .multi-select-option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .multi-select-option input[type="checkbox"] {
+            margin: 0;
+        }
+        
+        .multi-select-option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
+        .selected-count {
+            background-color: #ffd700;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .select-all-btn, .clear-all-btn {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            font-size: 0.8rem;
+            flex: 1;
+        }
+        
+        .select-all-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .clear-all-btn:hover {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        @media (max-width: 1200px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .preview-table-container {
+                max-height: 400px;
+            }
+            
+            button {
+                min-width: 140px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .totals-container {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                min-width: 100%;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .filters-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-crown"></i> Multi-Grade SKU Mapping Tool</h1>
+            <p class="subtitle">Track Gold, Grease, Hydraulic, DEF & Green Grades with District & Month Filters</p>
+        </header>
+        
+        <div class="content">
+            <div class="panel left-panel">
+                <h2><i class="fas fa-list"></i> SKU Codes by Grade <span class="sku-count" id="skuCount">32</span></h2>
+                <p>SKU codes classified by grade type:</p>
+                
+                <div class="sku-list-container" id="skuListContainer">
+                    <!-- SKU list will be populated by JavaScript -->
+                </div>
+                
+                <div class="sku-info-container">
+                    <h4><i class="fas fa-layer-group"></i> Grade Classification</h4>
+                    <p>SKU codes are automatically classified into grades:</p>
+                    <div class="grade-info gold">
+                        <strong>Gold Grade:</strong> Standard gold-grade lubricants
+                    </div>
+                    <div class="grade-info grease">
+                        <strong>Grease Grade:</strong> Grease products
+                    </div>
+                    <div class="grade-info hydraulic">
+                        <strong>Hydraulic Grade:</strong> Hydraulic fluids and oils
+                    </div>
+                    <div class="grade-info def">
+                        <strong>DEF Grade:</strong> Diesel Exhaust Fluid products
+                    </div>
+                    <div class="grade-info green">
+                        <strong>Green Grade:</strong> Environmentally friendly products
+                    </div>
+                    <div id="skuNameValidationInfo">
+                        <!-- SKU name validation info will appear here -->
+                    </div>
+                </div>
+                
+                <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-file-excel"></i>
+                    <h3>Upload XLSX File</h3>
+                    <p>Click to browse or drag and drop your Excel file</p>
+                    <p><small>File should contain columns for SKU code, name, quantity, liters, district and month/date</small></p>
+                    <input type="file" id="fileInput" accept=".xlsx, .xls">
+                </div>
+                
+                <div class="mapping-section">
+                    <h2><i class="fas fa-columns"></i> Map Your Columns</h2>
+                    <p>Select which columns from your file correspond to each required field:</p>
+                    
+                    <div class="mapping-control">
+                        <label for="skuCodeMap">SKU Code Column:</label>
+                        <select id="skuCodeMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="skuNameMap">SKU Name Column:</label>
+                        <select id="skuNameMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="qntyMap">Qnty Column:</label>
+                        <select id="qntyMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="litersMap">Liters Column:</label>
+                        <select id="litersMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="customerNameMap">Customer Name Column:</label>
+                        <select id="customerNameMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="customerGroupMap">Customer Group Column:</label>
+                        <select id="customerGroupMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="districtMap">Customer District Column:</label>
+                        <select id="districtMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mapping-control">
+                        <label for="monthMap">Month/Date Column:</label>
+                        <select id="monthMap">
+                            <option value="">Select column...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn-primary" id="processBtn" onclick="processMapping()">
+                            <i class="fas fa-cogs"></i> Process Mapping
+                        </button>
+                        <button class="btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Download Reports Section -->
+                <div class="action-buttons" style="margin-top: 30px;">
+                    <h2><i class="fas fa-download"></i> Download Reports</h2>
+                    <p>Download pre-defined sales and purchase reports:</p>
+                    
+                    <div class="button-group">
+                        <button class="btn-sales" onclick="window.location.href='https://alh-5.github.io/site/data/sales2526.xlsx';">
+                            <i class="fas fa-chart-line"></i> Sales Report
+                        </button>
+                        <button class="btn-purchase" onclick="window.location.href='https://alh-5.github.io/site/data/purchase2526.xlsx';">
+                            <i class="fas fa-shopping-cart"></i> Purchase Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel right-panel">
+                <h2><i class="fas fa-table"></i> Data Preview 
+                    <span class="status-indicator status-pending" id="previewStatus">
+                        <i class="fas fa-clock"></i> No file loaded
+                    </span>
+                </h2>
+                
+                <div class="filters-section" id="filtersSection" style="display: none;">
+                    <h4><i class="fas fa-filter"></i> Filter Data (Multi-Select)</h4>
+                    <div class="filters-container">
+                        <div class="filter-group">
+                            <label for="customerNameFilter"><i class="fas fa-user"></i> Customer Name:</label>
+                            <div class="multi-select-container" id="customerNameFilterContainer">
+                                <div class="multi-select-header" onclick="toggleMultiSelect('customerName')">
+                                    <span>Select Customers <span class="selected-count" id="customerNameSelectedCount">0</span></span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="multi-select-dropdown" id="customerNameFilterDropdown">
+                                    <!-- Customer name options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label for="customerGroupFilter"><i class="fas fa-users"></i> Customer Group:</label>
+                            <div class="multi-select-container" id="customerGroupFilterContainer">
+                                <div class="multi-select-header" onclick="toggleMultiSelect('customerGroup')">
+                                    <span>Select Groups <span class="selected-count" id="customerGroupSelectedCount">0</span></span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="multi-select-dropdown" id="customerGroupFilterDropdown">
+                                    <!-- Customer group options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label for="districtFilter"><i class="fas fa-map-marker-alt"></i> Customer District:</label>
+                            <div class="multi-select-container" id="districtFilterContainer">
+                                <div class="multi-select-header" onclick="toggleMultiSelect('district')">
+                                    <span>Select Districts <span class="selected-count" id="districtSelectedCount">0</span></span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="multi-select-dropdown" id="districtFilterDropdown">
+                                    <!-- District options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label for="monthFilter"><i class="fas fa-calendar-alt"></i> Month (MMM YYYY):</label>
+                            <div class="multi-select-container" id="monthFilterContainer">
+                                <div class="multi-select-header" onclick="toggleMultiSelect('month')">
+                                    <span>Select Months <span class="selected-count" id="monthSelectedCount">0</span></span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="multi-select-dropdown" id="monthFilterDropdown">
+                                    <!-- Month options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label for="gradeFilter"><i class="fas fa-layer-group"></i> Grade:</label>
+                            <div class="multi-select-container" id="gradeFilterContainer">
+                                <div class="multi-select-header" onclick="toggleMultiSelect('grade')">
+                                    <span>Select Grades <span class="selected-count" id="gradeSelectedCount">0</span></span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="multi-select-dropdown" id="gradeFilterDropdown">
+                                    <!-- Grade options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="select-all-btn" onclick="handleSelectAll()">Select All Filters</button>
+                        <button class="clear-all-btn" onclick="handleClearAll()">Clear All Filters</button>
+                        <button class="reset-filters" onclick="resetFilters()">
+                            <i class="fas fa-times"></i> Reset Filters
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="preview-table-container">
+                    <table class="preview-table" id="previewTable">
+                        <thead>
+                            <tr>
+                                <th>SKU Code</th>
+                                <th>SKU Name</th>
+                                <th>Qnty</th>
+                                <th>Liters</th>
+                                <th>Customer Name</th>
+                                <th>Customer Group</th>
+                                <th>Customer District</th>
+                                <th>Month (MMM YYYY)</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px; color: #999;">
+                                    <i class="fas fa-file-excel" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                    Upload an Excel file to preview data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="totals-container" id="totalsContainer" style="display: none;">
+                    <div class="total-box gold">
+                        <div class="total-label"><i class="fas fa-crown"></i> Gold Grade Qnty</div>
+                        <div class="total-value" id="totalGoldQnty">0</div>
+                    </div>
+                    <div class="total-box gold">
+                        <div class="total-label"><i class="fas fa-crown"></i> Gold Grade Liters</div>
+                        <div class="total-value" id="totalGoldLiters">0 <small>L</small></div>
+                    </div>
+                    <div class="total-box grease">
+                        <div class="total-label"><i class="fas fa-oil-can"></i> Grease Grade Qnty</div>
+                        <div class="total-value" id="totalGreaseQnty">0</div>
+                    </div>
+                    <div class="total-box grease">
+                        <div class="total-label"><i class="fas fa-oil-can"></i> Grease Grade Liters</div>
+                        <div class="total-value" id="totalGreaseLiters">0 <small>L</small></div>
+                    </div>
+                    <div class="total-box hydraulic">
+                        <div class="total-label"><i class="fas fa-tint"></i> Hydraulic Grade Qnty</div>
+                        <div class="total-value" id="totalHydraulicQnty">0</div>
+                    </div>
+                    <div class="total-box hydraulic">
+                        <div class="total-label"><i class="fas fa-tint"></i> Hydraulic Grade Liters</div>
+                        <div class="total-value" id="totalHydraulicLiters">0 <small>L</small></div>
+                    </div>
+                    <div class="total-box def">
+                        <div class="total-label"><i class="fas fa-truck"></i> DEF Grade Qnty</div>
+                        <div class="total-value" id="totalDefQnty">0</div>
+                    </div>
+                    <div class="total-box def">
+                        <div class="total-label"><i class="fas fa-truck"></i> DEF Grade Liters</div>
+                        <div class="total-value" id="totalDefLiters">0 <small>L</small></div>
+                    </div>
+                    <div class="total-box green">
+                        <div class="total-label"><i class="fas fa-leaf"></i> Green Grade Qnty</div>
+                        <div class="total-value" id="totalGreenQnty">0</div>
+                    </div>
+                    <div class="total-box green">
+                        <div class="total-label"><i class="fas fa-leaf"></i> Green Grade Liters</div>
+                        <div class="total-value" id="totalGreenLiters">0 <small>L</small></div>
+                    </div>
+                </div>
+                
+                <div class="validation-result" id="validationResult" style="display: none;">
+                    <h3><i class="fas fa-chart-pie"></i> Grade Analysis Results</h3>
+                    <div id="validationContent">
+                        <!-- Validation results will appear here -->
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <h2><i class="fas fa-download"></i> Export Data</h2>
+                    <p>Export the mapped data with multi-grade analysis:</p>
+                    
+                    <div class="button-group">
+                        <button class="btn-export" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
+                        <button class="btn-pdf" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf"></i> Export to PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Multi-Grade SKU Mapping Tool v5.0 | Gold, Grease, Hydraulic, DEF & Green Grade Tracking with Customer, Group, District & Month Filters</p>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentMappedData = [];
+        let filteredMappedData = [];
+        let totalGoldQnty = 0;
+        let totalGoldLiters = 0;
+        let totalGreaseQnty = 0;
+        let totalGreaseLiters = 0;
+        let totalHydraulicQnty = 0;
+        let totalHydraulicLiters = 0;
+        let totalDefQnty = 0;
+        let totalDefLiters = 0;
+        let totalGreenQnty = 0;
+        let totalGreenLiters = 0;
+        let goldSkuMatches = 0;
+        let greaseSkuMatches = 0;
+        let hydraulicSkuMatches = 0;
+        let defSkuMatches = 0;
+        let greenSkuMatches = 0;
+        let totalRows = 0;
+        let nameCorrections = 0;
+        
+        // Filter state
+        let selectedCustomerNames = [];
+        let selectedCustomerGroups = [];
+        let selectedDistricts = [];
+        let selectedMonths = [];
+        let selectedGrades = [];
+        
+        // Track which dropdown is currently open
+        let currentOpenDropdown = null;
+        
+        // Month names for conversion
+        const monthNames = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        
+        // Full month names for display
+        const fullMonthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        
+        // Multi-grade SKU codes with their validated names and grade classification
+        const skuData = {
+            // Gold Grade SKUs
+            '7434253': { validName: 'SERVO PRIDE NXT CK4 10W-30-15 L PROMO LUBE', grade: 'Gold' },
+'7436250': { validName: 'SERVO PRIDE NXT CK4 15W-40-7.5 L PROMO', grade: 'Gold' },
+'7434256': { validName: 'SERVO PRIDE NXT CK4 10W-30-15 L', grade: 'Gold' },
+'7436256': { validName: 'SERVO PRIDE NXT CK4 15W-40-15 L', grade: 'Gold' },
+'7436253': { validName: 'SERVO PRIDE NXT CK4 15W-40-15 L PROMO', grade: 'Gold' },
+'7436184': { validName: 'SERVO PRIDE NXT CK4 15W-40-20 X 1 L', grade: 'Gold' },
+'2967184': { validName: 'SERVO FUTURA G PLUS 5W-30-20 X 1 L', grade: 'Gold' },
+'2967213': { validName: 'SERVO FUTURA G PLUS 5W-30-4 X 3.5 L', grade: 'Gold' },
+'2967111': { validName: 'SERVO FUTURA G PLUS 5W-30-4X3.5 L PROMO', grade: 'Gold' },
+'7271213': { validName: 'SERVO FUTURA NXT 0W-16-4 X 3.5 L', grade: 'Gold' },
+'2914175': { validName: 'SERVO BRAKE FLUID DOT 4-20 X 1/2 L', grade: 'Gold' },
+'2914165': { validName: 'SERVO BRAKE FLUID DOT 4-20 X 1/4 L', grade: 'Gold' },
+'7429184': { validName: 'SERVO SUPERMILE 10W-30-20 X 1 L', grade: 'Gold' },
+'7429240': { validName: 'SERVO SUPERMILE 10W-30-4 X 5 L PROMO', grade: 'Gold' },
+'7429297': { validName: 'SERVO SUPERMILE 10W-30-7 L PROMO', grade: 'Gold' },
+'7430240': { validName: 'SERVO SUPERMILE PLUS 5W-30-4 X 5 L PROMO', grade: 'Gold' },
+'7430297': { validName: 'SERVO SUPERMILE PLUS 5W-30-7 L PROMO', grade: 'Gold' },
+'2829230': { validName: 'SERVO 4T XTRA 10W-30-20 X 0.9 L PROMO', grade: 'Gold' },
+'2828230': { validName: 'SERVO 4T XTRA-20 X 0.9 L PROMO', grade: 'Gold' },
+'2828229': { validName: 'SERVO 4T XTRA-20 X 1 L PROMO', grade: 'Gold' },
+'2971225': { validName: 'SERVO 4T HD-20 X 1.2 L', grade: 'Gold' },
+'2971195': { validName: 'SERVO 4T HD-4 X 2.5 L', grade: 'Gold' },
+'7584401': { validName: 'SERVO KOOL PLUS -210L BRL', grade: 'Gold' },
+'7584185': { validName: 'SERVO KOOL PLUS-10X1L-HDPE', grade: 'Gold' },
+'7584175': { validName: 'SERVO KOOL PLUS-20X1/2L-HDPE', grade: 'Gold' },
+'7584184': { validName: 'SERVO KOOL PLUS-20X1L-HDPE', grade: 'Gold' },
+'7607184': { validName: 'SERVO KOOL READY-20X1L-HDPE', grade: 'Gold' },
+'2825185': { validName: 'SERVO HYPERSPORT F5-10 X 1 L', grade: 'Gold' },
+'2825258': { validName: 'SERVO HYPERSPORT F5-10 X 1 L PROMO', grade: 'Gold' },
+'7275111': { validName: 'SERVO BLACKBIRD X-4X3.5 L PROMO', grade: 'Gold' },
+'2824184': { validName: 'SERVO 4T GREEN-20 X 1 L', grade: 'Green' },
+'7211213': { validName: 'SERVO GREENMILE-4 X 3.5 L', grade: 'Green' },
+'3725213': { validName: 'SERVO SUPER PUMP SO 40-4x3.5L HDPE', grade: 'Green' },
+'7330242': { validName: 'IOC CLEARBLUE-10 L', grade: 'DEF' },
+'7330265': { validName: 'IOC CLEARBLUE-20 L', grade: 'DEF' },
+'7701341': { validName: 'SERVO GREASE MP-20 KG BUC', grade: 'Grease' },
+'7705303': { validName: 'SERVO GREASE MP 3 - 20 X 1/2 KG CTN', grade: 'Grease' },
+'7705313': { validName: 'SERVO GREASE MP 3 - 10 X 1 KG CTN', grade: 'Grease' },
+'7705327': { validName: 'SERVOGREASE MP 3-6X2 KG', grade: 'Grease' },
+'7705337': { validName: 'SERVOGREASE MP 3-4X3 KG', grade: 'Grease' },
+'7705339': { validName: 'SERVOGREASE MP 3 - 5 KG BUC', grade: 'Grease' },
+'7705340': { validName: 'SERVOGREASE MP 3-2 X 5 KG', grade: 'Grease' },
+'7705341': { validName: 'SERVOGREASE MP 3 -20 KG BUC', grade: 'Grease' },
+'7727303': { validName: 'SERVO GEM RR 3 - 20 X 1/2 KG CTN', grade: 'Grease' },
+'7727313': { validName: 'SERVO GEM RR 3 - 10 X 1 KG CTN', grade: 'Grease' },
+'7727327': { validName: 'SERVO GEM RR 3-6X2 KG TUB', grade: 'Grease' },
+'7727337': { validName: 'SERVO GEM RR 3-4X3 KG', grade: 'Grease' },
+'7727341': { validName: 'SERVO GEM RR 3 - 20 KG. BUC', grade: 'Grease' },
+'7849303': { validName: 'SERVO LONG LIFE GREASE-20 X 1/2 KG', grade: 'Grease' },
+'7849313': { validName: 'SERVO LONG LIFE GREASE-10X1 KG TUB', grade: 'Grease' },
+'7849327': { validName: 'SERVO LONG LIFE GREASE-6X2 KG TUB', grade: 'Grease' },
+'7849337': { validName: 'SERVO LONG LIFE GREASE-4X3 KG TUB', grade: 'Grease' },
+'7849340': { validName: 'SERVO LONG LIFE GREASE-2 X 5 KG', grade: 'Grease' },
+'7849341': { validName: 'SERVO LONG LIFE GREASE-20 KG', grade: 'Grease' },
+'7849343': { validName: 'SERVO LONG LIFE GREASE-7 KG', grade: 'Grease' },
+'7849344': { validName: 'SERVO LONG LIFE GREASE-10 KG BUC', grade: 'Grease' },
+'7903303': { validName: 'SERVOGREASE MIRACLE 3-20 X 1/2 KG', grade: 'Grease' },
+'7903313': { validName: 'SERVOGREASE MIRACLE 3-10 X 1 KG', grade: 'Grease' },
+'7903327': { validName: 'SERVOGREASE MIRACLE 3-6 X 2 KG', grade: 'Grease' },
+'7903337': { validName: 'SERVOGREASE MIRACLE 3-4 X 3 KG', grade: 'Grease' },
+'7903339': { validName: 'SERVOGREASE MIRACLE 3-5 KG ', grade: 'Grease' },
+'7903343': { validName: 'SERVOGREASE MIRACLE 3-7 KG ', grade: 'Grease' },
+'7903344': { validName: 'SERVOGREASE MIRACLE 3-10 KG BUC ', grade: 'Grease' },
+'7903341': { validName: 'SERVOGREASE MIRACLE 3-20 KG', grade: 'Grease' },
+'7742341': { validName: 'SERVOGEM EP 2-20 KG BUC', grade: 'Grease' },
+'3040265': { validName: 'SERVOHYDRASHAKTI 68-20 L', grade: 'Hydraulic' },
+'3006401': { validName: 'SERVOSYSTEM 68 - 210L BRL', grade: 'Hydraulic' },
+'3006265': { validName: 'SERVOSYSTEM 68-20L BUC', grade: 'Hydraulic' },
+'3006403': { validName: 'SERVOSYSTEM 68-210 L HD', grade: 'Hydraulic' },
+'3006234': { validName: 'SERVOSYSTEM 68-4x5L - HDPE', grade: 'Hydraulic' }
+
+        };
+        
+        // All SKU codes array for quick lookup
+        const allSkuCodes = Object.keys(skuData);
+        
+        // Initialize the SKU list display
+        function initializeSkuList() {
+            const skuListContainer = document.getElementById('skuListContainer');
+            const skuCountElement = document.getElementById('skuCount');
+            const skuNameValidationInfo = document.getElementById('skuNameValidationInfo');
+            
+            skuCountElement.textContent = allSkuCodes.length;
+            
+            // Clear the container
+            skuListContainer.innerHTML = '';
+            
+            // Track SKUs by grade
+            let goldCount = 0, greaseCount = 0, hydraulicCount = 0, defCount = 0, greenCount = 0;
+            let validatedSkusCount = 0;
+            
+            // Add each SKU as a list item
+            allSkuCodes.forEach(sku => {
+                const skuInfo = skuData[sku];
+                const skuElement = document.createElement('div');
+                skuElement.className = `sku-item ${skuInfo.grade.toLowerCase()}`;
+                
+                // Update grade counters
+                if (skuInfo.grade === 'Gold') goldCount++;
+                if (skuInfo.grade === 'Grease') greaseCount++;
+                if (skuInfo.grade === 'Hydraulic') hydraulicCount++;
+                if (skuInfo.grade === 'DEF') defCount++;
+                if (skuInfo.grade === 'Green') greenCount++;
+                if (skuInfo.validName) validatedSkusCount++;
+                
+                let skuDetails = `<div>
+                    <strong>${sku}</strong>`;
+                
+                if (skuInfo.validName) {
+                    skuDetails += `<div class="sku-name">${skuInfo.validName}</div>`;
+                } else {
+                    skuDetails += `<div class="sku-name">${skuInfo.grade} Grade</div>`;
+                }
+                
+                skuDetails += `</div>`;
+                
+                let gradeBadge = '';
+                switch(skuInfo.grade) {
+                    case 'Gold':
+                        gradeBadge = '<span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>';
+                        break;
+                    case 'Grease':
+                        gradeBadge = '<span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>';
+                        break;
+                    case 'Hydraulic':
+                        gradeBadge = '<span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>';
+                        break;
+                    case 'DEF':
+                        gradeBadge = '<span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>';
+                        break;
+                    case 'Green':
+                        gradeBadge = '<span class="grade-indicator grade-green"><i class="fas fa-leaf"></i> Green</span>';
+                        break;
+                    default:
+                        gradeBadge = '<span class="grade-indicator grade-other">Other</span>';
+                }
+                
+                skuElement.innerHTML = skuDetails + gradeBadge;
+                skuListContainer.appendChild(skuElement);
+            });
+            
+            // Update SKU name validation info
+            skuNameValidationInfo.innerHTML = `
+                <p><strong>Grade Distribution:</strong></p>
+                <ul style="padding-left: 20px; margin-top: 8px;">
+                    <li><span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>: ${goldCount} SKUs</li>
+                    <li><span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>: ${greaseCount} SKUs</li>
+                    <li><span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>: ${hydraulicCount} SKUs</li>
+                    <li><span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>: ${defCount} SKUs</li>
+                    <li><span class="grade-indicator grade-green"><i class="fas fa-leaf"></i> Green</span>: ${greenCount} SKUs</li>
+                </ul>
+                <p style="margin-top: 10px; font-size: 0.85rem; color: #666;">
+                    <i class="fas fa-info-circle"></i> Grade is automatically determined based on SKU classification.
+                </p>
+            `;
+        }
+        
+        // Convert Excel serial date to proper date
+        function convertExcelDate(excelDate) {
+            // Excel date starts from January 1, 1900 (with 1900 incorrectly considered as a leap year)
+            // We need to adjust for this
+            if (!excelDate || excelDate < 1) return null;
+            
+            // Excel incorrectly considers 1900 as a leap year, so we adjust
+            // For dates after February 28, 1900, subtract 1 day
+            const excelEpoch = new Date(1899, 11, 30); // December 30, 1899
+            
+            // Calculate the date
+            const date = new Date(excelEpoch.getTime() + excelDate * 24 * 60 * 60 * 1000);
+            
+            // Adjust for the Excel bug (1900 is not a leap year)
+            if (excelDate >= 60) {
+                // Dates after February 28, 1900 need adjustment
+                date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
+            }
+            
+            return date;
+        }
+        
+        // Convert date to month format "MMM YYYY"
+        function convertDateToMonth(dateValue) {
+            if (!dateValue && dateValue !== 0) return '';
+            
+            let date = null;
+            
+            // Check if it's an Excel serial number (common range for dates)
+            if (typeof dateValue === 'number') {
+                // Excel serial numbers are typically between 1 and 50000 for reasonable dates
+                if (dateValue >= 1 && dateValue <= 50000) {
+                    date = convertExcelDate(dateValue);
+                } else {
+                    // Might be a timestamp or other number format
+                    date = new Date(dateValue);
+                }
+            } 
+            // Check if it's already a Date object
+            else if (dateValue instanceof Date) {
+                date = dateValue;
+            } 
+            // Check if it's a string that looks like a date
+            else if (typeof dateValue === 'string') {
+                // Try to parse common date formats
+                const str = dateValue.toString().trim();
+                
+                // Try dd-mm-yyyy, dd/mm/yyyy, dd.mm.yyyy
+                const dateMatch = str.match(/(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{2,4})/);
+                if (dateMatch) {
+                    const day = parseInt(dateMatch[1], 10);
+                    const month = parseInt(dateMatch[2], 10) - 1;
+                    let year = parseInt(dateMatch[3], 10);
+                    
+                    // Handle 2-digit years
+                    if (year < 100) {
+                        year = year < 50 ? 2000 + year : 1900 + year;
+                    }
+                    
+                    date = new Date(year, month, day);
+                } 
+                // Try yyyy-mm-dd format
+                else if (str.match(/^\d{4}-\d{1,2}-\d{1,2}/)) {
+                    date = new Date(str);
+                }
+                // Try month name formats
+                else {
+                    date = new Date(str);
+                }
+            }
+            
+            // If we still don't have a valid date, return original value
+            if (!date || isNaN(date.getTime())) {
+                return dateValue ? dateValue.toString() : '';
+            }
+            
+            // Format as "MMM YYYY"
+            const monthName = monthNames[date.getMonth()];
+            const year = date.getFullYear();
+            return `${monthName} ${year}`;
+        }
+        
+        // File input event handler
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        
+        // Handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Update status
+            document.getElementById('previewStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading file...';
+            document.getElementById('previewStatus').className = 'status-indicator status-pending';
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get the first sheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Convert to JSON - use raw values to get Excel serial numbers
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+                        header: 1, 
+                        raw: true, // Get raw values (Excel serial numbers for dates)
+                        defval: null 
+                    });
+                    
+                    if (jsonData.length === 0) {
+                        alert('The uploaded file appears to be empty.');
+                        resetForm();
+                        return;
+                    }
+                    
+                    // Get headers (first row)
+                    const headers = jsonData[0];
+                    
+                    // Update the mapping dropdowns
+                    updateMappingDropdowns(headers);
+                    
+                    // Display a preview of the data
+                    displayDataPreview(jsonData);
+                    
+                    // Update status
+                    document.getElementById('previewStatus').innerHTML = '<i class="fas fa-check"></i> File loaded';
+                    document.getElementById('previewStatus').className = 'status-indicator status-ready';
+                    
+                } catch (error) {
+                    console.error('Error reading file:', error);
+                    alert('Error reading the Excel file. Please make sure it\'s a valid XLSX or XLS file.');
+                    resetForm();
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // Update mapping dropdowns with column headers
+        function updateMappingDropdowns(headers) {
+            const dropdowns = ['skuCodeMap', 'skuNameMap', 'qntyMap', 'litersMap', 'customerNameMap', 'customerGroupMap', 'districtMap', 'monthMap'];
+            
+            dropdowns.forEach(dropdownId => {
+                const dropdown = document.getElementById(dropdownId);
+                
+                // Clear existing options except the first one
+                while (dropdown.options.length > 1) {
+                    dropdown.remove(1);
+                }
+                
+                // Add header options
+                headers.forEach((header, index) => {
+                    if (header && header.toString().trim() !== '') {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.text = `${header} (Column ${index + 1})`;
+                        dropdown.appendChild(option);
+                    }
+                });
+                
+                // Try to auto-detect based on header name
+                const dropdownName = dropdownId.replace('Map', '').toLowerCase();
+                let autoSelectIndex = -1;
+                
+                headers.forEach((header, index) => {
+                    if (header) {
+                        const headerLower = header.toString().toLowerCase();
+                        if (headerLower.includes(dropdownName) || 
+                            (dropdownName === 'qnty' && (headerLower.includes('quantity') || headerLower.includes('qty'))) ||
+                            (dropdownName === 'liters' && (headerLower.includes('liter') || headerLower.includes('volume') || headerLower.includes('capacity'))) ||
+                            (dropdownName === 'customername' && (headerLower.includes('customer') && headerLower.includes('name') || headerLower.includes('client') || headerLower.includes('account'))) ||
+                            (dropdownName === 'customergroup' && (headerLower.includes('customer') && headerLower.includes('group') || headerLower.includes('group') || headerLower.includes('category'))) ||
+                            (dropdownName === 'district' && (headerLower.includes('district') || headerLower.includes('region') || headerLower.includes('area'))) ||
+                            (dropdownName === 'month' && (headerLower.includes('month') || headerLower.includes('period') || headerLower.includes('date')))) {
+                            autoSelectIndex = index;
+                        }
+                    }
+                });
+                
+                if (autoSelectIndex !== -1) {
+                    dropdown.value = autoSelectIndex;
+                }
+            });
+        }
+        
+        // Display data preview
+        function displayDataPreview(data) {
+            const tableBody = document.getElementById('previewTableBody');
+            const headers = data[0];
+            
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            // Show up to 10 rows of data
+            const rowCount = Math.min(data.length, 11); // 1 header + up to 10 data rows
+            
+            for (let i = 1; i < rowCount; i++) {
+                const row = data[i];
+                const tableRow = document.createElement('tr');
+                
+                // Create cells based on headers
+                headers.forEach((header, index) => {
+                    const cell = document.createElement('td');
+                    const cellValue = row[index] !== undefined ? row[index] : '';
+                    
+                    // Format dates for display in preview
+                    if (cellValue !== null && cellValue !== undefined) {
+                        cell.textContent = cellValue.toString();
+                    } else {
+                        cell.textContent = '';
+                    }
+                    
+                    tableRow.appendChild(cell);
+                });
+                
+                // Add empty columns if needed
+                if (headers.length < 9) {
+                    const neededCells = 9 - headers.length;
+                    for (let j = 0; j < neededCells; j++) {
+                        const cell = document.createElement('td');
+                        cell.textContent = '';
+                        tableRow.appendChild(cell);
+                    }
+                }
+                
+                tableBody.appendChild(tableRow);
+            }
+            
+            // Update table header to show actual column names
+            const tableHeader = document.querySelector('#previewTable thead tr');
+            tableHeader.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeader.appendChild(th);
+            });
+            
+            // Add missing headers if needed
+            const neededHeaders = 9 - headers.length;
+            if (neededHeaders > 0) {
+                const extraHeaders = ['Grade', 'Customer Name', 'Customer Group', 'Customer District', 'Month'].slice(-neededHeaders);
+                extraHeaders.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    tableHeader.appendChild(th);
+                });
+            }
+        }
+        
+        // Process the mapping
+        function processMapping() {
+            // Get selected mapping values
+            const skuCodeIndex = document.getElementById('skuCodeMap').value;
+            const skuNameIndex = document.getElementById('skuNameMap').value;
+            const qntyIndex = document.getElementById('qntyMap').value;
+            const litersIndex = document.getElementById('litersMap').value;
+            const customerNameIndex = document.getElementById('customerNameMap').value;
+            const customerGroupIndex = document.getElementById('customerGroupMap').value;
+            const districtIndex = document.getElementById('districtMap').value;
+            const monthIndex = document.getElementById('monthMap').value;
+            
+            // Validate mapping
+            if (!skuCodeIndex || !skuNameIndex || !qntyIndex || !litersIndex || !customerNameIndex || !customerGroupIndex || !districtIndex || !monthIndex) {
+                alert('Please map all required columns before processing.');
+                return;
+            }
+            
+            // Get the file data
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files[0]) {
+                alert('Please upload a file first.');
+                return;
+            }
+            
+            // Read the file again to process with mapping
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+                        header: 1, 
+                        raw: true, // Get raw values (Excel serial numbers for dates)
+                        defval: null 
+                    });
+                    
+                    // Process the data with mapping
+                    processMappedData(jsonData, skuCodeIndex, skuNameIndex, qntyIndex, litersIndex, customerNameIndex, customerGroupIndex, districtIndex, monthIndex);
+                    
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    alert('Error processing the Excel file.');
+                }
+            };
+            
+            reader.readAsArrayBuffer(fileInput.files[0]);
+        }
+        
+        // Process mapped data
+        function processMappedData(data, skuCodeIdx, skuNameIdx, qntyIdx, litersIdx, customerNameIdx, customerGroupIdx, districtIdx, monthIdx) {
+            const headers = data[0];
+            currentMappedData = [];
+            
+            // Reset all totals
+            totalGoldQnty = 0;
+            totalGoldLiters = 0;
+            totalGreaseQnty = 0;
+            totalGreaseLiters = 0;
+            totalHydraulicQnty = 0;
+            totalHydraulicLiters = 0;
+            totalDefQnty = 0;
+            totalDefLiters = 0;
+            totalGreenQnty = 0;
+            totalGreenLiters = 0;
+            goldSkuMatches = 0;
+            greaseSkuMatches = 0;
+            hydraulicSkuMatches = 0;
+            defSkuMatches = 0;
+            greenSkuMatches = 0;
+            totalRows = 0;
+            nameCorrections = 0;
+            
+            // Collect unique values for filters
+            const uniqueCustomerNames = new Set();
+            const uniqueCustomerGroups = new Set();
+            const uniqueDistricts = new Set();
+            const uniqueMonths = new Set();
+            const uniqueMonthsOriginal = new Set();
+            const uniqueGrades = new Set(['Gold', 'Grease', 'Hydraulic', 'DEF', 'Green', 'Other']);
+            
+            // Start from row 1 to skip header
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                
+                // Skip empty rows
+                if (!row || row.length === 0) continue;
+                
+                totalRows++;
+                
+                // Extract values based on mapping
+                const skuCode = row[skuCodeIdx] ? row[skuCodeIdx].toString().trim() : '';
+                const originalSkuName = row[skuNameIdx] ? row[skuNameIdx].toString().trim() : '';
+                const qnty = row[qntyIdx] ? parseFloat(row[qntyIdx]) : 0;
+                const liters = row[litersIdx] ? parseFloat(row[litersIdx]) : 0;
+                const customerName = row[customerNameIdx] ? row[customerNameIdx].toString().trim() : '';
+                const customerGroup = row[customerGroupIdx] ? row[customerGroupIdx].toString().trim() : '';
+                const customerDistrict = row[districtIdx] ? row[districtIdx].toString().trim() : '';
+                const monthOriginal = row[monthIdx];
+                const monthDisplay = convertDateToMonth(monthOriginal);
+                
+                // Add to unique sets for filters
+                if (customerName) uniqueCustomerNames.add(customerName);
+                if (customerGroup) uniqueCustomerGroups.add(customerGroup);
+                if (customerDistrict) uniqueDistricts.add(customerDistrict);
+                if (monthOriginal !== null && monthOriginal !== undefined && monthOriginal !== '') {
+                    uniqueMonthsOriginal.add(monthOriginal.toString());
+                }
+                if (monthDisplay) uniqueMonths.add(monthDisplay);
+                
+                // Check if this is a known SKU
+                const isKnownSku = allSkuCodes.includes(skuCode);
+                const skuInfo = skuData[skuCode] || {};
+                const grade = skuInfo.grade || 'Other';
+                
+                // Add grade to unique grades
+                uniqueGrades.add(grade);
+                
+                // Determine the correct SKU name
+                let skuName = originalSkuName;
+                let nameValidated = false;
+                
+                if (isKnownSku && skuInfo && skuInfo.validName) {
+                    // Check if the uploaded name matches the validated name
+                    if (originalSkuName.toUpperCase() !== skuInfo.validName.toUpperCase()) {
+                        skuName = skuInfo.validName;
+                        nameValidated = true;
+                        nameCorrections++;
+                    }
+                }
+                
+                // Update totals based on grade
+                const quantity = isNaN(qnty) ? 0 : qnty;
+                const volume = isNaN(liters) ? 0 : liters;
+                
+                switch(grade) {
+                    case 'Gold':
+                        goldSkuMatches++;
+                        totalGoldQnty += quantity;
+                        totalGoldLiters += volume;
+                        break;
+                    case 'Grease':
+                        greaseSkuMatches++;
+                        totalGreaseQnty += quantity;
+                        totalGreaseLiters += volume;
+                        break;
+                    case 'Hydraulic':
+                        hydraulicSkuMatches++;
+                        totalHydraulicQnty += quantity;
+                        totalHydraulicLiters += volume;
+                        break;
+                    case 'DEF':
+                        defSkuMatches++;
+                        totalDefQnty += quantity;
+                        totalDefLiters += volume;
+                        break;
+                    case 'Green':
+                        greenSkuMatches++;
+                        totalGreenQnty += quantity;
+                        totalGreenLiters += volume;
+                        break;
+                }
+                
+                // Add to mapped data
+                currentMappedData.push({
+                    skuCode,
+                    originalSkuName,
+                    skuName,
+                    qnty: quantity,
+                    liters: volume,
+                    customerName,
+                    customerGroup,
+                    customerDistrict,
+                    monthOriginal,
+                    monthDisplay,
+                    grade,
+                    isKnownSku,
+                    nameValidated
+                });
+            }
+            
+            // Update filter dropdowns
+            updateFilterDropdowns(uniqueCustomerNames, uniqueCustomerGroups, uniqueDistricts, uniqueMonths, uniqueGrades);
+            
+            // Reset filter selections
+            selectedCustomerNames = [];
+            selectedCustomerGroups = [];
+            selectedDistricts = [];
+            selectedMonths = [];
+            selectedGrades = [];
+            
+            // Set filtered data to all data initially
+            filteredMappedData = [...currentMappedData];
+            
+            // Update the preview table with mapped data
+            updatePreviewWithMappedData();
+            
+            // Update totals display
+            updateTotalsDisplay();
+            
+            // Show validation results
+            showValidationResults();
+            
+            // Show filters section
+            document.getElementById('filtersSection').style.display = 'block';
+        }
+        
+        // Update filter dropdowns with checkboxes
+        function updateFilterDropdowns(customerNamesSet, customerGroupsSet, districtsSet, monthsSet, gradesSet) {
+            const customerNameFilter = document.getElementById('customerNameFilterDropdown');
+            const customerGroupFilter = document.getElementById('customerGroupFilterDropdown');
+            const districtFilter = document.getElementById('districtFilterDropdown');
+            const monthFilter = document.getElementById('monthFilterDropdown');
+            const gradeFilter = document.getElementById('gradeFilterDropdown');
+            
+            // Clear existing options
+            customerNameFilter.innerHTML = '';
+            customerGroupFilter.innerHTML = '';
+            districtFilter.innerHTML = '';
+            monthFilter.innerHTML = '';
+            gradeFilter.innerHTML = '';
+            
+            // Add customer name options with checkboxes
+            const customerNames = Array.from(customerNamesSet).sort();
+            customerNames.forEach(customerName => {
+                if (customerName.trim() !== '') {
+                    const option = document.createElement('div');
+                    option.className = 'multi-select-option';
+                    option.innerHTML = `
+                        <input type="checkbox" id="customerName_${customerName}" value="${customerName}" onchange="updateFilterSelection('customerName', '${customerName.replace(/'/g, "\\'")}')">
+                        <label for="customerName_${customerName}">${customerName}</label>
+                    `;
+                    customerNameFilter.appendChild(option);
+                }
+            });
+            
+            // Add customer group options with checkboxes
+            const customerGroups = Array.from(customerGroupsSet).sort();
+            customerGroups.forEach(customerGroup => {
+                if (customerGroup.trim() !== '') {
+                    const option = document.createElement('div');
+                    option.className = 'multi-select-option';
+                    option.innerHTML = `
+                        <input type="checkbox" id="customerGroup_${customerGroup}" value="${customerGroup}" onchange="updateFilterSelection('customerGroup', '${customerGroup.replace(/'/g, "\\'")}')">
+                        <label for="customerGroup_${customerGroup}">${customerGroup}</label>
+                    `;
+                    customerGroupFilter.appendChild(option);
+                }
+            });
+            
+            // Add district options with checkboxes
+            const districts = Array.from(districtsSet).sort();
+            districts.forEach(district => {
+                if (district.trim() !== '') {
+                    const option = document.createElement('div');
+                    option.className = 'multi-select-option';
+                    option.innerHTML = `
+                        <input type="checkbox" id="district_${district}" value="${district}" onchange="updateFilterSelection('district', '${district.replace(/'/g, "\\'")}')">
+                        <label for="district_${district}">${district}</label>
+                    `;
+                    districtFilter.appendChild(option);
+                }
+            });
+            
+            // Add month options with checkboxes (using display names)
+            const months = Array.from(monthsSet).sort((a, b) => {
+                // Sort by year and month
+                const getDateValue = (monthStr) => {
+                    if (!monthStr) return 0;
+                    
+                    // Try to parse "MMM YYYY" format
+                    const parts = monthStr.split(' ');
+                    if (parts.length === 2) {
+                        const monthName = parts[0];
+                        const year = parseInt(parts[1], 10);
+                        const monthIndex = monthNames.indexOf(monthName);
+                        if (monthIndex !== -1 && !isNaN(year)) {
+                            return year * 12 + monthIndex;
+                        }
+                    }
+                    
+                    // If not in expected format, use string comparison
+                    return monthStr;
+                };
+                
+                return getDateValue(a) - getDateValue(b);
+            });
+            
+            months.forEach(month => {
+                if (month.trim() !== '') {
+                    const option = document.createElement('div');
+                    option.className = 'multi-select-option';
+                    option.innerHTML = `
+                        <input type="checkbox" id="month_${month}" value="${month}" onchange="updateFilterSelection('month', '${month.replace(/'/g, "\\'")}')">
+                        <label for="month_${month}">${month}</label>
+                    `;
+                    monthFilter.appendChild(option);
+                }
+            });
+            
+            // Add grade options with checkboxes
+            const grades = Array.from(gradesSet).sort();
+            grades.forEach(grade => {
+                if (grade.trim() !== '') {
+                    const option = document.createElement('div');
+                    option.className = 'multi-select-option';
+                    option.innerHTML = `
+                        <input type="checkbox" id="grade_${grade}" value="${grade}" onchange="updateFilterSelection('grade', '${grade.replace(/'/g, "\\'")}')">
+                        <label for="grade_${grade}">${grade}</label>
+                    `;
+                    gradeFilter.appendChild(option);
+                }
+            });
+            
+            // Update selected counts
+            updateSelectedCounts();
+        }
+        
+        // Toggle multi-select dropdown
+        function toggleMultiSelect(type) {
+            // Close all other dropdowns
+            const allDropdowns = document.querySelectorAll('.multi-select-dropdown');
+            allDropdowns.forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            
+            // Close the currently open dropdown if clicking the same one
+            const dropdown = document.getElementById(`${type}FilterDropdown`);
+            if (currentOpenDropdown === type) {
+                currentOpenDropdown = null;
+                dropdown.classList.remove('show');
+            } else {
+                // Open the clicked dropdown
+                currentOpenDropdown = type;
+                dropdown.classList.add('show');
+            }
+        }
+        
+        // Update filter selection
+        function updateFilterSelection(type, value) {
+            const safeValue = value.replace(/\\'/g, "'");
+            const checkbox = document.getElementById(`${type}_${safeValue}`);
+            
+            if (!checkbox) return;
+            
+            if (type === 'customerName') {
+                if (checkbox.checked) {
+                    selectedCustomerNames.push(safeValue);
+                } else {
+                    selectedCustomerNames = selectedCustomerNames.filter(item => item !== safeValue);
+                }
+            } else if (type === 'customerGroup') {
+                if (checkbox.checked) {
+                    selectedCustomerGroups.push(safeValue);
+                } else {
+                    selectedCustomerGroups = selectedCustomerGroups.filter(item => item !== safeValue);
+                }
+            } else if (type === 'district') {
+                if (checkbox.checked) {
+                    selectedDistricts.push(safeValue);
+                } else {
+                    selectedDistricts = selectedDistricts.filter(item => item !== safeValue);
+                }
+            } else if (type === 'month') {
+                if (checkbox.checked) {
+                    selectedMonths.push(safeValue);
+                } else {
+                    selectedMonths = selectedMonths.filter(item => item !== safeValue);
+                }
+            } else if (type === 'grade') {
+                if (checkbox.checked) {
+                    selectedGrades.push(safeValue);
+                } else {
+                    selectedGrades = selectedGrades.filter(item => item !== safeValue);
+                }
+            }
+            
+            updateSelectedCounts();
+            applyFilters();
+            
+            // Keep the dropdown open after selection
+            if (currentOpenDropdown) {
+                const dropdown = document.getElementById(`${currentOpenDropdown}FilterDropdown`);
+                if (dropdown) {
+                    dropdown.classList.add('show');
+                }
+            }
+        }
+        
+        // Update selected counts display
+        function updateSelectedCounts() {
+            document.getElementById('customerNameSelectedCount').textContent = selectedCustomerNames.length;
+            document.getElementById('customerGroupSelectedCount').textContent = selectedCustomerGroups.length;
+            document.getElementById('districtSelectedCount').textContent = selectedDistricts.length;
+            document.getElementById('monthSelectedCount').textContent = selectedMonths.length;
+            document.getElementById('gradeSelectedCount').textContent = selectedGrades.length;
+        }
+        
+        // Handle Select All for all filters
+        function handleSelectAll() {
+            // Get all active filter types
+            const filterTypes = [];
+            if (document.getElementById('customerNameFilterDropdown').children.length > 0) filterTypes.push('customerName');
+            if (document.getElementById('customerGroupFilterDropdown').children.length > 0) filterTypes.push('customerGroup');
+            if (document.getElementById('districtFilterDropdown').children.length > 0) filterTypes.push('district');
+            if (document.getElementById('monthFilterDropdown').children.length > 0) filterTypes.push('month');
+            if (document.getElementById('gradeFilterDropdown').children.length > 0) filterTypes.push('grade');
+            
+            // Select all for each filter type
+            filterTypes.forEach(type => {
+                selectAll(type);
+            });
+        }
+        
+        // Handle Clear All for all filters
+        function handleClearAll() {
+            // Get all active filter types
+            const filterTypes = [];
+            if (document.getElementById('customerNameFilterDropdown').children.length > 0) filterTypes.push('customerName');
+            if (document.getElementById('customerGroupFilterDropdown').children.length > 0) filterTypes.push('customerGroup');
+            if (document.getElementById('districtFilterDropdown').children.length > 0) filterTypes.push('district');
+            if (document.getElementById('monthFilterDropdown').children.length > 0) filterTypes.push('month');
+            if (document.getElementById('gradeFilterDropdown').children.length > 0) filterTypes.push('grade');
+            
+            // Clear all for each filter type
+            filterTypes.forEach(type => {
+                clearAll(type);
+            });
+        }
+        
+        // Select all in a filter
+        function selectAll(type) {
+            const checkboxes = document.querySelectorAll(`#${type}FilterDropdown input[type="checkbox"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            
+            if (type === 'customerName') {
+                selectedCustomerNames = Array.from(checkboxes).map(cb => cb.value);
+            } else if (type === 'customerGroup') {
+                selectedCustomerGroups = Array.from(checkboxes).map(cb => cb.value);
+            } else if (type === 'district') {
+                selectedDistricts = Array.from(checkboxes).map(cb => cb.value);
+            } else if (type === 'month') {
+                selectedMonths = Array.from(checkboxes).map(cb => cb.value);
+            } else if (type === 'grade') {
+                selectedGrades = Array.from(checkboxes).map(cb => cb.value);
+            }
+            
+            updateSelectedCounts();
+            applyFilters();
+            
+            // Keep the dropdown open
+            if (currentOpenDropdown) {
+                const dropdown = document.getElementById(`${currentOpenDropdown}FilterDropdown`);
+                if (dropdown) {
+                    dropdown.classList.add('show');
+                }
+            }
+        }
+        
+        // Clear all in a filter
+        function clearAll(type) {
+            const checkboxes = document.querySelectorAll(`#${type}FilterDropdown input[type="checkbox"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            if (type === 'customerName') {
+                selectedCustomerNames = [];
+            } else if (type === 'customerGroup') {
+                selectedCustomerGroups = [];
+            } else if (type === 'district') {
+                selectedDistricts = [];
+            } else if (type === 'month') {
+                selectedMonths = [];
+            } else if (type === 'grade') {
+                selectedGrades = [];
+            }
+            
+            updateSelectedCounts();
+            applyFilters();
+            
+            // Keep the dropdown open
+            if (currentOpenDropdown) {
+                const dropdown = document.getElementById(`${currentOpenDropdown}FilterDropdown`);
+                if (dropdown) {
+                    dropdown.classList.add('show');
+                }
+            }
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            // Filter the data
+            filteredMappedData = currentMappedData.filter(item => {
+                // Customer Name filter
+                if (selectedCustomerNames.length > 0 && !selectedCustomerNames.includes(item.customerName)) {
+                    return false;
+                }
+                
+                // Customer Group filter
+                if (selectedCustomerGroups.length > 0 && !selectedCustomerGroups.includes(item.customerGroup)) {
+                    return false;
+                }
+                
+                // District filter
+                if (selectedDistricts.length > 0 && !selectedDistricts.includes(item.customerDistrict)) {
+                    return false;
+                }
+                
+                // Month filter (using display name)
+                if (selectedMonths.length > 0 && !selectedMonths.includes(item.monthDisplay)) {
+                    return false;
+                }
+                
+                // Grade filter
+                if (selectedGrades.length > 0 && !selectedGrades.includes(item.grade)) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Update preview with filtered data
+            updatePreviewWithMappedData();
+            
+            // Update totals for filtered data
+            updateFilteredTotals();
+            
+            // DON'T close dropdowns - keep them open
+            // This is the key change to fix the issue
+        }
+        
+        // Reset filters
+        function resetFilters() {
+            // Clear all checkboxes
+            clearAll('customerName');
+            clearAll('customerGroup');
+            clearAll('district');
+            clearAll('month');
+            clearAll('grade');
+            
+            // Reset to all data
+            filteredMappedData = [...currentMappedData];
+            
+            // Update preview
+            updatePreviewWithMappedData();
+            
+            // Update totals to show all data
+            updateFilteredTotals();
+            
+            // Close any open dropdowns
+            document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            currentOpenDropdown = null;
+        }
+        
+        // Update preview with mapped data
+        function updatePreviewWithMappedData() {
+            const tableBody = document.getElementById('previewTableBody');
+            const tableHeader = document.querySelector('#previewTable thead tr');
+            
+            // Update table header
+            tableHeader.innerHTML = `
+                <th>SKU Code</th>
+                <th>SKU Name</th>
+                <th>Qnty</th>
+                <th>Liters</th>
+                <th>Customer Name</th>
+                <th>Customer Group</th>
+                <th>Customer District</th>
+                <th>Month (MMM YYYY)</th>
+                <th>Grade</th>
+            `;
+            
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            // Show up to 15 rows of mapped data
+            const rowCount = Math.min(filteredMappedData.length, 15);
+            
+            for (let i = 0; i < rowCount; i++) {
+                const item = filteredMappedData[i];
+                const tableRow = document.createElement('tr');
+                
+                // Add class based on grade
+                if (item.grade === 'Grease') tableRow.className = 'grease-row';
+                if (item.grade === 'Hydraulic') tableRow.className = 'hydraulic-row';
+                if (item.grade === 'DEF') tableRow.className = 'def-row';
+                if (item.grade === 'Green') tableRow.className = 'green-row';
+                
+                let customerNameBadge = item.customerName ? 
+                    `<span class="customer-indicator"><i class="fas fa-user"></i> ${item.customerName}</span>` : '';
+                
+                let customerGroupBadge = item.customerGroup ? 
+                    `<span class="group-indicator"><i class="fas fa-users"></i> ${item.customerGroup}</span>` : '';
+                
+                let districtBadge = item.customerDistrict ? 
+                    `<span class="district-indicator"><i class="fas fa-map-marker-alt"></i> ${item.customerDistrict}</span>` : '';
+                
+                let monthBadge = item.monthDisplay ? 
+                    `<span class="month-indicator"><i class="fas fa-calendar-alt"></i> ${item.monthDisplay}</span>` : '';
+                
+                let gradeBadge = '';
+                switch(item.grade) {
+                    case 'Gold':
+                        gradeBadge = '<span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>';
+                        break;
+                    case 'Grease':
+                        gradeBadge = '<span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>';
+                        break;
+                    case 'Hydraulic':
+                        gradeBadge = '<span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>';
+                        break;
+                    case 'DEF':
+                        gradeBadge = '<span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>';
+                        break;
+                    case 'Green':
+                        gradeBadge = '<span class="grade-indicator grade-green"><i class="fas fa-leaf"></i> Green</span>';
+                        break;
+                    default:
+                        gradeBadge = '<span class="grade-indicator grade-other">Other</span>';
+                }
+                
+                tableRow.innerHTML = `
+                    <td>${item.skuCode}</td>
+                    <td>${item.skuName}${item.nameValidated ? ' <span style="color: #4CAF50; font-size: 0.8em;"><i class="fas fa-check"></i></span>' : ''}</td>
+                    <td>${formatNumber(item.qnty)}</td>
+                    <td>${formatNumber(item.liters)}</td>
+                    <td>${customerNameBadge}</td>
+                    <td>${customerGroupBadge}</td>
+                    <td>${districtBadge}</td>
+                    <td>${monthBadge}</td>
+                    <td>${gradeBadge}</td>
+                `;
+                
+                tableBody.appendChild(tableRow);
+            }
+            
+            // Add note if there are more rows
+            if (filteredMappedData.length > 15) {
+                const noteRow = document.createElement('tr');
+                noteRow.innerHTML = `
+                    <td colspan="9" style="text-align: center; padding: 15px; color: #666; font-style: italic;">
+                        Showing 15 of ${filteredMappedData.length} rows (filtered)
+                    </td>
+                `;
+                tableBody.appendChild(noteRow);
+            } else if (filteredMappedData.length === 0) {
+                const noteRow = document.createElement('tr');
+                noteRow.innerHTML = `
+                    <td colspan="9" style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fas fa-filter" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                        No data matches the selected filters
+                    </td>
+                `;
+                tableBody.appendChild(noteRow);
+            }
+        }
+        
+        // Update totals display
+        function updateTotalsDisplay() {
+            document.getElementById('totalGoldQnty').textContent = formatNumber(totalGoldQnty);
+            document.getElementById('totalGoldLiters').textContent = `${formatNumber(totalGoldLiters)}`;
+            document.getElementById('totalGreaseQnty').textContent = formatNumber(totalGreaseQnty);
+            document.getElementById('totalGreaseLiters').textContent = `${formatNumber(totalGreaseLiters)}`;
+            document.getElementById('totalHydraulicQnty').textContent = formatNumber(totalHydraulicQnty);
+            document.getElementById('totalHydraulicLiters').textContent = `${formatNumber(totalHydraulicLiters)}`;
+            document.getElementById('totalDefQnty').textContent = formatNumber(totalDefQnty);
+            document.getElementById('totalDefLiters').textContent = `${formatNumber(totalDefLiters)}`;
+            document.getElementById('totalGreenQnty').textContent = formatNumber(totalGreenQnty);
+            document.getElementById('totalGreenLiters').textContent = `${formatNumber(totalGreenLiters)}`;
+            
+            // Show totals container
+            document.getElementById('totalsContainer').style.display = 'grid';
+        }
+        
+        // Update filtered totals
+        function updateFilteredTotals() {
+            // Calculate totals for filtered data
+            let filteredGoldQnty = 0, filteredGoldLiters = 0;
+            let filteredGreaseQnty = 0, filteredGreaseLiters = 0;
+            let filteredHydraulicQnty = 0, filteredHydraulicLiters = 0;
+            let filteredDefQnty = 0, filteredDefLiters = 0;
+            let filteredGreenQnty = 0, filteredGreenLiters = 0;
+            
+            filteredMappedData.forEach(item => {
+                switch(item.grade) {
+                    case 'Gold':
+                        filteredGoldQnty += item.qnty;
+                        filteredGoldLiters += item.liters;
+                        break;
+                    case 'Grease':
+                        filteredGreaseQnty += item.qnty;
+                        filteredGreaseLiters += item.liters;
+                        break;
+                    case 'Hydraulic':
+                        filteredHydraulicQnty += item.qnty;
+                        filteredHydraulicLiters += item.liters;
+                        break;
+                    case 'DEF':
+                        filteredDefQnty += item.qnty;
+                        filteredDefLiters += item.liters;
+                        break;
+                    case 'Green':
+                        filteredGreenQnty += item.qnty;
+                        filteredGreenLiters += item.liters;
+                        break;
+                }
+            });
+            
+            // Update totals display with filtered data
+            document.getElementById('totalGoldQnty').textContent = formatNumber(filteredGoldQnty);
+            document.getElementById('totalGoldLiters').textContent = `${formatNumber(filteredGoldLiters)}`;
+            document.getElementById('totalGreaseQnty').textContent = formatNumber(filteredGreaseQnty);
+            document.getElementById('totalGreaseLiters').textContent = `${formatNumber(filteredGreaseLiters)}`;
+            document.getElementById('totalHydraulicQnty').textContent = formatNumber(filteredHydraulicQnty);
+            document.getElementById('totalHydraulicLiters').textContent = `${formatNumber(filteredHydraulicLiters)}`;
+            document.getElementById('totalDefQnty').textContent = formatNumber(filteredDefQnty);
+            document.getElementById('totalDefLiters').textContent = `${formatNumber(filteredDefLiters)}`;
+            document.getElementById('totalGreenQnty').textContent = formatNumber(filteredGreenQnty);
+            document.getElementById('totalGreenLiters').textContent = `${formatNumber(filteredGreenLiters)}`;
+        }
+        
+        // Show validation results
+        function showValidationResults() {
+            const validationResult = document.getElementById('validationResult');
+            const validationContent = document.getElementById('validationContent');
+            
+            // Calculate unknown SKUs
+            const unknownSkus = currentMappedData.filter(item => !item.isKnownSku && item.skuCode);
+            const totalVolume = totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters;
+            
+            // Get unique customer names, groups, districts and months
+            const customerNames = new Set(currentMappedData.map(item => item.customerName).filter(d => d));
+            const customerGroups = new Set(currentMappedData.map(item => item.customerGroup).filter(d => d));
+            const districts = new Set(currentMappedData.map(item => item.customerDistrict).filter(d => d));
+            const months = new Set(currentMappedData.map(item => item.monthDisplay).filter(m => m));
+            
+            validationContent.innerHTML = `
+                <div class="validation-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>${totalRows}</strong> total rows processed</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-user"></i>
+                    <span><strong>${customerNames.size}</strong> unique customer names</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-users"></i>
+                    <span><strong>${customerGroups.size}</strong> unique customer groups</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span><strong>${districts.size}</strong> unique customer districts</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span><strong>${months.size}</strong> unique months</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-crown"></i>
+                    <span><strong>${goldSkuMatches}</strong> Gold grade SKUs found</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-oil-can"></i>
+                    <span><strong>${greaseSkuMatches}</strong> Grease grade SKUs found</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-tint"></i>
+                    <span><strong>${hydraulicSkuMatches}</strong> Hydraulic grade SKUs found</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-truck"></i>
+                    <span><strong>${defSkuMatches}</strong> DEF grade SKUs found</span>
+                </div>
+                <div class="validation-item">
+                    <i class="fas fa-leaf"></i>
+                    <span><strong>${greenSkuMatches}</strong> Green grade SKUs found</span>
+                </div>
+                ${nameCorrections > 0 ? `
+                <div class="validation-item warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><strong>${nameCorrections}</strong> SKU names corrected to validated standards</span>
+                </div>
+                ` : ''}
+                <div class="validation-item ${unknownSkus.length > 0 ? 'error' : ''}">
+                    <i class="fas ${unknownSkus.length > 0 ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i>
+                    <span><strong>${unknownSkus.length}</strong> unknown SKU codes found</span>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <p><strong>Volume Analysis by Grade:</strong></p>
+                    <ul style="padding-left: 20px; margin-top: 8px;">
+                        <li>Total Gold Grade Liters: <strong>${formatNumber(totalGoldLiters)} L</strong> (${totalVolume > 0 ? Math.round(totalGoldLiters/totalVolume*100) : 0}%)</li>
+                        <li>Total Grease Grade Liters: <strong>${formatNumber(totalGreaseLiters)} L</strong> (${totalVolume > 0 ? Math.round(totalGreaseLiters/totalVolume*100) : 0}%)</li>
+                        <li>Total Hydraulic Grade Liters: <strong>${formatNumber(totalHydraulicLiters)} L</strong> (${totalVolume > 0 ? Math.round(totalHydraulicLiters/totalVolume*100) : 0}%)</li>
+                        <li>Total DEF Grade Liters: <strong>${formatNumber(totalDefLiters)} L</strong> (${totalVolume > 0 ? Math.round(totalDefLiters/totalVolume*100) : 0}%)</li>
+                        <li>Total Green Grade Liters: <strong>${formatNumber(totalGreenLiters)} L</strong> (${totalVolume > 0 ? Math.round(totalGreenLiters/totalVolume*100) : 0}%)</li>
+                        <li><strong>Total Volume:</strong> ${formatNumber(totalVolume)} L across all grades</li>
+                    </ul>
+                </div>
+            `;
+            
+            validationResult.style.display = 'block';
+        }
+        
+        // Export to Excel with filter info
+        function exportToExcel() {
+            if (currentMappedData.length === 0) {
+                alert('No data to export. Please process a file first.');
+                return;
+            }
+            
+            try {
+                // Get current filter status
+                const filterInfo = getFilterInfo();
+                
+                // Use filtered data for export
+                const exportDataArray = filteredMappedData;
+                
+                // Calculate totals from filtered data
+                let filteredGoldQnty = 0, filteredGoldLiters = 0;
+                let filteredGreaseQnty = 0, filteredGreaseLiters = 0;
+                let filteredHydraulicQnty = 0, filteredHydraulicLiters = 0;
+                let filteredDefQnty = 0, filteredDefLiters = 0;
+                let filteredGreenQnty = 0, filteredGreenLiters = 0;
+                
+                exportDataArray.forEach(item => {
+                    switch(item.grade) {
+                        case 'Gold':
+                            filteredGoldQnty += item.qnty;
+                            filteredGoldLiters += item.liters;
+                            break;
+                        case 'Grease':
+                            filteredGreaseQnty += item.qnty;
+                            filteredGreaseLiters += item.liters;
+                            break;
+                        case 'Hydraulic':
+                            filteredHydraulicQnty += item.qnty;
+                            filteredHydraulicLiters += item.liters;
+                            break;
+                        case 'DEF':
+                            filteredDefQnty += item.qnty;
+                            filteredDefLiters += item.liters;
+                            break;
+                        case 'Green':
+                            filteredGreenQnty += item.qnty;
+                            filteredGreenLiters += item.liters;
+                            break;
+                    }
+                });
+                
+                const filteredTotalVolume = filteredGoldLiters + filteredGreaseLiters + filteredHydraulicLiters + filteredDefLiters + filteredGreenLiters;
+                
+                // Prepare data for export
+                const exportData = [
+                    ['Multi-Grade SKU Analysis Report', '', '', '', '', '', '', '', ''],
+                    ['Generated on:', new Date().toLocaleString(), '', '', '', '', '', '', ''],
+                    ['Filter Applied:', filterInfo, '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', '', ''],
+                    ['Total SKUs (Filtered):', exportDataArray.length, 'Total Original SKUs:', currentMappedData.length, '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', '', ''],
+                    ['SKU Code', 'SKU Name', 'Qnty', 'Liters', 'Customer Name', 'Customer Group', 'Customer District', 'Month (MMM YYYY)', 'Grade']
+                ];
+                
+                // Add the data rows
+                exportDataArray.forEach(item => {
+                    exportData.push([
+                        item.skuCode,
+                        item.skuName,
+                        item.qnty,
+                        item.liters,
+                        item.customerName,
+                        item.customerGroup,
+                        item.customerDistrict,
+                        item.monthDisplay,
+                        item.grade
+                    ]);
+                });
+                
+                // Add summary rows with filtered totals
+                exportData.push(['', '', '', '', '', '', '', '', '']);
+                exportData.push(['FILTERED GRADE TOTALS', 'Quantity', 'Liters', 'Percentage', '', '', '', '', '']);
+                exportData.push(['Gold Grade', filteredGoldQnty, filteredGoldLiters, filteredTotalVolume > 0 ? `${Math.round(filteredGoldLiters/filteredTotalVolume*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['Grease Grade', filteredGreaseQnty, filteredGreaseLiters, filteredTotalVolume > 0 ? `${Math.round(filteredGreaseLiters/filteredTotalVolume*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['Hydraulic Grade', filteredHydraulicQnty, filteredHydraulicLiters, filteredTotalVolume > 0 ? `${Math.round(filteredHydraulicLiters/filteredTotalVolume*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['DEF Grade', filteredDefQnty, filteredDefLiters, filteredTotalVolume > 0 ? `${Math.round(filteredDefLiters/filteredTotalVolume*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['Green Grade', filteredGreenQnty, filteredGreenLiters, filteredTotalVolume > 0 ? `${Math.round(filteredGreenLiters/filteredTotalVolume*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['', '', '', '', '', '', '', '', '']);
+                exportData.push(['FILTERED TOTAL', filteredGoldQnty + filteredGreaseQnty + filteredHydraulicQnty + filteredDefQnty + filteredGreenQnty, filteredTotalVolume, '100%', '', '', '', '', '']);
+                
+                // Add original totals for comparison
+                exportData.push(['', '', '', '', '', '', '', '', '']);
+                exportData.push(['ORIGINAL TOTALS (All Data)', 'Quantity', 'Liters', 'Percentage', '', '', '', '', '']);
+                exportData.push(['Gold Grade', totalGoldQnty, totalGoldLiters, (totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters) > 0 ? `${Math.round(totalGoldLiters/(totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters)*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['Grease Grade', totalGreaseQnty, totalGreaseLiters, (totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters) > 0 ? `${Math.round(totalGreaseLiters/(totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters)*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['Hydraulic Grade', totalHydraulicQnty, totalHydraulicLiters, (totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters) > 0 ? `${Math.round(totalHydraulicLiters/(totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters)*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['DEF Grade', totalDefQnty, totalDefLiters, (totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters) > 0 ? `${Math.round(totalDefLiters/(totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters)*100)}%` : '0%', '', '', '', '', '']);
+                exportData.push(['Green Grade', totalGreenQnty, totalGreenLiters, (totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters) > 0 ? `${Math.round(totalGreenLiters/(totalGoldLiters + totalGreaseLiters + totalHydraulicLiters + totalDefLiters + totalGreenLiters)*100)}%` : '0%', '', '', '', '', '']);
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                
+                // Set column widths
+                const wscols = [
+                    {wch: 12},  // SKU Code
+                    {wch: 40},  // SKU Name
+                    {wch: 10},  // Qnty
+                    {wch: 10},  // Liters
+                    {wch: 25},  // Customer Name
+                    {wch: 20},  // Customer Group
+                    {wch: 20},  // Customer District
+                    {wch: 15},  // Month
+                    {wch: 12}   // Grade
+                ];
+                ws['!cols'] = wscols;
+                
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Multi-Grade Analysis");
+                
+                // Generate filename
+                const filename = `Multi_Grade_SKU_Analysis_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                
+                // Save to file
+                XLSX.writeFile(wb, filename);
+                
+                alert(`Excel file "${filename}" has been downloaded with filtered data and totals.`);
+                
+            } catch (error) {
+                console.error('Error exporting to Excel:', error);
+                alert('Error exporting to Excel. Please try again.');
+            }
+        }
+        
+        // Export to PDF with filter info
+        function exportToPDF() {
+            if (currentMappedData.length === 0) {
+                alert('No data to export. Please process a file first.');
+                return;
+            }
+            
+            try {
+                // Initialize jsPDF in landscape mode
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape');
+                
+                // Get current filter status
+                const filterInfo = getFilterInfo();
+                
+                // Use filtered data for export
+                const exportDataArray = filteredMappedData;
+                
+                // Calculate totals from filtered data
+                let filteredGoldQnty = 0, filteredGoldLiters = 0;
+                let filteredGreaseQnty = 0, filteredGreaseLiters = 0;
+                let filteredHydraulicQnty = 0, filteredHydraulicLiters = 0;
+                let filteredDefQnty = 0, filteredDefLiters = 0;
+                let filteredGreenQnty = 0, filteredGreenLiters = 0;
+                
+                exportDataArray.forEach(item => {
+                    switch(item.grade) {
+                        case 'Gold':
+                            filteredGoldQnty += item.qnty;
+                            filteredGoldLiters += item.liters;
+                            break;
+                        case 'Grease':
+                            filteredGreaseQnty += item.qnty;
+                            filteredGreaseLiters += item.liters;
+                            break;
+                        case 'Hydraulic':
+                            filteredHydraulicQnty += item.qnty;
+                            filteredHydraulicLiters += item.liters;
+                            break;
+                        case 'DEF':
+                            filteredDefQnty += item.qnty;
+                            filteredDefLiters += item.liters;
+                            break;
+                        case 'Green':
+                            filteredGreenQnty += item.qnty;
+                            filteredGreenLiters += item.liters;
+                            break;
+                    }
+                });
+                
+                const filteredTotalVolume = filteredGoldLiters + filteredGreaseLiters + filteredHydraulicLiters + filteredDefLiters + filteredGreenLiters;
+                
+                // Title
+                doc.setFontSize(16);
+                doc.setTextColor(40, 40, 40);
+                doc.text('Multi-Grade SKU Analysis Report', 14, 20);
+                
+                // Generation date
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+                
+                // Filter info
+                doc.setFontSize(9);
+                doc.text(`Filter Applied: ${filterInfo}`, 14, 40);
+                
+                // Summary information
+                doc.setTextColor(60, 60, 60);
+                
+                // Stats
+                doc.text(`Total SKUs (Filtered): ${exportDataArray.length}`, 14, 50);
+                doc.text(`Total Original SKUs: ${currentMappedData.length}`, 120, 50);
+                
+                // Prepare table data
+                const tableData = exportDataArray.map(item => [
+                    item.skuCode,
+                    item.skuName.substring(0, 20), // Limit name length
+                    formatNumber(item.qnty),
+                    formatNumber(item.liters),
+                    item.customerName.substring(0, 15), // Limit customer name length
+                    item.customerGroup.substring(0, 12), // Limit group length
+                    item.customerDistrict.substring(0, 12), // Limit district length
+                    item.monthDisplay.substring(0, 12), // Limit month length
+                    item.grade
+                ]);
+                
+                // Add table with landscape-friendly settings
+                doc.autoTable({
+                    startY: 60,
+                    head: [['SKU Code', 'SKU Name', 'Qnty', 'Liters', 'Customer Name', 'Customer Group', 'District', 'Month', 'Grade']],
+                    body: tableData,
+                    theme: 'grid',
+                    headStyles: { fillColor: [255, 215, 0] }, // Gold color
+                    columnStyles: {
+                        0: { cellWidth: 20 },
+                        1: { cellWidth: 35 },
+                        2: { cellWidth: 15 },
+                        3: { cellWidth: 18 },
+                        4: { cellWidth: 25 },
+                        5: { cellWidth: 22 },
+                        6: { cellWidth: 20 },
+                        7: { cellWidth: 20 },
+                        8: { cellWidth: 18 }
+                    },
+                    margin: { left: 10, right: 10 },
+                    styles: { fontSize: 7 },
+                    didDrawCell: function(data) {
+                        // Color code grade column
+                        if (data.column.index === 8 && data.row.index >= 0) {
+                            const grade = data.cell.raw;
+                            if (grade === 'Gold') doc.setTextColor(184, 134, 11);
+                            else if (grade === 'Grease') doc.setTextColor(139, 69, 19);
+                            else if (grade === 'Hydraulic') doc.setTextColor(0, 102, 204);
+                            else if (grade === 'DEF') doc.setTextColor(34, 139, 34);
+                            else if (grade === 'Green') doc.setTextColor(46, 139, 87);
+                            else doc.setTextColor(100, 100, 100);
+                        }
+                    },
+                    didDrawPage: function(data) {
+                        // Footer
+                        doc.setFontSize(8);
+                        doc.setTextColor(150, 150, 150);
+                        const pageCount = doc.internal.getNumberOfPages();
+                        for (let i = 1; i <= pageCount; i++) {
+                            doc.setPage(i);
+                            doc.text(
+                                `Page ${i} of ${pageCount}`,
+                                doc.internal.pageSize.width / 2,
+                                doc.internal.pageSize.height - 10,
+                                { align: 'center' }
+                            );
+                        }
+                    }
+                });
+                
+                // Add summary section with filtered totals
+                const finalY = doc.lastAutoTable.finalY + 10;
+                
+                // Check if we need a new page for the summary
+                if (finalY > 150) {
+                    doc.addPage();
+                    doc.setPage(doc.internal.getNumberOfPages());
+                }
+                
+                const summaryY = finalY > 150 ? 20 : finalY;
+                
+                doc.setFontSize(12);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('FILTERED VOLUME ANALYSIS BY GRADE', 14, summaryY);
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                let lineY = summaryY + 8;
+                doc.text(`Gold Grade: ${formatNumber(filteredGoldLiters)} L (${filteredTotalVolume > 0 ? Math.round(filteredGoldLiters/filteredTotalVolume*100) : 0}%)`, 14, lineY);
+                lineY += 6;
+                doc.text(`Grease Grade: ${formatNumber(filteredGreaseLiters)} L (${filteredTotalVolume > 0 ? Math.round(filteredGreaseLiters/filteredTotalVolume*100) : 0}%)`, 14, lineY);
+                lineY += 6;
+                doc.text(`Hydraulic Grade: ${formatNumber(filteredHydraulicLiters)} L (${filteredTotalVolume > 0 ? Math.round(filteredHydraulicLiters/filteredTotalVolume*100) : 0}%)`, 14, lineY);
+                lineY += 6;
+                doc.text(`DEF Grade: ${formatNumber(filteredDefLiters)} L (${filteredTotalVolume > 0 ? Math.round(filteredDefLiters/filteredTotalVolume*100) : 0}%)`, 14, lineY);
+                lineY += 6;
+                doc.text(`Green Grade: ${formatNumber(filteredGreenLiters)} L (${filteredTotalVolume > 0 ? Math.round(filteredGreenLiters/filteredTotalVolume*100) : 0}%)`, 14, lineY);
+                
+                doc.setFont(undefined, 'bold');
+                doc.text(`Filtered Total Volume: ${formatNumber(filteredTotalVolume)} L`, 14, lineY + 10);
+                
+                // Add a simple grade legend
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Grade Legend: Gold • Grease • Hydraulic • DEF • Green', 14, lineY + 20);
+                
+                // Save the PDF
+                const filename = `Multi_Grade_SKU_Analysis_${new Date().toISOString().slice(0, 10)}.pdf`;
+                doc.save(filename);
+                
+                alert(`PDF file "${filename}" has been downloaded with filtered data and totals.`);
+                
+            } catch (error) {
+                console.error('Error exporting to PDF:', error);
+                alert('Error exporting to PDF. Please try again.');
+            }
+        }
+        
+        // Get filter info for export
+        function getFilterInfo() {
+            let filterInfo = [];
+            
+            if (selectedCustomerNames.length > 0) {
+                filterInfo.push(`Customer Names: ${selectedCustomerNames.length} selected`);
+            } else {
+                filterInfo.push('All Customer Names');
+            }
+            
+            if (selectedCustomerGroups.length > 0) {
+                filterInfo.push(`Customer Groups: ${selectedCustomerGroups.length} selected`);
+            } else {
+                filterInfo.push('All Customer Groups');
+            }
+            
+            if (selectedDistricts.length > 0) {
+                filterInfo.push(`Districts: ${selectedDistricts.length} selected`);
+            } else {
+                filterInfo.push('All Districts');
+            }
+            
+            if (selectedMonths.length > 0) {
+                filterInfo.push(`Months: ${selectedMonths.length} selected`);
+            } else {
+                filterInfo.push('All Months');
+            }
+            
+            if (selectedGrades.length > 0) {
+                filterInfo.push(`Grades: ${selectedGrades.length} selected`);
+            } else {
+                filterInfo.push('All Grades');
+            }
+            
+            return filterInfo.join(' | ');
+        }
+        
+        // Format numbers with commas
+        function formatNumber(num) {
+            if (isNaN(num)) return '0';
+            return num.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+        }
+        
+        // Reset the form
+        function resetForm() {
+            // Reset file input
+            document.getElementById('fileInput').value = '';
+            
+            // Reset mapping dropdowns
+            const dropdowns = ['skuCodeMap', 'skuNameMap', 'qntyMap', 'litersMap', 'customerNameMap', 'customerGroupMap', 'districtMap', 'monthMap'];
+            dropdowns.forEach(dropdownId => {
+                document.getElementById(dropdownId).selectedIndex = 0;
+            });
+            
+            // Reset filter dropdowns
+            document.getElementById('customerNameFilterDropdown').innerHTML = '';
+            document.getElementById('customerGroupFilterDropdown').innerHTML = '';
+            document.getElementById('districtFilterDropdown').innerHTML = '';
+            document.getElementById('monthFilterDropdown').innerHTML = '';
+            document.getElementById('gradeFilterDropdown').innerHTML = '';
+            
+            // Reset selected counts
+            document.getElementById('customerNameSelectedCount').textContent = '0';
+            document.getElementById('customerGroupSelectedCount').textContent = '0';
+            document.getElementById('districtSelectedCount').textContent = '0';
+            document.getElementById('monthSelectedCount').textContent = '0';
+            document.getElementById('gradeSelectedCount').textContent = '0';
+            
+            // Reset filter selections
+            selectedCustomerNames = [];
+            selectedCustomerGroups = [];
+            selectedDistricts = [];
+            selectedMonths = [];
+            selectedGrades = [];
+            currentOpenDropdown = null;
+            
+            // Reset preview table
+            document.getElementById('previewTableBody').innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fas fa-file-excel" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                        Upload an Excel file to preview data
+                    </td>
+                </tr>
+            `;
+            
+            // Reset table header
+            const tableHeader = document.querySelector('#previewTable thead tr');
+            tableHeader.innerHTML = `
+                <th>SKU Code</th>
+                <th>SKU Name</th>
+                <th>Qnty</th>
+                <th>Liters</th>
+                <th>Customer Name</th>
+                <th>Customer Group</th>
+                <th>Customer District</th>
+                <th>Month (MMM YYYY)</th>
+                <th>Grade</th>
+            `;
+            
+            // Hide totals container
+            document.getElementById('totalsContainer').style.display = 'none';
+            
+            // Hide validation result
+            document.getElementById('validationResult').style.display = 'none';
+            
+            // Hide filters section
+            document.getElementById('filtersSection').style.display = 'none';
+            
+            // Reset status
+            document.getElementById('previewStatus').innerHTML = '<i class="fas fa-clock"></i> No file loaded';
+            document.getElementById('previewStatus').className = 'status-indicator status-pending';
+            
+            // Clear global data
+            currentMappedData = [];
+            filteredMappedData = [];
+            totalGoldQnty = 0;
+            totalGoldLiters = 0;
+            totalGreaseQnty = 0;
+            totalGreaseLiters = 0;
+            totalHydraulicQnty = 0;
+            totalHydraulicLiters = 0;
+            totalDefQnty = 0;
+            totalDefLiters = 0;
+            totalGreenQnty = 0;
+            totalGreenLiters = 0;
+            goldSkuMatches = 0;
+            greaseSkuMatches = 0;
+            hydraulicSkuMatches = 0;
+            defSkuMatches = 0;
+            greenSkuMatches = 0;
+            totalRows = 0;
+            nameCorrections = 0;
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideMultiSelect = event.target.closest('.multi-select-container');
+            const isClickOnButton = event.target.closest('button');
+            
+            if (!isClickInsideMultiSelect && !isClickOnButton) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+                currentOpenDropdown = null;
+            }
+        });
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSkuList();
+            
+            // Add drag and drop functionality
+            const dropArea = document.querySelector('.file-upload-area');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.style.backgroundColor = '#fffce6';
+                dropArea.style.borderColor = '#c19500';
+            }
+            
+            function unhighlight() {
+                dropArea.style.backgroundColor = '#fffef5';
+                dropArea.style.borderColor = '#daa520';
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length) {
+                    document.getElementById('fileInput').files = files;
+                    
+                    // Trigger the change event
+                    const event = new Event('change');
+                    document.getElementById('fileInput').dispatchEvent(event);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
