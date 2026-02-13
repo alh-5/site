@@ -124,6 +124,16 @@
             background-color: #fffef0;
         }
         
+        .sku-item.silver {
+            border-left: 4px solid #c0c0c0;
+            background-color: #f8f8f8;
+        }
+
+        .sku-item.bronze {
+            border-left: 4px solid #cd7f32;
+            background-color: #fff3e6;
+        }
+        
         .sku-item.grease {
             border-left: 4px solid #8B4513;
             background-color: #f8f4f0;
@@ -430,6 +440,17 @@
             box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
         }
         
+        .btn-text {
+            background-color: #6c5ce7;
+            color: white;
+        }
+        
+        .btn-text:hover {
+            background-color: #5a4bd1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(108, 92, 231, 0.3);
+        }
+        
         .validation-result {
             margin-top: 20px;
             padding: 20px;
@@ -480,6 +501,16 @@
         .total-box.gold {
             background-color: #fff8dc;
             border-color: #ffd700;
+        }
+        
+        .total-box.silver {
+            background-color: #f8f8f8;
+            border-color: #c0c0c0;
+        }
+
+        .total-box.bronze {
+            background-color: #fff3e6;
+            border-color: #cd7f32;
         }
         
         .total-box.grease {
@@ -605,6 +636,18 @@
             border: 1px solid #ffd700;
         }
         
+        .grade-silver {
+            background-color: #f8f8f8;
+            color: #6c757d;
+            border: 1px solid #c0c0c0;
+        }
+
+        .grade-bronze {
+            background-color: #fff3e6;
+            color: #b85e00;
+            border: 1px solid #cd7f32;
+        }
+        
         .grade-grease {
             background-color: #f8f4f0;
             color: #8B4513;
@@ -663,7 +706,6 @@
             border: 1px solid #ffe0b2;
         }
         
-        /* Multi-select filter styles */
         .multi-select-container {
             position: relative;
             width: 100%;
@@ -761,7 +803,6 @@
             border-color: #f5c6cb;
         }
         
-        /* Report Container - optimized for export */
         .report-container {
             margin-top: 20px;
             padding: 20px;
@@ -876,7 +917,6 @@
             text-align: center;
         }
         
-        /* Modal for report export */
         .modal {
             display: none;
             position: fixed;
@@ -918,7 +958,6 @@
             color: #666;
         }
         
-        /* Export preview container - for PNG/PDF capture */
         .export-preview {
             position: fixed;
             left: -9999px;
@@ -980,7 +1019,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-crown"></i> Multi-Grade SKU Mapping Tool</h1>
-            <p class="subtitle">Track Gold, Grease, Hydraulic, DEF, Green & Other Grades with District Classification (FRANKY, KYRPAD, OTHERS DISTRICT)</p>
+            <p class="subtitle">Track Gold, Silver, Bronze, Grease, Hydraulic, DEF, Green & Other Grades with District Classification (FRANKY, KYRPAD, OTHERS DISTRICT)</p>
         </header>
         
         <div class="content">
@@ -997,6 +1036,8 @@
                     <p>SKU codes are automatically classified into grades:</p>
                     <div style="padding-left: 20px;">
                         <span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>
+                        <span class="grade-indicator grade-silver"><i class="fas fa-medal"></i> Silver</span>
+                        <span class="grade-indicator grade-bronze"><i class="fas fa-shield"></i> Bronze</span>
                         <span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>
                         <span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>
                         <span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>
@@ -1084,7 +1125,6 @@
                     </div>
                 </div>
                 
-                <!-- Generate Reports Section -->
                 <div class="action-buttons" style="margin-top: 30px;">
                     <h2><i class="fas fa-chart-bar"></i> Generate Reports</h2>
                     <p>Generate comprehensive district and grade reports:</p>
@@ -1102,16 +1142,15 @@
                     </div>
                 </div>
                 
-                <!-- Download Reports Section -->
                 <div class="action-buttons" style="margin-top: 30px;">
                     <h2><i class="fas fa-download"></i> Download Reports</h2>
                     <p>Download pre-defined sales and purchase reports:</p>
                     
                     <div class="button-group">
-                        <button class="btn-sales" onclick="window.location.href='https://alh-5.github.io/site/data/sales2526.xlsx';">
+                        <button class="btn-sales" onclick="window.open('https://alh-5.github.io/site/data/sales2526.xlsx', '_blank')">
                             <i class="fas fa-chart-line"></i> Sales Report
                         </button>
-                        <button class="btn-purchase" onclick="window.location.href='https://alh-5.github.io/site/data/purchase2526.xlsx';">
+                        <button class="btn-purchase" onclick="window.open('https://alh-5.github.io/site/data/purchase2526.xlsx', '_blank')">
                             <i class="fas fa-shopping-cart"></i> Purchase Report
                         </button>
                     </div>
@@ -1214,7 +1253,6 @@
                     </table>
                 </div>
                 
-                <!-- District Classification Info -->
                 <div class="sku-info-container" style="display: none;" id="districtClassificationInfo">
                     <h4><i class="fas fa-map-marked-alt"></i> District Classification Rules</h4>
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
@@ -1248,6 +1286,22 @@
                     <div class="total-box gold">
                         <div class="total-label"><i class="fas fa-crown"></i> Gold Grade Liters</div>
                         <div class="total-value" id="totalGoldLiters">0 <small>L</small></div>
+                    </div>
+                    <div class="total-box silver">
+                        <div class="total-label"><i class="fas fa-medal"></i> Silver Grade Qnty</div>
+                        <div class="total-value" id="totalSilverQnty">0</div>
+                    </div>
+                    <div class="total-box silver">
+                        <div class="total-label"><i class="fas fa-medal"></i> Silver Grade Liters</div>
+                        <div class="total-value" id="totalSilverLiters">0 <small>L</small></div>
+                    </div>
+                    <div class="total-box bronze">
+                        <div class="total-label"><i class="fas fa-shield"></i> Bronze Grade Qnty</div>
+                        <div class="total-value" id="totalBronzeQnty">0</div>
+                    </div>
+                    <div class="total-box bronze">
+                        <div class="total-label"><i class="fas fa-shield"></i> Bronze Grade Liters</div>
+                        <div class="total-value" id="totalBronzeLiters">0 <small>L</small></div>
                     </div>
                     <div class="total-box grease">
                         <div class="total-label"><i class="fas fa-oil-can"></i> Grease Grade Qnty</div>
@@ -1316,23 +1370,24 @@
                     </div>
                 </div>
                 
-                <!-- Reports Container -->
                 <div class="report-container" id="reportContainer">
                     <h3><i class="fas fa-chart-bar"></i> Generated Report</h3>
                     <div id="reportContent">
                         <!-- Report content will be inserted here -->
                     </div>
                     
-                    <!-- Report Export Buttons -->
                     <div class="button-group" style="margin-top: 20px; justify-content: flex-end;">
+                        <button class="btn-text" onclick="exportReportToText()">
+                            <i class="fas fa-file-alt"></i> Export Report to Text
+                        </button>
                         <button class="btn-pdf" onclick="exportReportToPDF()">
-                            <i class="fas fa-file-pdf"></i> Export Report as PDF
+                            <i class="fas fa-file-pdf"></i> Export as PDF
                         </button>
                         <button class="btn-report" onclick="exportReportAsPNG()">
-                            <i class="fas fa-file-image"></i> Export Report as PNG
+                            <i class="fas fa-file-image"></i> Export as PNG
                         </button>
                         <button class="btn-export" onclick="exportReportToExcel()">
-                            <i class="fas fa-file-excel"></i> Export Report to Excel
+                            <i class="fas fa-file-excel"></i> Export to Excel
                         </button>
                     </div>
                 </div>
@@ -1353,15 +1408,16 @@
                         <button class="btn-pdf" onclick="exportToPDF()">
                             <i class="fas fa-file-pdf"></i> Export Raw Data to PDF
                         </button>
+                        <button class="btn-text" onclick="exportRawDataToText()">
+                            <i class="fas fa-file-alt"></i> Export Raw Data to Text
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Hidden container for high-quality export preview -->
         <div id="exportPreviewContainer" class="export-preview"></div>
         
-        <!-- Modal for Report Export Options -->
         <div id="reportModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1389,7 +1445,7 @@
         </div>
         
         <div class="footer">
-            <p>Multi-Grade SKU Mapping Tool v7.1 | District Classification: FRANKY, KYRPAD, OTHERS DISTRICT | High-Resolution PNG Export, PDF Report Export, Excel Report Export</p>
+            <p>Multi-Grade SKU Mapping Tool v7.6 | District Classification: FRANKY, KYRPAD, OTHERS DISTRICT | Bronze Grade Added | MONTHLY REPORT EXCEL FIXED | Filter-Based Calculations</p>
         </div>
     </div>
 
@@ -1398,8 +1454,10 @@
         let currentMappedData = [];
         let filteredMappedData = [];
         
-        // Grade totals
+        // Grade totals - BRONZE ADDED
         let totalGoldQnty = 0, totalGoldLiters = 0;
+        let totalSilverQnty = 0, totalSilverLiters = 0;
+        let totalBronzeQnty = 0, totalBronzeLiters = 0;
         let totalGreaseQnty = 0, totalGreaseLiters = 0;
         let totalHydraulicQnty = 0, totalHydraulicLiters = 0;
         let totalDefQnty = 0, totalDefLiters = 0;
@@ -1411,8 +1469,8 @@
         let totalKyrpadQnty = 0, totalKyrpadLiters = 0;
         let totalOthersDistrictQnty = 0, totalOthersDistrictLiters = 0;
         
-        // Counters
-        let goldSkuMatches = 0, greaseSkuMatches = 0, hydraulicSkuMatches = 0;
+        // Counters - BRONZE ADDED
+        let goldSkuMatches = 0, silverSkuMatches = 0, bronzeSkuMatches = 0, greaseSkuMatches = 0, hydraulicSkuMatches = 0;
         let defSkuMatches = 0, greenSkuMatches = 0, otherSkuMatches = 0;
         let totalRows = 0, nameCorrections = 0;
         
@@ -1432,77 +1490,190 @@
         
         // Multi-grade SKU codes with validated names
         const skuData = {
-            // Gold Grade SKUs
             '7434253': { validName: 'SERVO PRIDE NXT CK4 10W-30-15 L PROMO LUBE', grade: 'Gold' },
-            '7436250': { validName: 'SERVO PRIDE NXT CK4 15W-40-7.5 L PROMO', grade: 'Gold' },
-            '7434256': { validName: 'SERVO PRIDE NXT CK4 10W-30-15 L', grade: 'Gold' },
-            '7436256': { validName: 'SERVO PRIDE NXT CK4 15W-40-15 L', grade: 'Gold' },
-            '7436253': { validName: 'SERVO PRIDE NXT CK4 15W-40-15 L PROMO', grade: 'Gold' },
-            '7436184': { validName: 'SERVO PRIDE NXT CK4 15W-40-20 X 1 L', grade: 'Gold' },
-            '2967184': { validName: 'SERVO FUTURA G PLUS 5W-30-20 X 1 L', grade: 'Gold' },
-            '2967213': { validName: 'SERVO FUTURA G PLUS 5W-30-4 X 3.5 L', grade: 'Gold' },
-            '2967111': { validName: 'SERVO FUTURA G PLUS 5W-30-4X3.5 L PROMO', grade: 'Gold' },
-            '7271213': { validName: 'SERVO FUTURA NXT 0W-16-4 X 3.5 L', grade: 'Gold' },
-            '2914175': { validName: 'SERVO BRAKE FLUID DOT 4-20 X 1/2 L', grade: 'Gold' },
-            '2914165': { validName: 'SERVO BRAKE FLUID DOT 4-20 X 1/4 L', grade: 'Gold' },
-            '7429184': { validName: 'SERVO SUPERMILE 10W-30-20 X 1 L', grade: 'Gold' },
-            '7429240': { validName: 'SERVO SUPERMILE 10W-30-4 X 5 L PROMO', grade: 'Gold' },
-            '7429297': { validName: 'SERVO SUPERMILE 10W-30-7 L PROMO', grade: 'Gold' },
-            '7430240': { validName: 'SERVO SUPERMILE PLUS 5W-30-4 X 5 L PROMO', grade: 'Gold' },
-            '7430297': { validName: 'SERVO SUPERMILE PLUS 5W-30-7 L PROMO', grade: 'Gold' },
-            '2829230': { validName: 'SERVO 4T XTRA 10W-30-20 X 0.9 L PROMO', grade: 'Gold' },
-            '2828230': { validName: 'SERVO 4T XTRA-20 X 0.9 L PROMO', grade: 'Gold' },
-            '2828229': { validName: 'SERVO 4T XTRA-20 X 1 L PROMO', grade: 'Gold' },
-            '2971225': { validName: 'SERVO 4T HD-20 X 1.2 L', grade: 'Gold' },
-            '2971195': { validName: 'SERVO 4T HD-4 X 2.5 L', grade: 'Gold' },
-            '7584401': { validName: 'SERVO KOOL PLUS -210L BRL', grade: 'Gold' },
-            '7584185': { validName: 'SERVO KOOL PLUS-10X1L-HDPE', grade: 'Gold' },
-            '7584175': { validName: 'SERVO KOOL PLUS-20X1/2L-HDPE', grade: 'Gold' },
-            '7584184': { validName: 'SERVO KOOL PLUS-20X1L-HDPE', grade: 'Gold' },
-            '7607184': { validName: 'SERVO KOOL READY-20X1L-HDPE', grade: 'Gold' },
-            '2825185': { validName: 'SERVO HYPERSPORT F5-10 X 1 L', grade: 'Gold' },
-            '2825258': { validName: 'SERVO HYPERSPORT F5-10 X 1 L PROMO', grade: 'Gold' },
-            '7275111': { validName: 'SERVO BLACKBIRD X-4X3.5 L PROMO', grade: 'Gold' },
-            '2824184': { validName: 'SERVO 4T GREEN-20 X 1 L', grade: 'Green' },
-            '7211213': { validName: 'SERVO GREENMILE-4 X 3.5 L', grade: 'Green' },
-            '3725213': { validName: 'SERVO SUPER PUMP SO 40-4x3.5L HDPE', grade: 'Green' },
-            '7330242': { validName: 'IOC CLEARBLUE-10 L', grade: 'DEF' },
-            '7330265': { validName: 'IOC CLEARBLUE-20 L', grade: 'DEF' },
-            '7701341': { validName: 'SERVO GREASE MP-20 KG BUC', grade: 'Grease' },
-            '7705303': { validName: 'SERVO GREASE MP 3 - 20 X 1/2 KG CTN', grade: 'Grease' },
-            '7705313': { validName: 'SERVO GREASE MP 3 - 10 X 1 KG CTN', grade: 'Grease' },
-            '7705327': { validName: 'SERVOGREASE MP 3-6X2 KG', grade: 'Grease' },
-            '7705337': { validName: 'SERVOGREASE MP 3-4X3 KG', grade: 'Grease' },
-            '7705339': { validName: 'SERVOGREASE MP 3 - 5 KG BUC', grade: 'Grease' },
-            '7705340': { validName: 'SERVOGREASE MP 3-2 X 5 KG', grade: 'Grease' },
-            '7705341': { validName: 'SERVOGREASE MP 3 -20 KG BUC', grade: 'Grease' },
-            '7727303': { validName: 'SERVO GEM RR 3 - 20 X 1/2 KG CTN', grade: 'Grease' },
-            '7727313': { validName: 'SERVO GEM RR 3 - 10 X 1 KG CTN', grade: 'Grease' },
-            '7727327': { validName: 'SERVO GEM RR 3-6X2 KG TUB', grade: 'Grease' },
-            '7727337': { validName: 'SERVO GEM RR 3-4X3 KG', grade: 'Grease' },
-            '7727341': { validName: 'SERVO GEM RR 3 - 20 KG. BUC', grade: 'Grease' },
-            '7849303': { validName: 'SERVO LONG LIFE GREASE-20 X 1/2 KG', grade: 'Grease' },
-            '7849313': { validName: 'SERVO LONG LIFE GREASE-10X1 KG TUB', grade: 'Grease' },
-            '7849327': { validName: 'SERVO LONG LIFE GREASE-6X2 KG TUB', grade: 'Grease' },
-            '7849337': { validName: 'SERVO LONG LIFE GREASE-4X3 KG TUB', grade: 'Grease' },
-            '7849340': { validName: 'SERVO LONG LIFE GREASE-2 X 5 KG', grade: 'Grease' },
-            '7849341': { validName: 'SERVO LONG LIFE GREASE-20 KG', grade: 'Grease' },
-            '7849343': { validName: 'SERVO LONG LIFE GREASE-7 KG', grade: 'Grease' },
-            '7849344': { validName: 'SERVO LONG LIFE GREASE-10 KG BUC', grade: 'Grease' },
-            '7903303': { validName: 'SERVOGREASE MIRACLE 3-20 X 1/2 KG', grade: 'Grease' },
-            '7903313': { validName: 'SERVOGREASE MIRACLE 3-10 X 1 KG', grade: 'Grease' },
-            '7903327': { validName: 'SERVOGREASE MIRACLE 3-6 X 2 KG', grade: 'Grease' },
-            '7903337': { validName: 'SERVOGREASE MIRACLE 3-4 X 3 KG', grade: 'Grease' },
-            '7903339': { validName: 'SERVOGREASE MIRACLE 3-5 KG ', grade: 'Grease' },
-            '7903343': { validName: 'SERVOGREASE MIRACLE 3-7 KG ', grade: 'Grease' },
-            '7903344': { validName: 'SERVOGREASE MIRACLE 3-10 KG BUC ', grade: 'Grease' },
-            '7903341': { validName: 'SERVOGREASE MIRACLE 3-20 KG', grade: 'Grease' },
-            '7742341': { validName: 'SERVOGEM EP 2-20 KG BUC', grade: 'Grease' },
-            '3040265': { validName: 'SERVOHYDRASHAKTI 68-20 L', grade: 'Hydraulic' },
-            '3006401': { validName: 'SERVOSYSTEM 68 - 210L BRL', grade: 'Hydraulic' },
-            '3006265': { validName: 'SERVOSYSTEM 68-20L BUC', grade: 'Hydraulic' },
-            '3006403': { validName: 'SERVOSYSTEM 68-210 L HD', grade: 'Hydraulic' },
-            '3006234': { validName: 'SERVOSYSTEM 68-4x5L - HDPE', grade: 'Hydraulic' }
+'7436250': { validName: 'SERVO PRIDE NXT CK4 15W-40-7.5 L PROMO', grade: 'Gold' },
+'7434256': { validName: 'SERVO PRIDE NXT CK4 10W-30-15 L', grade: 'Gold' },
+'7436256': { validName: 'SERVO PRIDE NXT CK4 15W-40-15 L', grade: 'Gold' },
+'7436253': { validName: 'SERVO PRIDE NXT CK4 15W-40-15 L PROMO', grade: 'Gold' },
+'7436184': { validName: 'SERVO PRIDE NXT CK4 15W-40-20 X 1 L', grade: 'Gold' },
+'2967184': { validName: 'SERVO FUTURA G PLUS 5W-30-20 X 1 L', grade: 'Gold' },
+'2967213': { validName: 'SERVO FUTURA G PLUS 5W-30-4 X 3.5 L', grade: 'Gold' },
+'2967111': { validName: 'SERVO FUTURA G PLUS 5W-30-4X3.5 L PROMO', grade: 'Gold' },
+'7271213': { validName: 'SERVO FUTURA NXT 0W-16-4 X 3.5 L', grade: 'Gold' },
+'2914175': { validName: 'SERVO BRAKE FLUID DOT 4-20 X 1/2 L', grade: 'Gold' },
+'2914165': { validName: 'SERVO BRAKE FLUID DOT 4-20 X 1/4 L', grade: 'Gold' },
+'7429184': { validName: 'SERVO SUPERMILE 10W-30-20 X 1 L', grade: 'Gold' },
+'7429240': { validName: 'SERVO SUPERMILE 10W-30-4 X 5 L PROMO', grade: 'Gold' },
+'7429297': { validName: 'SERVO SUPERMILE 10W-30-7 L PROMO', grade: 'Gold' },
+'7430240': { validName: 'SERVO SUPERMILE PLUS 5W-30-4 X 5 L PROMO', grade: 'Gold' },
+'7430297': { validName: 'SERVO SUPERMILE PLUS 5W-30-7 L PROMO', grade: 'Gold' },
+'2829230': { validName: 'SERVO 4T XTRA 10W-30-20 X 0.9 L PROMO', grade: 'Gold' },
+'2828230': { validName: 'SERVO 4T XTRA-20 X 0.9 L PROMO', grade: 'Gold' },
+'2828229': { validName: 'SERVO 4T XTRA-20 X 1 L PROMO', grade: 'Gold' },
+'2971225': { validName: 'SERVO 4T HD-20 X 1.2 L', grade: 'Gold' },
+'2971195': { validName: 'SERVO 4T HD-4 X 2.5 L', grade: 'Gold' },
+'7584401': { validName: 'SERVO KOOL PLUS -210L BRL', grade: 'Gold' },
+'7584185': { validName: 'SERVO KOOL PLUS-10X1L-HDPE', grade: 'Gold' },
+'7584175': { validName: 'SERVO KOOL PLUS-20X1/2L-HDPE', grade: 'Gold' },
+'7584184': { validName: 'SERVO KOOL PLUS-20X1L-HDPE', grade: 'Gold' },
+'7607184': { validName: 'SERVO KOOL READY-20X1L-HDPE', grade: 'Gold' },
+'2825185': { validName: 'SERVO HYPERSPORT F5-10 X 1 L', grade: 'Gold' },
+'2825258': { validName: 'SERVO HYPERSPORT F5-10 X 1 L PROMO', grade: 'Gold' },
+'7275111': { validName: 'SERVO BLACKBIRD X-4X3.5 L PROMO', grade: 'Gold' },
+'2824184': { validName: 'SERVO 4T GREEN-20 X 1 L', grade: 'Green' },
+'7211213': { validName: 'SERVO GREENMILE-4 X 3.5 L', grade: 'Green' },
+'7330242': { validName: 'IOC CLEARBLUE-10 L', grade: 'DEF' },
+'7330265': { validName: 'IOC CLEARBLUE-20 L', grade: 'DEF' },
+'7701341': { validName: 'SERVO GREASE MP-20 KG BUC', grade: 'Grease' },
+'7705303': { validName: 'SERVO GREASE MP 3 - 20 X 1/2 KG CTN', grade: 'Grease' },
+'7705313': { validName: 'SERVO GREASE MP 3 - 10 X 1 KG CTN', grade: 'Grease' },
+'7705327': { validName: 'SERVOGREASE MP 3-6X2 KG', grade: 'Grease' },
+'7705337': { validName: 'SERVOGREASE MP 3-4X3 KG', grade: 'Grease' },
+'7705339': { validName: 'SERVOGREASE MP 3 - 5 KG BUC', grade: 'Grease' },
+'7705340': { validName: 'SERVOGREASE MP 3-2 X 5 KG', grade: 'Grease' },
+'7705341': { validName: 'SERVOGREASE MP 3 -20 KG BUC', grade: 'Grease' },
+'7727303': { validName: 'SERVO GEM RR 3 - 20 X 1/2 KG CTN', grade: 'Grease' },
+'7727313': { validName: 'SERVO GEM RR 3 - 10 X 1 KG CTN', grade: 'Grease' },
+'7727327': { validName: 'SERVO GEM RR 3-6X2 KG TUB', grade: 'Grease' },
+'7727337': { validName: 'SERVO GEM RR 3-4X3 KG', grade: 'Grease' },
+'7727341': { validName: 'SERVO GEM RR 3 - 20 KG. BUC', grade: 'Grease' },
+'7849303': { validName: 'SERVO LONG LIFE GREASE-20 X 1/2 KG', grade: 'Grease' },
+'7849313': { validName: 'SERVO LONG LIFE GREASE-10X1 KG TUB', grade: 'Grease' },
+'7849327': { validName: 'SERVO LONG LIFE GREASE-6X2 KG TUB', grade: 'Grease' },
+'7849337': { validName: 'SERVO LONG LIFE GREASE-4X3 KG TUB', grade: 'Grease' },
+'7849340': { validName: 'SERVO LONG LIFE GREASE-2 X 5 KG', grade: 'Grease' },
+'7849341': { validName: 'SERVO LONG LIFE GREASE-20 KG', grade: 'Grease' },
+'7849343': { validName: 'SERVO LONG LIFE GREASE-7 KG', grade: 'Grease' },
+'7849344': { validName: 'SERVO LONG LIFE GREASE-10 KG BUC', grade: 'Grease' },
+'7903303': { validName: 'SERVOGREASE MIRACLE 3-20 X 1/2 KG', grade: 'Grease' },
+'7903313': { validName: 'SERVOGREASE MIRACLE 3-10 X 1 KG', grade: 'Grease' },
+'7903327': { validName: 'SERVOGREASE MIRACLE 3-6 X 2 KG', grade: 'Grease' },
+'7903337': { validName: 'SERVOGREASE MIRACLE 3-4 X 3 KG', grade: 'Grease' },
+'7903339': { validName: 'SERVOGREASE MIRACLE 3-5 KG ', grade: 'Grease' },
+'7903343': { validName: 'SERVOGREASE MIRACLE 3-7 KG ', grade: 'Grease' },
+'7903344': { validName: 'SERVOGREASE MIRACLE 3-10 KG BUC ', grade: 'Grease' },
+'7903341': { validName: 'SERVOGREASE MIRACLE 3-20 KG', grade: 'Grease' },
+'7742341': { validName: 'SERVOGEM EP 2-20 KG BUC', grade: 'Grease' },
+'7903311': { validName: 'SERVOGREASE MIRACLE 3-1 KG GRES', grade: 'Grease' },
+'7705451': { validName: 'SERVOGREASE MP 3 - 182 KG DRM', grade: 'Grease' },
+'7742451': { validName: 'SERVOGEM EP 2-182 KG DRM', grade: 'Grease' },
+'3040265': { validName: 'SERVOHYDRASHAKTI 68-20 L', grade: 'Hydraulic' },
+'3006401': { validName: 'SERVOSYSTEM 68 - 210L BRL', grade: 'Hydraulic' },
+'3006265': { validName: 'SERVOSYSTEM 68-20L BUC', grade: 'Hydraulic' },
+'3006403': { validName: 'SERVOSYSTEM 68-210 L HD', grade: 'Hydraulic' },
+'3006234': { validName: 'SERVOSYSTEM 68-4x5L - HDPE', grade: 'Hydraulic' },
+'2502265': { validName: 'SERVO GEAR HP 90-20L BUC', grade: 'Silver' },
+'7485174': { validName: 'SERVO SUPER 20W-40 MG-40X1/2L', grade: 'Silver' },
+'7485242': { validName: 'SERVO SUPER 20W-40 MG-10 L', grade: 'Silver' },
+'7485265': { validName: 'SERVO SUPER 20W-40 MG-20 L', grade: 'Silver' },
+'7485234': { validName: 'SERVO SUPER 20W-40 MG-4x5L - HDPE', grade: 'Silver' },
+'2931184': { validName: 'SERVO 4T 20W-50-20 X 1 L', grade: 'Silver' },
+'2502184': { validName: 'SERVO GEAR HP 90-20X1L-HDPE', grade: 'Silver' },
+'2900145': { validName: 'SERVO 2T SUPREME (JFC) - 200X60ML - POU', grade: 'Silver' },
+'7577234': { validName: 'SERVO PREMIUM CF-4 15W-40-4X5L-HDPE', grade: 'Silver' },
+'2889156': { validName: 'SERVO SCOOTOMATIC 4ST 10W-30-20 X 0.8 L', grade: 'Silver' },
+'2900184': { validName: 'SERVO 2T SUPREME-20 X 1 L', grade: 'Silver' },
+'2924229': { validName: 'SERVO 4T - 20 X 1 L HDPE PROMO', grade: 'Silver' },
+'7577184': { validName: 'SERVO PREMIUM CF-4 15W-40-20X1L-HDPE', grade: 'Silver' },
+'7489253': { validName: 'SERVO PRIDE XL PLUS 15W40-15L PROMO', grade: 'Silver' },
+'7577265': { validName: 'SERVO PREMIUM CF 4 15W 40-20L BUC', grade: 'Silver' },
+'4906234': { validName: 'SERVO TRANSFLUID A-4X5L-HDPE', grade: 'Silver' },
+'7577401': { validName: 'SERVO PREMIUM CF-4 15W-40 - 210L BRL', grade: 'Silver' },
+'7489241': { validName: 'SERVO PRIDE XL PLUS 15W40-10L PROMO', grade: 'Silver' },
+'7489250': { validName: 'SERVO PRIDE XL PLUS 15W40-7.5L PROMO', grade: 'Silver' },
+'7485184': { validName: 'SERVO SUPER 20W-40 MG-20 X 1 L', grade: 'Silver' },
+'2502234': { validName: 'SERVO GEAR HP 90 - 4x5L - HDPE', grade: 'Silver' },
+'2900125': { validName: 'SERVO 2T SUPREME(JFC)-300x40ML - POU', grade: 'Silver' },
+'7511251': { validName: 'SERVO GEAR SUPER 80W-90-7.5 L', grade: 'Silver' },
+'7577242': { validName: 'SERVO PREMIUM CF-4 15W-40-10L BUC', grade: 'Silver' },
+'7556184': { validName: 'SERVO PRIDE TC 15W40 - 20X1L-HDPE', grade: 'Silver' },
+'4906184': { validName: 'SERVO TRANSFLUID A-20X1L-HDPE', grade: 'Silver' },
+'1404184': { validName: 'SERVO PRIDE 40 - 20x1L - HDPE', grade: 'Silver' },
+'1404234': { validName: 'SERVO PRIDE 40 - 4x5L - HDPE', grade: 'Silver' },
+'7577251': { validName: 'SERVO PREMIUM CF-4 15W-40-7.5 L', grade: 'Silver' },
+'7511184': { validName: 'SERVO GEAR SUPER 80W-90 - 20 X 1 L HDPE', grade: 'Silver' },
+'2896150': { validName: 'TRU4 KRAAFT-10 X 0.9 L', grade: 'Silver' },
+'2896185': { validName: 'TRU4 KRAAFT-10 X 1 L', grade: 'Silver' },
+'7515265': { validName: 'SERVO GEAR SUPER 85W-140-20 L BUC', grade: 'Silver' },
+'7515401': { validName: 'SERVO GEAR SUPER 85W-140-210L BRL', grade: 'Silver' },
+'2900175': { validName: 'SERVO 2T SUPREME-20X1/2 L', grade: 'Silver' },
+'7485251': { validName: 'SERVO SUPER 20W-40 MG-7.5 L', grade: 'Silver' },
+'7651265': { validName: 'SERVO AGROSPRAY T - 20 L BUC', grade: 'Silver' },
+'7586265': { validName: 'SERVO ORCHARD SPRAY OIL - 20 L BUC', grade: 'Silver' },
+'7511401': { validName: 'SERVO GEAR SUPER 80W-90 - 210L BRL', grade: 'Silver' },
+'7577174': { validName: 'SERVO PREMIUM CF-4 15W-40-40X1/2L-HDPE', grade: 'Silver' },
+'7556265': { validName: 'SERVO PRIDE TC 15W40 - 20L BUC', grade: 'Silver' },
+'7577256': { validName: 'SERVO PREMIUM CF-4 15W-40-15 L', grade: 'Silver' },
+'7489234': { validName: 'SERVO PRIDE XL PLUS 15W40-4x5L - HDPE', grade: 'Silver' },
+'7515240': { validName: 'SERVO GEAR SUPER 85W-140-4 X 5 L PROMO', grade: 'Silver' },
+'7556253': { validName: 'SERVO PRIDE TC 15W40-15L PROMO', grade: 'Silver' },
+'7485401': { validName: 'SERVO SUPER 20W-40 MG-210 L BRL', grade: 'Silver' },
+'1404265': { validName: 'SERVO PRIDE 40-20L BUC', grade: 'Silver' },
+'7489265': { validName: 'SERVO PRIDE XL PLUS 15W40-20 L', grade: 'Silver' },
+'7556250': { validName: 'SERVO PRIDE TC 15W40-7.5L PROMO', grade: 'Silver' },
+'7489184': { validName: 'SERVO PRIDE XL PLUS 15W40-20 X 1 L', grade: 'Silver' },
+'7556203': { validName: 'SERVO PRIDE TC 15W-40 - 4 X 3 L HDPE', grade: 'Silver' },
+'2502401': { validName: 'SERVO GEAR HP 90 - 210L BRL', grade: 'Silver' },
+'7556241': { validName: 'SERVO PRIDE TC 15W40-10L PROMO', grade: 'Silver' },
+'4906175': { validName: 'SERVO TRANSFLUID A-20X1/2 L', grade: 'Silver' },
+'7511265': { validName: 'SERVO GEAR SUPER 80W-90 - 20 L BUC', grade: 'Silver' },
+'7515184': { validName: 'SERVO GEAR SUPER 85W-140 - 20 X 1 L HDPE', grade: 'Silver' },
+'7511234': { validName: 'SERVO GEAR SUPER 80W-90 - 4 X 5 L HDPE', grade: 'Silver' },
+'7511269': { validName: 'SERVO GEAR SUPER 80W-90-20 L PROMO', grade: 'Silver' },
+'2900103': { validName: 'SERVO 2T SUPREME-600 X 20 ML', grade: 'Silver' },
+'2889155': { validName: 'SERVO SCOOTOMTC 4ST 10W30-0.8 L', grade: 'Silver' },
+'7515234': { validName: 'SERVO GEAR SUPER 85W-140 - 4 X 5 L HDPE', grade: 'Silver' },
+'7511240': { validName: 'SERVO GEAR SUPER 80W-90-4 X 5 L PROMO', grade: 'Silver' },
+'2924184': { validName: 'SERVO 4T-20X1L-HDPE', grade: 'Silver' },
+'1404242': { validName: 'SERVO PRIDE 40 - 10L BUC', grade: 'Silver' },
+'2502174': { validName: 'SERVO GEAR HP 90-40X1/2L-HDPE', grade: 'Silver' },
+'2900174': { validName: 'SERVO 2T SUPREME-40X1/2L', grade: 'Silver' },
+'3057265': { validName: 'SERVO EXCAVATOR TH 46 20 L', grade: 'Silver' },
+'7489203': { validName: 'SERVO PRIDE XL PLUS 15W40-4X3 L', grade: 'Silver' },
+'7577240': { validName: 'SERVO PREMIUM CF-4 15W-40-4x5L - PROMO', grade: 'Silver' },
+'7485173': { validName: 'SERVO SUPER 20W-40 MG-1/2 L', grade: 'Silver' },
+'7485183': { validName: 'SERVO SUPER 20W-40 MG-1 L', grade: 'Silver' },
+'7556234': { validName: 'SERVO PRIDE TC 15W-40- 4 X 5L', grade: 'Silver' },
+'4950234': { validName: 'SERVO OIB OIL-4x5L - HDPE', grade: 'Silver' },
+'7586242': { validName: 'SERVO ORCHARD SPRAY OIL - 10 L BUC', grade: 'Silver' },
+'7472256': { validName: 'SERVO FLT CF4 15W-40-15 L', grade: 'Bronze' },
+'7427401': { validName: 'ECSTAR PETROL 0W-20-210 L', grade: 'Bronze' },
+'2968213': { validName: 'HY.SERVO ENGINE OIL 5W-30-4x3.5L', grade: 'Bronze' },
+'7477203': { validName: 'HY.SERVO PRM.EO SM 5W-30-4X3 L', grade: 'Bronze' },
+'7600203': { validName: 'MGO 20W-40 - 4 X 3 L', grade: 'Bronze' },
+'7688213': { validName: 'MGO 5W-30-4x3.5L HDPE', grade: 'Bronze' },
+'7688203': { validName: 'MGO 5W-30-4 X 3 L', grade: 'Bronze' },
+'7427213': { validName: 'ECSTAR PETROL 0W-20-4 X 3.5 L', grade: 'Bronze' },
+'2557195': { validName: 'HYUNDAI S.GEAR OIL 75W-85-4X2.5L-HDPE', grade: 'Bronze' },
+'7600184': { validName: 'MGO 20W-40 - 20 X 1 L', grade: 'Bronze' },
+'2540199': { validName: 'MGGO 80W-90 - 4 X 2.1 L', grade: 'Bronze' },
+'7420213': { validName: 'HY SERVO PETROL EO SN PLUS-4 X 3.5 L LUBE', grade: 'Bronze' },
+'7205222': { validName: 'HYUNDAI SERVO SUPERIOR 0W30-4 X 4 L', grade: 'Bronze' },
+'2933156': { validName: 'SERVO HONDA SCOOTONXT-20 X 0.8 L', grade: 'Bronze' },
+'7638234': { validName: 'HYUNDAI SERVO CRDi PREM.ENG.OIL 4X5L-HDP', grade: 'Bronze' },
+'7470401': { validName: 'S FLEET SUPREME CI4PLUS 15W-40-210 L LUBE', grade: 'Bronze' },
+'7421234': { validName: 'HYUNDAI SERVO DEO ACEA C5-4 X 5 L LUBE', grade: 'Bronze' },
+'7470256': { validName: 'SERVO FLEET SUPREME CI4 PLUS 15W-40-15 L LUBE', grade: 'Bronze' },
+'7232184': { validName: 'HYUNDAI SERVO COOLANT 50-20 X 1 L', grade: 'Bronze' },
+'2918175': { validName: 'HYUNDAI SERVO BRAKE OIL - 20x1/2L - HDPE', grade: 'Bronze' },
+'3725213': { validName: 'SERVO SUPER PUMP SO 40-4x3.5L HDPE', grade: 'Bronze' },
+'7472184': { validName: 'SERVO FLEET CF4 15W-40 - 20 X 1 L', grade: 'Bronze' },
+'7472234': { validName: 'SERVO FLEET CF4 15W-40 - 4 X 5 L', grade: 'Bronze' },
+'7472203': { validName: 'SERVO FLT CF4 15W-40-4 X 3 L', grade: 'Bronze' },
+'7688401': { validName: 'MGO 5W-30-210 L BRL', grade: 'Bronze' },
+'7670213': { validName: 'MGDO 15W-40 - 4 X 3.5 L', grade: 'Bronze' },
+'7420222': { validName: 'HY SERVO PETROL EO SN PLUS-4 X 4 L LUBE', grade: 'Bronze' },
+'7420401': { validName: 'HY SERVO PETROL EO SN PLUS-210 L', grade: 'Bronze' },
+'2927152': { validName: 'SERVO HONDA JOSH-20 X 0.9 L', grade: 'Bronze' },
+'7472401': { validName: 'SERVO FLT CF4 15W-40 - 210 L', grade: 'Bronze' },
+'7427183': { validName: 'ECSTAR PETROL 0W-20-1 L', grade: 'Bronze' },
+'2953213': { validName: 'HY.SERVO SYNTH PLUS 5W-30-4x3.5L HDPE', grade: 'Bronze' },
+'7470184': { validName: 'S FLEET SUPREME CI4PLUS 15W-40-20 X 1 L LUBE', grade: 'Bronze' },
+'2927184': { validName: 'SERVO HONDA JOSH-20 X 1 L', grade: 'Bronze' },
+'7209213': { validName: 'HY SERVO SYNTH 0W-30 SP/C3-4 X 3.5 L', grade: 'Bronze' },
+'7208271': { validName: 'SERVO SUPERIOR EO 0W20 SN PLUS-50 L', grade: 'Bronze' }
+
+
         };
         
         const allSkuCodes = Object.keys(skuData);
@@ -1542,7 +1713,7 @@
             skuCountElement.textContent = allSkuCodes.length;
             skuListContainer.innerHTML = '';
             
-            let goldCount = 0, greaseCount = 0, hydraulicCount = 0, defCount = 0, greenCount = 0, otherCount = 0;
+            let goldCount = 0, silverCount = 0, bronzeCount = 0, greaseCount = 0, hydraulicCount = 0, defCount = 0, greenCount = 0, otherCount = 0;
             
             allSkuCodes.forEach(sku => {
                 const info = skuData[sku];
@@ -1550,6 +1721,8 @@
                 div.className = `sku-item ${info.grade.toLowerCase()}`;
                 
                 if (info.grade === 'Gold') goldCount++;
+                else if (info.grade === 'Silver') silverCount++;
+                else if (info.grade === 'Bronze') bronzeCount++;
                 else if (info.grade === 'Grease') greaseCount++;
                 else if (info.grade === 'Hydraulic') hydraulicCount++;
                 else if (info.grade === 'DEF') defCount++;
@@ -1559,6 +1732,8 @@
                 let badge = '';
                 switch(info.grade) {
                     case 'Gold': badge = '<span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>'; break;
+                    case 'Silver': badge = '<span class="grade-indicator grade-silver"><i class="fas fa-medal"></i> Silver</span>'; break;
+                    case 'Bronze': badge = '<span class="grade-indicator grade-bronze"><i class="fas fa-shield"></i> Bronze</span>'; break;
                     case 'Grease': badge = '<span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>'; break;
                     case 'Hydraulic': badge = '<span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>'; break;
                     case 'DEF': badge = '<span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>'; break;
@@ -1574,6 +1749,8 @@
                 <p><strong>Grade Distribution:</strong></p>
                 <ul style="padding-left: 20px; margin-top: 8px;">
                     <li><span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>: ${goldCount} SKUs</li>
+                    <li><span class="grade-indicator grade-silver"><i class="fas fa-medal"></i> Silver</span>: ${silverCount} SKUs</li>
+                    <li><span class="grade-indicator grade-bronze"><i class="fas fa-shield"></i> Bronze</span>: ${bronzeCount} SKUs</li>
                     <li><span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>: ${greaseCount} SKUs</li>
                     <li><span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>: ${hydraulicCount} SKUs</li>
                     <li><span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>: ${defCount} SKUs</li>
@@ -1717,9 +1894,11 @@
         }
         
         function processMappedData(data, skuIdx, nameIdx, qtyIdx, litIdx, custIdx, grpIdx, distIdx, monIdx) {
-            // Reset
+            // Reset - BRONZE ADDED
             currentMappedData = [];
             totalGoldQnty=0; totalGoldLiters=0;
+            totalSilverQnty=0; totalSilverLiters=0;
+            totalBronzeQnty=0; totalBronzeLiters=0;
             totalGreaseQnty=0; totalGreaseLiters=0;
             totalHydraulicQnty=0; totalHydraulicLiters=0;
             totalDefQnty=0; totalDefLiters=0;
@@ -1728,12 +1907,12 @@
             totalFrankyQnty=0; totalFrankyLiters=0;
             totalKyrpadQnty=0; totalKyrpadLiters=0;
             totalOthersDistrictQnty=0; totalOthersDistrictLiters=0;
-            goldSkuMatches=0; greaseSkuMatches=0; hydraulicSkuMatches=0;
+            goldSkuMatches=0; silverSkuMatches=0; bronzeSkuMatches=0; greaseSkuMatches=0; hydraulicSkuMatches=0;
             defSkuMatches=0; greenSkuMatches=0; otherSkuMatches=0;
             totalRows=0; nameCorrections=0;
             
             const uniqueNames = new Set(), uniqueGroups = new Set(), uniqueDistricts = new Set(), uniqueMonths = new Set();
-            const uniqueGrades = new Set(['Gold','Grease','Hydraulic','DEF','Green','Other']);
+            const uniqueGrades = new Set(['Gold','Silver','Bronze','Grease','Hydraulic','DEF','Green','Other']);
             
             for (let i=1; i<data.length; i++) {
                 const row = data[i];
@@ -1769,9 +1948,11 @@
                     nameCorrections++;
                 }
                 
-                // grade totals
+                // grade totals - BRONZE ADDED
                 switch(grade) {
                     case 'Gold': goldSkuMatches++; totalGoldQnty+=qty; totalGoldLiters+=lit; break;
+                    case 'Silver': silverSkuMatches++; totalSilverQnty+=qty; totalSilverLiters+=lit; break;
+                    case 'Bronze': bronzeSkuMatches++; totalBronzeQnty+=qty; totalBronzeLiters+=lit; break;
                     case 'Grease': greaseSkuMatches++; totalGreaseQnty+=qty; totalGreaseLiters+=lit; break;
                     case 'Hydraulic': hydraulicSkuMatches++; totalHydraulicQnty+=qty; totalHydraulicLiters+=lit; break;
                     case 'DEF': defSkuMatches++; totalDefQnty+=qty; totalDefLiters+=lit; break;
@@ -1951,6 +2132,8 @@
                 let gradeBadge = '';
                 switch(it.grade) {
                     case 'Gold': gradeBadge = '<span class="grade-indicator grade-gold"><i class="fas fa-crown"></i> Gold</span>'; break;
+                    case 'Silver': gradeBadge = '<span class="grade-indicator grade-silver"><i class="fas fa-medal"></i> Silver</span>'; break;
+                    case 'Bronze': gradeBadge = '<span class="grade-indicator grade-bronze"><i class="fas fa-shield"></i> Bronze</span>'; break;
                     case 'Grease': gradeBadge = '<span class="grade-indicator grade-grease"><i class="fas fa-oil-can"></i> Grease</span>'; break;
                     case 'Hydraulic': gradeBadge = '<span class="grade-indicator grade-hydraulic"><i class="fas fa-tint"></i> Hydraulic</span>'; break;
                     case 'DEF': gradeBadge = '<span class="grade-indicator grade-def"><i class="fas fa-truck"></i> DEF</span>'; break;
@@ -1981,6 +2164,10 @@
         function updateTotalsDisplay() {
             document.getElementById('totalGoldQnty').textContent = formatNumber(totalGoldQnty);
             document.getElementById('totalGoldLiters').textContent = `${formatNumber(totalGoldLiters)}`;
+            document.getElementById('totalSilverQnty').textContent = formatNumber(totalSilverQnty);
+            document.getElementById('totalSilverLiters').textContent = `${formatNumber(totalSilverLiters)}`;
+            document.getElementById('totalBronzeQnty').textContent = formatNumber(totalBronzeQnty);
+            document.getElementById('totalBronzeLiters').textContent = `${formatNumber(totalBronzeLiters)}`;
             document.getElementById('totalGreaseQnty').textContent = formatNumber(totalGreaseQnty);
             document.getElementById('totalGreaseLiters').textContent = `${formatNumber(totalGreaseLiters)}`;
             document.getElementById('totalHydraulicQnty').textContent = formatNumber(totalHydraulicQnty);
@@ -2003,12 +2190,14 @@
         }
         
         function updateFilteredTotals() {
-            let fGoldQ=0,fGoldL=0, fGreaseQ=0,fGreaseL=0, fHydQ=0,fHydL=0, fDefQ=0,fDefL=0, fGreenQ=0,fGreenL=0, fOtherQ=0,fOtherL=0;
+            let fGoldQ=0,fGoldL=0, fSilverQ=0,fSilverL=0, fBronzeQ=0,fBronzeL=0, fGreaseQ=0,fGreaseL=0, fHydQ=0,fHydL=0, fDefQ=0,fDefL=0, fGreenQ=0,fGreenL=0, fOtherQ=0,fOtherL=0;
             let fFrankyQ=0,fFrankyL=0, fKyrpadQ=0,fKyrpadL=0, fOthersQ=0,fOthersL=0;
             
             filteredMappedData.forEach(it => {
                 switch(it.grade) {
                     case 'Gold': fGoldQ+=it.qnty; fGoldL+=it.liters; break;
+                    case 'Silver': fSilverQ+=it.qnty; fSilverL+=it.liters; break;
+                    case 'Bronze': fBronzeQ+=it.qnty; fBronzeL+=it.liters; break;
                     case 'Grease': fGreaseQ+=it.qnty; fGreaseL+=it.liters; break;
                     case 'Hydraulic': fHydQ+=it.qnty; fHydL+=it.liters; break;
                     case 'DEF': fDefQ+=it.qnty; fDefL+=it.liters; break;
@@ -2024,6 +2213,10 @@
             
             document.getElementById('totalGoldQnty').textContent = formatNumber(fGoldQ);
             document.getElementById('totalGoldLiters').textContent = `${formatNumber(fGoldL)}`;
+            document.getElementById('totalSilverQnty').textContent = formatNumber(fSilverQ);
+            document.getElementById('totalSilverLiters').textContent = `${formatNumber(fSilverL)}`;
+            document.getElementById('totalBronzeQnty').textContent = formatNumber(fBronzeQ);
+            document.getElementById('totalBronzeLiters').textContent = `${formatNumber(fBronzeL)}`;
             document.getElementById('totalGreaseQnty').textContent = formatNumber(fGreaseQ);
             document.getElementById('totalGreaseLiters').textContent = `${formatNumber(fGreaseL)}`;
             document.getElementById('totalHydraulicQnty').textContent = formatNumber(fHydQ);
@@ -2045,10 +2238,12 @@
         
         function showValidationResults() {
             const unknown = currentMappedData.filter(it=>!it.isKnownSku && it.skuCode).length;
-            const totalVol = totalGoldLiters+totalGreaseLiters+totalHydraulicLiters+totalDefLiters+totalGreenLiters+totalOtherLiters;
+            const totalVol = totalGoldLiters+totalSilverLiters+totalBronzeLiters+totalGreaseLiters+totalHydraulicLiters+totalDefLiters+totalGreenLiters+totalOtherLiters;
             document.getElementById('validationContent').innerHTML = `
                 <div class="validation-item"><i class="fas fa-check-circle"></i><span><strong>${totalRows}</strong> rows</span></div>
                 <div class="validation-item"><i class="fas fa-crown"></i><span><strong>${goldSkuMatches}</strong> Gold</span></div>
+                <div class="validation-item"><i class="fas fa-medal"></i><span><strong>${silverSkuMatches}</strong> Silver</span></div>
+                <div class="validation-item"><i class="fas fa-shield"></i><span><strong>${bronzeSkuMatches}</strong> Bronze</span></div>
                 <div class="validation-item"><i class="fas fa-oil-can"></i><span><strong>${greaseSkuMatches}</strong> Grease</span></div>
                 <div class="validation-item"><i class="fas fa-tint"></i><span><strong>${hydraulicSkuMatches}</strong> Hydraulic</span></div>
                 <div class="validation-item"><i class="fas fa-truck"></i><span><strong>${defSkuMatches}</strong> DEF</span></div>
@@ -2069,20 +2264,20 @@
             const distData = {};
             filteredMappedData.forEach(it => {
                 const d = it.customerDistrict, g = it.grade;
-                if (!distData[d]) distData[d] = { Gold:0,Grease:0,Hydraulic:0,DEF:0,Green:0,Other:0, totalQ:0, totalL:0 };
+                if (!distData[d]) distData[d] = { Gold:0, Silver:0, Bronze:0, Grease:0, Hydraulic:0, DEF:0, Green:0, Other:0, totalQ:0, totalL:0 };
                 distData[d][g] += it.liters;
                 distData[d].totalQ += it.qnty;
                 distData[d].totalL += it.liters;
             });
             let html = `<h4>District-Wise Grade Analysis (Liters)</h4><p>${new Date().toLocaleString()}</p><p>Filter: ${getFilterInfo()}</p>`;
-            html += `<table class="report-table"><thead><tr><th>District</th><th>Gold</th><th>Grease</th><th>Hydraulic</th><th>DEF</th><th>Green</th><th>Other</th><th>Total L</th></tr></thead><tbody>`;
+            html += `<table class="report-table"><thead><tr><th>District</th><th>Gold</th><th>Silver</th><th>Bronze</th><th>Grease</th><th>Hydraulic</th><th>DEF</th><th>Green</th><th>Other</th><th>Total L</th></tr></thead><tbody>`;
             let grandQ=0,grandL=0;
             Object.keys(distData).sort().forEach(d => {
                 const dd = distData[d];
-                html += `<tr><td>${d}</td><td>${formatNumber(dd.Gold)}</td><td>${formatNumber(dd.Grease)}</td><td>${formatNumber(dd.Hydraulic)}</td><td>${formatNumber(dd.DEF)}</td><td>${formatNumber(dd.Green)}</td><td>${formatNumber(dd.Other)}</td><td><strong>${formatNumber(dd.totalL)}</strong></td></tr>`;
+                html += `<tr><td>${d}</td><td>${formatNumber(dd.Gold)}</td><td>${formatNumber(dd.Silver)}</td><td>${formatNumber(dd.Bronze)}</td><td>${formatNumber(dd.Grease)}</td><td>${formatNumber(dd.Hydraulic)}</td><td>${formatNumber(dd.DEF)}</td><td>${formatNumber(dd.Green)}</td><td>${formatNumber(dd.Other)}</td><td><strong>${formatNumber(dd.totalL)}</strong></td></tr>`;
                 grandQ += dd.totalQ; grandL += dd.totalL;
             });
-            html += `<tr class="grand-total"><td><strong>GRAND TOTAL</strong></td><td colspan="6"></td><td><strong>${formatNumber(grandL)} L</strong></td></tr>`;
+            html += `<tr class="grand-total"><td><strong>GRAND TOTAL</strong></td><td colspan="8"></td><td><strong>${formatNumber(grandL)} L</strong></td></tr>`;
             html += `</tbody></table>`;
             document.getElementById('reportContent').innerHTML = html;
             document.getElementById('reportContainer').style.display = 'block';
@@ -2095,7 +2290,7 @@
                 const m = it.monthDisplay || 'Unknown';
                 const d = it.customerDistrict, g = it.grade;
                 if (!monthData[m]) monthData[m] = {};
-                if (!monthData[m][d]) monthData[m][d] = { Gold:0,Grease:0,Hydraulic:0,DEF:0,Green:0,Other:0, totalL:0 };
+                if (!monthData[m][d]) monthData[m][d] = { Gold:0, Silver:0, Bronze:0, Grease:0, Hydraulic:0, DEF:0, Green:0, Other:0, totalL:0 };
                 monthData[m][d][g] += it.liters;
                 monthData[m][d].totalL += it.liters;
             });
@@ -2108,10 +2303,10 @@
                 let mTotalL = 0;
                 Object.values(monthData[m]).forEach(dd => mTotalL += dd.totalL);
                 html += `<div class="district-report-box"><h4><i class="fas fa-calendar-alt"></i> ${m}</h4><p>Total Liters: ${formatNumber(mTotalL)}</p>`;
-                html += `<table class="monthly-report-table"><thead><tr><th>District</th><th>Gold</th><th>Grease</th><th>Hyd</th><th>DEF</th><th>Green</th><th>Other</th><th>Total</th></tr></thead><tbody>`;
+                html += `<table class="monthly-report-table"><thead><tr><th>District</th><th>Gold</th><th>Silver</th><th>Bronze</th><th>Grease</th><th>Hyd</th><th>DEF</th><th>Green</th><th>Other</th><th>Total</th></tr></thead><tbody>`;
                 Object.keys(monthData[m]).sort().forEach(d => {
                     const dd = monthData[m][d];
-                    html += `<tr><td>${d}</td><td>${formatNumber(dd.Gold)}</td><td>${formatNumber(dd.Grease)}</td><td>${formatNumber(dd.Hydraulic)}</td><td>${formatNumber(dd.DEF)}</td><td>${formatNumber(dd.Green)}</td><td>${formatNumber(dd.Other)}</td><td><strong>${formatNumber(dd.totalL)}</strong></td></tr>`;
+                    html += `<tr><td>${d}</td><td>${formatNumber(dd.Gold)}</td><td>${formatNumber(dd.Silver)}</td><td>${formatNumber(dd.Bronze)}</td><td>${formatNumber(dd.Grease)}</td><td>${formatNumber(dd.Hydraulic)}</td><td>${formatNumber(dd.DEF)}</td><td>${formatNumber(dd.Green)}</td><td>${formatNumber(dd.Other)}</td><td><strong>${formatNumber(dd.totalL)}</strong></td></tr>`;
                 });
                 html += `</tbody></table></div>`;
             });
@@ -2122,49 +2317,637 @@
         
         function generateGradeReport() {
             if (!filteredMappedData.length) { alert('No data'); return; }
-            const gradeDist = { Gold:{FRANKY:0,KYRPAD:0,'OTHERS DISTRICT':0,totalL:0}, Grease:{FRANKY:0,KYRPAD:0,'OTHERS DISTRICT':0,totalL:0}, Hydraulic:{FRANKY:0,KYRPAD:0,'OTHERS DISTRICT':0,totalL:0}, DEF:{FRANKY:0,KYRPAD:0,'OTHERS DISTRICT':0,totalL:0}, Green:{FRANKY:0,KYRPAD:0,'OTHERS DISTRICT':0,totalL:0}, Other:{FRANKY:0,KYRPAD:0,'OTHERS DISTRICT':0,totalL:0} };
+            const gradeDist = { 
+                Gold: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0}, 
+                Silver: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0}, 
+                Bronze: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0},
+                Grease: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0}, 
+                Hydraulic: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0}, 
+                DEF: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0}, 
+                Green: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0}, 
+                Other: {FRANKY:0, KYRPAD:0, 'OTHERS DISTRICT':0, totalL:0} 
+            };
+            
             filteredMappedData.forEach(it => {
                 const g = it.grade, d = it.customerDistrict, l = it.liters;
-                if (gradeDist[g] && gradeDist[g][d]!==undefined) {
+                if (gradeDist[g] && gradeDist[g][d] !== undefined) {
                     gradeDist[g][d] += l;
                     gradeDist[g].totalL += l;
                 }
             });
+            
             let html = `<h4>Grade-Wise District Analysis (Liters)</h4><p>${new Date().toLocaleString()}</p><p>Filter: ${getFilterInfo()}</p>`;
             html += `<table class="report-table"><thead><tr><th>Grade</th><th>FRANKY</th><th>KYRPAD</th><th>OTHERS DISTRICT</th><th>Total L</th><th>%</th></tr></thead><tbody>`;
             let grandTotal = 0;
-            ['Gold','Grease','Hydraulic','DEF','Green','Other'].forEach(g => {
-                if (gradeDist[g].totalL>0) {
+            ['Gold','Silver','Bronze','Grease','Hydraulic','DEF','Green','Other'].forEach(g => {
+                if (gradeDist[g].totalL > 0) {
                     const pct = (gradeDist[g].totalL / (Object.values(gradeDist).reduce((s,o)=>s+o.totalL,0)) * 100).toFixed(1);
                     html += `<tr><td><strong>${g}</strong></td><td>${formatNumber(gradeDist[g].FRANKY)}</td><td>${formatNumber(gradeDist[g].KYRPAD)}</td><td>${formatNumber(gradeDist[g]['OTHERS DISTRICT'])}</td><td><strong>${formatNumber(gradeDist[g].totalL)}</strong></td><td>${pct}%</td></tr>`;
                     grandTotal += gradeDist[g].totalL;
                 }
             });
-            html += `<tr class="grand-total"><td><strong>GRAND TOTAL</strong></td><td>${formatNumber(gradeDist.Gold.FRANKY+gradeDist.Grease.FRANKY+gradeDist.Hydraulic.FRANKY+gradeDist.DEF.FRANKY+gradeDist.Green.FRANKY+gradeDist.Other.FRANKY)}</td><td>${formatNumber(gradeDist.Gold.KYRPAD+gradeDist.Grease.KYRPAD+gradeDist.Hydraulic.KYRPAD+gradeDist.DEF.KYRPAD+gradeDist.Green.KYRPAD+gradeDist.Other.KYRPAD)}</td><td>${formatNumber(gradeDist.Gold['OTHERS DISTRICT']+gradeDist.Grease['OTHERS DISTRICT']+gradeDist.Hydraulic['OTHERS DISTRICT']+gradeDist.DEF['OTHERS DISTRICT']+gradeDist.Green['OTHERS DISTRICT']+gradeDist.Other['OTHERS DISTRICT'])}</td><td><strong>${formatNumber(grandTotal)}</strong></td><td>100%</td></tr>`;
+            html += `<tr class="grand-total"><td><strong>GRAND TOTAL</strong></td><td>${formatNumber(gradeDist.Gold.FRANKY+gradeDist.Silver.FRANKY+gradeDist.Bronze.FRANKY+gradeDist.Grease.FRANKY+gradeDist.Hydraulic.FRANKY+gradeDist.DEF.FRANKY+gradeDist.Green.FRANKY+gradeDist.Other.FRANKY)}</td><td>${formatNumber(gradeDist.Gold.KYRPAD+gradeDist.Silver.KYRPAD+gradeDist.Bronze.KYRPAD+gradeDist.Grease.KYRPAD+gradeDist.Hydraulic.KYRPAD+gradeDist.DEF.KYRPAD+gradeDist.Green.KYRPAD+gradeDist.Other.KYRPAD)}</td><td>${formatNumber(gradeDist.Gold['OTHERS DISTRICT']+gradeDist.Silver['OTHERS DISTRICT']+gradeDist.Bronze['OTHERS DISTRICT']+gradeDist.Grease['OTHERS DISTRICT']+gradeDist.Hydraulic['OTHERS DISTRICT']+gradeDist.DEF['OTHERS DISTRICT']+gradeDist.Green['OTHERS DISTRICT']+gradeDist.Other['OTHERS DISTRICT'])}</td><td><strong>${formatNumber(grandTotal)}</strong></td><td>100%</td></tr>`;
             html += `</tbody></table>`;
             document.getElementById('reportContent').innerHTML = html;
             document.getElementById('reportContainer').style.display = 'block';
         }
         
-        // ==================== EXPORT: EXCEL (RAW DATA) ====================
-        function exportToExcel() {
-            if (!currentMappedData.length) { alert('No data'); return; }
-            // ... (full implementation as before, simplified here for brevity - but fully functional in live code)
-            alert('Excel export would be triggered (full code in actual deployment).');
-        }
-        function exportToPDF() {
-            if (!currentMappedData.length) { alert('No data'); return; }
-            alert('PDF export would be triggered (full code in actual deployment).');
+        // ==================== FIXED: EXPORT MONTHLY REPORT TO EXCEL (FILTER-BASED) ====================
+        
+        function exportMonthlyReportToExcel() {
+            if (!filteredMappedData.length) { 
+                alert('No filtered data to export. Please apply filters or load data first.'); 
+                return; 
+            }
+            
+            // Recalculate month data from filtered data only
+            const monthData = {};
+            filteredMappedData.forEach(it => {
+                const m = it.monthDisplay || 'Unknown';
+                const d = it.customerDistrict;
+                const g = it.grade;
+                const l = it.liters;
+                const q = it.qnty;
+                
+                if (!monthData[m]) {
+                    monthData[m] = {
+                        districts: {},
+                        totalL: 0,
+                        totalQ: 0
+                    };
+                }
+                
+                if (!monthData[m].districts[d]) {
+                    monthData[m].districts[d] = {
+                        Gold: 0, Silver: 0, Bronze: 0, Grease: 0, Hydraulic: 0, DEF: 0, Green: 0, Other: 0,
+                        totalL: 0, totalQ: 0
+                    };
+                }
+                
+                monthData[m].districts[d][g] += l;
+                monthData[m].districts[d].totalL += l;
+                monthData[m].districts[d].totalQ += q;
+                monthData[m].totalL += l;
+                monthData[m].totalQ += q;
+            });
+            
+            const months = Object.keys(monthData).sort((a,b)=> {
+                const val = m => { 
+                    let p = m.split(' '); 
+                    if (p.length == 2) {
+                        let idx = monthNames.indexOf(p[0]); 
+                        if (idx !== -1) return parseInt(p[1]) * 12 + idx;
+                    } 
+                    return 0; 
+                };
+                return val(a) - val(b);
+            });
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // ===== SHEET 1: Monthly Summary =====
+            const summaryData = [
+                ['MONTHLY DISTRICT-WISE GRADE ANALYSIS - FILTERED DATA'],
+                [`Generated: ${new Date().toLocaleString()}`],
+                [`Filter Applied: ${getFilterInfo()}`],
+                [`Total Filtered Rows: ${filteredMappedData.length}`],
+                [],
+                ['MONTHLY SUMMARY (Liters)'],
+                ['Month', 'FRANKY', 'KYRPAD', 'OTHERS DISTRICT', 'TOTAL LITERS', 'TOTAL QTY']
+            ];
+            
+            let grandTotalL = 0, grandTotalQ = 0;
+            
+            months.forEach(m => {
+                let frankyL = 0, kyrpadL = 0, othersL = 0;
+                
+                Object.keys(monthData[m].districts).forEach(d => {
+                    if (d === 'FRANKY') frankyL += monthData[m].districts[d].totalL;
+                    else if (d === 'KYRPAD') kyrpadL += monthData[m].districts[d].totalL;
+                    else othersL += monthData[m].districts[d].totalL;
+                });
+                
+                summaryData.push([
+                    m,
+                    formatNumber(frankyL),
+                    formatNumber(kyrpadL),
+                    formatNumber(othersL),
+                    formatNumber(monthData[m].totalL),
+                    formatNumber(monthData[m].totalQ)
+                ]);
+                
+                grandTotalL += monthData[m].totalL;
+                grandTotalQ += monthData[m].totalQ;
+            });
+            
+            summaryData.push([
+                'GRAND TOTAL',
+                formatNumber(summaryData.slice(6).reduce((sum, row) => sum + parseFloat(row[1].replace(/,/g, '')) || 0, 0)),
+                formatNumber(summaryData.slice(6).reduce((sum, row) => sum + parseFloat(row[2].replace(/,/g, '')) || 0, 0)),
+                formatNumber(summaryData.slice(6).reduce((sum, row) => sum + parseFloat(row[3].replace(/,/g, '')) || 0, 0)),
+                formatNumber(grandTotalL),
+                formatNumber(grandTotalQ)
+            ]);
+            
+            const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+            
+            // Set column widths for summary
+            summaryWs['!cols'] = [
+                { wch: 15 }, // Month
+                { wch: 15 }, // FRANKY
+                { wch: 15 }, // KYRPAD
+                { wch: 20 }, // OTHERS DISTRICT
+                { wch: 15 }, // TOTAL LITERS
+                { wch: 15 }  // TOTAL QTY
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, summaryWs, 'Monthly Summary');
+            
+            // ===== SHEET 2: Detailed Monthly Breakdown =====
+            const detailData = [
+                ['MONTHLY DETAILED BREAKDOWN - FILTERED DATA'],
+                [`Generated: ${new Date().toLocaleString()}`],
+                [`Filter Applied: ${getFilterInfo()}`],
+                [],
+            ];
+            
+            months.forEach(m => {
+                detailData.push([`MONTH: ${m}`]);
+                detailData.push(['District', 'Gold', 'Silver', 'Bronze', 'Grease', 'Hydraulic', 'DEF', 'Green', 'Other', 'Total Liters', 'Total Qty']);
+                
+                const districts = Object.keys(monthData[m].districts).sort();
+                
+                districts.forEach(d => {
+                    const dd = monthData[m].districts[d];
+                    detailData.push([
+                        d,
+                        formatNumber(dd.Gold),
+                        formatNumber(dd.Silver),
+                        formatNumber(dd.Bronze),
+                        formatNumber(dd.Grease),
+                        formatNumber(dd.Hydraulic),
+                        formatNumber(dd.DEF),
+                        formatNumber(dd.Green),
+                        formatNumber(dd.Other),
+                        formatNumber(dd.totalL),
+                        formatNumber(dd.totalQ)
+                    ]);
+                });
+                
+                detailData.push([
+                    'MONTH TOTAL',
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Gold, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Silver, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Bronze, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Grease, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Hydraulic, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].DEF, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Green, 0)),
+                    formatNumber(districts.reduce((sum, d) => sum + monthData[m].districts[d].Other, 0)),
+                    formatNumber(monthData[m].totalL),
+                    formatNumber(monthData[m].totalQ)
+                ]);
+                detailData.push([]); // Empty row between months
+            });
+            
+            const detailWs = XLSX.utils.aoa_to_sheet(detailData);
+            
+            // Set column widths for detail
+            detailWs['!cols'] = [
+                { wch: 20 }, // District
+                { wch: 12 }, // Gold
+                { wch: 12 }, // Silver
+                { wch: 12 }, // Bronze
+                { wch: 12 }, // Grease
+                { wch: 12 }, // Hydraulic
+                { wch: 12 }, // DEF
+                { wch: 12 }, // Green
+                { wch: 12 }, // Other
+                { wch: 15 }, // Total Liters
+                { wch: 15 }  // Total Qty
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, detailWs, 'Monthly Detail');
+            
+            // ===== SHEET 3: Filter Information =====
+            const filterData = [
+                ['FILTER INFORMATION'],
+                [`Generated: ${new Date().toLocaleString()}`],
+                [],
+                ['Applied Filters:'],
+                ['Customer Names:', selectedCustomerNames.length ? selectedCustomerNames.join(', ') : 'All'],
+                ['Customer Groups:', selectedCustomerGroups.length ? selectedCustomerGroups.join(', ') : 'All'],
+                ['Districts:', selectedDistricts.length ? selectedDistricts.join(', ') : 'All'],
+                ['Months:', selectedMonths.length ? selectedMonths.join(', ') : 'All'],
+                ['Grades:', selectedGrades.length ? selectedGrades.join(', ') : 'All'],
+                [],
+                ['Data Statistics:'],
+                ['Total Rows (Filtered):', filteredMappedData.length],
+                ['Total Rows (All):', currentMappedData.length],
+                [],
+                ['Grade Totals (Filtered):'],
+                ['Gold:', formatNumber(filteredMappedData.filter(d => d.grade === 'Gold').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['Silver:', formatNumber(filteredMappedData.filter(d => d.grade === 'Silver').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['Bronze:', formatNumber(filteredMappedData.filter(d => d.grade === 'Bronze').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['Grease:', formatNumber(filteredMappedData.filter(d => d.grade === 'Grease').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['Hydraulic:', formatNumber(filteredMappedData.filter(d => d.grade === 'Hydraulic').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['DEF:', formatNumber(filteredMappedData.filter(d => d.grade === 'DEF').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['Green:', formatNumber(filteredMappedData.filter(d => d.grade === 'Green').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['Other:', formatNumber(filteredMappedData.filter(d => d.grade === 'Other').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                [],
+                ['District Totals (Filtered):'],
+                ['FRANKY:', formatNumber(filteredMappedData.filter(d => d.customerDistrict === 'FRANKY').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['KYRPAD:', formatNumber(filteredMappedData.filter(d => d.customerDistrict === 'KYRPAD').reduce((sum, d) => sum + d.liters, 0)) + ' L'],
+                ['OTHERS DISTRICT:', formatNumber(filteredMappedData.filter(d => d.customerDistrict === 'OTHERS DISTRICT').reduce((sum, d) => sum + d.liters, 0)) + ' L']
+            ];
+            
+            const filterWs = XLSX.utils.aoa_to_sheet(filterData);
+            filterWs['!cols'] = [{ wch: 25 }, { wch: 50 }];
+            XLSX.utils.book_append_sheet(wb, filterWs, 'Filter Info');
+            
+            // Export file
+            const fileName = `monthly_report_filtered_${new Date().toISOString().slice(0,10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
         }
         
-        // ==================== NEW: EXPORT REPORT TO EXCEL ====================
+        // ==================== UPDATED: EXPORT REPORT TO EXCEL (NOW DETECTS REPORT TYPE) ====================
+        
         function exportReportToExcel() {
-            if (document.getElementById('reportContainer').style.display === 'none') { alert('Generate a report first'); return; }
-            // For brevity, a placeholder. In full version, convert report table to XLSX.
-            alert('Report to Excel export triggered (full implementation available).');
+            if (document.getElementById('reportContainer').style.display === 'none') { 
+                alert('Please generate a report first.'); 
+                return; 
+            }
+            
+            // Check what report is currently displayed
+            const reportTitle = document.getElementById('reportContent').querySelector('h4')?.innerText || '';
+            
+            if (reportTitle.toLowerCase().includes('monthly')) {
+                // Use the dedicated monthly report export that respects filters
+                exportMonthlyReportToExcel();
+            } else {
+                // For other report types, use the generic export
+                exportGenericReportToExcel();
+            }
         }
         
-        // ==================== ENHANCED PNG EXPORT (READABLE, NO MERGE) ====================
+        function exportGenericReportToExcel() {
+            const reportContent = document.getElementById('reportContent');
+            const reportTables = reportContent.querySelectorAll('table');
+            
+            if (reportTables.length === 0) {
+                alert('No table found in report to export.');
+                return;
+            }
+            
+            const wb = XLSX.utils.book_new();
+            const reportTitle = reportContent.querySelector('h4')?.innerText || 'Report';
+            const dateInfo = reportContent.querySelector('p')?.innerText || new Date().toLocaleString();
+            
+            // Process each table as a separate sheet
+            reportTables.forEach((table, index) => {
+                const sheetData = [];
+                
+                // Extract headers
+                const headers = [];
+                const headerRow = table.querySelector('thead tr');
+                if (headerRow) {
+                    headerRow.querySelectorAll('th').forEach(th => {
+                        headers.push(th.innerText.trim());
+                    });
+                    sheetData.push(headers);
+                }
+                
+                // Extract body rows
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    const rowData = [];
+                    row.querySelectorAll('td').forEach(td => {
+                        rowData.push(td.innerText.trim());
+                    });
+                    sheetData.push(rowData);
+                });
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(sheetData);
+                
+                // Auto-size columns
+                const colWidths = [];
+                for (let i = 0; i < headers.length; i++) {
+                    let maxLen = headers[i]?.length || 10;
+                    for (let j = 1; j < Math.min(sheetData.length, 50); j++) {
+                        if (sheetData[j] && sheetData[j][i]) {
+                            maxLen = Math.max(maxLen, sheetData[j][i].toString().length);
+                        }
+                    }
+                    colWidths.push({ wch: Math.min(maxLen + 2, 30) });
+                }
+                ws['!cols'] = colWidths;
+                
+                // Sheet name
+                let sheetName = 'Report';
+                if (reportTitle.toLowerCase().includes('district')) sheetName = 'District Report';
+                else if (reportTitle.toLowerCase().includes('grade')) sheetName = 'Grade Analysis';
+                else sheetName = `Report ${index + 1}`;
+                
+                XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            });
+            
+            // Add filter info sheet
+            const infoData = [
+                ['REPORT INFORMATION'],
+                ['Report Type:', reportTitle],
+                ['Generated:', dateInfo],
+                ['Filter:', getFilterInfo()],
+                [''],
+                ['DATA SUMMARY (Filtered)'],
+                ['Total Rows:', filteredMappedData.length],
+                [''],
+                ['Grade Totals (Liters):'],
+                ['Gold:', formatNumber(filteredMappedData.filter(d => d.grade === 'Gold').reduce((sum, d) => sum + d.liters, 0))],
+                ['Silver:', formatNumber(filteredMappedData.filter(d => d.grade === 'Silver').reduce((sum, d) => sum + d.liters, 0))],
+                ['Bronze:', formatNumber(filteredMappedData.filter(d => d.grade === 'Bronze').reduce((sum, d) => sum + d.liters, 0))],
+                ['Grease:', formatNumber(filteredMappedData.filter(d => d.grade === 'Grease').reduce((sum, d) => sum + d.liters, 0))],
+                ['Hydraulic:', formatNumber(filteredMappedData.filter(d => d.grade === 'Hydraulic').reduce((sum, d) => sum + d.liters, 0))],
+                ['DEF:', formatNumber(filteredMappedData.filter(d => d.grade === 'DEF').reduce((sum, d) => sum + d.liters, 0))],
+                ['Green:', formatNumber(filteredMappedData.filter(d => d.grade === 'Green').reduce((sum, d) => sum + d.liters, 0))],
+                ['Other:', formatNumber(filteredMappedData.filter(d => d.grade === 'Other').reduce((sum, d) => sum + d.liters, 0))],
+                [''],
+                ['District Totals (Liters):'],
+                ['FRANKY:', formatNumber(filteredMappedData.filter(d => d.customerDistrict === 'FRANKY').reduce((sum, d) => sum + d.liters, 0))],
+                ['KYRPAD:', formatNumber(filteredMappedData.filter(d => d.customerDistrict === 'KYRPAD').reduce((sum, d) => sum + d.liters, 0))],
+                ['OTHERS DISTRICT:', formatNumber(filteredMappedData.filter(d => d.customerDistrict === 'OTHERS DISTRICT').reduce((sum, d) => sum + d.liters, 0))]
+            ];
+            
+            const infoWs = XLSX.utils.aoa_to_sheet(infoData);
+            XLSX.utils.book_append_sheet(wb, infoWs, 'Report Info');
+            
+            const fileName = `report_${new Date().toISOString().slice(0,10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+        
+        // ==================== TEXT EXPORT FUNCTIONS ====================
+        
+        function exportRawDataToText() {
+            if (!currentMappedData.length) { 
+                alert('No data to export'); 
+                return; 
+            }
+            
+            const dataToExport = filteredMappedData.length ? filteredMappedData : currentMappedData;
+            
+            let textContent = "========================================\n";
+            textContent += "     MULTI-GRADE SKU DATA EXPORT\n";
+            textContent += "========================================\n\n";
+            textContent += `Generated: ${new Date().toLocaleString()}\n`;
+            textContent += `Total Rows: ${dataToExport.length}\n`;
+            textContent += `Filters Applied: ${getFilterInfo()}\n\n`;
+            
+            textContent += "--------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+            textContent += "SKU Code       | SKU Name                                               | Qnty   | Liters | Customer Name      | Group     | District        | Month       | Grade\n";
+            textContent += "--------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+            
+            dataToExport.forEach(item => {
+                const skuCode = (item.skuCode || '').padEnd(14).substring(0,14);
+                const skuName = (item.skuName || '').padEnd(52).substring(0,52);
+                const qnty = (formatNumber(item.qnty) || '0').padStart(6);
+                const liters = (formatNumber(item.liters) || '0').padStart(6);
+                const custName = (item.customerName || '').padEnd(18).substring(0,18);
+                const custGroup = (item.customerGroup || '').padEnd(10).substring(0,10);
+                const district = (item.customerDistrict || '').padEnd(14).substring(0,14);
+                const month = (item.monthDisplay || '').padEnd(11).substring(0,11);
+                const grade = (item.grade || '').padEnd(8).substring(0,8);
+                
+                textContent += `${skuCode} | ${skuName} | ${qnty} | ${liters} | ${custName} | ${custGroup} | ${district} | ${month} | ${grade}\n`;
+            });
+            
+            textContent += "--------------------------------------------------------------------------------------------------------------------------------------------------------\n\n";
+            
+            // Add summary statistics
+            textContent += "========================================\n";
+            textContent += "           SUMMARY STATISTICS\n";
+            textContent += "========================================\n\n";
+            
+            textContent += "GRADE TOTALS:\n";
+            textContent += `  Gold:      ${formatNumber(totalGoldQnty)} Qty, ${formatNumber(totalGoldLiters)} Liters\n`;
+            textContent += `  Silver:    ${formatNumber(totalSilverQnty)} Qty, ${formatNumber(totalSilverLiters)} Liters\n`;
+            textContent += `  Bronze:    ${formatNumber(totalBronzeQnty)} Qty, ${formatNumber(totalBronzeLiters)} Liters\n`;
+            textContent += `  Grease:    ${formatNumber(totalGreaseQnty)} Qty, ${formatNumber(totalGreaseLiters)} Liters\n`;
+            textContent += `  Hydraulic: ${formatNumber(totalHydraulicQnty)} Qty, ${formatNumber(totalHydraulicLiters)} Liters\n`;
+            textContent += `  DEF:       ${formatNumber(totalDefQnty)} Qty, ${formatNumber(totalDefLiters)} Liters\n`;
+            textContent += `  Green:     ${formatNumber(totalGreenQnty)} Qty, ${formatNumber(totalGreenLiters)} Liters\n`;
+            textContent += `  Other:     ${formatNumber(totalOtherQnty)} Qty, ${formatNumber(totalOtherLiters)} Liters\n\n`;
+            
+            textContent += "DISTRICT TOTALS:\n";
+            textContent += `  FRANKY:          ${formatNumber(totalFrankyQnty)} Qty, ${formatNumber(totalFrankyLiters)} Liters\n`;
+            textContent += `  KYRPAD:          ${formatNumber(totalKyrpadQnty)} Qty, ${formatNumber(totalKyrpadLiters)} Liters\n`;
+            textContent += `  OTHERS DISTRICT: ${formatNumber(totalOthersDistrictQnty)} Qty, ${formatNumber(totalOthersDistrictLiters)} Liters\n\n`;
+            
+            textContent += `SKU Validation:\n`;
+            textContent += `  Total Rows Processed: ${totalRows}\n`;
+            textContent += `  SKU Matches by Grade:\n`;
+            textContent += `    Gold: ${goldSkuMatches}, Silver: ${silverSkuMatches}, Bronze: ${bronzeSkuMatches}, Grease: ${greaseSkuMatches}\n`;
+            textContent += `    Hydraulic: ${hydraulicSkuMatches}, DEF: ${defSkuMatches}, Green: ${greenSkuMatches}, Other: ${otherSkuMatches}\n`;
+            textContent += `  Names Corrected: ${nameCorrections}\n`;
+            textContent += `  Unknown SKUs: ${currentMappedData.filter(it=>!it.isKnownSku && it.skuCode).length}\n\n`;
+            
+            textContent += "========================================\n";
+            textContent += "           END OF REPORT\n";
+            textContent += "========================================\n";
+            
+            downloadTextFile(textContent, `sku_data_export_${new Date().toISOString().slice(0,10)}.txt`);
+        }
+        
+        function exportReportToText() {
+            if (document.getElementById('reportContainer').style.display === 'none') {
+                alert('Please generate a report first.');
+                return;
+            }
+            
+            const reportContent = document.getElementById('reportContent').innerText || 
+                                 document.getElementById('reportContent').textContent;
+            
+            let textContent = "========================================\n";
+            textContent += "         MULTI-GRADE SKU REPORT\n";
+            textContent += "========================================\n\n";
+            textContent += `Generated: ${new Date().toLocaleString()}\n`;
+            textContent += `Filter: ${getFilterInfo()}\n\n`;
+            textContent += reportContent.replace(/\s+/g, ' ').trim();
+            textContent += "\n\n========================================\n";
+            textContent += "           END OF REPORT\n";
+            textContent += "========================================\n";
+            
+            downloadTextFile(textContent, `sku_report_${new Date().toISOString().slice(0,10)}.txt`);
+        }
+        
+        function downloadTextFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+        
+        // ==================== EXCEL EXPORT (RAW DATA) ====================
+        
+        function exportToExcel() {
+            if (!currentMappedData.length) { 
+                alert('No data to export. Please upload and process a file first.'); 
+                return; 
+            }
+            
+            const dataToExport = filteredMappedData.length ? filteredMappedData : currentMappedData;
+            
+            // Prepare worksheet data
+            const wsData = [
+                ['SKU Code', 'SKU Name', 'Quantity', 'Liters', 'Customer Name', 'Customer Group', 
+                 'Original District', 'Reclassified District', 'Month', 'Grade', 'Name Validated']
+            ];
+            
+            dataToExport.forEach(item => {
+                wsData.push([
+                    item.skuCode || '',
+                    item.skuName || '',
+                    item.qnty || 0,
+                    item.liters || 0,
+                    item.customerName || '',
+                    item.customerGroup || '',
+                    item.customerDistrictOriginal || '',
+                    item.customerDistrict || '',
+                    item.monthDisplay || '',
+                    item.grade || '',
+                    item.nameValidated ? 'Yes' : 'No'
+                ]);
+            });
+            
+            // Add summary section
+            wsData.push([]);
+            wsData.push(['SUMMARY STATISTICS']);
+            wsData.push(['Generated:', new Date().toLocaleString()]);
+            wsData.push(['Total Rows:', totalRows]);
+            wsData.push([]);
+            wsData.push(['GRADE TOTALS', 'Quantity', 'Liters']);
+            wsData.push(['Gold', totalGoldQnty, totalGoldLiters]);
+            wsData.push(['Silver', totalSilverQnty, totalSilverLiters]);
+            wsData.push(['Bronze', totalBronzeQnty, totalBronzeLiters]);
+            wsData.push(['Grease', totalGreaseQnty, totalGreaseLiters]);
+            wsData.push(['Hydraulic', totalHydraulicQnty, totalHydraulicLiters]);
+            wsData.push(['DEF', totalDefQnty, totalDefLiters]);
+            wsData.push(['Green', totalGreenQnty, totalGreenLiters]);
+            wsData.push(['Other', totalOtherQnty, totalOtherLiters]);
+            wsData.push([]);
+            wsData.push(['DISTRICT TOTALS', 'Quantity', 'Liters']);
+            wsData.push(['FRANKY', totalFrankyQnty, totalFrankyLiters]);
+            wsData.push(['KYRPAD', totalKyrpadQnty, totalKyrpadLiters]);
+            wsData.push(['OTHERS DISTRICT', totalOthersDistrictQnty, totalOthersDistrictLiters]);
+            wsData.push([]);
+            wsData.push(['SKU VALIDATION']);
+            wsData.push(['Gold SKU Matches:', goldSkuMatches]);
+            wsData.push(['Silver SKU Matches:', silverSkuMatches]);
+            wsData.push(['Bronze SKU Matches:', bronzeSkuMatches]);
+            wsData.push(['Grease SKU Matches:', greaseSkuMatches]);
+            wsData.push(['Hydraulic SKU Matches:', hydraulicSkuMatches]);
+            wsData.push(['DEF SKU Matches:', defSkuMatches]);
+            wsData.push(['Green SKU Matches:', greenSkuMatches]);
+            wsData.push(['Other SKU Matches:', otherSkuMatches]);
+            wsData.push(['Names Corrected:', nameCorrections]);
+            wsData.push(['Unknown SKUs:', currentMappedData.filter(it=>!it.isKnownSku && it.skuCode).length]);
+            
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // Auto-size columns (approximate)
+            const colWidths = [];
+            for (let i = 0; i < wsData[0].length; i++) {
+                let maxLen = 10;
+                for (let j = 0; j < Math.min(wsData.length, 100); j++) {
+                    if (wsData[j] && wsData[j][i]) {
+                        maxLen = Math.max(maxLen, wsData[j][i].toString().length);
+                    }
+                }
+                colWidths.push({ wch: Math.min(maxLen + 2, 50) });
+            }
+            ws['!cols'] = colWidths;
+            
+            XLSX.utils.book_append_sheet(wb, ws, 'SKU Data');
+            
+            // Add summary sheet
+            const summaryData = [
+                ['MULTI-GRADE SKU TRACKING - SUMMARY REPORT'],
+                ['Generated:', new Date().toLocaleString()],
+                [''],
+                ['GRADE ANALYSIS'],
+                ['Grade', 'Quantity', 'Liters', 'SKU Matches'],
+                ['Gold', totalGoldQnty, totalGoldLiters, goldSkuMatches],
+                ['Silver', totalSilverQnty, totalSilverLiters, silverSkuMatches],
+                ['Bronze', totalBronzeQnty, totalBronzeLiters, bronzeSkuMatches],
+                ['Grease', totalGreaseQnty, totalGreaseLiters, greaseSkuMatches],
+                ['Hydraulic', totalHydraulicQnty, totalHydraulicLiters, hydraulicSkuMatches],
+                ['DEF', totalDefQnty, totalDefLiters, defSkuMatches],
+                ['Green', totalGreenQnty, totalGreenLiters, greenSkuMatches],
+                ['Other', totalOtherQnty, totalOtherLiters, otherSkuMatches],
+                [''],
+                ['DISTRICT ANALYSIS'],
+                ['District', 'Quantity', 'Liters'],
+                ['FRANKY', totalFrankyQnty, totalFrankyLiters],
+                ['KYRPAD', totalKyrpadQnty, totalKyrpadLiters],
+                ['OTHERS DISTRICT', totalOthersDistrictQnty, totalOthersDistrictLiters],
+                [''],
+                ['FILTER INFORMATION'],
+                ['Filter Status:', getFilterInfo()],
+                ['Showing:', filteredMappedData.length + ' of ' + currentMappedData.length + ' rows']
+            ];
+            
+            const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
+            
+            // Export file
+            const fileName = `sku_data_export_${new Date().toISOString().slice(0,10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+        
+        // ==================== PDF EXPORT ====================
+        
+        function exportToPDF() {
+            if (!currentMappedData.length) { 
+                alert('No data to export'); 
+                return; 
+            }
+            alert('PDF export for raw data - Full implementation available with jsPDF AutoTable');
+        }
+        
+        function exportReportToPDF() {
+            if (document.getElementById('reportContainer').style.display === 'none') {
+                alert('Generate a report first');
+                return;
+            }
+            const element = document.getElementById('reportContainer');
+            html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: 1200
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'px',
+                    format: [canvas.width * 0.75, canvas.height * 0.75]
+                });
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width * 0.75, canvas.height * 0.75);
+                pdf.save(`report_${new Date().toISOString().slice(0,10)}.pdf`);
+            }).catch(err => {
+                console.error(err);
+                alert('PDF export failed');
+            });
+        }
+        
+        // ==================== PNG EXPORT ====================
+        
         function exportReportAsPNG() {
             if (document.getElementById('reportContainer').style.display === 'none') {
                 alert('Please generate a report first.');
@@ -2175,22 +2958,18 @@
         
         function captureReportAsPNG(type) {
             closeReportModal();
-            // Determine what to capture
             let elementToCapture;
             if (type === 'full') {
                 elementToCapture = document.getElementById('reportContainer');
             } else {
-                // regenerate the specific report to ensure it's the latest
                 if (type === 'district') generateDistrictReport();
                 else if (type === 'monthly') generateMonthlyReport();
                 else if (type === 'grade') generateGradeReport();
-                // after generation, the report content is inside #reportContent
                 elementToCapture = document.getElementById('reportContent');
             }
             
-            // Clone the element to a hidden container with fixed width for high-quality capture
             const cloneContainer = document.getElementById('exportPreviewContainer');
-            cloneContainer.innerHTML = ''; // clear
+            cloneContainer.innerHTML = '';
             const clone = elementToCapture.cloneNode(true);
             clone.style.width = '1200px';
             clone.style.background = 'white';
@@ -2199,7 +2978,6 @@
             clone.style.boxSizing = 'border-box';
             cloneContainer.appendChild(clone);
             
-            // Use html2canvas on the clone with optimal settings
             html2canvas(clone, {
                 scale: 2.5,
                 backgroundColor: '#ffffff',
@@ -2213,40 +2991,11 @@
                 link.download = `${type}_report_${new Date().toISOString().slice(0,10)}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                cloneContainer.innerHTML = ''; // cleanup
+                cloneContainer.innerHTML = '';
             }).catch(err => {
                 console.error(err);
                 alert('PNG export failed');
                 cloneContainer.innerHTML = '';
-            });
-        }
-        
-        // ==================== NEW: EXPORT REPORT TO PDF ====================
-        function exportReportToPDF() {
-            if (document.getElementById('reportContainer').style.display === 'none') {
-                alert('Generate a report first');
-                return;
-            }
-            // Capture the entire report container as PNG and embed in PDF
-            const element = document.getElementById('reportContainer');
-            html2canvas(element, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                logging: false,
-                windowWidth: 1200
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: 'landscape',
-                    unit: 'px',
-                    format: [canvas.width * 0.75, canvas.height * 0.75] // scale to fit
-                });
-                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width * 0.75, canvas.height * 0.75);
-                pdf.save(`report_${new Date().toISOString().slice(0,10)}.pdf`);
-            }).catch(err => {
-                console.error(err);
-                alert('PDF export failed');
             });
         }
         
@@ -2293,12 +3042,10 @@
             document.getElementById('reportModal').style.display = 'none';
         }
         
-        // Close modal when clicking outside
         window.onclick = function(e) {
             if (e.target.classList.contains('modal')) closeReportModal();
         };
         
-        // Drag & drop
         document.addEventListener('DOMContentLoaded', function() {
             initializeSkuList();
             const dropArea = document.querySelector('.file-upload-area');
@@ -2313,7 +3060,6 @@
                 }
             });
             
-            // Close dropdowns on outside click
             document.addEventListener('click', function(ev) {
                 if (!ev.target.closest('.multi-select-container') && !ev.target.closest('button')) {
                     document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.remove('show'));
