@@ -1018,7 +1018,7 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-crown"></i> Multi-Grade SKU Mapping Tool</h1>
+            <h1><i class="fas fa-crown"></i> Auto Lube House Multi-Grade Analys</h1>
             <p class="subtitle">Track Gold, Silver, Bronze, Grease, Hydraulic, DEF, Green & Other Grades with District Classification (FRANKY, KYRPAD, OTHERS DISTRICT)</p>
         </header>
         
@@ -1445,7 +1445,7 @@
         </div>
         
         <div class="footer">
-            <p>Multi-Grade SKU Mapping Tool v7.6 | District Classification: FRANKY, KYRPAD, OTHERS DISTRICT | Bronze Grade Added | MONTHLY REPORT EXCEL FIXED | Filter-Based Calculations</p>
+            <p>Multi-Grade SKU Mapping Tool v7.6 | District Classification: FRANKY, KYRPAD, OTHERS DISTRICT |</p>
         </div>
     </div>
 
@@ -1674,10 +1674,6 @@
 '2927184': { validName: 'SERVO HONDA JOSH-20 X 1 L', grade: 'Bronze' },
 '7209213': { validName: 'HY SERVO SYNTH 0W-30 SP/C3-4 X 3.5 L', grade: 'Bronze' },
 '7208271': { validName: 'SERVO SUPERIOR EO 0W20 SN PLUS-50 L', grade: 'Bronze' }
-
-
-
-
         };
         
         const allSkuCodes = Object.keys(skuData);
@@ -1764,30 +1760,119 @@
             `;
         }
         
-        // ==================== DATE CONVERSION ====================
+        // ==================== COMPLETELY REWRITTEN DATE CONVERSION - FIXED FOR 1ST DAY OF MONTH ====================
+        
         function convertExcelDate(excelDate) {
             if (!excelDate || excelDate < 1) return null;
-            const epoch = new Date(1899, 11, 30);
-            const date = new Date(epoch.getTime() + excelDate * 24 * 60 * 60 * 1000);
-            if (excelDate >= 60) date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
-            return date;
+            
+            try {
+                // Excel date system: 
+                // 1 = January 1, 1900
+                // But Excel incorrectly treats 1900 as leap year
+                
+                // Convert Excel serial to days since 1899-12-31
+                let days = Math.floor(excelDate);
+                
+                // Adjust for Excel's leap year bug (dates after Feb 28, 1900 need adjustment)
+                if (days >= 60) {
+                    days -= 1;
+                }
+                
+                // Days since 1899-12-31 to milliseconds
+                const milliseconds = days * 24 * 60 * 60 * 1000;
+                
+                // Create date in UTC to avoid timezone issues
+                const date = new Date(Date.UTC(1899, 11, 31) + milliseconds);
+                
+                return date;
+            } catch (e) {
+                console.error('Error converting Excel date:', e);
+                return null;
+            }
         }
         
         function convertDateToMonth(dateValue) {
-            if (!dateValue && dateValue !== 0) return '';
-            let date = null;
-            if (typeof dateValue === 'number' && dateValue >= 1 && dateValue <= 50000) date = convertExcelDate(dateValue);
-            else if (dateValue instanceof Date) date = dateValue;
-            else if (typeof dateValue === 'string') {
-                const str = dateValue.toString().trim();
-                const match = str.match(/(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{2,4})/);
-                if (match) {
-                    let y = parseInt(match[3],10); if(y<100) y = y<50 ? 2000+y : 1900+y;
-                    date = new Date(y, parseInt(match[2],10)-1, parseInt(match[1],10));
-                } else date = new Date(str);
+            if (dateValue === null || dateValue === undefined || dateValue === '') return '';
+            
+            try {
+                let year, month;
+                let date = null;
+                
+                // CASE 1: Excel serial number
+                if (typeof dateValue === 'number' && dateValue >= 1 && dateValue <= 50000) {
+                    date = convertExcelDate(dateValue);
+                }
+                // CASE 2: Already a Date object
+                else if (dateValue instanceof Date) {
+                    date = new Date(Date.UTC(
+                        dateValue.getUTCFullYear(),
+                        dateValue.getUTCMonth(),
+                        dateValue.getUTCDate(),
+                        12, 0, 0
+                    ));
+                }
+                // CASE 3: String date
+                else if (typeof dateValue === 'string') {
+                    const str = dateValue.toString().trim();
+                    
+                    // Try DD/MM/YYYY format (common in Excel exports)
+                    const dmyMatch = str.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
+                    if (dmyMatch) {
+                        let day = parseInt(dmyMatch[1], 10);
+                        let monthIdx = parseInt(dmyMatch[2], 10) - 1; // 0-based month
+                        let yr = parseInt(dmyMatch[3], 10);
+                        
+                        // Handle 2-digit years
+                        if (yr < 100) {
+                            yr = yr < 50 ? 2000 + yr : 1900 + yr;
+                        }
+                        
+                        // Create UTC date
+                        date = new Date(Date.UTC(yr, monthIdx, day, 12, 0, 0));
+                    }
+                    // Try MM/DD/YYYY format
+                    else {
+                        const parts = str.split(/[\/\-\.]/);
+                        if (parts.length === 3) {
+                            let monthIdx = parseInt(parts[0], 10) - 1;
+                            let day = parseInt(parts[1], 10);
+                            let yr = parseInt(parts[2], 10);
+                            
+                            if (yr < 100) {
+                                yr = yr < 50 ? 2000 + yr : 1900 + yr;
+                            }
+                            
+                            date = new Date(Date.UTC(yr, monthIdx, day, 12, 0, 0));
+                        } else {
+                            // Try standard JS date parsing
+                            const jsDate = new Date(str);
+                            if (!isNaN(jsDate.getTime())) {
+                                date = new Date(Date.UTC(
+                                    jsDate.getFullYear(),
+                                    jsDate.getMonth(),
+                                    jsDate.getDate(),
+                                    12, 0, 0
+                                ));
+                            }
+                        }
+                    }
+                }
+                
+                // If we got a valid date, extract UTC components
+                if (date && !isNaN(date.getTime())) {
+                    year = date.getUTCFullYear();
+                    month = date.getUTCMonth();
+                    
+                    return `${monthNames[month]} ${year}`;
+                }
+                
+                // If all parsing fails, return the original value
+                return dateValue?.toString() || '';
+                
+            } catch (e) {
+                console.error('Date parsing error:', e);
+                return dateValue?.toString() || '';
             }
-            if (!date || isNaN(date.getTime())) return dateValue?.toString() || '';
-            return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
         }
         
         // ==================== FILE HANDLING ====================
