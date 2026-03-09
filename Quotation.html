@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Lube House - Quotation</title>
+    <title>Quotation</title>
     <style>
         /* Reset and Base Styles */
         * {
@@ -14,53 +14,13 @@
         }
         
         body {
-            background-color: #D4AF37;
+            background-color: #f5f7fa;
             color: #333;
             line-height: 1.4;
             font-size: 12px;
             padding: 15px;
             width: 100%;
             overflow-x: auto;
-        }
-        
-        /* Logo Spinner */
-        .logo-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .logo-spinner {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #D4AF37 0%, #F7EF8A 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #8B6914;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-            animation: spin 8s linear infinite;
-            border: 3px solid #D4AF37;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .logo-label {
-            margin-top: 5px;
-            font-size: 9px;
-            color: #8B6914;
-            font-weight: bold;
-            text-align: center;
         }
         
         /* Screen Styles */
@@ -76,62 +36,50 @@
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(139, 105, 20, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             overflow: hidden;
-            border: 1px solid #F0E6D2;
         }
         
         .header {
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-            color: #fff;
-            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            position: relative;
         }
         
         .company-info h1 {
-            font-size: 28px;
-            margin-bottom: 6px;
+            font-size: 22px;
+            margin-bottom: 4px;
             line-height: 1.2;
-            color: #fff;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         .company-info p {
-            opacity: 0.95;
-            font-size: 12px;
-            margin-bottom: 3px;
-            color: #fff;
+            opacity: 0.9;
+            font-size: 11px;
+            margin-bottom: 2px;
         }
         
         .challan-details {
             text-align: right;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px 15px;
-            border-radius: 8px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .challan-details h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: #fff;
+            font-size: 18px;
+            margin-bottom: 8px;
         }
         
         .challan-details div {
-            margin-bottom: 5px;
-            font-size: 12px;
-            color: #fff;
+            margin-bottom: 3px;
+            font-size: 11px;
         }
         
         .import-section {
-            padding: 15px 20px;
-            background-color: #FFF9E6;
-            border-bottom: 2px solid #F0E6D2;
+            padding: 12px 20px;
+            background-color: #e8f4fc;
+            border-bottom: 1px solid #cce7ff;
         }
         
         .import-controls {
@@ -158,32 +106,29 @@
         }
         
         .file-btn {
-            background-color: #D4AF37;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 6px;
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             transition: all 0.3s;
             border: none;
-            box-shadow: 0 3px 6px rgba(212, 175, 55, 0.3);
         }
         
         .file-btn:hover {
-            background-color: #B8860B;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(212, 175, 55, 0.4);
+            background-color: #2980b9;
         }
         
         .client-info {
             display: flex;
-            padding: 15px 20px;
-            background-color: #FFF9E6;
-            border-bottom: 2px solid #F0E6D2;
+            padding: 12px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
         }
         
         .bill-to {
@@ -196,60 +141,56 @@
         }
         
         .info-section h3 {
-            color: #8B6914;
-            margin-bottom: 10px;
-            font-size: 16px;
-            border-bottom: 2px solid #D4AF37;
-            padding-bottom: 6px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 4px;
         }
         
         .editable {
-            padding: 5px 8px;
-            border-radius: 4px;
+            padding: 3px 5px;
+            border-radius: 3px;
             transition: all 0.2s;
             cursor: text;
-            min-height: 22px;
-            font-size: 12px;
+            min-height: 18px;
+            font-size: 11px;
             display: inline-block;
             width: 100%;
-            border: 1px solid transparent;
-            background: 1px solid transparent;
         }
         
         .editable:hover {
-            background-color: rgba(212, 175, 55, 0.9)
-            border-color: #D4AF37;
+            background-color: #0000;
         }
         
         .editable:focus {
-            outline: 2px solid #D4AF37;
-            background-color: rgba(212, 175, 55, 0.9);
-            border-color: #D4AF37;
+            outline: 2px solid #3498db;
+            background-color: #0000;
         }
         
         .table-container {
-            padding: 0 20px 20px;
+            padding: 0 20px 15px;
             overflow-x: auto;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 10px;
             table-layout: fixed;
         }
         
         thead {
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            background-color: #2c3e50;
             color: white;
         }
         
         th {
-            padding: 10px 8px;
+            padding: 8px 6px;
             text-align: left;
             font-weight: 600;
-            font-size: 12px;
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 11px;
+            border-right: 1px solid #3a506b;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
@@ -259,91 +200,163 @@
             width: 45px !important;
         }
         
-        /* Updated Column widths for 11 columns */
-        th:nth-child(1) { width: 5%; }   /* SL No */
-        th:nth-child(2) { width: 25%; }  /* SKU Name */
-        th:nth-child(3) { width: 10%; }  /* SKU # */
-        th:nth-child(4) { width: 10%; }  /* Qnty (Ltrs/Kg) */
-        th:nth-child(5) { width: 8%; }   /* Qnty Per Liter */
-        th:nth-child(6) { width: 10%; }  /* Rate per liter */
-        th:nth-child(7) { width: 10%; }  /* Per Disc */
-        th:nth-child(8) { width: 12%; }  /* Taxable Value */
-        th:nth-child(9) { width: 10%; }  /* GST 18% */
-        th:nth-child(10) { width: 10%; } /* Net Amt */
-        th:nth-child(11) { width: 5%; }  /* Delete */
+        /* Updated Column widths for 14 columns */
+        th:nth-child(1) { width: 4%; }   /* SL No */
+        th:nth-child(2) { width: 20%; }  /* SKU Name */
+        th:nth-child(3) { width: 7%; }   /* SKU # */
+        th:nth-child(4) { width: 6%; }   /* MRP */
+        th:nth-child(5) { width: 7%; }   /* Qnty (Ltrs/Kg) */
+        th:nth-child(6) { width: 4%; }   /* Qnty */
+        th:nth-child(7) { width: 9%; }   /* Rate */
+        th:nth-child(8) { width: 9%; }   /* Net Total */
+        th:nth-child(9) { width: 7%; }   /* Disc (₹) */
+        th:nth-child(10) { width: 9%; }  /* Total Disc (₹) */
+        th:nth-child(11) { width: 9%; }  /* Taxable Value */
+        th:nth-child(12) { width: 9%; }  /* GST 18% */
+        th:nth-child(13) { width: 9%; }  /* Net Amt */
+        th:nth-child(14) { width: 3%; }  /* Del */
         
-        tbody tr {
-            border-bottom: 1px solid #F0E6D2;
-            transition: background-color 0.2s;
+        /* CENTER ALIGNMENT FOR SPECIFIC COLUMNS */
+        /* Qnty (Column 6) */
+        th:nth-child(6), 
+        td:nth-child(6),
+        tfoot td:nth-child(6) {
+            text-align: center !important;
         }
         
-        tbody tr:hover {
-            background-color: #FFF9E6;
+        /* Rate (Column 7) */
+        th:nth-child(7), 
+        td:nth-child(7),
+        tfoot td:nth-child(7) {
+            text-align: center !important;
+        }
+        
+        /* Net Total (Column 8) */
+        th:nth-child(8), 
+        td:nth-child(8),
+        tfoot td:nth-child(8) {
+            text-align: center !important;
+        }
+        
+        /* Disc (Column 9) */
+        th:nth-child(9), 
+        td:nth-child(9),
+        tfoot td:nth-child(9) {
+            text-align: center !important;
+        }
+        
+        /* Total Disc (Column 10) */
+        th:nth-child(10), 
+        td:nth-child(10),
+        tfoot td:nth-child(10) {
+            text-align: center !important;
+        }
+        
+        /* Taxable Value (Column 11) */
+        th:nth-child(11), 
+        td:nth-child(11),
+        tfoot td:nth-child(11) {
+            text-align: center !important;
+        }
+        
+        /* GST 18% (Column 12) */
+        th:nth-child(12), 
+        td:nth-child(12),
+        tfoot td:nth-child(12) {
+            text-align: center !important;
+        }
+        
+        /* Net Amt (Column 13) */
+        th:nth-child(13), 
+        td:nth-child(13),
+        tfoot td:nth-child(13) {
+            text-align: center !important;
+        }
+        
+        /* Also align MRP and Qnty (Ltrs/Kg) */
+        th:nth-child(4), 
+        td:nth-child(4),
+        tfoot td:nth-child(4) {
+            text-align: center !important;
+        }
+        
+        th:nth-child(5), 
+        td:nth-child(5),
+        tfoot td:nth-child(5) {
+            text-align: center !important;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #eaeaea;
         }
         
         tfoot tr {
-            background-color: #F8F5F0;
+            background-color: #f8f9fa;
             font-weight: bold;
-            border-top: 3px solid #D4AF37;
+            border-top: 2px solid #2c3e50;
         }
         
         td {
-            padding: 8px;
+            padding: 6px;
             text-align: left;
-            font-size: 12px;
+            font-size: 11px;
             word-wrap: break-word;
             overflow-wrap: break-word;
             vertical-align: middle;
         }
         
-        .sku-input, .sku-name-input {
+        /* FIXED: SKU Name input with proper text wrapping */
+        .sku-name-input {
             width: 100%;
-            padding: 6px 8px;
-            border: 1px solid #E0D6C2;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+            white-space: pre-wrap !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            height: auto !important;
+            min-height: 30px;
+            resize: vertical;
+            line-height: 1.3;
+            overflow-y: auto;
+            max-height: 80px;
         }
         
-        .sku-input:focus, .sku-name-input:focus {
-            outline: 2px solid #D4AF37;
-            border-color: #D4AF37;
-            background: white;
+        .sku-input, .rate-input {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+            text-align: center;
+        }
+        
+        .sku-input:focus, .sku-name-input:focus, .rate-input:focus {
+            outline: 2px solid #3498db;
+            border-color: #3498db;
         }
         
         .editable-cell {
-            padding: 6px 8px;
-            border: 1px solid #E0D6C2;
-            border-radius: 4px;
-            min-height: 22px;
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.8);
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            min-height: 20px;
+            font-size: 11px;
         }
         
         .editable-cell:focus {
-            outline: 2px solid #D4AF37;
-            border-color: #D4AF37;
-            background: white;
+            outline: 2px solid #3498db;
+            border-color: #3498db;
         }
         
         .non-editable {
-            background-color: #F8F5F0;
+            background-color: #f9f9f9;
             color: #333;
-            padding: 6px 8px;
-            border: 1px solid #E0D6C2;
-            border-radius: 4px;
-        }
-        
-        .non-editable-input {
-            background-color: #F8F5F0;
-            color: #333;
-            padding: 6px 8px;
-            border: 1px solid #E0D6C2;
-            border-radius: 4px;
-            width: 100%;
-            text-align: right;
-            cursor: not-allowed;
+            padding: 4px 6px;
+            border: 1px solid #eee;
+            border-radius: 3px;
+            text-align: center !important;
         }
         
         .text-right {
@@ -351,24 +364,42 @@
         }
         
         .text-center {
+            text-align: center !important;
+        }
+        
+        .text-left {
+            text-align: left !important;
+        }
+        
+        .discount-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
             text-align: center;
+        }
+        
+        .discount-input:focus {
+            outline: 2px solid #3498db;
+            border-color: #3498db;
         }
         
         .delete-btn {
             background-color: transparent;
-            border: 2px solid #e74c3c;
+            border: 1px solid #e74c3c;
             color: #e74c3c;
             cursor: pointer;
-            font-size: 13px;
-            padding: 6px 10px;
-            border-radius: 6px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            min-width: 35px;
-            height: 35px;
+            min-width: 30px;
+            height: 30px;
             margin: 0 auto;
         }
         
@@ -381,58 +412,57 @@
         .total-section {
             display: flex;
             justify-content: flex-end;
-            padding: 20px;
+            padding: 15px 20px;
         }
         
         .total-box {
-            width: 400px;
-            border: 2px solid #D4AF37;
-            border-radius: 8px;
-            padding: 20px;
-            background-color: #FFF9E6;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.1);
+            width: 350px;
+            border: 1px solid #eaeaea;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f8f9fa;
         }
         
         .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #D4AF37;
-            font-size: 13px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #ddd;
+            font-size: 11px;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            min-width: 100%;
         }
         
-        .total-row.final {
-            font-weight: 700;
-            font-size: 16px;
-            color: #8B6914;
-            border-bottom: 3px solid #D4AF37;
-            margin-top: 10px;
-            padding-top: 10px;
+        .total-row.amount-words {
+           white-space: normal !important;
+           word-wrap: break-word !important;
+           overflow-wrap: break-word !important;
+           display: block !important;
         }
         
         .total-row.amount-words {
             font-style: italic;
             border-bottom: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #D4AF37;
-            font-size: 12px;
-            color: #666;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
         }
         
         .footer {
-            padding: 20px;
-            background-color: #F8F5F0;
-            border-top: 2px solid #D4AF37;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eaeaea;
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 10px;
         }
         
         .footer-section {
             flex: 1;
-            padding-right: 20px;
+            padding-right: 15px;
         }
         
         .footer-section:last-child {
@@ -440,122 +470,118 @@
         }
         
         .footer-section h4 {
-            margin-bottom: 8px;
-            color: #8B6914;
-            font-size: 13px;
-            border-bottom: 1px solid #D4AF37;
-            padding-bottom: 5px;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-size: 11px;
         }
         
         .actions {
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
-            border-top: 2px solid #F0E6D2;
+            border-top: 1px solid #eaeaea;
         }
         
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         
         button {
-            padding: 10px 20px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            gap: 6px;
         }
         
         .print-btn {
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            background-color: #2c3e50;
             color: white;
         }
         
         .print-btn:hover {
-            background: linear-gradient(135deg, #B8860B 0%, #8B6914 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(212, 175, 55, 0.4);
+            background-color: #1a252f;
         }
         
         .add-item-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background-color: #3498db;
             color: white;
         }
         
         .add-item-btn:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #1c6ea4 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(52, 152, 219, 0.4);
+            background-color: #2980b9;
         }
         
         .save-btn {
-            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            background-color: #9b59b6;
             color: white;
         }
         
         .save-btn:hover {
-            background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(155, 89, 182, 0.4);
+            background-color: #8e44ad;
         }
         
         .reset-btn {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            background-color: #e74c3c;
             color: white;
         }
         
         .reset-btn:hover {
-            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(231, 76, 60, 0.4);
+            background-color: #c0392b;
         }
         
         .import-btn {
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            background-color: #2ecc71;
             color: white;
         }
         
         .import-btn:hover {
-            background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(46, 204, 113, 0.4);
+            background-color: #27ae60;
+        }
+        
+        .export-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background-color: #d68910;
         }
         
         button i {
-            font-size: 13px;
+            font-size: 12px;
         }
         
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            background-color: #27ae60;
             color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
             display: none;
             z-index: 1000;
             animation: slideIn 0.3s ease-out;
-            font-size: 13px;
-            max-width: 350px;
+            font-size: 12px;
+            max-width: 300px;
         }
         
         .notification.error {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            background-color: #e74c3c;
         }
         
         .notification.warning {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            background-color: #f39c12;
         }
         
         @keyframes slideIn {
@@ -567,50 +593,42 @@
             display: none;
             position: absolute;
             background: white;
-            border: 2px solid #D4AF37;
-            max-height: 250px;
+            border: 1px solid #ddd;
+            max-height: 200px;
             overflow-y: auto;
             z-index: 1000;
-            width: 350px;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
         }
         
         .sku-item {
-            padding: 10px 15px;
+            padding: 8px 12px;
             cursor: pointer;
-            border-bottom: 1px solid #F0E6D2;
-            font-size: 12px;
-            transition: background-color 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 11px;
         }
         
         .sku-item:hover {
-            background-color: #FFF9E6;
+            background-color: #f0f8ff;
         }
         
         .highlight {
-            background-color: #FFF3CD;
-            color: #8B6914;
-            padding: 2px 4px;
-            border-radius: 3px;
+            background-color: #fff3cd;
         }
         
-        /* PRINT STYLES */
+        /* PRINT STYLES - FIXED FOR SINGLE PAGE */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 10mm !important;
-            }
-            
-            .logo-container {
-                display: none !important;
+                margin: 5mm !important;
             }
             
             body {
                 background: white !important;
                 color: black !important;
-                font-size: 10pt !important;
-                line-height: 1.2 !important;
+                font-size: 9pt !important;
+                line-height: 1.1 !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
@@ -633,7 +651,8 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
-                border: 1px solid #000 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             .import-section {
@@ -641,54 +660,49 @@
             }
             
             .header {
-                background: #D4AF37 !important;
+                background: #2c3e50 !important;
+                color: white !important;
+                padding: 8px 10px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-                color: #000 !important;
-                padding: 12px 15px !important;
+                page-break-inside: avoid;
             }
             
             .company-info h1 {
-                font-size: 18pt !important;
-                margin-bottom: 4px !important;
-                color: #000 !important;
+                font-size: 14pt !important;
+                margin-bottom: 2px !important;
+                color: white !important;
             }
             
             .company-info p {
-                font-size: 8pt !important;
-                margin-bottom: 2px !important;
-                color: #000 !important;
-            }
-            
-            .challan-details {
-                background: rgba(255, 255, 255, 0.9) !important;
-                padding: 8px 12px !important;
-                border: 1px solid #000 !important;
-                color: #000 !important;
+                font-size: 7pt !important;
+                margin-bottom: 1px !important;
+                color: rgba(255, 255, 255, 0.9) !important;
             }
             
             .challan-details h2 {
-                font-size: 14pt !important;
-                margin-bottom: 5px !important;
-                color: #000 !important;
+                font-size: 12pt !important;
+                margin-bottom: 3px !important;
+                color: white !important;
             }
             
             .challan-details div {
-                font-size: 8pt !important;
-                color: #000 !important;
+                font-size: 7pt !important;
+                color: rgba(255, 255, 255, 0.9) !important;
             }
             
             .client-info {
-                padding: 10px 15px !important;
+                padding: 6px 8px !important;
                 border: 1px solid #ddd !important;
-                margin: 8px 0 !important;
+                margin: 5px 0 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             .info-section h3 {
-                font-size: 11pt !important;
-                margin-bottom: 5px !important;
-                border-bottom: 1px solid #000 !important;
-                color: #000 !important;
+                font-size: 9pt !important;
+                margin-bottom: 3px !important;
+                border-bottom: 1px solid #ccc !important;
             }
             
             .editable {
@@ -696,34 +710,45 @@
                 border: none !important;
                 padding: 0 !important;
                 min-height: auto !important;
-                font-size: 9pt !important;
+                font-size: 8pt !important;
                 cursor: default !important;
             }
             
             .table-container {
-                padding: 0 10px 10px !important;
+                padding: 0 8px 8px !important;
                 overflow: visible !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             table {
                 width: 100% !important;
-                margin-top: 10px !important;
+                margin-top: 8px !important;
                 border: 1px solid #000 !important;
-                font-size: 9pt !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                font-size: 8pt !important;
             }
             
             thead {
-                background: #D4AF37 !important;
+                background: #2c3e50 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             th {
-                padding: 6px 4px !important;
-                font-size: 9pt !important;
+                padding: 4px 3px !important;
+                font-size: 8pt !important;
                 font-weight: bold !important;
-                color: #000 !important;
-                border: 1px solid #000 !important;
+                color: white !important;
+                border: 1px solid #3a506b !important;
+                text-align: center !important;
+            }
+            
+            th:first-child,
+            th:nth-child(2),
+            th:nth-child(3) {
+                text-align: left !important;
             }
             
             th:last-child {
@@ -731,9 +756,18 @@
             }
             
             td {
-                padding: 5px 4px !important;
-                font-size: 9pt !important;
-                border: 1px solid #000 !important;
+                padding: 3px !important;
+                font-size: 8pt !important;
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                text-align: center !important;
+            }
+            
+            td:first-child,
+            td:nth-child(2),
+            td:nth-child(3) {
+                text-align: left !important;
             }
             
             td:last-child {
@@ -741,21 +775,38 @@
             }
             
             tbody tr {
-                border-bottom: 1px solid #000 !important;
+                border-bottom: 1px solid #ddd !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             tfoot tr {
                 border-top: 2px solid #000 !important;
-                background: #F8F5F0 !important;
+                background: #f8f9fa !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
-            .sku-input, .sku-name-input, .editable-cell, .non-editable-input {
+            tfoot td {
+                text-align: center !important;
+            }
+            
+            tfoot td:first-child,
+            tfoot td:nth-child(2),
+            tfoot td:nth-child(3) {
+                text-align: left !important;
+            }
+            
+            .sku-input, .sku-name-input, .rate-input, .th:nth-child(6), .discount-input {
                 border: none !important;
                 background: transparent !important;
                 padding: 0 !important;
-                font-size: 9pt !important;
+                font-size: 8pt !important;
+                text-align: Left !important;
+            }
+            
+            .sku-name-input {
+                text-align: left !important;
             }
             
             .delete-btn {
@@ -763,41 +814,46 @@
             }
             
             .total-section {
-                padding: 10px !important;
+                padding: 8px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             .total-box {
-                width: 300px !important;
-                padding: 12px !important;
-                border: 2px solid #000 !important;
+                width: 250px !important;
+                padding: 8px !important;
+                border: 1px solid #000 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             .total-row {
-                font-size: 9pt !important;
-                margin-bottom: 4px !important;
+                font-size: 8pt !important;
+                margin-bottom: 3px !important;
             }
             
             .total-row.final {
-                font-size: 11pt !important;
+                font-size: 9pt !important;
             }
             
             .total-row.amount-words {
-                font-size: 8pt !important;
+                font-size: 7pt !important;
             }
             
             .footer {
-                padding: 10px 15px !important;
-                border-top: 2px solid #000 !important;
-                font-size: 8pt !important;
+                padding: 6px 8px !important;
+                border-top: 1px solid #000 !important;
+                font-size: 6pt !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             .footer-section {
-                padding-right: 15px !important;
+                padding-right: 8px !important;
             }
             
             .footer-section h4 {
-                font-size: 9pt !important;
-                color: #000 !important;
+                font-size: 7pt !important;
             }
             
             .actions {
@@ -817,15 +873,6 @@
         
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            .logo-container {
-                position: relative;
-                top: 0;
-                left: 0;
-                margin-bottom: 15px;
-                width: 100%;
-                justify-content: center;
-            }
-            
             body {
                 padding: 10px;
             }
@@ -837,32 +884,31 @@
             
             .header {
                 flex-direction: column;
-                padding: 15px;
+                padding: 12px;
             }
             
             .challan-details {
                 text-align: left;
-                margin-top: 15px;
-                width: 100%;
+                margin-top: 12px;
             }
             
             .client-info {
                 flex-direction: column;
-                padding: 12px 15px;
+                padding: 10px 12px;
             }
             
             .bill-to, .ship-to {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 margin-right: 0;
             }
             
             .table-container {
-                padding: 0 10px 15px;
+                padding: 0 12px 12px;
                 overflow-x: auto;
             }
             
             table {
-                min-width: 1100px;
+                min-width: 1200px;
             }
             
             .total-box {
@@ -871,11 +917,11 @@
             
             .footer {
                 flex-direction: column;
-                padding: 15px;
+                padding: 12px;
             }
             
             .footer-section {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 padding-right: 0;
             }
             
@@ -886,7 +932,7 @@
             
             button {
                 width: 100%;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
             }
         }
     </style>
@@ -894,36 +940,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-    <!-- Spinning ALH Logo -->
-    <div class="logo-container">
-        <div class="logo-spinner">ALH</div>
-        <div class="logo-label">Auto Lube House</div>
-    </div>
-    
     <div class="notification" id="notification"></div>
     
     <!-- SKU Search Dropdown -->
     <div class="sku-search" id="sku-search"></div>
     
     <!-- Print Header -->
-    <div class="print-only" style="text-align: center; margin-bottom: 8px; font-size: 9pt; color: #8B6914;">
-        Auto Lube House Quotation | Printed on: <span id="print-date"></span>
+    <div class="print-only" style="text-align: center; margin-bottom: 5px; font-size: 8pt; color: #666;">
+        Auto Lube House | Printed on: <span id="print-date"></span>
     </div>
     
     <div class="container">
         <div class="header">
             <div class="company-info">
-                <h1 contenteditable="false" class="editable">AUTO LUBE HOUSE</h1>
-                <p contenteditable="false" class="editable">Iewduh, Bara Bazaar, Shillong, East Khasi Hills, Bara Bazaar, EAST KHASI HILLS, Meghalaya(17)-793002</p>
-                <p contenteditable="false" class="editable">Phone: (+91) 9402134892 | E-Mail: autolubehouse@gmail.com</p>
-                <p contenteditable="false" class="editable">GSTIN: 17ACHFA1117F1ZW | PAN: ACHFA1117F</p>
+                <h1 contenteditable="False" class="editable">AUTO LUBE HOUSE</h1>
+                <p contenteditable="False" class="editable">Iewduh, Bara Bazaar, Shillong,East Khasi Hills,Bara Bazaar, EAST KHASI HILLS, Meghalaya(17)-793002 </p>
+                <p contenteditable="False" class="editable">Phone: (+91) 9402134892 | E-Mail : autolubehouse@gmail.com</p>
+                <p contenteditable="False" class="editable">GSTIN: 17ACHFA1117F1ZW | PAN: ACHFA1117F</p>
             </div>
             <div class="challan-details">
-                <h2 contenteditable="true" class="editable">QUOTATION</h2>
-                <div><strong>Quotation No:</strong> <span contenteditable="true" class="editable">Q-ALH-2026-</span></div>
-                <div><strong>Date:</strong> <span contenteditable="true" class="editable" id="current-date"></span></div>
-                <div><strong>Reference:</strong> <span contenteditable="true" class="editable"></span></div>
-                <div><strong>Valid Until:</strong> <span contenteditable="true" class="editable" id="valid-until"></span></div>
+                <h2 contenteditable="False" class="editable">Invoice</h2>
+                <div><strong>Quotation No:</strong> <span contenteditable="true" class="editable">ALH-</span></div>
+                <div><strong>Date:</strong> <span contenteditable="true" class="editable" id="date-field"></span></div>
+                <div><strong>Reference:</strong> <span contenteditable="true" class="editable">Quotation Invoice</span></div>
             </div>
         </div>
         
@@ -936,11 +975,15 @@
                     </button>
                     <input type="file" id="xlsx-file" accept=".xlsx,.xls" />
                 </div>
-                <span id="file-info" style="font-size: 13px; color: #8B6914;">
-                    No file selected. Import your product list
+                <span id="file-info" style="font-size: 12px; color: #666;">
+                    No file selected.
                 </span>
+                
                 <button class="file-btn" id="download-template" onclick="window.location.href='https://alh-5.github.io/site/Challan_Pricelist/Challan_PriceList.xlsx';">
-                    <i class="fas fa-download"></i> Download Template
+                    <i class="fas fa-chart-pie"></i> Challan_Price
+                </button>
+				 <button class="add-item-btn" id="add-item-btn">
+                    <i class="fas fa-plus-circle"></i> Add Item
                 </button>
             </div>
         </div>
@@ -948,17 +991,17 @@
         <div class="client-info">
             <div class="bill-to info-section">
                 <h3>Bill To</h3>
-                <p contenteditable="true" class="editable"><strong>Customer Name</strong></p>
-                <p contenteditable="true" class="editable">Address: </p>
-                <p contenteditable="true" class="editable">Phone No: </p>
-                <p contenteditable="true" class="editable">GSTIN: </p>
+                <p contenteditable="true" class="editable"><strong>Customer Name:<strong>&nbsp;</strong></strong></p>
+                <p contenteditable="true" class="editable">Address:&nbsp;</p>
+                <p contenteditable="true" class="editable">Phone No:&nbsp;</p>
+                <p contenteditable="true" class="editable">GSTIN:&nbsp;</p>
             </div>
             <div class="ship-to info-section">
                 <h3>Ship To</h3>
-                <p contenteditable="true" class="editable"><strong>Shipping Name</strong></p>
-                <p contenteditable="true" class="editable">Address: </p>
-                <p contenteditable="true" class="editable">Phone No: </p>
-                <p contenteditable="true" class="editable">Contact: </p>
+                <p contenteditable="true" class="editable"><strong>Shipping Name<strong>&nbsp;</strong></strong></p>
+                <p contenteditable="true" class="editable">Address:&nbsp;</p>
+                <p contenteditable="true" class="editable">Phone No:&nbsp;</p>
+                <p contenteditable="true" class="editable">Contact:&nbsp;</p>
             </div>
         </div>
         
@@ -966,17 +1009,20 @@
             <table>
                 <thead>
                     <tr>
-                        <th>SL No</th>
-                        <th>SKU Name</th>
-                        <th>SKU #</th>
-                        <th>Qnty (Ltrs/Kg)</th>
-                        <th>Qnty Per Liter</th>
-                        <th>Rate per liter</th>
-                        <th>Per Disc</th>
-                        <th>Taxable Value</th>
-                        <th>GST 18%</th>
-                        <th>Net Amt</th>
-                        <th class="screen-only">Delete</th>
+                        <th class="text-center">SL No</th>
+                        <th class="text-left">SKU Name</th>
+                        <th class="text-left">SKU #</th>
+                        <th class="text-center">MRP</th>
+                        <th class="text-center">Qnty (Ltrs/Kg)</th>
+                        <th class="text-center">Qnty</th>
+                        <th class="text-center">Rate</th>
+                        <th class="text-center">Net Total</th>
+                        <th class="text-center">Disc (₹)</th>
+                        <th class="text-center">Total Disc (₹)</th>
+                        <th class="text-center">Taxable Value</th>
+                        <th class="text-center">GST 18%</th>
+                        <th class="text-center">Net Amt</th>
+                        <th class="text-center screen-only">Del</th>
                     </tr>
                 </thead>
                 <tbody id="items-table">
@@ -991,8 +1037,16 @@
         <div class="total-section">
             <div class="total-box">
                 <div class="total-row">
-                    <span>Total Taxable Value:</span>
-                    <span id="total-taxable-value">₹0.00</span>
+                    <span>Subtotal:</span>
+                    <span id="subtotal">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Total Discount:</span>
+                    <span id="total-discount">-₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Taxable Value:</span>
+                    <span id="taxable-value">₹0.00</span>
                 </div>
                 <div class="total-row">
                     <span>CGST (9%):</span>
@@ -1024,42 +1078,39 @@
         <div class="footer">
             <div class="footer-section">
                 <h4>Payment Information</h4>
-                <p contenteditable="false" class="editable">Account Name: Auto Lube House</p>
-                <p contenteditable="false" class="editable">Bank: Kotak Mahindra Bank</p>
-                <p contenteditable="false" class="editable">Account No: 7350335349</p>
-                <p contenteditable="false" class="editable">IFSC: KKBK0000340</p>
-                <p contenteditable="false" class="editable">UPI: autolubehouse@kotak</p>
+                <p contenteditable="False" class="editable">Account Name: Auto Lube House</p>
+                <p contenteditable="False" class="editable">Bank: Kotak Mahindra Bank</p>
+                <p contenteditable="False" class="editable">Account No: 7350335349</p>
+                <p contenteditable="False" class="editable">IFSC: KKBK0000340</p>
             </div>
             <div class="footer-section">
                 <h4>Terms & Conditions</h4>
-                <p contenteditable="true" class="editable">1. This quotation is valid for 30 days from the date of issue.</p>
-                <p contenteditable="true" class="editable">2. Prices are exclusive of taxes unless mentioned otherwise.</p>
-                <p contenteditable="true" class="editable">3. Payment terms: 50% advance, balance before delivery.</p>
-                <p contenteditable="true" class="editable">4. Delivery: 3-5 working days after confirmation.</p>
+                <p contenteditable="true" class="editable">1. Goods once sold will not be taken back.</p>
+                <p contenteditable="true" class="editable">2. Payment due within 30 days from invoice date.</p>
+                <p contenteditable="true" class="editable">3. Interest @5% p.a. on overdue payments.</p>
             </div>
             <div class="footer-section">
                 <h4>Authorized Signatory</h4>
-                <p contenteditable="false" class="editable" style="margin-top: 25px; min-height: 40px;">_________________________</p>
-                <p contenteditable="false" class="editable">For Auto Lube House</p>
-                <p contenteditable="false" class="editable">Manager / Proprietor</p>
+                <p contenteditable="False" class="editable" style="margin-top: 15px; min-height: 25px;">_________________________</p>
+                <p contenteditable="False" class="editable">For Auto Lube House</p>
             </div>
         </div>
         
         <div class="actions screen-only">
             <div class="action-buttons">
-                <button class="add-item-btn" id="add-item-btn">
-                    <i class="fas fa-plus-circle"></i> Add Item
-                </button>
                 <button class="save-btn" id="save-changes">
-                    <i class="fas fa-save"></i> Save Quotation
+                    <i class="fas fa-save"></i> Save
                 </button>
                 <button class="reset-btn" id="reset-btn">
                     <i class="fas fa-redo"></i> Clear All
                 </button>
             </div>
             <div class="action-buttons">
-                <button class="print-btn" onclick="printQuotation()">
-                    <i class="fas fa-print"></i> Print Quotation
+                <button class="export-btn" id="export-excel-btn">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
+                <button class="print-btn" onclick="printChallan()">
+                    <i class="fas fa-print"></i> Print Challan
                 </button>
             </div>
         </div>
@@ -1071,22 +1122,6 @@
         let currentInput = null;
         let searchType = null; // 'sku' or 'name'
         let debounceTimer = null;
-        
-        // Set current date
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-        });
-        
-        // Set valid until date (30 days from now)
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + 30);
-        document.getElementById('valid-until').textContent = futureDate.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-        });
         
         // Initialize the table with 1 empty row
         function initializeTable() {
@@ -1110,25 +1145,28 @@
             
             newRow.innerHTML = `
                 <td class="text-center">${slNo}</td>
-                <td>
-                    <input type="text" class="sku-name-input" placeholder="Type SKU Name" data-row="${slNo}" data-rowid="${rowId}" autocomplete="off">
+                <td class="text-left">
+                    <textarea class="sku-name-input" placeholder="Type SKU Name" data-row="${slNo}" data-rowid="${rowId}" autocomplete="off" rows="2"></textarea>
                 </td>
-                <td>
+                <td class="text-left">
                     <input type="text" class="sku-input" placeholder="Type SKU #" data-row="${slNo}" data-rowid="${rowId}" autocomplete="off">
                 </td>
-                <td class="text-right non-editable unit-qnty-display">-</td>
-                <td class="text-right">
-                    <input type="number" class="editable-cell qnty-per-liter" value="0" min="0" step="0.01" data-row="${slNo}" data-rowid="${rowId}" placeholder="0.00">
+                <td class="text-center non-editable mrp">₹0.00</td>
+                <td class="text-center non-editable total-qnty-unit">-</td>
+                <td class="text-Left">
+                    <input type="number" class="editable-cell qnty" value="0" min="0" step="1" data-row="${slNo}" data-rowid="${rowId}" style="text-align: Left;">
                 </td>
-                <td class="text-right">
-                    <input type="text" class="non-editable-input rate-per-liter-display" value="0.00" data-row="${slNo}" data-rowid="${rowId}" readonly>
+                <td class="text-center">
+                    <input type="number" class="rate-input" value="0" min="0" step="0.01" data-row="${slNo}" data-rowid="${rowId}" placeholder="0.00" style="text-align: center;">
                 </td>
-                <td class="text-right">
-                    <input type="text" class="non-editable-input per-disc-display" value="0.00" data-row="${slNo}" data-rowid="${rowId}" readonly>
+                <td class="text-center non-editable net-total">₹0.00</td>
+                <td class="text-center">
+                    <input type="text" class="discount-input" value="0" data-row="${slNo}" data-rowid="${rowId}" placeholder="0 or 0%" style="text-align: center;">
                 </td>
-                <td class="text-right non-editable taxable-value">₹0.00</td>
-                <td class="text-right non-editable gst">₹0.00</td>
-                <td class="text-right non-editable net-amt">₹0.00</td>
+                <td class="text-center non-editable total-discount">₹0.00</td>
+                <td class="text-center non-editable taxable-value">₹0.00</td>
+                <td class="text-center non-editable gst">₹0.00</td>
+                <td class="text-center non-editable net-amt">₹0.00</td>
                 <td class="text-center screen-only">
                     <button class="delete-btn" data-rowid="${rowId}" title="Delete this item">
                         <i class="fas fa-trash-alt"></i>
@@ -1141,7 +1179,9 @@
             // Add event listeners
             const skuInput = newRow.querySelector('.sku-input');
             const skuNameInput = newRow.querySelector('.sku-name-input');
-            const qntyInput = newRow.querySelector('.qnty-per-liter');
+            const qntyInput = newRow.querySelector('.qnty');
+            const rateInput = newRow.querySelector('.rate-input');
+            const discountInput = newRow.querySelector('.discount-input');
             const deleteBtn = newRow.querySelector('.delete-btn');
             
             // SKU # input events
@@ -1160,7 +1200,7 @@
             
             skuInput.addEventListener('keydown', handleSkuKeydown);
             
-            // SKU Name input events
+            // SKU Name textarea events
             skuNameInput.addEventListener('input', function(e) {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
@@ -1176,9 +1216,21 @@
             
             skuNameInput.addEventListener('keydown', handleSkuKeydown);
             
-            // Quantity event
+            // Auto-resize textarea
+            skuNameInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Quantity, rate and discount events
             qntyInput.addEventListener('input', calculateRowTotal);
             qntyInput.addEventListener('blur', calculateRowTotal);
+            
+            rateInput.addEventListener('input', calculateRowTotal);
+            rateInput.addEventListener('blur', calculateRowTotal);
+            
+            discountInput.addEventListener('input', calculateRowTotal);
+            discountInput.addEventListener('blur', calculateRowTotal);
             
             // Delete button event
             deleteBtn.addEventListener('click', function() {
@@ -1199,12 +1251,15 @@
             tfoot.innerHTML = `
                 <tr>
                     <td colspan="4" class="text-center"><strong>TOTAL</strong></td>
-                    <td class="text-right" id="total-qnty-per-liter-foot">0.00</td>
-                    <td class="text-right">-</td>
-                    <td class="text-right">-</td>
-                    <td class="text-right" id="total-taxable-foot">₹0.00</td>
-                    <td class="text-right" id="total-gst-foot">₹0.00</td>
-                    <td class="text-right" id="total-net-amt-foot">₹0.00</td>
+                    <td class="text-center" id="total-qnty-unit-foot">-</td>
+                    <td class="text-center" id="total-qnty-foot">0</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center" id="total-net-total-foot">₹0.00</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center" id="total-disc-foot">₹0.00</td>
+                    <td class="text-center" id="total-taxable-foot">₹0.00</td>
+                    <td class="text-center" id="total-gst-foot">₹0.00</td>
+                    <td class="text-center" id="total-net-amt-foot">₹0.00</td>
                     <td></td>
                 </tr>
             `;
@@ -1346,7 +1401,7 @@
             let currentIndex = -1;
             
             items.forEach((item, index) => {
-                if (item.style.backgroundColor === 'rgb(255, 249, 230)') {
+                if (item.style.backgroundColor === 'rgb(240, 248, 255)') {
                     currentIndex = index;
                 }
             });
@@ -1378,7 +1433,7 @@
             });
             
             if (index >= 0 && index < items.length) {
-                items[index].style.backgroundColor = '#D4AF37';
+                items[index].style.backgroundColor = '#3498db';
                 items[index].style.color = 'white';
             }
         }
@@ -1403,6 +1458,12 @@
             }
             
             document.getElementById('sku-search').style.display = 'none';
+            
+            // Auto-resize textarea
+            if (skuNameInput.value) {
+                skuNameInput.style.height = 'auto';
+                skuNameInput.style.height = (skuNameInput.scrollHeight) + 'px';
+            }
             
             // Fill row data from SKU
             fillRowDataFromSku(rowIndex, sku);
@@ -1443,7 +1504,7 @@
             const rows = document.querySelectorAll('#items-table tr');
             rows.forEach((row, index) => {
                 row.querySelector('td:first-child').textContent = index + 1;
-                const inputs = row.querySelectorAll('.sku-input, .sku-name-input, .qnty-per-liter');
+                const inputs = row.querySelectorAll('.sku-input, .sku-name-input, .qnty, .rate-input, .discount-input');
                 inputs.forEach(input => {
                     input.dataset.row = index + 1;
                 });
@@ -1468,40 +1529,26 @@
                 skuNameInput.value = skuData.name || '-';
             }
             
-            // Get unit quantity from imported data
-            const unitQty = skuData.unitQty || 1;
-            const unit = skuData.unit || '';
+            row.querySelector('.mrp').textContent = skuData.mrp ? '₹' + parseFloat(skuData.mrp).toFixed(2) : '₹0.00';
             
-            // Set unit quantity display
-            row.querySelector('.unit-qnty-display').textContent = unitQty + ' ' + unit;
-            
-            // Calculate and set Rate per liter = Rate from file ÷ Unit Qty
-            const rateFromFile = skuData.rate || 0;
-            const ratePerLiter = unitQty > 0 ? rateFromFile / unitQty : rateFromFile;
-            
-            // Set rate per liter (non-editable)
-            const rateDisplay = row.querySelector('.rate-per-liter-display');
-            rateDisplay.value = ratePerLiter.toFixed(2);
-            
-            // Calculate and set Per Disc = Disc from file ÷ Unit Qty
-            const discFromFile = skuData.discount || 0;
-            const perDisc = unitQty > 0 ? discFromFile / unitQty : discFromFile;
-            
-            // Set per disc (non-editable)
-            const discDisplay = row.querySelector('.per-disc-display');
-            discDisplay.value = perDisc.toFixed(2);
-            
-            // Store unitQty and unit in row dataset for calculations
-            row.dataset.unitQty = unitQty;
-            row.dataset.unit = unit;
-            
-            // Set default Qnty Per Liter to unitQty
-            const qntyInput = row.querySelector('.qnty-per-liter');
-            if (parseFloat(qntyInput.value) === 0) {
-                qntyInput.value = unitQty;
+            // Set rate input value from price list, but keep it editable
+            const rateInput = row.querySelector('.rate-input');
+            if (rateInput.value === '0' || rateInput.value === '') {
+                rateInput.value = skuData.rate ? parseFloat(skuData.rate).toFixed(2) : '0.00';
             }
             
-            // Calculate row total
+            const discountInput = row.querySelector('.discount-input');
+            discountInput.value = skuData.discount ? parseFloat(skuData.discount).toFixed(2) : '0.00';
+            
+            row.dataset.unitQty = skuData.unitQty || 1;
+            row.dataset.unit = skuData.unit || '';
+            
+            const qntyInput = row.querySelector('.qnty');
+            if (parseFloat(qntyInput.value) === 0) {
+                qntyInput.value = 1;
+            }
+            
+            updateTotalQuantityDisplay(row);
             calculateRowTotalForRow(rowIndex);
             
             setTimeout(() => {
@@ -1510,29 +1557,65 @@
             }, 50);
         }
         
+        // Update total quantity display
+        function updateTotalQuantityDisplay(row) {
+            const unitQty = parseFloat(row.dataset.unitQty) || 0;
+            const qnty = parseFloat(row.querySelector('.qnty').value) || 0;
+            const unit = row.dataset.unit || '';
+            
+            if (unitQty > 0 && qnty > 0 && unit) {
+                const totalQnty = unitQty * qnty;
+                row.querySelector('.total-qnty-unit').textContent = totalQnty.toFixed(2) + ' ' + unit;
+            } else if (unit) {
+                row.querySelector('.total-qnty-unit').textContent = unit;
+            } else {
+                row.querySelector('.total-qnty-unit').textContent = '-';
+            }
+        }
+        
         // Calculate row total for a specific row
         function calculateRowTotalForRow(rowIndex) {
             const rows = document.querySelectorAll('#items-table tr');
             if (rowIndex >= rows.length) return;
             
             const row = rows[rowIndex];
-            const qntyPerLiter = parseFloat(row.querySelector('.qnty-per-liter').value) || 0;
-            const ratePerLiter = parseFloat(row.querySelector('.rate-per-liter-display').value) || 0;
-            const perDisc = parseFloat(row.querySelector('.per-disc-display').value) || 0;
+            const qnty = parseFloat(row.querySelector('.qnty').value) || 0;
+            const rate = parseFloat(row.querySelector('.rate-input').value) || 0;
+            const discountInput = row.querySelector('.discount-input');
+            const discountStr = discountInput.value.trim();
+            let discount = 0;
+            let discountPerUnit = 0;
             
-            // Calculate Taxable Value = (Rate per liter - Per Disc) * Qnty Per Liter
-            const taxableValuePerLiter = Math.max(0, ratePerLiter - perDisc);
-            const taxableValue = taxableValuePerLiter * qntyPerLiter;
+            // Handle discount input (can be absolute value or percentage)
+            if (discountStr.endsWith('%')) {
+                // Percentage discount - calculate per unit percentage discount
+                const percentage = parseFloat(discountStr) / 100;
+                // For percentage, discount per unit = rate * percentage
+                discountPerUnit = rate * percentage;
+                // Total discount = discount per unit * quantity
+                discount = discountPerUnit * qnty;
+            } else {
+                // Absolute discount - treat as discount per unit
+                discountPerUnit = parseFloat(discountStr) || 0;
+                // Total discount = discount per unit * quantity
+                discount = discountPerUnit * qnty;
+            }
             
-            // Calculate GST 18% from Taxable Value
-            const gst = taxableValue * 0.18;
+            updateTotalQuantityDisplay(row);
             
-            // Calculate Net Amount = Taxable Value + GST 18%
-            const netAmount = taxableValue + gst;
+            const netTotal = qnty * rate;
+            row.querySelector('.net-total').textContent = '₹' + netTotal.toFixed(2);
             
-            // Update row values
+            // Display total discount
+            row.querySelector('.total-discount').textContent = '₹' + discount.toFixed(2);
+            
+            const taxableValue = Math.max(0, netTotal - discount);
             row.querySelector('.taxable-value').textContent = '₹' + taxableValue.toFixed(2);
+            
+            const gst = taxableValue * 0.18;
             row.querySelector('.gst').textContent = '₹' + gst.toFixed(2);
+            
+            const netAmount = taxableValue + gst;
             row.querySelector('.net-amt').textContent = '₹' + netAmount.toFixed(2);
             
             calculateOverallTotals();
@@ -1548,41 +1631,75 @@
         // Calculate overall totals
         function calculateOverallTotals() {
             const rows = document.querySelectorAll('#items-table tr');
-            let totalQntyPerLiter = 0;
-            let totalTaxableValue = 0;
-            let totalGst = 0;
-            let totalNetAmt = 0;
+            let totalQntyUnit = 0;
+            let totalQnty = 0;
+            let subtotal = 0;
+            let totalDiscount = 0;
+            let taxableValue = 0;
+            let gstTotal = 0;
+            let netAmtTotal = 0;
             
             rows.forEach(row => {
+                const netTotalText = row.querySelector('.net-total').textContent.replace('₹', '').replace(/,/g, '');
+                const totalDiscountText = row.querySelector('.total-discount').textContent.replace('₹', '').replace(/,/g, '');
                 const taxableValueText = row.querySelector('.taxable-value').textContent.replace('₹', '').replace(/,/g, '');
                 const gstText = row.querySelector('.gst').textContent.replace('₹', '').replace(/,/g, '');
                 const netAmtText = row.querySelector('.net-amt').textContent.replace('₹', '').replace(/,/g, '');
-                const qntyValue = parseFloat(row.querySelector('.qnty-per-liter').value) || 0;
+                const qntyValue = parseFloat(row.querySelector('.qnty').value) || 0;
+                const rateValue = parseFloat(row.querySelector('.rate-input').value) || 0;
+                const discountInput = row.querySelector('.discount-input');
+                const discountStr = discountInput.value.trim();
                 
+                // Calculate discount amount
+                let discount = 0;
+                if (discountStr.endsWith('%')) {
+                    // Percentage discount
+                    const percentage = parseFloat(discountStr) / 100;
+                    const discountPerUnit = rateValue * percentage;
+                    discount = discountPerUnit * qntyValue;
+                } else {
+                    // Absolute discount per unit
+                    const discountPerUnit = parseFloat(discountStr) || 0;
+                    discount = discountPerUnit * qntyValue;
+                }
+                
+                const netTotal = parseFloat(netTotalText) || 0;
+                const rowTotalDiscount = parseFloat(totalDiscountText) || 0;
                 const rowTaxableValue = parseFloat(taxableValueText) || 0;
                 const rowGst = parseFloat(gstText) || 0;
                 const rowNetAmt = parseFloat(netAmtText) || 0;
                 
-                totalQntyPerLiter += qntyValue;
-                totalTaxableValue += rowTaxableValue;
-                totalGst += rowGst;
-                totalNetAmt += rowNetAmt;
+                // Calculate total quantity in units
+                const unitQty = parseFloat(row.dataset.unitQty) || 0;
+                if (unitQty > 0) {
+                    totalQntyUnit += unitQty * qntyValue;
+                }
+                
+                totalQnty += qntyValue;
+                subtotal += netTotal;
+                totalDiscount += rowTotalDiscount;
+                taxableValue += rowTaxableValue;
+                gstTotal += rowGst;
+                netAmtTotal += rowNetAmt;
             });
             
             // Update table footer totals
-            document.getElementById('total-qnty-per-liter-foot').textContent = totalQntyPerLiter.toFixed(2);
-            document.getElementById('total-taxable-foot').textContent = '₹' + totalTaxableValue.toFixed(2);
-            document.getElementById('total-gst-foot').textContent = '₹' + totalGst.toFixed(2);
-            document.getElementById('total-net-amt-foot').textContent = '₹' + totalNetAmt.toFixed(2);
+            document.getElementById('total-qnty-unit-foot').textContent = totalQntyUnit > 0 ? totalQntyUnit.toFixed(2) : '-';
+            document.getElementById('total-qnty-foot').textContent = totalQnty;
+            document.getElementById('total-net-total-foot').textContent = '₹' + subtotal.toFixed(2);
+            document.getElementById('total-disc-foot').textContent = '₹' + totalDiscount.toFixed(2);
+            document.getElementById('total-taxable-foot').textContent = '₹' + taxableValue.toFixed(2);
+            document.getElementById('total-gst-foot').textContent = '₹' + gstTotal.toFixed(2);
+            document.getElementById('total-net-amt-foot').textContent = '₹' + netAmtTotal.toFixed(2);
             
             // Calculate CGST and SGST (9% each)
-            const cgst = totalTaxableValue * 0.09;
-            const sgst = totalTaxableValue * 0.09;
+            const cgst = taxableValue * 0.09;
+            const sgst = taxableValue * 0.09;
             
             const shippingCharges = parseFloat(document.getElementById('shipping-charges').textContent.replace('₹', '').replace(/,/g, '')) || 0;
             
             // Calculate final total before round off
-            let finalTotal = totalTaxableValue + cgst + sgst + shippingCharges;
+            let finalTotal = taxableValue + cgst + sgst + shippingCharges;
             
             // Calculate round off
             const roundedTotal = Math.round(finalTotal);
@@ -1592,7 +1709,9 @@
             finalTotal = roundedTotal;
             
             // Update the display
-            document.getElementById('total-taxable-value').textContent = '₹' + totalTaxableValue.toFixed(2);
+            document.getElementById('subtotal').textContent = '₹' + subtotal.toFixed(2);
+            document.getElementById('total-discount').textContent = '-₹' + totalDiscount.toFixed(2);
+            document.getElementById('taxable-value').textContent = '₹' + taxableValue.toFixed(2);
             document.getElementById('cgst').textContent = '₹' + cgst.toFixed(2);
             document.getElementById('sgst').textContent = '₹' + sgst.toFixed(2);
             document.getElementById('round-off').textContent = '₹' + roundOff.toFixed(2);
@@ -1607,15 +1726,9 @@
             const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
             const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
             
-            if (num === 0) return 'Zero Rupees Only';
+            if (num === 0) return '';
             
             let words = '';
-            
-            // Handle crores
-            if (num >= 10000000) {
-                words += convertToWords(Math.floor(num / 10000000)) + ' Crore ';
-                num %= 10000000;
-            }
             
             // Handle lakhs
             if (num >= 100000) {
@@ -1647,7 +1760,7 @@
                 }
             }
             
-            return words.trim() + ' Rupees Only';
+            return words.trim() + ' ';
         }
         
         // Show notification
@@ -1659,7 +1772,7 @@
             
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 3000);
+            }, 2500);
         }
         
         // Handle XLSX file import
@@ -1679,9 +1792,9 @@
                     processPriceListData(jsonData);
                     
                     document.getElementById('file-info').innerHTML = 
-                        `<strong style="color: #B8860B;">${file.name}</strong> loaded with ${jsonData.length} SKUs`;
+                        `<strong>${file.name}</strong> loaded with ${jsonData.length} SKUs`;
                     
-                    showNotification(`Price list imported successfully with ${jsonData.length} items`);
+                    showNotification(`Price list imported successfully`);
                 } catch (error) {
                     showNotification('Error reading XLSX file: ' + error.message, 'error');
                 }
@@ -1697,6 +1810,7 @@
             jsonData.forEach(item => {
                 let sku = '';
                 let name = '';
+                let mrp = '';
                 let unitQty = '';
                 let unit = '';
                 let rate = '';
@@ -1711,7 +1825,10 @@
                     else if (lowerKey.includes('name') || lowerKey.includes('product') || lowerKey.includes('item')) {
                         name = String(item[key]).trim();
                     }
-                    else if (lowerKey.includes('unit qty') || lowerKey.includes('unit quantity') || lowerKey.includes('pack qty') || lowerKey.includes('size')) {
+                    else if (lowerKey.includes('mrp') || lowerKey.includes('max price')) {
+                        mrp = String(item[key]).trim();
+                    }
+                    else if (lowerKey.includes('unit qty') || lowerKey.includes('unit quantity') || lowerKey.includes('pack qty')) {
                         unitQty = String(item[key]).trim();
                     }
                     else if (lowerKey.includes('unit') && !lowerKey.includes('qty') && !lowerKey.includes('price')) {
@@ -1728,6 +1845,7 @@
                 if (sku) {
                     priceListData[sku] = {
                         name: name || sku,
+                        mrp: parseFloat(mrp) || 0,
                         unitQty: parseFloat(unitQty) || 1,
                         unit: unit || 'Pc',
                         rate: parseFloat(rate) || 0,
@@ -1737,48 +1855,129 @@
             });
             
             console.log('Price list loaded:', priceListData);
-            
-            // Show sample data notification
-            if (Object.keys(priceListData).length === 0) {
-                // Load sample data if no data in file
-                loadSampleData();
-            }
         }
         
-        // Load sample data
-        function loadSampleData() {
-            priceListData = {
-                "MOBIL1": {
-                    name: "Mobil Super 3000 X1 5W-30",
-                    unitQty: 5,
-                    unit: "Ltr",
-                    rate: 3500,
-                    discount: 100
-                },
-                "CAST1": {
-                    name: "Castrol MAGNATEC 5W-30",
-                    unitQty: 4,
-                    unit: "Ltr",
-                    rate: 2800,
-                    discount: 80
-                },
-                "SHELL1": {
-                    name: "Shell Helix HX7 10W-40",
-                    unitQty: 3,
-                    unit: "Ltr",
-                    rate: 1800,
-                    discount: 50
-                },
-                "TOTAL1": {
-                    name: "Total QUARTZ 9000 5W-40",
-                    unitQty: 5,
-                    unit: "Ltr",
-                    rate: 3200,
-                    discount: 90
-                }
-            };
-            
-            showNotification("Loaded sample data. Import your own price list for actual rates.");
+        // NEW FUNCTION: Export to Excel
+        function exportToExcel() {
+            try {
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Prepare data for export
+                const exportData = [];
+                
+                // Add header information
+                exportData.push(['AUTO LUBE HOUSE INVOICE']);
+                exportData.push([]);
+                exportData.push(['Invoice No:', document.querySelector('.challan-details div:nth-child(2) span').textContent]);
+                exportData.push(['Date:', document.querySelector('.challan-details div:nth-child(3) span').textContent]);
+                exportData.push([]);
+                
+                // Add customer information
+                exportData.push(['BILL TO:']);
+                const billToText = document.querySelector('.bill-to').innerText;
+                billToText.split('\n').forEach(line => {
+                    if (line.trim()) exportData.push([line.trim()]);
+                });
+                
+                exportData.push([]);
+                exportData.push(['SHIP TO:']);
+                const shipToText = document.querySelector('.ship-to').innerText;
+                shipToText.split('\n').forEach(line => {
+                    if (line.trim()) exportData.push([line.trim()]);
+                });
+                
+                exportData.push([]);
+                exportData.push([]);
+                
+                // Add table headers
+                const headers = [
+                    'SL No', 'SKU Name', 'SKU #', 'MRP', 'Qnty (Ltrs/Kg)', 
+                    'Qnty', 'Rate', 'Net Total', 'Disc (₹)', 'Total Disc (₹)', 
+                    'Taxable Value', 'GST 18%', 'Net Amt'
+                ];
+                exportData.push(headers);
+                
+                // Add items data
+                document.querySelectorAll('#items-table tr').forEach((row, index) => {
+                    const rowData = [];
+                    rowData.push(index + 1);
+                    rowData.push(row.querySelector('.sku-name-input').value);
+                    rowData.push(row.querySelector('.sku-input').value);
+                    rowData.push(row.querySelector('.mrp').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.total-qnty-unit').textContent);
+                    rowData.push(row.querySelector('.qnty').value);
+                    rowData.push(row.querySelector('.rate-input').value);
+                    rowData.push(row.querySelector('.net-total').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.discount-input').value);
+                    rowData.push(row.querySelector('.total-discount').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.taxable-value').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.gst').textContent.replace('₹', ''));
+                    rowData.push(row.querySelector('.net-amt').textContent.replace('₹', ''));
+                    exportData.push(rowData);
+                });
+                
+                exportData.push([]);
+                exportData.push([]);
+                
+                // Add totals
+                exportData.push(['Subtotal:', document.getElementById('subtotal').textContent.replace('₹', '')]);
+                exportData.push(['Total Discount:', document.getElementById('total-discount').textContent.replace('-₹', '-')]);
+                exportData.push(['Taxable Value:', document.getElementById('taxable-value').textContent.replace('₹', '')]);
+                exportData.push(['CGST (9%):', document.getElementById('cgst').textContent.replace('₹', '')]);
+                exportData.push(['SGST/UTGST (9%):', document.getElementById('sgst').textContent.replace('₹', '')]);
+                exportData.push(['Shipping Charges:', document.getElementById('shipping-charges').textContent.replace('₹', '')]);
+                exportData.push(['Round Off:', document.getElementById('round-off').textContent.replace('₹', '')]);
+                exportData.push(['TOTAL AMOUNT:', document.getElementById('final-total').textContent.replace('₹', '')]);
+                exportData.push(['Amount in Words:', document.getElementById('amount-words').textContent]);
+                
+                exportData.push([]);
+                exportData.push([]);
+                
+                // Add footer information
+                exportData.push(['Payment Information:']);
+                exportData.push(['Account Name: Auto Lube House']);
+                exportData.push(['Bank: Kotak Mahindra Bank']);
+                exportData.push(['Account No: 7350335349']);
+                exportData.push(['IFSC: KKBK0000340']);
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                
+                // Set column widths
+                const wscols = [
+                    {wch: 8},   // SL No
+                    {wch: 40},  // SKU Name (wider for text wrapping)
+                    {wch: 12},  // SKU #
+                    {wch: 10},  // MRP
+                    {wch: 15},  // Qnty (Ltrs/Kg)
+                    {wch: 8},   // Qnty
+                    {wch: 10},  // Rate
+                    {wch: 12},  // Net Total
+                    {wch: 10},  // Disc (₹)
+                    {wch: 15},  // Total Disc (₹)
+                    {wch: 15},  // Taxable Value
+                    {wch: 12},  // GST 18%
+                    {wch: 12},  // Net Amt
+                ];
+                ws['!cols'] = wscols;
+                
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, "Invoice");
+                
+                // Generate filename with invoice number and date
+                const invoiceNo = document.querySelector('.challan-details div:nth-child(2) span').textContent || 'ALH-INVOICE';
+                const date = document.querySelector('.challan-details div:nth-child(3) span').textContent || new Date().toISOString().slice(0, 10);
+                const filename = `${invoiceNo}_${date}.xlsx`;
+                
+                // Save file
+                XLSX.writeFile(wb, filename);
+                
+                showNotification('Invoice exported to Excel successfully');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Error exporting to Excel: ' + error.message, 'error');
+            }
         }
         
         // Add item button
@@ -1799,16 +1998,17 @@
         
         // Save changes
         document.getElementById('save-changes').addEventListener('click', function() {
-            const quotationData = {
+            const challanData = {
                 company: document.querySelector('.company-info h1').textContent,
-                quotationNo: document.querySelector('.challan-details div:nth-child(2) span').textContent,
+                challanNo: document.querySelector('.challan-details div:nth-child(2) span').textContent,
                 date: document.querySelector('.challan-details div:nth-child(3) span').textContent,
-                validUntil: document.querySelector('.challan-details div:nth-child(5) span').textContent,
                 billTo: document.querySelector('.bill-to').innerText,
                 shipTo: document.querySelector('.ship-to').innerText,
                 items: [],
                 totals: {
-                    totalTaxableValue: document.getElementById('total-taxable-value').textContent,
+                    subtotal: document.getElementById('subtotal').textContent,
+                    totalDiscount: document.getElementById('total-discount').textContent,
+                    taxableValue: document.getElementById('taxable-value').textContent,
                     cgst: document.getElementById('cgst').textContent,
                     sgst: document.getElementById('sgst').textContent,
                     shipping: document.getElementById('shipping-charges').textContent,
@@ -1822,14 +2022,17 @@
                 const sku = row.querySelector('.sku-input').value;
                 const skuName = row.querySelector('.sku-name-input').value;
                 if (sku || skuName) {
-                    quotationData.items.push({
+                    challanData.items.push({
                         slNo: row.querySelector('td:first-child').textContent,
                         skuName: skuName,
                         sku: sku,
-                        unitQnty: row.querySelector('.unit-qnty-display').textContent,
-                        qntyPerLiter: row.querySelector('.qnty-per-liter').value,
-                        ratePerLiter: row.querySelector('.rate-per-liter-display').value,
-                        perDisc: row.querySelector('.per-disc-display').value,
+                        mrp: row.querySelector('.mrp').textContent,
+                        totalQntyUnit: row.querySelector('.total-qnty-unit').textContent,
+                        qnty: row.querySelector('.qnty').value,
+                        rate: row.querySelector('.rate-input').value,
+                        netTotal: row.querySelector('.net-total').textContent,
+                        disc: row.querySelector('.discount-input').value,
+                        totalDisc: row.querySelector('.total-discount').textContent,
                         taxableValue: row.querySelector('.taxable-value').textContent,
                         gst: row.querySelector('.gst').textContent,
                         netAmt: row.querySelector('.net-amt').textContent
@@ -1837,26 +2040,29 @@
                 }
             });
             
-            localStorage.setItem('quotationData', JSON.stringify(quotationData));
+            localStorage.setItem('challanData', JSON.stringify(challanData));
             localStorage.setItem('priceListData', JSON.stringify(priceListData));
             
-            showNotification("Quotation saved successfully");
+            showNotification("Challan data saved");
         });
         
         // Reset button
         document.getElementById('reset-btn').addEventListener('click', function() {
-            if (confirm("Clear all items from the quotation?")) {
+            if (confirm("Clear all items?")) {
                 initializeTable();
                 showNotification("All items cleared", 'warning');
             }
         });
+        
+        // Export to Excel button
+        document.getElementById('export-excel-btn').addEventListener('click', exportToExcel);
         
         // Shipping charges
         document.getElementById('shipping-charges').addEventListener('input', calculateOverallTotals);
         document.getElementById('shipping-charges').addEventListener('blur', calculateOverallTotals);
         
         // Print function
-        function printQuotation() {
+        function printChallan() {
             document.getElementById('print-date').textContent = new Date().toLocaleDateString('en-IN', {
                 day: '2-digit',
                 month: 'short',
@@ -1870,8 +2076,8 @@
         // Set print date
         document.getElementById('print-date').textContent = new Date().toLocaleDateString('en-IN', {
             day: '2-digit',
-            month: 'short',
-            year: 'numeric'
+                month: 'short',
+                year: 'numeric'
         });
         
         // Initialize
@@ -1880,8 +2086,33 @@
         
         // Load data on page load
         window.addEventListener('DOMContentLoaded', function() {
-            // Load sample data initially
-            loadSampleData();
+            // Sample price list data
+            priceListData = {
+                "MOBIL1": {
+                    name: "Mobil Super 3000 X1 5W-30 (1L)",
+                    mrp: 950,
+                    unitQty: 1,
+                    unit: "Ltr",
+                    rate: 850,
+                    discount: 25
+                },
+                "CAST1": {
+                    name: "Castrol MAGNATEC 5W-30 (1L)",
+                    mrp: 920,
+                    unitQty: 1,
+                    unit: "Ltr",
+                    rate: 820,
+                    discount: 20
+                },
+                "SHELL1": {
+                    name: "Shell HELIX HX7 10W-40 (1L)",
+                    mrp: 850,
+                    unitQty: 1,
+                    unit: "Ltr",
+                    rate: 780,
+                    discount: 15
+                }
+            };
             
             try {
                 const savedPriceList = localStorage.getItem('priceListData');
@@ -1892,18 +2123,34 @@
                 console.log("No saved data found");
             }
             
-            // Set shipping charges
-            document.getElementById('shipping-charges').textContent = "₹0.00";
-            calculateOverallTotals();
-            
-            showNotification("Auto Lube House Quotation Generator Ready");
-            
-            const firstSkuNameInput = document.querySelector('.sku-name-input');
-            if (firstSkuNameInput) {
-                setTimeout(() => {
-                    firstSkuNameInput.focus();
-                }, 500);
-            }
+            // Auto-fill sample data for demonstration
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#items-table tr');
+                if (rows.length >= 2) {
+                    fillRowDataFromSku(0, "MOBIL1");
+                    rows[0].querySelector('.qnty').value = 5;
+                    rows[0].querySelector('.discount-input').value = "10"; // ₹10 per unit discount
+                    calculateRowTotalForRow(0);
+                    
+                    fillRowDataFromSku(1, "CAST1");
+                    rows[1].querySelector('.qnty').value = 3;
+                    rows[1].querySelector('.discount-input').value = "5%"; // 5% per unit discount
+                    calculateRowTotalForRow(1);
+                }
+                
+                // Set shipping charges
+                document.getElementById('shipping-charges').textContent = "₹0.00";
+                calculateOverallTotals();
+                
+                showNotification("Auto Lube House Challan Generator Ready");
+                
+                const firstSkuNameInput = document.querySelector('.sku-name-input');
+                if (firstSkuNameInput) {
+                    setTimeout(() => {
+                        firstSkuNameInput.focus();
+                    }, 300);
+                }
+            }, 300);
         });
         
         // Close search dropdown when clicking outside
@@ -1915,6 +2162,27 @@
                 }
             }
         });
+		
+		//Nabynta ka Tarik
+		document.addEventListener('DOMContentLoaded', function() {
+    const dateSpan = document.getElementById('date-field');
+    const now = new Date();
+    
+    // Format options
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        weekday: 'short' // Optional: add day of week
+    };
+    
+    // Set the date
+   dateSpan.textContent = now.toLocaleDateString('en-GB', options);
+    
+    // OR use a simpler format:
+    // dateSpan.textContent = now.toLocaleDateString();
+});
+
     </script>
 </body>
 </html>
