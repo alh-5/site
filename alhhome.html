@@ -1209,6 +1209,11 @@
                             <i class="fas fa-store"></i>
                             Invoice Status
                         </button>
+						
+						<button class="tab-btn" data-tab="hpincentive">
+                            <i class="fa-file-invoice-dollar"></i>
+                            HP Incentive
+                        </button>
 						 						 
                         <button class="tab-btn" data-tab="Home2">
                             <i class="fa-clipboard-list"></i>
@@ -1373,6 +1378,28 @@
                         </div>
                     </div>
 					
+					<div class="tab-content" id="hpincentive-tab">
+                        <h2 class="tab-title"><i class="fas fa-calculator"></i>HP Incentive</h2>
+                        <p class="tab-desc">Click Invoice Status to View More.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> HP incentives</li>
+							<li><i class="fas fa-check-circle"></i> Purchases Amount Analys</li>
+                            <li><i class="fas fa-check-circle"></i> Incentives Liters</li>
+                            <li><i class="fas fa-check-circle"></i> Support mobile Version View</li>
+                            <li><i class="fas fa-check-circle"></i> friendly and responsive</li>
+                       </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="hp/hpincentive.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                HP incentive Tracker
+                            </a>
+                            <p class="link-note">Click Invoice Status</p>
+                        </div>
+                    </div>
+		
+					
 					<div class="tab-content" id="Home2-tab">
                         <h2 class="tab-title"><i class="fas fa-calculator"></i>Next</h2>
                         <p class="tab-desc">Click Next to View More.</p>
@@ -1481,6 +1508,7 @@
                                 this.textContent.includes('RO') ? 'RO Order' :
                                 this.textContent.includes('Requirements') ? 'Requirements' :
 								this.textContent.includes('invtracker') ? 'Invoice Status' :
+								this.textContent.includes('hpincentive') ? 'HP Incentive' :
                                 'Order Calculator'
 								'Pricelist'
 								'SPanalys';

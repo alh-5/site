@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>HPCL incentive </title>
+    <!-- SheetJS for Excel import/export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF + autoTable for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- Papa Parse for better CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f0f5fd 0%, #e6ecf5 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.8rem;
+        }
+        .card {
+            max-width: 1800px;
+            width: 100%;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -10px rgba(0,30,60,0.25);
+            padding: 1.2rem 1rem;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin: 0 0 0.2rem 0;
+            background: linear-gradient(145deg, #1b2b44, #2b405e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        /* mobile adjustments */
+        @media (max-width: 600px) {
+            body { padding: 0.3rem; }
+            .card { padding: 1rem 0.8rem; border-radius: 1.5rem; }
+            h1 { font-size: 1.4rem; }
+        }
+        .import-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 0.8rem 1.2rem;
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 6px 14px rgba(0,32,64,0.08);
+        }
+        .file-label {
+            background: #1f2e4a;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #30456b;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .file-label:hover { background: #2a3d60; }
+        .file-label input { display: none; }
+        .google-sheet-btn, .csv-download-btn {
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .google-sheet-btn { background: #0F9D58; border: 1px solid #0b7c45; }
+        .csv-download-btn { background: #aa4e3c; border: 1px solid #8a3e2f; }
+        .google-sheet-btn:hover { background: #0b7c45; }
+        .csv-download-btn:hover { background: #8a3e2f; }
+        .export-btn {
+            background: #2666a8;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .export-btn:hover { background: #1a4c82; }
+        .mapping-panel {
+            background: #f4f9ff;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            border: 1px solid #b8cde0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+        }
+        .mapping-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            width: 100%;
+        }
+        .mapper-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: white;
+            padding: 0.2rem 0.6rem 0.2rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #acc2db;
+            flex: 1 0 auto;
+            min-width: 180px;
+        }
+        .mapper-item label {
+            font-weight: 600;
+            color: #163457;
+            min-width: 70px;
+            font-size:0.8rem;
+        }
+        .mapper-item select {
+            padding: 0.2rem 0.5rem;
+            border-radius: 30px;
+            border: 1px solid #8da7c5;
+            background: white;
+            font-weight: 500;
+            max-width: 140px;
+        }
+        .apply-mapping {
+            background: #2666a8;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .entry-panel {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 6px 14px rgba(0,32,64,0.05);
+            border: 1px solid #cddef2;
+        }
+        .entry-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .entry-field {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #f2f8ff;
+            padding: 0.2rem 0.6rem 0.2rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #abc0d6;
+            flex: 1 1 auto;
+            min-width: 170px;
+        }
+        .entry-field label {
+            font-weight: 600;
+            color: #1d3d62;
+            font-size: 0.8rem;
+            min-width: 40px;
+        }
+        .entry-field input, .entry-field select {
+            padding: 0.3rem 0.5rem;
+            border-radius: 30px;
+            border: 1px solid #7e9ec0;
+            background: white;
+            min-width: 90px;
+            font-size: 0.85rem;
+        }
+        .entry-field input[type=number] { min-width: 75px; }
+        .entry-field input[type=date] { min-width: 125px; }
+        .add-btn {
+            background: #1b6b4c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .cart-wrapper {
+            overflow-x: auto;
+            border-radius: 1.5rem;
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(4px);
+            margin: 1.5rem 0 1rem;
+            border: 1px solid white;
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px; /* reduced a bit for mobile but still scrollable */
+        }
+        th {
+            background: #1f324b;
+            color: white;
+            font-weight: 600;
+            font-size: 0.7rem;
+            padding: 0.6rem 0.2rem;
+            text-align: center;
+            border-right: 1px solid #314e72;
+        }
+        td {
+            padding: 0.5rem 0.2rem;
+            border-bottom: 1px solid #cfddee;
+            text-align: center;
+            background-color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            color: #13273f;
+        }
+        .value-cell { font-weight: 600; background: #eaf2fc; }
+        .badge-foc { background: #b8e0d0; color: #0b4635; padding: 0.1rem 0.3rem; border-radius: 30px; }
+        .badge-cd { background: #ffdec2; color: #964b00; padding: 0.1rem 0.3rem; border-radius: 30px; }
+        .incentive-cell { background: #fceec7; font-weight: 700; }
+        .free-cell { background: #d6f0e2; font-weight: 700; }
+        .footnote {
+            margin-top: 1rem;
+            background: #eef5fc;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.75rem;
+        }
+        .empty-message { text-align: center; padding: 2rem; }
+        .remove-btn {
+            background: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .export-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            margin: 1rem 0;
+            border: 1px solid #ef9a9a;
+            font-size:0.9rem;
+        }
+        .gst-badge {
+            background: #d4e3fd;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .rupee-value { font-weight:700; color:#0f3b5e; }
+        .totals-row td { background: #d4e3fd; font-weight:700; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <h1>⛽ Auto Spare House HPCL </h1>
+        <span style="background: #c9dff7; padding:0.2rem 1rem; border-radius:40px; font-weight:600; font-size:0.8rem;">incentive = (purch+free)×pack×∑disc</span>
+    </div>
+    
+    <!-- import area with CSV download button -->
+    <div class="import-section">
+        <label class="file-label">📂 Import <input type="file" id="fileInput" accept=".xlsx,.xls,.csv"></label>
+        <button class="google-sheet-btn" id="googleSheetBtn">📊 Load</button>
+        <!-- NEW CSV DOWNLOAD BUTTON (exact URL) -->
+        <button class="csv-download-btn" id="csvDownloadBtn">📥 Download CSV</button>
+        <span class="gst-badge">🔻 discount +18% GST</span>
+        <div class="export-bar">
+            <button class="export-btn" id="exportExcelBtn">📥 Excel</button>
+            <button class="export-btn" id="exportPDFBtn">📄 PDF</button>
+        </div>
+    </div>
+
+    <div id="errorDisplay" class="error-message" style="display: none;"></div>
+
+    <!-- mapping panel (dynamic) -->
+    <div class="mapping-panel" id="mappingPanel" style="display: none;">
+        <div style="font-weight:700; width:100%;">↘ map pricelist columns</div>
+        <div class="mapping-grid" id="mappingGrid"></div>
+        <button class="apply-mapping" id="applyMappingBtn">✔ load pricelist</button>
+    </div>
+
+    <!-- purchase entry panel -->
+    <div class="entry-panel" id="entryPanel" style="display: none;">
+        <div style="font-size:1.2rem; font-weight:700; margin-bottom:0.8rem;">➕ Add purchase line</div>
+        <div class="entry-row">
+            <div class="entry-field" style="flex:2;">
+                <label>Item</label>
+                <input type="text" id="itemSearch" list="itemOptions" placeholder="type or select" autocomplete="off">
+                <datalist id="itemOptions"></datalist>
+            </div>
+            <div class="entry-field">
+                <label>Brand</label>
+                <input type="text" id="brandSearch" list="brandOptions" placeholder="auto" autocomplete="off">
+                <datalist id="brandOptions"></datalist>
+            </div>
+            <div class="entry-field">
+                <label>Pack</label>
+                <input type="text" id="packDisplay" readonly style="background:#eef3f9; width:60px;">
+            </div>
+            <div class="entry-field">
+                <label>UOM</label>
+                <input type="text" id="uomDisplay" readonly style="background:#eef3f9; width:50px;">
+            </div>
+            <div class="entry-field">
+                <label>Purch</label>
+                <input type="number" id="purchQty" min="0" value="0" step="1" style="width:70px;">
+            </div>
+            <div class="entry-field">
+                <label>Free</label>
+                <input type="number" id="freeQty" min="0" value="0" step="1" style="width:70px;">
+            </div>
+            <div class="entry-field actual-prch-field">
+                <label>Actual</label>
+                <input type="number" id="actualPrch" min="0" value="0" step="0.01" style="width:80px;">
+            </div>
+            <div class="entry-field date-field">
+                <label>Date</label>
+                <input type="date" id="purchaseDate" value="">
+            </div>
+            <button class="add-btn" id="addToCartBtn">➕ Add</button>
+        </div>
+    </div>
+
+    <!-- cart table -->
+    <div class="cart-wrapper">
+        <table>
+            <thead>
+                <tr><th rowspan="2">Date</th><th rowspan="2">Item</th><th rowspan="2">Brand</th><th rowspan="2">Pack</th><th rowspan="2">UOM</th><th rowspan="2">Base</th><th rowspan="2">AftGST</th><th rowspan="2">MRP</th><th rowspan="2">FOC%</th><th rowspan="2">CD%</th><th rowspan="2">Inv Ltr</th><th rowspan="2">Inv EA</th><th colspan="5">SCHEMES (₹)</th><th rowspan="2">∑Disc</th><th rowspan="2">+GST</th><th rowspan="2">Disc+GST</th><th rowspan="2">Final Ltr</th><th rowspan="2">Final EA</th><th rowspan="2">Purch</th><th rowspan="2">Free</th><th rowspan="2">Actual</th><th rowspan="2">Incentive</th><th rowspan="2">Free val</th><th rowspan="2">Final Amt</th><th rowspan="2"></th></tr>
+                <tr class="scheme-header"><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th></tr>
+            </thead>
+            <tbody id="cartBody"><tr><td colspan="32" class="empty-message">Import pricelist and add items</td></tr></tbody>
+            <tfoot id="cartFooter" style="display: none;"><tr class="totals-row"><td colspan="21" class="total-label">TOTAL</td><td id="totalPurchQty">0</td><td id="totalFreeQty">0</td><td id="totalActualPrch">₹0</td><td id="totalIncentive">₹0</td><td id="totalFreeValue">₹0</td><td id="totalFinalAmount">₹0</td><td></td></tr></tfoot>
+        </table>
+    </div>
+
+    <div class="footnote">
+        <span>🔹Incentive = (Purch+Free)×Pack×∑Disc</span>
+        <span>🔹Free val = [(Pack×Base)-(Pack×∑Disc)]×Free</span>
+        <span>🔹Final Amt = (Purch×Pack×AfterGST) - CD%</span>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ---------- data ----------
+    let pricelist = [];
+    let cart = [];
+    let importedRawData = [];
+    let importedColumns = [];
+
+    // DOM elements
+    const fileInput = document.getElementById('fileInput');
+    const googleSheetBtn = document.getElementById('googleSheetBtn');
+    const csvDownloadBtn = document.getElementById('csvDownloadBtn');   // new button
+    const mappingPanel = document.getElementById('mappingPanel');
+    const mappingGrid = document.getElementById('mappingGrid');
+    const applyBtn = document.getElementById('applyMappingBtn');
+    const entryPanel = document.getElementById('entryPanel');
+    const itemSearch = document.getElementById('itemSearch');
+    const brandSearch = document.getElementById('brandSearch');
+    const packDisplay = document.getElementById('packDisplay');
+    const uomDisplay = document.getElementById('uomDisplay');
+    const purchQtyInput = document.getElementById('purchQty');
+    const freeQtyInput = document.getElementById('freeQty');
+    const actualPrchInput = document.getElementById('actualPrch');
+    const purchaseDateInput = document.getElementById('purchaseDate');
+    const addBtn = document.getElementById('addToCartBtn');
+    const cartBody = document.getElementById('cartBody');
+    const cartFooter = document.getElementById('cartFooter');
+    const totalPurchQtySpan = document.getElementById('totalPurchQty');
+    const totalFreeQtySpan = document.getElementById('totalFreeQty');
+    const totalActualPrchSpan = document.getElementById('totalActualPrch');
+    const totalIncentiveSpan = document.getElementById('totalIncentive');
+    const totalFreeValueSpan = document.getElementById('totalFreeValue');
+    const totalFinalSpan = document.getElementById('totalFinalAmount');
+    const itemOptions = document.getElementById('itemOptions');
+    const brandOptions = document.getElementById('brandOptions');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    const exportPDFBtn = document.getElementById('exportPDFBtn');
+    const errorDisplay = document.getElementById('errorDisplay');
+
+    // set today's date
+    const today = new Date();
+    purchaseDateInput.value = today.toISOString().slice(0,10);
+
+    const TARGET_FIELDS = [
+        { key: 'itemNumber', label: 'Item Number' },
+        { key: 'brand', label: 'Brand' },
+        { key: 'packSize', label: 'Pack Size' },
+        { key: 'uom', label: 'UOM' },
+        { key: 'baseRate', label: 'Base Rate' },
+        { key: 'afterGST', label: 'After GST' },
+        { key: 'MRP', label: 'Revised MRP (EA)' },
+        { key: 'foc', label: 'FOC %' },
+        { key: 'cd', label: 'CD %' },
+        { key: 'Invoice Ltr', label: 'Invoice Landing per Ltr' },
+        { key: 'Invoice EA', label: 'Invoice Landing per EA' },
+        { key: 'scheme1', label: 'Scheme 1' },
+        { key: 'scheme2', label: 'Scheme 2' },
+        { key: 'scheme3', label: 'Scheme 3' },
+        { key: 'scheme4', label: 'Scheme 4' },
+        { key: 'scheme5', label: 'Scheme 5' }
+    ];
+
+    // ---------- helpers ----------
+    function showError(m) { errorDisplay.style.display = 'block'; errorDisplay.innerHTML = `<strong>⚠️</strong> ${m}`; }
+    function hideError() { errorDisplay.style.display = 'none'; }
+    const fmt = (v) => (v===undefined||v===''||v===null) ? '—' : '₹'+Number(v).toFixed(2);
+    const fmtPct = (v) => (v===undefined||v==='') ? '—' : Number(v).toFixed(1)+'%';
+    const fmtNumber = (v) => (v===undefined||v==='') ? '—' : Number(v).toFixed(2);
+    const formatDate = (ds) => ds ? new Date(ds).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}) : '—';
+
+    function computeDerived(item) {
+        const s1 = parseFloat(item.scheme1)||0, s2 = parseFloat(item.scheme2)||0, s3 = parseFloat(item.scheme3)||0, s4 = parseFloat(item.scheme4)||0, s5 = parseFloat(item.scheme5)||0;
+        const totalDisc = s1+s2+s3+s4+s5;
+        const gstOnDisc = totalDisc*0.18;
+        const discPlusGst = totalDisc + gstOnDisc;
+        const invLtr = parseFloat(item.invLtr)||0;
+        const pack = parseFloat(item.packSize)||1;
+        const finalLtr = invLtr - discPlusGst;
+        const finalEa = finalLtr * pack;
+        return { totalDisc, gstOnDisc, discPlusGst, finalLtr, finalEa, invLtr, pack };
+    }
+
+    function renderCart() {
+        if (!cart.length) {
+            cartBody.innerHTML = `<tr><td colspan="32" class="empty-message">No items added</td></tr>`;
+            cartFooter.style.display = 'none';
+            return;
+        }
+        let html = '';
+        let tPur=0,tFree=0,tActual=0,tIncent=0,tFreeVal=0,tFinal=0;
+        cart.forEach((e,i)=>{
+            const it = e.item, pq = e.purchQty||0, fq = e.freeQty||0, act = e.actualPrch||0, dt = e.date;
+            const d = computeDerived(it);
+            const pack = parseFloat(it.packSize)||1, base = parseFloat(it.baseRate)||0, aft = parseFloat(it.afterGST)||0, cd = parseFloat(it.cd)||0;
+            const amountBeforeCD = pq * pack * aft;
+            const cdAmt = amountBeforeCD * (cd/100);
+            const finalAmt = amountBeforeCD - cdAmt;
+            const incentive = (pq+fq) * pack * d.totalDisc;
+            const freeProdVal = (pack*base - pack*d.totalDisc) * fq;
+
+            tPur += pq; tFree += fq; tActual += act; tIncent += incentive; tFreeVal += freeProdVal; tFinal += finalAmt;
+
+            html += `<tr>
+                <td>${formatDate(dt)}</td><td>${it.itemNumber||''}</td><td>${it.brand||''}</td><td>${it.packSize||''}</td><td>${it.uom||''}</td>
+                <td class="value-cell">${fmt(it.baseRate)}</td><td class="value-cell">${fmt(it.afterGST)}</td><td class="value-cell">${fmt(it.mrp)}</td>
+                <td><span class="badge-foc">${fmtPct(it.foc)}</span></td><td><span class="badge-cd">${fmtPct(it.cd)}</span></td>
+                <td class="value-cell">${fmt(it.invLtr)}</td><td class="value-cell">${fmt(it.invEa)}</td>
+                <td>${fmt(it.scheme1)}</td><td>${fmt(it.scheme2)}</td><td>${fmt(it.scheme3)}</td><td>${fmt(it.scheme4)}</td><td>${fmt(it.scheme5)}</td>
+                <td class="value-cell">${fmt(d.totalDisc)}</td><td class="value-cell">${fmt(d.gstOnDisc)}</td><td class="value-cell">${fmt(d.discPlusGst)}</td>
+                <td class="final-landing">${fmt(d.finalLtr)}</td><td class="final-landing">${fmt(d.finalEa)}</td>
+                <td>${pq}</td><td>${fq}</td><td style="background:#fff0d9;">${fmt(act)}</td>
+                <td class="incentive-cell">${fmt(incentive)}</td><td class="free-cell">${fmt(freeProdVal)}</td>
+                <td style="background:#cbe5fe;">${fmt(finalAmt)}</td>
+                <td><button class="remove-btn" data-index="${i}">✖</button></td>
+            </tr>`;
+        });
+        cartBody.innerHTML = html;
+        cartFooter.style.display = 'table-footer-group';
+        totalPurchQtySpan.innerText = tPur;
+        totalFreeQtySpan.innerText = tFree;
+        totalActualPrchSpan.innerText = fmt(tActual);
+        totalIncentiveSpan.innerText = fmt(tIncent);
+        totalFreeValueSpan.innerText = fmt(tFreeVal);
+        totalFinalSpan.innerText = fmt(tFinal);
+        document.querySelectorAll('.remove-btn').forEach(b => b.addEventListener('click', (e) => { 
+            cart.splice(parseInt(e.target.dataset.index),1); renderCart(); 
+        }));
+    }
+
+    function updateSuggestions() {
+        if (!pricelist.length) return;
+        const items = [...new Set(pricelist.map(p=>p.itemNumber).filter(Boolean))];
+        itemOptions.innerHTML = items.map(i=>`<option value="${i.replace(/"/g,'&quot;')}">`).join('');
+        itemSearch.oninput = function() {
+            const m = pricelist.find(p=>p.itemNumber === itemSearch.value);
+            if(m){ brandSearch.value = m.brand||''; packDisplay.value = m.packSize||''; uomDisplay.value = m.uom||''; }
+            else { brandSearch.value = packDisplay.value = uomDisplay.value = ''; }
+        };
+        const brands = [...new Set(pricelist.map(p=>p.brand).filter(Boolean))];
+        brandOptions.innerHTML = brands.map(b=>`<option value="${b.replace(/"/g,'&quot;')}">`).join('');
+    }
+
+    addBtn.addEventListener('click',()=>{
+        const match = pricelist.find(p=>p.itemNumber === itemSearch.value.trim());
+        if(!match) { alert('Select a valid item'); return; }
+        const pq = parseInt(purchQtyInput.value)||0, fq = parseInt(freeQtyInput.value)||0, act = parseFloat(actualPrchInput.value)||0;
+        if(pq===0 && fq===0){ alert('Enter quantity'); return; }
+        cart.push({ item: match, purchQty: pq, freeQty: fq, actualPrch: act, date: purchaseDateInput.value });
+        renderCart();
+        itemSearch.value = brandSearch.value = packDisplay.value = uomDisplay.value = '';
+        purchQtyInput.value = freeQtyInput.value = actualPrchInput.value = 0;
+    });
+
+    // ---------- mapping UI ----------
+    function buildMappingUI(cols) {
+        mappingPanel.style.display = 'flex';
+        mappingGrid.innerHTML = TARGET_FIELDS.map(t => `
+            <div class="mapper-item"><label>${t.label}</label>
+                <select data-target="${t.key}">
+                    <option value="">—</option>
+                    ${cols.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c.replace(/</g,'&lt;')}</option>`).join('')}
+                </select>
+            </div>`).join('');
+        TARGET_FIELDS.forEach(t => {
+            const sel = mappingGrid.querySelector(`select[data-target="${t.key}"]`);
+            if (!sel) return;
+            let guess = cols.find(c => c.toLowerCase().includes(t.label.toLowerCase()) || 
+                (t.key==='itemNumber' && c.toLowerCase().includes('item')) ||
+                (t.key==='packSize' && (c.toLowerCase().includes('pack')||c.toLowerCase().includes('size'))) ||
+                (t.key==='baseRate' && c.toLowerCase().includes('base')) ||
+                (t.key==='afterGST' && c.toLowerCase().includes('gst')) );
+            if (t.key === 'mrp') guess = cols.find(c => c.includes('Revised MRP')||c.includes('MRP'));
+            if (t.key.includes('scheme')) guess = cols.find(c => c.includes(t.label) || (c.includes('Scheme') && c.includes(t.key.slice(-1))));
+            if (guess) sel.value = guess;
+        });
+    }
+
+    function applyMapping() {
+        if (!importedRawData.length) { alert('No data'); return; }
+        const mapping = {};
+        TARGET_FIELDS.forEach(t => {
+            const sel = mappingGrid.querySelector(`select[data-target="${t.key}"]`);
+            if (sel && sel.value) mapping[t.key] = sel.value;
+        });
+        const newList = importedRawData.map(row => {
+            let obj = {};
+            Object.entries(mapping).forEach(([key, col]) => {
+                let val = row[col];
+                if (val == null) { obj[key] = undefined; return; }
+                if (['packSize','baseRate','afterGST','mrp','foc','cd','invLtr','invEa','scheme1','scheme2','scheme3','scheme4','scheme5'].includes(key)) {
+                    let num = parseFloat(String(val).replace(/[^0-9.-]/g,''));
+                    obj[key] = isNaN(num) ? undefined : num;
+                } else obj[key] = String(val).trim() || undefined;
+            });
+            return obj;
+        }).filter(r => r.itemNumber);
+        if (newList.length) {
+            pricelist = newList;
+            cart = [];
+            entryPanel.style.display = 'block';
+            mappingPanel.style.display = 'none';
+            hideError();
+            updateSuggestions();
+            renderCart();
+        } else alert('No valid items');
+    }
+
+    // file import
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (le) => {
+            try {
+                const wb = XLSX.read(new Uint8Array(le.target.result), {type:'array'});
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                const raw = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                if (raw.length<2) return;
+                const headers = raw[0].map(h=>(h||'').toString().trim());
+                const rows = [];
+                for (let i=1;i<raw.length;i++) {
+                    let rowArr = raw[i]||[];
+                    let obj = {};
+                    headers.forEach((h,idx)=> { if(h) obj[h]=rowArr[idx]; });
+                    rows.push(obj);
+                }
+                importedRawData = rows;
+                importedColumns = headers.filter(h=>h);
+                buildMappingUI(importedColumns);
+                hideError();
+            } catch (err) { showError('Parse error: '+err); }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    // Google Sheet loader (with fallbacks)
+    googleSheetBtn.addEventListener('click', async function() {
+        const original = this.innerHTML;
+        this.innerHTML = '<span class="loading"></span> Loading...';
+        this.disabled = true;
+        hideError();
+        const urls = [
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vSel5qWAnT-KVJNA1QrLFrjqHs11HkNAq52MDa3zESm2QPNfUnrfNyixIN0BgSbVExWBYWCwATewKyI/pub?output=csv',
+            'https://docs.google.com/spreadsheets/d/1iWow93W1JQP6CDmFAjEacm4xj6Ar9rTF6QjEWmqH61E/export?format=csv&gid=0'
+        ];
+        const proxies = ['https://api.allorigins.win/raw?url=', 'https://cors-anywhere.herokuapp.com/'];
+        let success = false;
+        for (let proxy of proxies) {
+            for (let url of urls) {
+                try {
+                    const res = await fetch(proxy + encodeURIComponent(url), {mode:'cors'});
+                    if (!res.ok) continue;
+                    const text = await res.text();
+                    if (text && text.length>200 && !text.includes('<html')) {
+                        Papa.parse(text, {header:true, skipEmptyLines:true, complete: (r) => {
+                            if (r.data && r.data.length) {
+                                importedRawData = r.data;
+                                importedColumns = r.meta.fields || [];
+                                buildMappingUI(importedColumns);
+                                success = true;
+                            }
+                        }});
+                        if (success) break;
+                    }
+                } catch (e) {}
+            }
+            if (success) break;
+        }
+        if (!success) showError('Could not load Google Sheet. Use CSV download or import.');
+        this.innerHTML = original;
+        this.disabled = false;
+    });
+
+    // NEW: CSV download button (exact URL provided)
+    csvDownloadBtn.addEventListener('click', function() {
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSel5qWAnT-KVJNA1QrLFrjqHs11HkNAq52MDa3zESm2QPNfUnrfNyixIN0BgSbVExWBYWCwATewKyI/pub?output=csv';
+        // Create a hidden link and trigger download
+        const link = document.createElement('a');
+        link.href = csvUrl;
+        link.target = '_blank';  // open in new tab to avoid CORS download issues? but we want download.
+        link.download = '';      // let browser decide name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // optional feedback
+        setTimeout(() => alert('If download did not start, right-click and save. Then use IMPORT XLSX.'), 200);
+    });
+
+    applyBtn.addEventListener('click', applyMapping);
+
+    // export Excel
+    exportExcelBtn.addEventListener('click', ()=>{
+        if (!cart.length) { alert('Cart empty'); return; }
+        const data = cart.map(e => {
+            const it = e.item, pq=e.purchQty||0, fq=e.freeQty||0, act=e.actualPrch||0, d = computeDerived(it);
+            const pack=parseFloat(it.packSize)||1, base=parseFloat(it.baseRate)||0, aft=parseFloat(it.afterGST)||0, cd=parseFloat(it.cd)||0;
+            const incentive = (pq+fq)*pack*d.totalDisc;
+            const freeVal = (pack*base - pack*d.totalDisc)*fq;
+            const finalAmt = (pq*pack*aft) - (pq*pack*aft*(cd/100));
+            return {
+                Date: formatDate(e.date), Item: it.itemNumber, Brand: it.brand, Pack: it.packSize, UOM: it.uom,
+                Base: it.baseRate, AfterGST: it.afterGST, MRP: it.mrp, FOC: it.foc, CD: it.cd,
+                InvLtr: it.invLtr, InvEA: it.invEa, S1: it.scheme1, S2: it.scheme2, S3: it.scheme3, S4: it.scheme4, S5: it.scheme5,
+                DiscSum: d.totalDisc, GST18: d.gstOnDisc, DiscPlusGST: d.discPlusGst,
+                FinalLtr: d.finalLtr, FinalEA: d.finalEa,
+                PurchQty: pq, FreeQty: fq, ActualPrch: act,
+                Incentive: incentive, FreeProductValue: freeVal, FinalAmt: finalAmt
+            };
+        });
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'Purchase');
+        XLSX.writeFile(wb, 'HPCL_incentive.xlsx');
+    });
+
+    // PDF export
+    exportPDFBtn.addEventListener('click', ()=>{
+        if (!cart.length) { alert('Cart empty'); return; }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape');
+        const cols = ['Item','Base','AftGST','Purch','Free','Incentive','FreeVal','Final'];
+        const rows = [];
+        let tPur=0,tFree=0,tInc=0,tFV=0,tFin=0;
+        cart.forEach(e=>{
+            const it=e.item, pq=e.purchQty||0, fq=e.freeQty||0, d=computeDerived(it);
+            const pack=parseFloat(it.packSize)||1, base=parseFloat(it.baseRate)||0, aft=parseFloat(it.afterGST)||0, cd=parseFloat(it.cd)||0;
+            const inc = (pq+fq)*pack*d.totalDisc;
+            const freeVal = (pack*base - pack*d.totalDisc)*fq;
+            const final = (pq*pack*aft) - (pq*pack*aft*(cd/100));
+            tPur+=pq; tFree+=fq; tInc+=inc; tFV+=freeVal; tFin+=final;
+            rows.push([ (it.itemNumber||'').substring(0,10), fmtNumber(base), fmtNumber(aft), pq, fq, fmtNumber(inc), fmtNumber(freeVal), fmtNumber(final) ]);
+        });
+        rows.push(['TOTAL','','', tPur, tFree, fmtNumber(tInc), fmtNumber(tFV), fmtNumber(tFin)]);
+        doc.autoTable({ head:[cols], body:rows, styles:{fontSize:7}, headStyles:{fillColor:[31,50,75]}});
+        doc.save('HPCL_summary.pdf');
+    });
+
+    // initial hide
+    entryPanel.style.display = 'none';
+})();
+</script>
+</body>
+</html>
