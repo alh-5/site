@@ -128,12 +128,12 @@
             border-radius: 40px;
             border: 1px solid #acc2db;
             flex: 1 0 auto;
-            min-width: 180px;
+            min-width: 280px;
         }
         .mapper-item label {
             font-weight: 600;
             color: #163457;
-            min-width: 70px;
+            min-width: 120px;
             font-size:0.8rem;
         }
         .mapper-item select {
@@ -142,7 +142,7 @@
             border: 1px solid #8da7c5;
             background: white;
             font-weight: 500;
-            max-width: 140px;
+            max-width: 180px;
         }
         .apply-mapping {
             background: #2666a8;
@@ -215,7 +215,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px; /* reduced a bit for mobile but still scrollable */
+            min-width: 1000px;
         }
         th {
             background: #1f324b;
@@ -306,7 +306,6 @@
     <div class="import-section">
         <label class="file-label">📂 Import <input type="file" id="fileInput" accept=".xlsx,.xls,.csv"></label>
         <button class="google-sheet-btn" id="googleSheetBtn">📊 Load</button>
-        <!-- NEW CSV DOWNLOAD BUTTON (exact URL) -->
         <button class="csv-download-btn" id="csvDownloadBtn">📥 Download CSV</button>
         <span class="gst-badge">🔻 discount +18% GST</span>
         <div class="export-bar">
@@ -396,7 +395,7 @@
     // DOM elements
     const fileInput = document.getElementById('fileInput');
     const googleSheetBtn = document.getElementById('googleSheetBtn');
-    const csvDownloadBtn = document.getElementById('csvDownloadBtn');   // new button
+    const csvDownloadBtn = document.getElementById('csvDownloadBtn');
     const mappingPanel = document.getElementById('mappingPanel');
     const mappingGrid = document.getElementById('mappingGrid');
     const applyBtn = document.getElementById('applyMappingBtn');
@@ -428,23 +427,24 @@
     const today = new Date();
     purchaseDateInput.value = today.toISOString().slice(0,10);
 
+    // FIXED: Target fields with exact labels as requested
     const TARGET_FIELDS = [
-        { key: 'itemNumber', label: 'Item Number' },
+        { key: 'itemNumber', label: 'Item Number 1' },
         { key: 'brand', label: 'Brand' },
         { key: 'packSize', label: 'Pack Size' },
         { key: 'uom', label: 'UOM' },
         { key: 'baseRate', label: 'Base Rate' },
         { key: 'afterGST', label: 'After GST' },
-        { key: 'MRP', label: 'Revised MRP (EA)' },
+        { key: 'mrp', label: 'Revised MRP (EA)' },
         { key: 'foc', label: 'FOC %' },
         { key: 'cd', label: 'CD %' },
-        { key: 'Invoice Ltr', label: 'Invoice Landing per Ltr' },
-        { key: 'Invoice EA', label: 'Invoice Landing per EA' },
-        { key: 'Scheme 1: Volume Linked Discount(2.5-3)', label: 'Scheme 1: Volume Linked Discount(2.5-3)' },
-        { key: 'Scheme 2: Special Growth Bonus(2.5-3)', label: 'Scheme 2: Special Growth Bonus(2.5-3)' },
-        { key: 'Scheme 3: Mix Volume Linked Incentive(2.5-3)', label: 'Scheme 3: Mix Volume Linked Incentive(2.5-3)' },
-        { key: 'Scheme 4: Product Mix Volume Linked Incentive(2.5-3)', label: 'Scheme 4: Product Mix Volume Linked Incentive(2.5-3)' },
-        { key: 'Scheme 5: Early Bird Incentive(3-4)', label: 'Scheme 5: Early Bird Incentive(3-4)' }
+        { key: 'invLtr', label: 'Invoice Landing per Ltr' },
+        { key: 'invEa', label: 'Invoice Landing per EA' },
+        { key: 'scheme1', label: 'Scheme 1: Volume Linked Discount(2.5-3)' },
+        { key: 'scheme2', label: 'Scheme 2: Special Growth Bonus(2.5-3)' },
+        { key: 'scheme3', label: 'Scheme 3: Mix Volume Linked Incentive(2.5-3)' },
+        { key: 'scheme4', label: 'Scheme 4: Product Mix Volume Linked Incentive(2.5-3)' },
+        { key: 'scheme5', label: 'Scheme 5: Early Bird Incentive(3-4)' }
     ];
 
     // ---------- helpers ----------
@@ -548,16 +548,33 @@
                     ${cols.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c.replace(/</g,'&lt;')}</option>`).join('')}
                 </select>
             </div>`).join('');
+        
+        // Auto-guess mappings based on exact labels
         TARGET_FIELDS.forEach(t => {
             const sel = mappingGrid.querySelector(`select[data-target="${t.key}"]`);
             if (!sel) return;
-            let guess = cols.find(c => c.toLowerCase().includes(t.label.toLowerCase()) || 
-                (t.key==='itemNumber' && c.toLowerCase().includes('item')) ||
-                (t.key==='packSize' && (c.toLowerCase().includes('pack')||c.toLowerCase().includes('size'))) ||
-                (t.key==='baseRate' && c.toLowerCase().includes('base')) ||
-                (t.key==='afterGST' && c.toLowerCase().includes('gst')) );
-            if (t.key === 'mrp') guess = cols.find(c => c.includes('Revised MRP')||c.includes('MRP'));
-            if (t.key.includes('scheme')) guess = cols.find(c => c.includes(t.label) || (c.includes('Scheme') && c.includes(t.key.slice(-1))));
+            
+            // Try to find exact match first
+            let guess = cols.find(c => c === t.label);
+            
+            // If no exact match, try contains match
+            if (!guess) {
+                guess = cols.find(c => c.toLowerCase().includes(t.label.toLowerCase()) || 
+                    (t.key === 'itemNumber' && c.toLowerCase().includes('item')) ||
+                    (t.key === 'brand' && c.toLowerCase().includes('brand')) ||
+                    (t.key === 'packSize' && (c.toLowerCase().includes('pack') || c.toLowerCase().includes('size'))) ||
+                    (t.key === 'uom' && c.toLowerCase().includes('uom')) ||
+                    (t.key === 'baseRate' && (c.toLowerCase().includes('base') || c.toLowerCase().includes('rate'))) ||
+                    (t.key === 'afterGST' && c.toLowerCase().includes('gst')) ||
+                    (t.key === 'mrp' && (c.toLowerCase().includes('mrp') || c.toLowerCase().includes('revised'))) ||
+                    (t.key === 'foc' && c.toLowerCase().includes('foc')) ||
+                    (t.key === 'cd' && c.toLowerCase().includes('cd')) ||
+                    (t.key === 'invLtr' && (c.toLowerCase().includes('inv') && c.toLowerCase().includes('ltr'))) ||
+                    (t.key === 'invEa' && (c.toLowerCase().includes('inv') && c.toLowerCase().includes('ea'))) ||
+                    (t.key.includes('scheme') && c.includes('Scheme') && c.includes(t.key.slice(-1)))
+                );
+            }
+            
             if (guess) sel.value = guess;
         });
     }
@@ -569,11 +586,13 @@
             const sel = mappingGrid.querySelector(`select[data-target="${t.key}"]`);
             if (sel && sel.value) mapping[t.key] = sel.value;
         });
+        
         const newList = importedRawData.map(row => {
             let obj = {};
             Object.entries(mapping).forEach(([key, col]) => {
                 let val = row[col];
                 if (val == null) { obj[key] = undefined; return; }
+                // Convert to appropriate type
                 if (['packSize','baseRate','afterGST','mrp','foc','cd','invLtr','invEa','scheme1','scheme2','scheme3','scheme4','scheme5'].includes(key)) {
                     let num = parseFloat(String(val).replace(/[^0-9.-]/g,''));
                     obj[key] = isNaN(num) ? undefined : num;
@@ -581,6 +600,7 @@
             });
             return obj;
         }).filter(r => r.itemNumber);
+        
         if (newList.length) {
             pricelist = newList;
             cart = [];
@@ -589,6 +609,7 @@
             hideError();
             updateSuggestions();
             renderCart();
+            console.log('Loaded items with schemes:', pricelist); // Debug
         } else alert('No valid items');
     }
 
@@ -620,7 +641,7 @@
         reader.readAsArrayBuffer(file);
     });
 
-    // Google Sheet loader (with fallbacks)
+    // Google Sheet loader
     googleSheetBtn.addEventListener('click', async function() {
         const original = this.innerHTML;
         this.innerHTML = '<span class="loading"></span> Loading...';
@@ -658,18 +679,16 @@
         this.disabled = false;
     });
 
-    // NEW: CSV download button (exact URL provided)
+    // CSV download button
     csvDownloadBtn.addEventListener('click', function() {
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSel5qWAnT-KVJNA1QrLFrjqHs11HkNAq52MDa3zESm2QPNfUnrfNyixIN0BgSbVExWBYWCwATewKyI/pub?output=csv';
-        // Create a hidden link and trigger download
         const link = document.createElement('a');
         link.href = csvUrl;
-        link.target = '_blank';  // open in new tab to avoid CORS download issues? but we want download.
-        link.download = '';      // let browser decide name
+        link.target = '_blank';
+        link.download = '';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        // optional feedback
         setTimeout(() => alert('If download did not start, right-click and save. Then use IMPORT XLSX.'), 200);
     });
 
