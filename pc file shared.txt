@@ -1,0 +1,51 @@
+Step 1: Prepare Your Computers for Sharing
+
+Go to Settings > Network & internet > Properties (or Ethernet/Wi-Fi).
+
+Under "Network profile type," select Private
+
+Open Control Panel > Network and Sharing Center > Change advanced sharing settings .
+
+For your "Private" profile, select:
+
+Turn on network discovery
+
+Turn on file and printer sharing .
+
+Click Save changes.
+
+Locate the Folder: Using File Explorer, navigate to the folder you wish to share .
+
+Open Sharing Properties: Right-click the folder and select Properties .
+
+Go to the Sharing Tab: In the properties window, click on the Sharing tab .
+
+Start the Sharing Wizard: Click the Share... button. This opens the file sharing window .
+
+Choose People to Share With:
+
+Click the dropdown menu or text field and type the name of the person you want to share with.
+
+For simplicity on a home network, you can type "Everyone" to give access to all users on the network .
+
+Click the Add button
+
+Next to the name you just added, you'll see a "Permission Level" column.
+
+Click on the permission level to change it:
+
+Read: Users can open and view files, but cannot modify or delete them .
+
+Read/Write: Users can open, view, change, and delete files .
+
+Finish Sharing:
+
+Click the Share button at the bottom of the window .
+
+You will see a confirmation screen with the network path to your folder (e.g., \\YourComputerName\FolderName). You can copy this path to send to others.
+
+Click Done .
+
+Go to Control Panel > Network and Sharing Center > Change advanced sharing settings.
+
+Under "All Networks," scroll down to "Password protected sharing" and select Turn off password protected sharing 
