@@ -677,10 +677,10 @@
             quantity: ''
         };
         let ordersMappings = {
-            customerName: '',
-            skuCode: '',
-            skuName: '',
-            pendingQty: ''
+            customerName: 'customerName',
+            skuCode: 'skuCode',
+            skuName: 'skuName',
+            pendingQty: 'quantity'
         };
         let stockMappingApplied = false;
         let ordersMappingApplied = false;
@@ -953,7 +953,7 @@
             const lowerHeaders = headers.map(h => h ? h.toLowerCase() : '');
             
             // Try to find Customer column
-            const customerPatterns = ['customer', 'client', 'buyer', 'name'];
+            const customerPatterns = ['customerName', 'client', 'buyer', 'name'];
             const customerIndex = lowerHeaders.findIndex(h => customerPatterns.some(pattern => h.includes(pattern)));
             if (customerIndex !== -1) {
                 ordersCustomerMap.value = headers[customerIndex];
@@ -969,7 +969,7 @@
             }
             
             // Try to find SKU Name column
-            const skuNamePatterns = ['sku name', 'skuname', 'name', 'item name', 'product name', 'description'];
+            const skuNamePatterns = ['sku name', 'skuname', 'sku', 'item name', 'skuName', 'description'];
             const skuNameIndex = lowerHeaders.findIndex(h => skuNamePatterns.some(pattern => h.includes(pattern)));
             if (skuNameIndex !== -1) {
                 ordersSkuNameMap.value = headers[skuNameIndex];
@@ -1458,10 +1458,10 @@
                 ["Current Stock", "SKU Code", stockMappings.skuCode],
                 ["Current Stock", "SKU Name", stockMappings.skuName],
                 ["Current Stock", "Quantity", stockMappings.quantity],
-                ["Orders", "Customer Name", ordersMappings.customerName],
-                ["Orders", "SKU Code", ordersMappings.skuCode],
-                ["Orders", "SKU Name", ordersMappings.skuName],
-                ["Orders", "Pending Quantity", ordersMappings.pendingQty]
+                ["Orders", "customerName", ordersMappings.customerName],
+                ["Orders", "skuCode", ordersMappings.skuCode],
+                ["Orders", "skuName", ordersMappings.skuName],
+                ["Orders", "quantity", ordersMappings.pendingQty]
             ];
             
             const mappingWs = XLSX.utils.aoa_to_sheet(mappingWsData);
