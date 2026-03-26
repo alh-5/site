@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>Household & EPIC Registry | BLOCK LETTERS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #d4dee7 0%, #b8c5d6 100%);
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+      padding: 1.25rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .form-header {
+      background: linear-gradient(115deg, #0b2b44 0%, #1c4e6e 100%);
+      padding: 1.5rem 2rem;
+      color: white;
+    }
+
+    .form-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .form-header p {
+      opacity: 0.85;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-body {
+      padding: 2rem;
+    }
+
+    .section {
+      background: #fefefe;
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+      border: 1px solid #e6edf4;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #155a7a;
+      border-left: 5px solid #2c8c6e;
+      padding-left: 1rem;
+      margin-bottom: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-field label {
+      font-weight: 600;
+      color: #1e4a6b;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .form-field input, .form-field select {
+      padding: 0.8rem 1rem;
+      border: 1.5px solid #e2eaf1;
+      border-radius: 1rem;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      background: #ffffff;
+      font-family: inherit;
+      width: 100%;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .form-field input::placeholder {
+      text-transform: none;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    .form-field input:focus, .form-field select:focus {
+      outline: none;
+      border-color: #2c7da0;
+      box-shadow: 0 0 0 3px rgba(44, 125, 160, 0.15);
+    }
+
+    .family-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+
+    .add-btn {
+      background: #1f6e4a;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 2.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      text-transform: uppercase;
+    }
+
+    .add-btn:hover {
+      background: #0f5438;
+      transform: translateY(-1px);
+    }
+
+    .plus-icon {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .family-member-card {
+      background: #fbfdff;
+      border-radius: 1.25rem;
+      padding: 1.2rem 1.3rem;
+      margin-bottom: 1.2rem;
+      border: 1px solid #e2edf5;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .member-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed #cbdde6;
+    }
+
+    .member-badge {
+      font-weight: 700;
+      background: #e9f0f5;
+      padding: 0.25rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      color: #1a5d7a;
+      text-transform: uppercase;
+    }
+
+    .remove-member {
+      background: #fee8e8;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #b91c1c;
+      font-weight: bold;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+      transition: 0.15s;
+      text-transform: uppercase;
+    }
+
+    .remove-member:hover {
+      background: #fccaca;
+    }
+
+    .family-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .family-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .family-field label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #3c6e8f;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .family-field input {
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.9rem;
+      border: 1.5px solid #e0eaf1;
+      font-size: 0.9rem;
+      width: 100%;
+      text-transform: uppercase;
+    }
+
+    .family-field input::placeholder {
+      text-transform: none;
+    }
+
+    .total-family-box {
+      background: #f0f5fa;
+      border-radius: 1rem;
+      padding: 0.8rem 1.2rem;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-left: 4px solid #2c7da0;
+    }
+
+    .total-family-box label {
+      font-weight: 700;
+      color: #1f5e7e;
+      text-transform: uppercase;
+    }
+
+    .total-family-box input {
+      background: white;
+      border: 1px solid #cbdbe0;
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      width: 100px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .submit-area {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-submit {
+      background: #1d6f42;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 3rem;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-transform: uppercase;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #0f5838;
+      transform: translateY(-2px);
+    }
+
+    .btn-submit:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    .preview-data {
+      background: #f8fafd;
+      border-radius: 1.25rem;
+      padding: 1.2rem 1.5rem;
+      margin-top: 1.8rem;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      border-left: 6px solid #2c7da0;
+      max-height: 320px;
+      overflow: auto;
+      line-height: 1.5;
+    }
+
+    .required-star::after {
+      content: "*";
+      color: #d9534f;
+      margin-left: 4px;
+      font-weight: bold;
+    }
+
+    .status-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: none;
+      animation: slideIn 0.3s ease;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 0.8rem;
+      }
+      .form-body {
+        padding: 1.2rem;
+      }
+      .section {
+        padding: 1rem;
+      }
+      .grid-2col, .grid-3col {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .form-header h1 {
+        font-size: 1.3rem;
+      }
+      .family-grid {
+        grid-template-columns: 1fr;
+      }
+      .submit-area {
+        justify-content: stretch;
+      }
+      .btn-submit {
+        width: 100%;
+      }
+    }
+
+    select {
+      text-transform: uppercase;
+    }
+    
+    option {
+      text-transform: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>📋 LAWSOHTUN RESIDENTIAL REGISTRY</h1>
+      <p>YOUR CO-OPERATION MEANS ALOT TO US</p>
+    </div>
+    <div class="form-body">
+      <form id="householdForm">
+        <!-- SECTION 1: HOUSE OWNER DETAILS -->
+        <div class="section">
+          <div class="section-title">
+            <span>🏠</span> HOUSE OWNER (PRIMARY)
+          </div>
+          <div class="grid-2col">
+            <div class="form-field">
+              <label class="required-star">HOUSE OWNER NAME</label>
+              <input type="text" id="ownerName" placeholder="FULL NAME AS PER EPIC" required style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label class="required-star">HOUSE OWNER EPIC NUMBER</label>
+              <input type="text" id="ownerEpic" placeholder="E.G., ABC1234567" required style="text-transform: uppercase;">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: RESIDENT PRIMARY DETAILS -->
+        <div class="section">
+          <div class="section-title">
+            <span>📇</span> PRIMARY RESIDENT (AS PER EPIC)
+          </div>
+          <div class="grid-2col">
+            <div class="form-field">
+              <label>NAME OF RESIDENT</label>
+              <input type="text" id="residentName" placeholder="FULL NAME" style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label>LAST NAME</label>
+              <input type="text" id="lastName" placeholder="SURNAME / LAST NAME" style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label class="required-star">EPIC NUMBER (RESIDENT)</label>
+              <input type="text" id="residentEpic" placeholder="EPIC NUMBER" required style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label class="required-star">GUARDIAN NAME (AS PER EPIC)</label>
+              <input type="text" id="guardianName" placeholder="FATHER/HUSBAND NAME" required style="text-transform: uppercase;">
+            </div>
+          </div>
+          <div class="grid-3col">
+            <div class="form-field">
+              <label class="required-star">DISTRICT</label>
+              <select id="district" required style="text-transform: uppercase;">
+                <option value="" disabled selected>-- SELECT DISTRICT --</option>
+                <option value="EAST GARO HILLS">EAST GARO HILLS</option>
+                <option value="NORTH GARO HILLS">NORTH GARO HILLS</option>
+                <option value="SOUTH GARO HILLS">SOUTH GARO HILLS</option>
+                <option value="SOUTH WEST GARO HILLS">SOUTH WEST GARO HILLS</option>
+                <option value="WEST GARO HILLS">WEST GARO HILLS</option>
+                <option value="EAST JAINTIA HILLS">EAST JAINTIA HILLS</option>
+                <option value="WEST JAINTIA HILLS">WEST JAINTIA HILLS</option>
+                <option value="EAST KHASI HILLS">EAST KHASI HILLS</option>
+                <option value="EASTERN WEST KHASI HILLS">EASTERN WEST KHASI HILLS</option>
+                <option value="SOUTH WEST KHASI HILLS">SOUTH WEST KHASI HILLS</option>
+                <option value="WEST KHASI HILLS">WEST KHASI HILLS</option>
+                <option value="RI BHOI">RI BHOI</option>
+                <option value="OTHERS">OTHERS</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="required-star">PINCODE (6 DIGITS)</label>
+              <input type="text" id="pincode" placeholder="6 DIGIT CODE" maxlength="6" inputmode="numeric" required style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label class="required-star">PHONE NUMBER (10 DIGITS)</label>
+              <input type="tel" id="phoneNumber" placeholder="9876543210" maxlength="10" inputmode="numeric" required style="text-transform: uppercase;">
+            </div>
+          </div>
+          <div class="grid-2col">
+            <div class="form-field">
+              <label class="required-star">ADDRESS AS PER EPIC</label>
+              <input type="text" id="addressEpic" placeholder="FULL ADDRESS AS PER EPIC CARD" required style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label>RESIDENT ADDRESS (CURRENT)</label>
+              <input type="text" id="residentAddress" placeholder="CURRENT RESIDENCE ADDRESS" style="text-transform: uppercase;">
+            </div>
+            <div class="form-field">
+              <label>BLOCK</label>
+              <select id="block" style="text-transform: uppercase;">
+                <option value="" selected disabled>-- SELECT BLOCK --</option>
+                <option value="BLOCK 1">BLOCK 1</option>
+                <option value="BLOCK 2">BLOCK 2</option>
+                <option value="BLOCK 3">BLOCK 3</option>
+                <option value="BLOCK 4">BLOCK 4</option>
+                <option value="BLOCK 5">BLOCK 5</option>
+                <option value="BLOCK 6">BLOCK 6</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: FAMILY MANAGEMENT -->
+        <div class="section">
+          <div class="family-header">
+            <div class="section-title" style="border-left-color: #2c9c6e; margin-bottom:0;">
+              👨‍👩‍👧‍👦 FAMILY MEMBERS
+            </div>
+            <button type="button" id="addFamilyBtn" class="add-btn">
+              <span class="plus-icon">+</span> ADD MEMBER
+            </button>
+          </div>
+          <p style="font-size:0.75rem; color:#527a96; margin-bottom: 1rem; background:#f3f9fe; padding:0.4rem 0.8rem; border-radius: 2rem; display:inline-block; text-transform: uppercase;">
+            🔹 EACH FAMILY MEMBER: NAME, EPIC, PHONE (10 DIGITS), OCCUPATION
+          </p>
+          <div id="familyMembersContainer"></div>
+          
+          <div class="total-family-box">
+            <label>📊 NUMBER OF FAMILY MEMBERS</label>
+            <input type="text" id="totalFamilyCountDisplay" readonly value="0">
+          </div>
+        </div>
+
+        <div class="submit-area">
+          <button type="submit" class="btn-submit" id="submitBtn">📤 SUBMIT</button>
+        </div>
+      </form>
+
+      <div class="preview-data" id="previewArea">
+        <strong>📄 DATA PREVIEW</strong><br> PLEASE CHECK CAREFULLY BEFORE SUBMITTING.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="statusMessage" class="status-message"></div>
+
+<script>
+  // ==================== CONFIGURATION ====================
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3LPA_5qQeoo3p3cfF_3oZM5KDWAPaPgTbg0h_TjVWpeOYaCijFFdKFiNbk2KLklyIMA/exec';
+  // ========================================================
+  
+  // DOM elements
+  const familyContainer = document.getElementById('familyMembersContainer');
+  const addFamilyBtn = document.getElementById('addFamilyBtn');
+  const totalDisplay = document.getElementById('totalFamilyCountDisplay');
+  const householdForm = document.getElementById('householdForm');
+  const previewArea = document.getElementById('previewArea');
+  const statusMessageDiv = document.getElementById('statusMessage');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Show status message
+  function showStatus(message, isSuccess) {
+    statusMessageDiv.textContent = message.toUpperCase();
+    statusMessageDiv.className = `status-message ${isSuccess ? 'status-success' : 'status-error'}`;
+    statusMessageDiv.style.display = 'block';
+    setTimeout(() => {
+      statusMessageDiv.style.display = 'none';
+    }, 5000);
+  }
+  
+  // Clear entire form including all family members
+  function clearAllFormFields() {
+    // Clear all main form inputs
+    const allInputs = document.querySelectorAll('#householdForm input, #householdForm select');
+    allInputs.forEach(input => {
+      if (input.type !== 'button' && input.id !== 'totalFamilyCountDisplay') {
+        if (input.tagName === 'SELECT') {
+          input.selectedIndex = 0;
+        } else {
+          input.value = '';
+        }
+      }
+    });
+    
+    // Clear all family member cards
+    const allFamilyCards = document.querySelectorAll('.family-member-card');
+    allFamilyCards.forEach(card => card.remove());
+    
+    // Reset total family count display
+    updateTotalFamilyDisplay();
+    
+    // Reset preview area
+    previewArea.innerHTML = '<strong>📄 DATA PREVIEW</strong><br> FORM HAS BEEN CLEARED. PLEASE FILL NEW DATA AND SUBMIT.';
+    
+    // Reset border colors for all fields
+    const requiredFields = ['ownerName', 'ownerEpic', 'residentEpic', 'guardianName', 'district', 'pincode', 'phoneNumber', 'addressEpic'];
+    requiredFields.forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.style.borderColor = '#e2eaf1';
+    });
+  }
+  
+  // Update total family count
+  function updateTotalFamilyDisplay() {
+    const familyCards = document.querySelectorAll('.family-member-card');
+    const count = familyCards.length;
+    totalDisplay.value = count;
+    return count;
+  }
+  
+  // Reindex member badges
+  function reindexMemberBadges() {
+    const cards = document.querySelectorAll('.family-member-card');
+    cards.forEach((card, idx) => {
+      const badgeSpan = card.querySelector('.member-badge');
+      if (badgeSpan) {
+        badgeSpan.innerText = `👤 MEMBER ${idx + 1}`;
+      }
+      card.setAttribute('data-member-id', idx + 1);
+    });
+  }
+  
+  // Create family member card
+  function createFamilyMemberCard(memberNumber) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'family-member-card';
+    cardDiv.setAttribute('data-member-id', memberNumber);
+    
+    cardDiv.innerHTML = `
+      <div class="member-title">
+        <span class="member-badge">👤 MEMBER ${memberNumber}</span>
+        <button type="button" class="remove-member" title="REMOVE">✖ REMOVE</button>
+      </div>
+      <div class="family-grid">
+        <div class="family-field">
+          <label>FULL NAME *</label>
+          <input type="text" class="family-name" placeholder="ENTER FULL NAME" required style="text-transform: uppercase;">
+        </div>
+        <div class="family-field">
+          <label>EPIC NUMBER</label>
+          <input type="text" class="family-epic" placeholder="EPIC NUMBER (OPTIONAL)" style="text-transform: uppercase;">
+        </div>
+        <div class="family-field">
+          <label>PHONE NUMBER</label>
+          <input type="tel" class="family-phone" placeholder="OPTIONAL - WILL USE PRIMARY" maxlength="10" inputmode="numeric">
+        </div>
+        <div class="family-field">
+          <label>OCCUPATION</label>
+          <input type="text" class="family-occupation" placeholder="E.G., STUDENT, FARMER, LABOUR, TEACHER" style="text-transform: uppercase;">
+        </div>
+      </div>
+    `;
+    
+    // Add uppercase conversion for name and epic fields
+    const nameInput = cardDiv.querySelector('.family-name');
+    const epicInput = cardDiv.querySelector('.family-epic');
+    const occInput = cardDiv.querySelector('.family-occupation');
+    
+    nameInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+    
+    epicInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+    
+    occInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+    
+    // Add phone validation
+    const phoneInput = cardDiv.querySelector('.family-phone');
+    phoneInput.addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+    });
+    
+    const removeBtn = cardDiv.querySelector('.remove-member');
+    removeBtn.addEventListener('click', () => {
+      cardDiv.remove();
+      updateTotalFamilyDisplay();
+      reindexMemberBadges();
+    });
+    
+    return cardDiv;
+  }
+  
+  // Add family member
+  addFamilyBtn.addEventListener('click', () => {
+    const currentCards = document.querySelectorAll('.family-member-card').length;
+    const newId = currentCards + 1;
+    const newCard = createFamilyMemberCard(newId);
+    familyContainer.appendChild(newCard);
+    updateTotalFamilyDisplay();
+    newCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  
+  // Collect all form data
+  function collectFormData() {
+    const ownerName = document.getElementById('ownerName').value.trim().toUpperCase();
+    const ownerEpic = document.getElementById('ownerEpic').value.trim().toUpperCase();
+    const residentName = document.getElementById('residentName').value.trim().toUpperCase();
+    const lastName = document.getElementById('lastName').value.trim().toUpperCase();
+    const residentEpic = document.getElementById('residentEpic').value.trim().toUpperCase();
+    const guardianName = document.getElementById('guardianName').value.trim().toUpperCase();
+    const district = document.getElementById('district').value;
+    const pincode = document.getElementById('pincode').value.trim();
+    const primaryPhoneNumber = document.getElementById('phoneNumber').value.trim();
+    const addressEpic = document.getElementById('addressEpic').value.trim().toUpperCase();
+    const residentAddress = document.getElementById('residentAddress').value.trim().toUpperCase();
+    const block = document.getElementById('block').value;
+    
+    const familyMembers = [];
+    const familyCards = document.querySelectorAll('.family-member-card');
+    familyCards.forEach((card, idx) => {
+      const nameInput = card.querySelector('.family-name');
+      const epicInput = card.querySelector('.family-epic');
+      const phoneInput = card.querySelector('.family-phone');
+      const occInput = card.querySelector('.family-occupation');
+      
+      let epicValue = epicInput ? epicInput.value.trim().toUpperCase() : '';
+      if (!epicValue) {
+        epicValue = 'NONE';
+      }
+      
+      let phoneValue = phoneInput ? phoneInput.value.trim() : '';
+      if (!phoneValue && primaryPhoneNumber) {
+        phoneValue = primaryPhoneNumber;
+      }
+      
+      familyMembers.push({
+        serial: idx + 1,
+        name: nameInput ? nameInput.value.trim().toUpperCase() : '',
+        epicNumber: epicValue,
+        phoneNumber: phoneValue,
+        occupation: occInput ? occInput.value.trim().toUpperCase() : ''
+      });
+    });
+    
+    return {
+      timestamp: new Date().toISOString(),
+      houseOwnerName: ownerName,
+      houseOwnerEpic: ownerEpic,
+      residentName: residentName,
+      lastName: lastName,
+      residentEpic: residentEpic,
+      guardianName: guardianName,
+      district: district,
+      pincode: pincode,
+      phoneNumber: primaryPhoneNumber,
+      addressAsPerEpic: addressEpic,
+      residentAddress: residentAddress || addressEpic,
+      block: block,
+      familyMembers: JSON.stringify(familyMembers),
+      totalFamilyCount: familyMembers.length
+    };
+  }
+  
+  // Validate form
+  function validateRequiredFields() {
+    const requiredIds = ['ownerName', 'ownerEpic', 'residentEpic', 'guardianName', 'district', 'pincode', 'phoneNumber', 'addressEpic'];
+    let isValid = true;
+    
+    for (let id of requiredIds) {
+      const field = document.getElementById(id);
+      if (!field.value.trim()) {
+        field.style.borderColor = '#e74c3c';
+        isValid = false;
+        setTimeout(() => {
+          field.style.borderColor = '#e2eaf1';
+        }, 2000);
+      } else {
+        field.style.borderColor = '#e2eaf1';
+      }
+    }
+    
+    const districtVal = document.getElementById('district').value;
+    if (!districtVal) {
+      document.getElementById('district').style.borderColor = '#e74c3c';
+      isValid = false;
+      setTimeout(() => {
+        document.getElementById('district').style.borderColor = '#e2eaf1';
+      }, 2000);
+    }
+    
+    const pincodeVal = document.getElementById('pincode').value.trim();
+    if (pincodeVal && !/^\d{6}$/.test(pincodeVal)) {
+      alert('❌ PINCODE MUST BE EXACTLY 6 DIGITS (E.G., 793001)');
+      document.getElementById('pincode').style.borderColor = '#e74c3c';
+      isValid = false;
+    }
+    
+    const phoneVal = document.getElementById('phoneNumber').value.trim();
+    if (phoneVal && !/^\d{10}$/.test(phoneVal)) {
+      alert('📞 PRIMARY PHONE NUMBER MUST BE EXACTLY 10 DIGITS (E.G., 9876543210)');
+      document.getElementById('phoneNumber').style.borderColor = '#e74c3c';
+      isValid = false;
+    }
+    
+    const familyCards = document.querySelectorAll('.family-member-card');
+    familyCards.forEach((card, idx) => {
+      const nameInput = card.querySelector('.family-name');
+      if (nameInput && !nameInput.value.trim()) {
+        alert(`❌ FAMILY MEMBER ${idx + 1}: NAME IS REQUIRED`);
+        nameInput.style.borderColor = '#e74c3c';
+        isValid = false;
+      } else if (nameInput) {
+        nameInput.style.borderColor = '#e0eaf1';
+      }
+      
+      const phoneInput = card.querySelector('.family-phone');
+      if (phoneInput && phoneInput.value.trim()) {
+        const phoneValFamily = phoneInput.value.trim();
+        if (!/^\d{10}$/.test(phoneValFamily)) {
+          alert(`❌ FAMILY MEMBER ${idx + 1}: PHONE NUMBER MUST BE EXACTLY 10 DIGITS IF PROVIDED`);
+          phoneInput.style.borderColor = '#e74c3c';
+          isValid = false;
+        } else {
+          phoneInput.style.borderColor = '#e0eaf1';
+        }
+      }
+    });
+    
+    return isValid;
+  }
+  
+  // Generate preview
+  function generatePreviewHTML(data) {
+    let html = `<strong>🏡 HOUSEHOLD REGISTRATION SUMMARY</strong><br><br>`;
+    html += `<strong>🏠 OWNER:</strong> ${escapeHtml(data.houseOwnerName) || '—'} (EPIC: ${escapeHtml(data.houseOwnerEpic) || '—'})<br>`;
+    html += `<strong>📌 PRIMARY RESIDENT:</strong> ${escapeHtml(data.residentName) || '—'} ${escapeHtml(data.lastName) || ''}<br>`;
+    html += ` EPIC: ${escapeHtml(data.residentEpic)} | GUARDIAN: ${escapeHtml(data.guardianName)}<br>`;
+    html += ` 📍 DISTRICT: ${escapeHtml(data.district)} | PIN: ${escapeHtml(data.pincode)} | 📞 PHONE: ${escapeHtml(data.phoneNumber)}<br>`;
+    html += ` 🏠 ADDRESS: ${escapeHtml(data.addressAsPerEpic)}<br>`;
+    if (data.block) {
+      html += ` 🚩 BLOCK: ${escapeHtml(data.block)}<br>`;
+    }
+    html += `<hr>`;
+    html += `<strong>👨‍👩‍👧‍👦 FAMILY MEMBERS (${data.totalFamilyCount})</strong><br>`;
+    
+    const familyMembers = JSON.parse(data.familyMembers);
+    if (familyMembers.length === 0) {
+      html += `<em>NO ADDITIONAL FAMILY MEMBERS</em><br>`;
+    } else {
+      familyMembers.forEach((mem) => {
+        html += `▸ #${mem.serial} ${escapeHtml(mem.name) || '—'} | EPIC: ${escapeHtml(mem.epicNumber) || 'NONE'} | 📞 ${escapeHtml(mem.phoneNumber) || '—'} | 💼 ${escapeHtml(mem.occupation) || '—'}<br>`;
+      });
+    }
+    html += `<hr><small>✅ DATA SUBMITTED SUCCESSFULLY</small>`;
+    return html;
+  }
+  
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+  
+  // Send data to Google Sheets
+  async function sendToGoogleSheets(formData) {
+    try {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(formData)
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Error:', error);
+      return false;
+    }
+  }
+  
+  // Handle form submission
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    if (!validateRequiredFields()) {
+      showStatus('❌ PLEASE FIX VALIDATION ERRORS BEFORE SUBMITTING.', false);
+      return;
+    }
+    
+    const formData = collectFormData();
+    
+    // Show preview
+    const previewHtml = generatePreviewHTML(formData);
+    previewArea.innerHTML = previewHtml;
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ SUBMITTING...';
+    
+    // Submit to Google Sheets
+    const success = await sendToGoogleSheets(formData);
+    
+    if (success) {
+      showStatus('✅ DATA SUCCESSFULLY SUBMITTED!.', true);
+      previewArea.innerHTML = previewHtml + '\n\n✅ DATA HAS BEEN SAVED SUCCESSFULLY!.';
+      
+      // Clear all form fields after successful submission
+      clearAllFormFields();
+    } else {
+      showStatus('❌ ERROR SUBMITTING DATA. PLEASE TRY AGAIN.', false);
+      previewArea.innerHTML = previewHtml + '\n\n❌ SUBMISSION FAILED. PLEASE CHECK YOUR CONNECTION AND TRY AGAIN.';
+    }
+    
+    // Re-enable submit button
+    submitBtn.disabled = false;
+    submitBtn.textContent = '📤 SUBMIT';
+  }
+  
+  // Input validators
+  const pincodeInput = document.getElementById('pincode');
+  pincodeInput.addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+  });
+  
+  const phoneMain = document.getElementById('phoneNumber');
+  phoneMain.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+  });
+  
+  // Apply uppercase to all text inputs
+  const allTextInputs = document.querySelectorAll('input[type="text"]');
+  allTextInputs.forEach(input => {
+    input.addEventListener('input', function() {
+      if (this.id !== 'pincode' && this.id !== 'phoneNumber' && !this.classList.contains('family-phone')) {
+        this.value = this.value.toUpperCase();
+      }
+    });
+  });
+  
+  householdForm.addEventListener('submit', handleFormSubmit);
+  updateTotalFamilyDisplay();
+</script>
+
+<!-- ==================== GOOGLE APPS SCRIPT CODE ==================== -->
+<!-- 
+  COPY AND PASTE THE FOLLOWING CODE INTO YOUR GOOGLE APPS SCRIPT EDITOR:
+  (Extensions > Apps Script in your Google Sheet)
+  
+  ==================== START OF APPS SCRIPT ====================
+  
+  function doPost(e) {
+    try {
+      const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      const data = e.parameter;
+      
+      // Add headers if sheet is empty
+      if (sheet.getLastRow() === 0) {
+        const headers = [
+          'TIMESTAMP', 'HOUSE OWNER NAME', 'HOUSE OWNER EPIC', 'RESIDENT NAME', 
+          'LAST NAME', 'RESIDENT EPIC', 'GUARDIAN NAME', 'DISTRICT', 'PINCODE',
+          'PHONE NUMBER', 'ADDRESS AS PER EPIC', 'RESIDENT ADDRESS', 'BLOCK',
+          'FAMILY MEMBERS (JSON)', 'TOTAL FAMILY COUNT'
+        ];
+        sheet.appendRow(headers);
+      }
+      
+      // Append data row
+      const row = [
+        data.timestamp || new Date().toISOString(),
+        data.houseOwnerName || '',
+        data.houseOwnerEpic || '',
+        data.residentName || '',
+        data.lastName || '',
+        data.residentEpic || '',
+        data.guardianName || '',
+        data.district || '',
+        data.pincode || '',
+        data.phoneNumber || '',
+        data.addressAsPerEpic || '',
+        data.residentAddress || '',
+        data.block || '',
+        data.familyMembers || '[]',
+        data.totalFamilyCount || '0'
+      ];
+      
+      sheet.appendRow(row);
+      
+      return ContentService
+        .createTextOutput(JSON.stringify({ success: true, message: 'Data saved' }))
+        .setMimeType(ContentService.MimeType.JSON);
+        
+    } catch (error) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  
+  function doGet(e) {
+    return ContentService.createTextOutput('SERVICE IS RUNNING. USE POST METHOD TO SUBMIT DATA.');
+  }
+  
+  ==================== END OF APPS SCRIPT ====================
+-->
+</body>
+</html>
