@@ -677,10 +677,10 @@
             quantity: ''
         };
         let ordersMappings = {
-            customerName: 'customerName',
-            skuCode: 'skuCode',
-            skuName: 'skuName',
-            pendingQty: 'quantity'
+            customerName: '',
+            skuCode: '',
+            skuName: '',
+            pendingQty: ''
         };
         let stockMappingApplied = false;
         let ordersMappingApplied = false;
@@ -924,7 +924,7 @@
             const lowerHeaders = headers.map(h => h ? h.toLowerCase() : '');
             
             // Try to find SKU Code column
-            const skuCodePatterns = ['sku code', 'skucode', 'code', 'item code', 'product code'];
+            const skuCodePatterns = ['sku code', 'skucode', 'SKU Code', 'item code', 'product code'];
             const skuCodeIndex = lowerHeaders.findIndex(h => skuCodePatterns.some(pattern => h.includes(pattern)));
             if (skuCodeIndex !== -1) {
                 stockSkuCodeMap.value = headers[skuCodeIndex];
@@ -932,7 +932,7 @@
             }
             
             // Try to find SKU Name column
-            const skuNamePatterns = ['sku name', 'skuname', 'name', 'item name', 'product name', 'description'];
+            const skuNamePatterns = ['sku name', 'skuname', 'SKU Name', 'item name', 'product name', 'description'];
             const skuNameIndex = lowerHeaders.findIndex(h => skuNamePatterns.some(pattern => h.includes(pattern)));
             if (skuNameIndex !== -1) {
                 stockSkuNameMap.value = headers[skuNameIndex];
@@ -940,7 +940,7 @@
             }
             
             // Try to find Quantity column
-            const qtyPatterns = ['quantity', 'qty', 'stock', 'available', 'balance', 'qnty'];
+            const qtyPatterns = ['quantity', 'qty', 'stock', 'available', 'Qty', 'qnty'];
             const qtyIndex = lowerHeaders.findIndex(h => qtyPatterns.some(pattern => h.includes(pattern)));
             if (qtyIndex !== -1) {
                 stockQuantityMap.value = headers[qtyIndex];
@@ -953,7 +953,7 @@
             const lowerHeaders = headers.map(h => h ? h.toLowerCase() : '');
             
             // Try to find Customer column
-            const customerPatterns = ['customerName', 'client', 'buyer', 'name'];
+            const customerPatterns = ['customerName', 'customer', 'Name', 'name'];
             const customerIndex = lowerHeaders.findIndex(h => customerPatterns.some(pattern => h.includes(pattern)));
             if (customerIndex !== -1) {
                 ordersCustomerMap.value = headers[customerIndex];
@@ -961,7 +961,7 @@
             }
             
             // Try to find SKU Code column
-            const skuCodePatterns = ['sku code', 'skucode', 'code', 'item code', 'product code'];
+            const skuCodePatterns = ['skuCode', 'skucode', 'code', 'item code', 'product code'];
             const skuCodeIndex = lowerHeaders.findIndex(h => skuCodePatterns.some(pattern => h.includes(pattern)));
             if (skuCodeIndex !== -1) {
                 ordersSkuCodeMap.value = headers[skuCodeIndex];
@@ -969,7 +969,7 @@
             }
             
             // Try to find SKU Name column
-            const skuNamePatterns = ['sku name', 'skuname', 'sku', 'item name', 'skuName', 'description'];
+            const skuNamePatterns = ['skuName', 'sku', 'Name', 'item name','description'];
             const skuNameIndex = lowerHeaders.findIndex(h => skuNamePatterns.some(pattern => h.includes(pattern)));
             if (skuNameIndex !== -1) {
                 ordersSkuNameMap.value = headers[skuNameIndex];
@@ -1458,10 +1458,10 @@
                 ["Current Stock", "SKU Code", stockMappings.skuCode],
                 ["Current Stock", "SKU Name", stockMappings.skuName],
                 ["Current Stock", "Quantity", stockMappings.quantity],
-                ["Orders", "customerName", ordersMappings.customerName],
-                ["Orders", "skuCode", ordersMappings.skuCode],
-                ["Orders", "skuName", ordersMappings.skuName],
-                ["Orders", "quantity", ordersMappings.pendingQty]
+                ["Orders", "Customer Name", ordersMappings.customerName],
+                ["Orders", "SKU Code", ordersMappings.skuCode],
+                ["Orders", "SKU Name", ordersMappings.skuName],
+                ["Orders", "Pending Quantity", ordersMappings.pendingQty]
             ];
             
             const mappingWs = XLSX.utils.aoa_to_sheet(mappingWsData);
