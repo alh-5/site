@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Lawsohtun Nongshong shnong</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif; }
+        body { background: #e9f0f5; margin: 0; padding: 16px 12px; }
+        .app-container { max-width: 1600px; margin: 0 auto; }
+        .search-card { background: white; border-radius: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 20px 22px; margin-bottom: 24px; transition: all 0.2s; }
+        .search-title { font-size: 1.5rem; font-weight: 800; margin: 0 0 8px 0; background: linear-gradient(135deg, #1a4d8c, #2b6eb3); background-clip: text; -webkit-background-clip: text; color: transparent; text-align: center; letter-spacing: -0.2px; }
+        .subtitle { text-align: center; font-size: 0.75rem; color: #5b7a9a; margin-bottom: 20px; }
+        .import-section { background: #f0f6fe; border-radius: 24px; padding: 12px 18px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .sync-badge { background: #e6f7e6; border-radius: 40px; padding: 6px 16px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 8px; color: #2c7a4d; font-weight: 600; }
+        .auto-load-note { background: #eef2fa; border-radius: 30px; padding: 6px 14px; font-size: 0.7rem; color: #1a5d9c; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+        .import-status { font-size: 0.7rem; padding: 6px 14px; border-radius: 30px; text-align: center; background: #e8f5e9; color: #2c7a4d; font-weight: 500; }
+        .import-status.error { background: #fee2e2; color: #b91c1c; }
+        .import-status.loading { background: #fff3e0; color: #d97706; }
+        
+        /* UNIVERSAL SEARCH BOX - HERO STYLE */
+        .universal-search-wrapper { margin: 12px 0 20px 0; position: relative; }
+        .universal-search-input { width: 100%; padding: 16px 24px; font-size: 1rem; border-radius: 60px; border: 2px solid #e2edf7; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.25s; padding-left: 55px; font-weight: 500; }
+        .universal-search-input:focus { outline: none; border-color: #1a5d9c; box-shadow: 0 4px 18px rgba(26,93,156,0.15); }
+        .search-icon-symbol { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; pointer-events: none; color: #7c9bc0; }
+        .reset-search-btn { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: #eef2f8; border: none; border-radius: 40px; padding: 6px 14px; font-size: 0.7rem; cursor: pointer; color: #4a627a; font-weight: 600; transition: 0.2s; }
+        .reset-search-btn:hover { background: #dce5ef; }
+        .search-hint { font-size: 0.65rem; color: #6f8eae; margin-top: 8px; margin-left: 18px; display: flex; gap: 16px; flex-wrap: wrap; }
+        
+        .btn { border: none; background: #f0f4f9; padding: 10px 20px; border-radius: 40px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; color: #1f3a5f; }
+        .btn-primary { background: #1a5d9c; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn-primary:hover { background: #0f4a7c; transform: translateY(-1px); }
+        .btn-outline { background: transparent; border: 1.5px solid #cbdde9; }
+        .table-wrapper { background: white; border-radius: 24px; overflow-x: auto; padding: 4px 0; box-shadow: 0 6px 14px rgba(0,0,0,0.03); }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; min-width: 1000px; }
+        .data-table th { background: #f8fafd; padding: 14px 8px; text-align: left; font-weight: 700; color: #1e3a5f; border-bottom: 2px solid #dce7f0; position: sticky; top: 0; backdrop-filter: blur(4px); }
+        .data-table td { padding: 10px 8px; border-bottom: 1px solid #e9edf2; vertical-align: middle; }
+        .json-preview { max-width: 200px; font-family: monospace; font-size: 0.65rem; background: #f3f6fc; padding: 4px 6px; border-radius: 12px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .view-receipt-btn { background: #e67e22; border: none; color: white; padding: 5px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .view-receipt-btn:hover { background: #d35400; transform: scale(0.97); }
+        .stats-badge { background: #e6f0ff; padding: 8px 18px; border-radius: 40px; font-size: 0.75rem; font-weight: 600; color: #1a5d9c; display: inline-block; margin-bottom: 16px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
+        .modal-card { background: white; max-width: 90%; width: 720px; max-height: 90vh; border-radius: 32px; overflow-y: auto; padding: 20px; box-shadow: 0 25px 40px rgba(0,0,0,0.2); }
+        .receipt-container { background: white; padding: 24px; width: 100%; max-width: 620px; margin: 0 auto; border-radius: 20px; font-family: system-ui; }
+        .receipt-title { text-align: center; font-size: 1.4rem; font-weight: 800; border-bottom: 2px dashed #bdd4e7; margin-bottom: 16px; padding-bottom: 8px; color: #1a4d8c; }
+        .receipt-row { display: flex; justify-content: space-between; margin: 6px 0; font-size: 0.8rem; border-bottom: 1px dotted #ecf3fa; padding: 5px 0; }
+        .receipt-label { font-weight: 700; min-width: 140px; color: #2c3e66; }
+        .family-members-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.7rem; }
+        .family-members-table th { background: #f0f4fa; padding: 8px 6px; text-align: left; font-weight: 700; }
+        .family-members-table td { padding: 6px 4px; border-bottom: 1px solid #eef2f8; }
+        .receipt-footer { text-align: center; margin-top: 20px; font-size: 0.65rem; color: #6c8dae; border-top: 1px dashed #dce5ef; padding-top: 12px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        @media (max-width: 640px) {
+            .search-card { padding: 16px; }
+            .universal-search-input { padding: 14px 20px 14px 48px; font-size: 0.9rem; }
+            .receipt-container { padding: 16px; }
+            .receipt-label { min-width: 100px; }
+        }
+        .hidden-url { display: none; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="search-card">
+        <div class="search-title">🏡 Lawsohtun Registry</div>
+        <div class="subtitle">Lawsohtun Resident Data | Live Sync </div>
+        
+        <!-- Universal Search Box (single field searches everything) -->
+        <div class="universal-search-wrapper">
+            <span class="search-icon-symbol">🔎</span>
+            <input type="text" id="universalSearch" class="universal-search-input" placeholder="Track Details...">
+            <button class="reset-search-btn" id="clearUniversalSearch">✕ Clear</button>
+        </div>
+        
+
+        <div class="import-section">
+            <div class="flex-between" style="width:100%">
+                <div class="auto-load-note">🔄 Lawsohtun Track and Trace Resident</div>
+                <div id="liveSyncIndicator" class="sync-badge">⏳ Connecting...</div>
+            </div>
+            <div id="importStatus" class="import-status" style="margin-top: 10px;">🟢 Initializing secure data link...</div>
+            <!-- Script URL is hidden from UI, stored only internally -->
+        </div>
+        
+        <!-- Legacy filter fields are removed, only universal search remains, but we keep hidden for logic -->
+        <div style="display: none;">
+            <input type="text" id="searchOwner" placeholder="Owner name">
+            <input type="text" id="searchOwnerEpic" placeholder="Owner EPIC">
+            <input type="text" id="searchResidentEpic" placeholder="Resident EPIC">
+            <input type="text" id="searchResident" placeholder="Resident name">
+            <input type="text" id="searchPhone" placeholder="Phone">
+            <input type="text" id="searchFamilyJson" placeholder="Family JSON">
+        </div>
+    </div>
+
+    <div class="stats-badge" id="statsDisplay">📊 Loading records...</div>
+    <div class="table-wrapper">
+        <table class="data-table" id="registryTable">
+            <thead>
+                <tr><th>TIMESTAMP</th><th>OWNER NAME</th><th>OWNER EPIC</th><th>RESIDENT NAME</th><th>LAST NAME</th>
+                    <th>RESIDENT EPIC</th><th>GUARDIAN</th><th>DISTRICT</th><th>PINCODE</th><th>PHONE</th>
+                    <th>ADDRESS</th><th>RESIDENT ADDR</th><th>BLOCK</th><th>FAMILY JSON</th><th>COUNT</th><th>VIEW RECEIPT</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="16" style="text-align:center;padding:50px;">⏳ Syncing Lawsohtun Resident Data...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Receipt Modal (PNG Ready) -->
+<div id="receiptModal" class="modal">
+    <div class="modal-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin:0;">📄 LAWSOHTUN TRACKING SYSTEM </h3>
+            <button class="btn btn-outline" id="closeReceiptModal" style="background:#f1f5f9;">✕ Close</button>
+        </div>
+        <div id="receiptContentArea" style="overflow-y: auto; max-height: 65vh;"></div>
+        <div class="modal-actions">
+            <button class="btn btn-primary" id="downloadReceiptPngBtn">📸 Download as PNG</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= CONFIGURATION =======================
+    // HARDCODED APPS SCRIPT URL (hidden from UI, no display)
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWy-K9lhmM-KkYXTntIyU7ohbabg7TyfRqyGsag24Xc_lnMJwF4u3Makdn-wT--HMF/exec";
+    
+    let registryData = [];
+    let syncEnabled = false;
+    let refreshInterval = null;
+    
+    const REQUIRED_HEADERS = ["TIMESTAMP", "HOUSE OWNER NAME", "HOUSE OWNER EPIC", "RESIDENT NAME", "LAST NAME", "RESIDENT EPIC", "GUARDIAN NAME", "DISTRICT", "PINCODE", "PHONE NUMBER", "ADDRESS AS PER EPIC", "RESIDENT ADDRESS", "BLOCK", "FAMILY MEMBERS (JSON)"];
+    
+    // Helper UI status
+    function showStatus(msg, type = "success") {
+        const statusDiv = document.getElementById("importStatus");
+        statusDiv.innerText = msg;
+        statusDiv.className = `import-status ${type}`;
+        if (type !== "loading") {
+            setTimeout(() => {
+                if (registryData.length) statusDiv.innerText = `✅ Live: ${registryData.length} records synced`;
+                else statusDiv.innerText = `📭 Connected but no records found`;
+                statusDiv.className = "import-status success";
+            }, 2800);
+        }
+    }
+    
+    function updateFamilyCount(entry) {
+        try {
+            let members = JSON.parse(entry["FAMILY MEMBERS (JSON)"] || "[]");
+            entry["TOTAL FAMILY COUNT"] = (Array.isArray(members) ? members.length : 0).toString();
+        } catch(e) { entry["TOTAL FAMILY COUNT"] = "0"; }
+        return entry;
+    }
+    
+    function escapeHtml(str) { return String(str || "").replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+    
+    // UNIVERSAL SEARCH FUNCTION: searches across ALL fields + deep family JSON content
+    function universalMatch(entry, searchTerm) {
+        if (!searchTerm) return true;
+        const term = searchTerm.toLowerCase();
+        
+        // Standard flat fields
+        const flatValues = [
+            entry["HOUSE OWNER NAME"], entry["HOUSE OWNER EPIC"], entry["RESIDENT NAME"], entry["LAST NAME"],
+            entry["RESIDENT EPIC"], entry["GUARDIAN NAME"], entry["DISTRICT"], entry["PINCODE"],
+            entry["PHONE NUMBER"], entry["ADDRESS AS PER EPIC"], entry["RESIDENT ADDRESS"], entry["BLOCK"]
+        ];
+        for (let val of flatValues) {
+            if (val && val.toLowerCase().includes(term)) return true;
+        }
+        
+        // Search inside FAMILY MEMBERS JSON deeply
+        const familyJsonStr = entry["FAMILY MEMBERS (JSON)"] || "[]";
+        try {
+            const members = JSON.parse(familyJsonStr);
+            if (Array.isArray(members)) {
+                for (let m of members) {
+                    if ((m.name && m.name.toLowerCase().includes(term)) ||
+                        (m.epicNumber && m.epicNumber.toLowerCase().includes(term)) ||
+                        (m.phoneNumber && m.phoneNumber.toLowerCase().includes(term)) ||
+                        (m.occupation && m.occupation.toLowerCase().includes(term)) ||
+                        (m.serial && m.serial.toString().includes(term))) {
+                        return true;
+                    }
+                }
+            }
+        } catch(e) { /* fallback: search raw string */ if (familyJsonStr.toLowerCase().includes(term)) return true; }
+        
+        return false;
+    }
+    
+    // render table with universal search applied
+    function renderTable() {
+        const tbody = document.getElementById("tableBody");
+        const universalTerm = document.getElementById("universalSearch").value.trim();
+        
+        if (!registryData.length) {
+            tbody.innerHTML = `<tr><td colspan="16" style="text-align:center;padding:60px"><div>📂 No records loaded. Auto-sync will fetch data shortly.</div></td></tr>`;
+            document.getElementById("statsDisplay").innerText = `📊 Total Records: 0`;
+            return;
+        }
+        
+        const filtered = registryData.filter(entry => universalMatch(entry, universalTerm));
+        document.getElementById("statsDisplay").innerHTML = `📊 Total: ${registryData.length} | Showing: ${filtered.length} ${syncEnabled ? '🔁 Live Sync' : ''}`;
+        
+        if (!filtered.length) {
+            tbody.innerHTML = `<tr><td colspan="16" style="text-align:center;padding:40px">🔎 No results matching "${escapeHtml(universalTerm)}"</td></tr>`;
+            return;
+        }
+        
+        tbody.innerHTML = "";
+        filtered.forEach(entry => {
+            const originalIdx = registryData.findIndex(r => r["TIMESTAMP"] === entry["TIMESTAMP"] && r["HOUSE OWNER EPIC"] === entry["HOUSE OWNER EPIC"]);
+            const row = tbody.insertRow();
+            REQUIRED_HEADERS.forEach(h => {
+                const cell = row.insertCell();
+                let val = entry[h] || "";
+                if (h === "FAMILY MEMBERS (JSON)") {
+                    let display = val.length > 55 ? val.substring(0, 55) + "…" : val;
+                    cell.innerHTML = `<div class="json-preview" title="${escapeHtml(val)}">📋 ${escapeHtml(display)}</div>`;
+                } else cell.innerText = val;
+            });
+            row.insertCell().innerText = entry["TOTAL FAMILY COUNT"] || "0";
+            const actionCell = row.insertCell();
+            actionCell.style.textAlign = "center";
+            actionCell.innerHTML = `<button class="view-receipt-btn" data-idx="${originalIdx}">🖼️ View Receipt (PNG)</button>`;
+            const viewBtn = actionCell.querySelector(".view-receipt-btn");
+            viewBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openReceiptViewer(originalIdx);
+            });
+        });
+    }
+    
+    // Parse incoming sheet rows
+    function parseRecords(rows) {
+        const records = [];
+        for (let row of rows) {
+            const entry = {};
+            for (let h of REQUIRED_HEADERS) {
+                let val = row[h];
+                if (val === undefined || val === null) val = "";
+                entry[h] = String(val);
+            }
+            if (!entry["FAMILY MEMBERS (JSON)"]) entry["FAMILY MEMBERS (JSON)"] = "[]";
+            if (entry["HOUSE OWNER NAME"] || entry["RESIDENT NAME"] || entry["RESIDENT EPIC"]) {
+                try { JSON.parse(entry["FAMILY MEMBERS (JSON)"]); } catch(e) { entry["FAMILY MEMBERS (JSON)"] = "[]"; }
+                records.push(updateFamilyCount(entry));
+            }
+        }
+        return records;
+    }
+    
+    // Auto-load from hidden Apps Script URL
+    async function autoLoadFromSheet() {
+        const url = APPS_SCRIPT_URL;
+        if (!url) {
+            document.getElementById("importStatus").innerHTML = "⚠️ Configuration missing";
+            document.getElementById("liveSyncIndicator").innerHTML = "⚠️ No URL";
+            return;
+        }
+        document.getElementById("liveSyncIndicator").innerHTML = "🔄 Syncing...";
+        document.getElementById("importStatus").innerHTML = "🔄 Fetching latest resident data...";
+        document.getElementById("importStatus").className = "import-status loading";
+        
+        try {
+            const response = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-cache' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            if (!data || !Array.isArray(data)) throw new Error("Invalid data format from Google Sheet");
+            if (data.length === 0) throw new Error("Sheet returned empty array");
+            
+            const records = parseRecords(data);
+            if (records.length === 0) throw new Error("No valid records after parsing");
+            
+            registryData = records;
+            syncEnabled = true;
+            document.getElementById("liveSyncIndicator").innerHTML = "🔗 Live Sync Active";
+            document.getElementById("liveSyncIndicator").style.background = "#e0f2e9";
+            renderTable();
+            document.getElementById("importStatus").innerHTML = `✅ Synced ${records.length} records from Lawsohtun Registry`;
+            document.getElementById("importStatus").className = "import-status success";
+            showStatus(`📋 Loaded ${records.length} records`, "success");
+        } catch(err) {
+            console.error("AutoLoad Error:", err);
+            document.getElementById("liveSyncIndicator").innerHTML = "⚠️ Sync Failed";
+            document.getElementById("importStatus").innerHTML = `❌ Error: ${err.message}. Check CORS & sheet deployment.`;
+            document.getElementById("importStatus").className = "import-status error";
+            syncEnabled = false;
+            registryData = [];
+            renderTable();
+        }
+    }
+    
+    // Periodic refresh to maintain live sync (every 50 seconds)
+    function startAutoRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => {
+            if (APPS_SCRIPT_URL) {
+                autoLoadFromSheet().catch(e => console.warn("periodic refresh error", e));
+            }
+        }, 50000);
+    }
+    
+    // ==================== RECEIPT MODAL WITH PNG ====================
+    let currentReceiptEntry = null;
+    
+    function generateReceiptHTML(entry) {
+        let members = [];
+        try { members = JSON.parse(entry["FAMILY MEMBERS (JSON)"] || "[]"); } catch(e) { members = []; }
+        let membersHtml = '<tr><td colspan="5" style="text-align:center; padding: 20px;">— No family members listed —</td></tr>';
+        if (members.length) {
+            membersHtml = members.map((m, i) => `
+                <tr>
+                    <td style="padding: 6px 4px;">${i+1}</td>
+                    <td style="padding: 6px 4px;">${escapeHtml(m.name || '-')}</td>
+                    <td style="padding: 6px 4px;">${escapeHtml(m.epicNumber || '-')}</td>
+                    <td style="padding: 6px 4px;">${escapeHtml(m.phoneNumber || '-')}</td>
+                    <td style="padding: 6px 4px;">${escapeHtml(m.occupation || '-')}</td>
+                </tr>
+            `).join('');
+        }
+        return `
+            <div class="receipt-container" id="receiptCaptureElement">
+                <div class="receipt-title">🏠 RESIDENT REGISTRATION CERTIFICATE</div>
+                <div class="receipt-row"><span class="receipt-label">House Owner:</span><span>${escapeHtml(entry["HOUSE OWNER NAME"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Owner EPIC:</span><span>${escapeHtml(entry["HOUSE OWNER EPIC"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Resident Name:</span><span>${escapeHtml(entry["RESIDENT NAME"] || '—')} ${escapeHtml(entry["LAST NAME"] || '')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Resident EPIC:</span><span>${escapeHtml(entry["RESIDENT EPIC"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Guardian:</span><span>${escapeHtml(entry["GUARDIAN NAME"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">District / Pincode:</span><span>${escapeHtml(entry["DISTRICT"] || '—')} | ${escapeHtml(entry["PINCODE"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Phone Number:</span><span>${escapeHtml(entry["PHONE NUMBER"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Address (EPIC):</span><span>${escapeHtml(entry["ADDRESS AS PER EPIC"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Resident Address:</span><span>${escapeHtml(entry["RESIDENT ADDRESS"] || '—')}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Block:</span><span>${escapeHtml(entry["BLOCK"] || '—')}</span></div>
+                <div style="margin-top: 14px;"><strong>👨‍👩‍👧‍👦 Family Members (${members.length})</strong>
+                    <table class="family-members-table">
+                        <thead><tr><th>#</th><th>Name</th><th>EPIC</th><th>Phone</th><th>Occupation</th></tr></thead>
+                        <tbody>${membersHtml}</tbody>
+                    </table>
+                </div>
+                <div class="receipt-footer">📅 Generated: ${new Date().toLocaleString()} | Lawsohtun Resident Portal</div>
+            </div>
+        `;
+    }
+    
+    async function openReceiptViewer(index) {
+        const entry = registryData[index];
+        if (!entry) return;
+        currentReceiptEntry = entry;
+        const modal = document.getElementById("receiptModal");
+        const contentArea = document.getElementById("receiptContentArea");
+        contentArea.innerHTML = generateReceiptHTML(entry);
+        modal.style.display = "flex";
+    }
+    
+    async function downloadReceiptPNG() {
+        if (!currentReceiptEntry) {
+            showStatus("No receipt selected", "error");
+            return;
+        }
+        const receiptElement = document.getElementById("receiptCaptureElement");
+        if (!receiptElement) {
+            showStatus("Receipt content missing", "error");
+            return;
+        }
+        try {
+            showStatus("Generating PNG...", "loading");
+            const canvas = await html2canvas(receiptElement, { scale: 2.2, backgroundColor: '#ffffff', logging: false });
+            const link = document.createElement('a');
+            const ownerSlug = (currentReceiptEntry["HOUSE OWNER NAME"] || "family").replace(/[^a-z0-9]/gi, '_').substring(0, 30);
+            link.download = `FamilyReceipt_${ownerSlug}_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showStatus("✅ Receipt PNG saved!", "success");
+        } catch(err) {
+            console.error(err);
+            showStatus("Failed to generate PNG", "error");
+        }
+    }
+    
+    // Event listeners
+    document.getElementById("universalSearch").addEventListener("input", () => renderTable());
+    document.getElementById("clearUniversalSearch").addEventListener("click", () => {
+        document.getElementById("universalSearch").value = "";
+        renderTable();
+    });
+    document.getElementById("closeReceiptModal").addEventListener("click", () => {
+        document.getElementById("receiptModal").style.display = "none";
+        currentReceiptEntry = null;
+    });
+    document.getElementById("downloadReceiptPngBtn").addEventListener("click", downloadReceiptPNG);
+    window.onclick = (e) => { if (e.target === document.getElementById("receiptModal")) document.getElementById("receiptModal").style.display = "none"; };
+    
+    // INIT: auto-load + start refresh (NO URL displayed)
+    (function init() {
+        autoLoadFromSheet().then(() => {
+            startAutoRefresh();
+        }).catch(e => console.warn("initial auto-load", e));
+    })();
+</script>
+</body>
+</html>
