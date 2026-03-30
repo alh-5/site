@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Trai IIng | Track & Trace System - Complete Mandatory Fields</title>
+    <title>Trai IIng | Track & Trace System</title>
     <style>
         * {
             margin: 0;
@@ -146,6 +146,14 @@
             text-transform: none;
         }
 
+        input:disabled, textarea:disabled {
+            background-color: #eef2f7;
+            cursor: not-allowed;
+            color: #2c5a44;
+            font-weight: 600;
+            border-color: #cbdbe0;
+        }
+
         select {
             cursor: pointer;
             appearance: none;
@@ -168,6 +176,16 @@
             background: #ffe4e4;
             color: #c53030;
             padding: 0.2rem 0.5rem;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        .fixed-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: #e0f0ea;
+            color: #1f6e4a;
+            padding: 0.2rem 0.6rem;
             border-radius: 30px;
             margin-left: 6px;
         }
@@ -323,18 +341,13 @@
             background-color: #fff5f5 !important;
         }
         
-        .district-valid-icon {
-            position: absolute;
-            right: 15px;
-            top: 45px;
-            font-size: 1rem;
-            pointer-events: none;
-            color: #2c7a5e;
-        }
-        
-        /* Button visible by default */
-        .btn-visible {
-            display: inline-flex !important;
+        .info-note {
+            font-size: 0.7rem;
+            background: #eef3fc;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            display: inline-block;
+            color: #2c6b2f;
         }
     </style>
 </head>
@@ -363,7 +376,10 @@
                 <div class="input-group pincode-field"><label>📮 PINCODE <span class="mandatory-badge">6 digits</span></label><input type="text" id="pincode" placeholder="793001" maxlength="6"></div>
             </div>
             <div class="form-row">
-                <div class="input-group rent-address-field"><label>🏘️ ADDRESS/JAKA BA AI IING WAI <span class="mandatory-badge">Required</span></label><textarea rows="2" id="rentAddress" placeholder="Jaka IIng ai Wai"></textarea></div>
+                <div class="input-group rent-address-field">
+                    <label>🏘️ ADDRESS/JAKA BA AI IING WAI</label>
+                    <textarea rows="2" id="rentAddress" placeholder="Jaka IIng ai Wai" disabled style="background:#eef2f7; color:#1f5e4c; font-weight:600;">LAWSOHTUN</textarea>
+                </div>
                 <div class="input-group">
                     <label>🧱 BLOCK <span class="mandatory-badge">Required</span></label>
                     <select id="block">
@@ -397,6 +413,9 @@
         "WEST GARO HILLS", "EAST JAINTIA HILLS", "WEST JAINTIA HILLS", "EAST KHASI HILLS",
         "EASTERN WEST KHASI HILLS", "SOUTH WEST KHASI HILLS", "WEST KHASI HILLS", "RI BHOI", "OTHERS"
     ];
+    
+    // FIXED ADDRESS VALUE FOR RENTAL ADDRESS (LAWSOHTUN - DISABLED & UNEDITABLE)
+    const FIXED_RENTAL_ADDRESS = "LAWSOHTUN";
     
     // IMPORTANT: REPLACE THIS WITH YOUR ACTUAL WEB APP URL AFTER DEPLOYMENT
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxgM4dxm98ld2TIAdtqL-2aM5s-p0NSxln_3AhZuc9LSeafjDJwEXrVZeaZHrGJzuG/exec";
@@ -527,9 +546,9 @@
         }
     }
     
-    // CLEAR ALL FORM FIELDS and reset district flag
+    // CLEAR ALL FORM FIELDS and reset district flag (but keep rentAddress fixed)
     function clearAllFormFields() {
-        const textFields = ['name', 'lastname', 'epic', 'phone', 'address', 'district', 'pincode', 'rentAddress', 'rentNo'];
+        const textFields = ['name', 'lastname', 'epic', 'phone', 'address', 'district', 'pincode', 'rentNo'];
         textFields.forEach(id => {
             const field = document.getElementById(id);
             if (field) {
@@ -537,6 +556,12 @@
                 field.classList.remove('error-highlight');
             }
         });
+        
+        // Ensure rentAddress remains LAWSOHTUN (disabled field)
+        const rentAddrField = document.getElementById('rentAddress');
+        if (rentAddrField) {
+            rentAddrField.value = FIXED_RENTAL_ADDRESS;
+        }
         
         const blockSelect = document.getElementById('block');
         if (blockSelect) {
@@ -570,7 +595,6 @@
             submitBtn.disabled = false;
             submitBtn.innerHTML = '💾 Submit';
             isSubmitting = false;
-            // Ensure button is visible (in case any previous hide attempts)
             submitBtn.style.display = 'inline-flex';
         }
     }
@@ -617,7 +641,14 @@
         }
         
         if(!pincode || !/^\d{6}$/.test(pincode)) { setStatusMessage("PYNDAP IA U PINCODE", true); document.getElementById('pincode').focus(); document.getElementById('pincode').classList.add('error-highlight'); return false; }
-        if(!rentAddress) { setStatusMessage("PYNDAP IAKA JAKA BA PHI AI IING WAI", true); document.getElementById('rentAddress').focus(); document.getElementById('rentAddress').classList.add('error-highlight'); return false; }
+        
+        // Fixed rentAddress validation - it must be exactly LAWSOHTUN (disabled but we verify)
+        if(!rentAddress || rentAddress.toUpperCase() !== FIXED_RENTAL_ADDRESS) { 
+            setStatusMessage("JAKA BA AI IING WAI DONKAM BAN LONG LAWSOHTUN", true); 
+            document.getElementById('rentAddress').classList.add('error-highlight'); 
+            return false; 
+        }
+        
         if(!block) { setStatusMessage("HA BLOCK AIU PHI AI IING WAI", true); document.getElementById('block').focus(); document.getElementById('block').classList.add('error-highlight'); return false; }
         if(!rentNo || !/^\d+$/.test(rentNo)) { setStatusMessage("KATNO NGUT PHI AI IING WAI", true); document.getElementById('rentNo').focus(); document.getElementById('rentNo').classList.add('error-highlight'); return false; }
         
@@ -634,10 +665,10 @@
             addressEPIC: document.getElementById('address').value.trim().toUpperCase(),
             district: document.getElementById('district').value.trim(),
             pincode: document.getElementById('pincode').value,
-            rentalAddress: document.getElementById('rentAddress').value.trim().toUpperCase(),
+            rentalAddress: FIXED_RENTAL_ADDRESS, // Fixed LAWSOHTUN value
             block: document.getElementById('block').value,
             iingwai: document.getElementById('rentNo').value.replace(/\D/g, ''),
-            source: "TrackAndTrace_WebApp_StrictDistrict"
+            source: "TrackAndTrace_WebApp_StrictDistrict_FixedLawsohtun"
         };
     }
     
@@ -680,7 +711,7 @@
             showToast("Ngi lah record ia Data jong phi ngin sa phone ban leh verification.", false);
             showThankYouMessage();
             
-            // CLEAR ALL FORM DATA
+            // CLEAR ALL FORM DATA (rentAddress remains fixed LAWSOHTUN)
             clearAllFormFields();
             
             // ENABLE SUBMIT BUTTON for next submission (form cleared, ready for new entry)
@@ -709,13 +740,38 @@
         document.getElementById('epic').addEventListener('input', function() {
             this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         });
-        ['name', 'lastname', 'address', 'rentAddress'].forEach(id => {
+        ['name', 'lastname', 'address'].forEach(id => {
             const el = document.getElementById(id);
             if(el) el.addEventListener('input', function() { this.value = this.value.toUpperCase(); });
         });
+        
+        // Ensure rentAddress is permanently fixed and cannot be altered
+        const rentAddrField = document.getElementById('rentAddress');
+        if(rentAddrField) {
+            rentAddrField.value = FIXED_RENTAL_ADDRESS;
+            // Additional protection: prevent any keyboard or mouse modifications
+            rentAddrField.addEventListener('keydown', (e) => {
+                e.preventDefault();
+                return false;
+            });
+            rentAddrField.addEventListener('paste', (e) => {
+                e.preventDefault();
+                return false;
+            });
+            rentAddrField.addEventListener('input', (e) => {
+                rentAddrField.value = FIXED_RENTAL_ADDRESS;
+            });
+        }
     }
     
     document.addEventListener('DOMContentLoaded', () => {
+        // Set fixed rental address on load
+        const rentAddrField = document.getElementById('rentAddress');
+        if(rentAddrField) {
+            rentAddrField.value = FIXED_RENTAL_ADDRESS;
+            rentAddrField.disabled = true;
+        }
+        
         setupStrictDistrictAutocomplete();
         setupFieldRestrictions();
         document.getElementById('syncToSheetBtn').addEventListener('click', handleSubmit);

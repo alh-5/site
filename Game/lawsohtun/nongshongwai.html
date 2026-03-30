@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <title>Household & EPIC Registry | BLOCK LETTERS</title>
+  <title>Lawsohtun Household Registry | BLOCK LETTERS</title>
   <style>
     * {
       margin: 0;
@@ -115,6 +115,14 @@
       width: 100%;
       cursor: pointer;
       text-transform: uppercase;
+    }
+
+    .form-field input:disabled {
+      background-color: #f0f3f8;
+      cursor: not-allowed;
+      color: #2c5a74;
+      font-weight: 500;
+      border-color: #cbdde6;
     }
 
     .form-field input::placeholder {
@@ -399,6 +407,15 @@
     option {
       text-transform: none;
     }
+
+    .info-note {
+      font-size: 0.7rem;
+      background: #eef3fc;
+      padding: 0.2rem 0.6rem;
+      border-radius: 1rem;
+      display: inline-block;
+      color: #2c6b2f;
+    }
   </style>
 </head>
 <body>
@@ -486,7 +503,7 @@
             </div>
             <div class="form-field">
               <label>RESIDENT ADDRESS (CURRENT)</label>
-              <input type="text" id="residentAddress" placeholder="CURRENT RESIDENCE ADDRESS" style="text-transform: uppercase;">
+              <input type="text" id="residentAddress" value="LAWSOHTUN" disabled style="background:#f0f5fa; color:#1f4e6e; font-weight:600; text-transform: uppercase;">
             </div>
             <div class="form-field">
               <label>BLOCK</label>
@@ -552,6 +569,9 @@
   const statusMessageDiv = document.getElementById('statusMessage');
   const submitBtn = document.getElementById('submitBtn');
   
+  // Fixed resident address value - LAWSOHTUN (automatically assigned, disabled)
+  const FIXED_RESIDENT_ADDRESS = "LAWSOHTUN";
+  
   // Show status message
   function showStatus(message, isSuccess) {
     statusMessageDiv.textContent = message.toUpperCase();
@@ -564,9 +584,11 @@
   
   // Clear entire form including all family members
   function clearAllFormFields() {
-    // Clear all main form inputs
+    // Clear all main form inputs except residentAddress which is fixed
     const allInputs = document.querySelectorAll('#householdForm input, #householdForm select');
     allInputs.forEach(input => {
+      // Skip the disabled residentAddress field because it must stay "LAWSOHTUN"
+      if (input.id === 'residentAddress') return;
       if (input.type !== 'button' && input.id !== 'totalFamilyCountDisplay') {
         if (input.tagName === 'SELECT') {
           input.selectedIndex = 0;
@@ -575,6 +597,10 @@
         }
       }
     });
+    
+    // Ensure residentAddress remains LAWSOHTUN (disabled, but double-check)
+    const residentAddrField = document.getElementById('residentAddress');
+    if (residentAddrField) residentAddrField.value = FIXED_RESIDENT_ADDRESS;
     
     // Clear all family member cards
     const allFamilyCards = document.querySelectorAll('.family-member-card');
@@ -700,7 +726,8 @@
     const pincode = document.getElementById('pincode').value.trim();
     const primaryPhoneNumber = document.getElementById('phoneNumber').value.trim();
     const addressEpic = document.getElementById('addressEpic').value.trim().toUpperCase();
-    const residentAddress = document.getElementById('residentAddress').value.trim().toUpperCase();
+    // FIXED resident address - LAWSOHTUN (disabled field but read its value)
+    const residentAddress = FIXED_RESIDENT_ADDRESS;
     const block = document.getElementById('block').value;
     
     const familyMembers = [];
@@ -742,7 +769,7 @@
       pincode: pincode,
       phoneNumber: primaryPhoneNumber,
       addressAsPerEpic: addressEpic,
-      residentAddress: residentAddress || addressEpic,
+      residentAddress: residentAddress,   // Always "LAWSOHTUN" and non-editable
       block: block,
       familyMembers: JSON.stringify(familyMembers),
       totalFamilyCount: familyMembers.length
@@ -824,7 +851,8 @@
     html += `<strong>📌 PRIMARY RESIDENT:</strong> ${escapeHtml(data.residentName) || '—'} ${escapeHtml(data.lastName) || ''}<br>`;
     html += ` EPIC: ${escapeHtml(data.residentEpic)} | GUARDIAN: ${escapeHtml(data.guardianName)}<br>`;
     html += ` 📍 DISTRICT: ${escapeHtml(data.district)} | PIN: ${escapeHtml(data.pincode)} | 📞 PHONE: ${escapeHtml(data.phoneNumber)}<br>`;
-    html += ` 🏠 ADDRESS: ${escapeHtml(data.addressAsPerEpic)}<br>`;
+    html += ` 🏠 ADDRESS (EPIC): ${escapeHtml(data.addressAsPerEpic)}<br>`;
+    html += ` 📍 CURRENT RESIDENCE: <strong>${escapeHtml(data.residentAddress)}</strong> (FIXED: LAWSOHTUN)<br>`;
     if (data.block) {
       html += ` 🚩 BLOCK: ${escapeHtml(data.block)}<br>`;
     }
@@ -839,7 +867,7 @@
         html += `▸ #${mem.serial} ${escapeHtml(mem.name) || '—'} | EPIC: ${escapeHtml(mem.epicNumber) || 'NONE'} | 📞 ${escapeHtml(mem.phoneNumber) || '—'} | 💼 ${escapeHtml(mem.occupation) || '—'}<br>`;
       });
     }
-    html += `<hr><small>✅ DATA SUBMITTED SUCCESSFULLY</small>`;
+    html += `<hr><small>✅ DATA READY FOR SUBMISSION</small>`;
     return html;
   }
   
@@ -895,7 +923,7 @@
     const success = await sendToGoogleSheets(formData);
     
     if (success) {
-      showStatus('✅ DATA SUCCESSFULLY SUBMITTED!.', true);
+      showStatus('✅ DATA SUCCESSFULLY SUBMITTED!', true);
       previewArea.innerHTML = previewHtml + '\n\n✅ DATA HAS BEEN SAVED SUCCESSFULLY!.';
       
       // Clear all form fields after successful submission
@@ -921,15 +949,24 @@
     this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
   });
   
-  // Apply uppercase to all text inputs
+  // Apply uppercase to all text inputs (except disabled fixed field)
   const allTextInputs = document.querySelectorAll('input[type="text"]');
   allTextInputs.forEach(input => {
+    if (input.id === 'residentAddress') return; // skip fixed disabled field
     input.addEventListener('input', function() {
       if (this.id !== 'pincode' && this.id !== 'phoneNumber' && !this.classList.contains('family-phone')) {
         this.value = this.value.toUpperCase();
       }
     });
   });
+  
+  // Ensure residentAddress always stays LAWSOHTUN (security)
+  const residentAddrField = document.getElementById('residentAddress');
+  if (residentAddrField) {
+    residentAddrField.value = FIXED_RESIDENT_ADDRESS;
+    // additional disable check: field already disabled, but also prevent any possible change via devtools via attribute
+    residentAddrField.setAttribute('readonly', 'readonly');
+  }
   
   householdForm.addEventListener('submit', handleFormSubmit);
   updateTotalFamilyDisplay();
