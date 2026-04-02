@@ -416,6 +416,13 @@
       display: inline-block;
       color: #2c6b2f;
     }
+
+    /* small inline group for block and particular */
+    .double-select-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -452,11 +459,11 @@
           <div class="grid-2col">
             <div class="form-field">
               <label>NAME OF RESIDENT</label>
-              <input type="text" id="residentName" placeholder="FULL NAME" style="text-transform: uppercase;">
+              <input type="text" id="residentName" placeholder="FULL NAME" required style="text-transform: uppercase;">
             </div>
             <div class="form-field">
               <label>LAST NAME</label>
-              <input type="text" id="lastName" placeholder="SURNAME / LAST NAME" style="text-transform: uppercase;">
+              <input type="text" id="lastName" placeholder="SURNAME / LAST NAME" required style="text-transform: uppercase;">
             </div>
             <div class="form-field">
               <label class="required-star">EPIC NUMBER (RESIDENT)</label>
@@ -505,9 +512,12 @@
               <label>RESIDENT ADDRESS (CURRENT)</label>
               <input type="text" id="residentAddress" value="LAWSOHTUN" disabled style="background:#f0f5fa; color:#1f4e6e; font-weight:600; text-transform: uppercase;">
             </div>
+          </div>
+          <!-- BLOCK + PARTICULAR (new field) grouped side by side -->
+          <div class="double-select-group" style="margin-top: 0.5rem;">
             <div class="form-field">
               <label>BLOCK</label>
-              <select id="block" style="text-transform: uppercase;">
+              <select id="block" required style="text-transform: uppercase;">
                 <option value="" selected disabled>-- SELECT BLOCK --</option>
                 <option value="BLOCK 1">BLOCK 1</option>
                 <option value="BLOCK 2">BLOCK 2</option>
@@ -515,6 +525,14 @@
                 <option value="BLOCK 4">BLOCK 4</option>
                 <option value="BLOCK 5">BLOCK 5</option>
                 <option value="BLOCK 6">BLOCK 6</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="required-star">PARTICULAR (LOCAL/NON-LOCAL)</label>
+              <select id="particularType" required style="text-transform: uppercase;">
+                <option value="" disabled selected>-- SELECT TYPE --</option>
+                <option value="LOCAL">LOCAL</option>
+                <option value="NON-LOCAL">NON-LOCAL</option>
               </select>
             </div>
           </div>
@@ -557,7 +575,7 @@
 
 <script>
   // ==================== CONFIGURATION ====================
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWy-K9lhmM-KkYXTntIyU7ohbabg7TyfRqyGsag24Xc_lnMJwF4u3Makdn-wT--HMF/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxeNZQ01XSz2hFb-lp_QcG1nk3mhuP8ryguRTE7mMbHQIZ-8T8XB7-xqUWraXhrS34Z/exec';
   // ========================================================
   
   // DOM elements
@@ -602,6 +620,12 @@
     const residentAddrField = document.getElementById('residentAddress');
     if (residentAddrField) residentAddrField.value = FIXED_RESIDENT_ADDRESS;
     
+    // Reset particular and block selects properly (selected index to 0)
+    const blockSelect = document.getElementById('block');
+    const particularSelect = document.getElementById('particularType');
+    if (blockSelect) blockSelect.selectedIndex = 0;
+    if (particularSelect) particularSelect.selectedIndex = 0;
+    
     // Clear all family member cards
     const allFamilyCards = document.querySelectorAll('.family-member-card');
     allFamilyCards.forEach(card => card.remove());
@@ -612,8 +636,8 @@
     // Reset preview area
     previewArea.innerHTML = '<strong>📄 DATA PREVIEW</strong><br> FORM HAS BEEN CLEARED. PLEASE FILL NEW DATA AND SUBMIT.';
     
-    // Reset border colors for all fields
-    const requiredFields = ['ownerName', 'ownerEpic', 'residentEpic', 'guardianName', 'district', 'pincode', 'phoneNumber', 'addressEpic'];
+    // Reset border colors for all required fields
+    const requiredFields = ['ownerName', 'ownerEpic', 'residentEpic', 'guardianName', 'district', 'pincode', 'phoneNumber', 'addressEpic', 'particularType'];
     requiredFields.forEach(id => {
       const field = document.getElementById(id);
       if (field) field.style.borderColor = '#e2eaf1';
@@ -666,7 +690,7 @@
         </div>
         <div class="family-field">
           <label>OCCUPATION</label>
-          <input type="text" class="family-occupation" placeholder="E.G., STUDENT, FARMER, LABOUR, TEACHER" style="text-transform: uppercase;">
+          <input type="text" class="family-occupation" placeholder="E.G., STUDENT, FARMER, LABOUR, TEACHER" required style="text-transform: uppercase;">
         </div>
       </div>
     `;
@@ -726,9 +750,10 @@
     const pincode = document.getElementById('pincode').value.trim();
     const primaryPhoneNumber = document.getElementById('phoneNumber').value.trim();
     const addressEpic = document.getElementById('addressEpic').value.trim().toUpperCase();
-    // FIXED resident address - LAWSOHTUN (disabled field but read its value)
+    // FIXED resident address - LAWSOHTUN
     const residentAddress = FIXED_RESIDENT_ADDRESS;
     const block = document.getElementById('block').value;
+    const particular = document.getElementById('particularType').value;   // NEW FIELD
     
     const familyMembers = [];
     const familyCards = document.querySelectorAll('.family-member-card');
@@ -769,16 +794,17 @@
       pincode: pincode,
       phoneNumber: primaryPhoneNumber,
       addressAsPerEpic: addressEpic,
-      residentAddress: residentAddress,   // Always "LAWSOHTUN" and non-editable
+      residentAddress: residentAddress,
       block: block,
+      particular: particular,      // captured
       familyMembers: JSON.stringify(familyMembers),
       totalFamilyCount: familyMembers.length
     };
   }
   
-  // Validate form
+  // Validate form (includes new PARTICULAR field)
   function validateRequiredFields() {
-    const requiredIds = ['ownerName', 'ownerEpic', 'residentEpic', 'guardianName', 'district', 'pincode', 'phoneNumber', 'addressEpic'];
+    const requiredIds = ['ownerName', 'ownerEpic', 'residentEpic', 'guardianName', 'district', 'pincode', 'phoneNumber', 'addressEpic', 'particularType'];
     let isValid = true;
     
     for (let id of requiredIds) {
@@ -798,9 +824,6 @@
     if (!districtVal) {
       document.getElementById('district').style.borderColor = '#e74c3c';
       isValid = false;
-      setTimeout(() => {
-        document.getElementById('district').style.borderColor = '#e2eaf1';
-      }, 2000);
     }
     
     const pincodeVal = document.getElementById('pincode').value.trim();
@@ -844,7 +867,7 @@
     return isValid;
   }
   
-  // Generate preview
+  // Generate preview with new PARTICULAR field
   function generatePreviewHTML(data) {
     let html = `<strong>🏡 HOUSEHOLD REGISTRATION SUMMARY</strong><br><br>`;
     html += `<strong>🏠 OWNER:</strong> ${escapeHtml(data.houseOwnerName) || '—'} (EPIC: ${escapeHtml(data.houseOwnerEpic) || '—'})<br>`;
@@ -856,6 +879,7 @@
     if (data.block) {
       html += ` 🚩 BLOCK: ${escapeHtml(data.block)}<br>`;
     }
+    html += ` 🏷️ PARTICULAR: <strong>${escapeHtml(data.particular) || '—'}</strong> (LOCAL/NON-LOCAL)<br>`;
     html += `<hr>`;
     html += `<strong>👨‍👩‍👧‍👦 FAMILY MEMBERS (${data.totalFamilyCount})</strong><br>`;
     
@@ -892,7 +916,6 @@
         },
         body: new URLSearchParams(formData)
       });
-      
       return true;
     } catch (error) {
       console.error('Error:', error);
@@ -925,15 +948,12 @@
     if (success) {
       showStatus('✅ DATA SUCCESSFULLY SUBMITTED!', true);
       previewArea.innerHTML = previewHtml + '\n\n✅ DATA HAS BEEN SAVED SUCCESSFULLY!.';
-      
-      // Clear all form fields after successful submission
       clearAllFormFields();
     } else {
       showStatus('❌ ERROR SUBMITTING DATA. PLEASE TRY AGAIN.', false);
       previewArea.innerHTML = previewHtml + '\n\n❌ SUBMISSION FAILED. PLEASE CHECK YOUR CONNECTION AND TRY AGAIN.';
     }
     
-    // Re-enable submit button
     submitBtn.disabled = false;
     submitBtn.textContent = '📤 SUBMIT';
   }
@@ -952,7 +972,7 @@
   // Apply uppercase to all text inputs (except disabled fixed field)
   const allTextInputs = document.querySelectorAll('input[type="text"]');
   allTextInputs.forEach(input => {
-    if (input.id === 'residentAddress') return; // skip fixed disabled field
+    if (input.id === 'residentAddress') return;
     input.addEventListener('input', function() {
       if (this.id !== 'pincode' && this.id !== 'phoneNumber' && !this.classList.contains('family-phone')) {
         this.value = this.value.toUpperCase();
@@ -960,11 +980,10 @@
     });
   });
   
-  // Ensure residentAddress always stays LAWSOHTUN (security)
+  // Ensure residentAddress always stays LAWSOHTUN
   const residentAddrField = document.getElementById('residentAddress');
   if (residentAddrField) {
     residentAddrField.value = FIXED_RESIDENT_ADDRESS;
-    // additional disable check: field already disabled, but also prevent any possible change via devtools via attribute
     residentAddrField.setAttribute('readonly', 'readonly');
   }
   
@@ -972,30 +991,26 @@
   updateTotalFamilyDisplay();
 </script>
 
-<!-- ==================== GOOGLE APPS SCRIPT CODE ==================== -->
+<!-- ==================== GOOGLE APPS SCRIPT CODE (UPDATE with new column) ==================== -->
 <!-- 
-  COPY AND PASTE THE FOLLOWING CODE INTO YOUR GOOGLE APPS SCRIPT EDITOR:
-  (Extensions > Apps Script in your Google Sheet)
+  IMPORTANT: Update your Google Apps Script to include the 'PARTICULAR' column.
+  Replace the header row and data mapping accordingly.
   
-  ==================== START OF APPS SCRIPT ====================
+  Example updated doPost function:
   
   function doPost(e) {
     try {
       const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
       const data = e.parameter;
-      
-      // Add headers if sheet is empty
       if (sheet.getLastRow() === 0) {
         const headers = [
           'TIMESTAMP', 'HOUSE OWNER NAME', 'HOUSE OWNER EPIC', 'RESIDENT NAME', 
           'LAST NAME', 'RESIDENT EPIC', 'GUARDIAN NAME', 'DISTRICT', 'PINCODE',
-          'PHONE NUMBER', 'ADDRESS AS PER EPIC', 'RESIDENT ADDRESS', 'BLOCK',
+          'PHONE NUMBER', 'ADDRESS AS PER EPIC', 'RESIDENT ADDRESS', 'BLOCK', 'PARTICULAR',
           'FAMILY MEMBERS (JSON)', 'TOTAL FAMILY COUNT'
         ];
         sheet.appendRow(headers);
       }
-      
-      // Append data row
       const row = [
         data.timestamp || new Date().toISOString(),
         data.houseOwnerName || '',
@@ -1010,28 +1025,34 @@
         data.addressAsPerEpic || '',
         data.residentAddress || '',
         data.block || '',
+        data.particular || '',
         data.familyMembers || '[]',
         data.totalFamilyCount || '0'
       ];
-      
       sheet.appendRow(row);
-      
-      return ContentService
-        .createTextOutput(JSON.stringify({ success: true, message: 'Data saved' }))
-        .setMimeType(ContentService.MimeType.JSON);
-        
+      return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
     } catch (error) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
-        .setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: error.toString() })).setMimeType(ContentService.MimeType.JSON);
     }
   }
-  
-  function doGet(e) {
+   function doGet(e) {
     return ContentService.createTextOutput('SERVICE IS RUNNING. USE POST METHOD TO SUBMIT DATA.');
   }
-  
-  ==================== END OF APPS SCRIPT ====================
+
+  function doGet() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const records = [];
+  for(let i=1; i<data.length; i++) {
+    let obj = {};
+    headers.forEach((h, idx) => { obj[h] = data[i][idx] || ""; });
+    records.push(obj);
+  }
+  return ContentService.createTextOutput(JSON.stringify(records))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 -->
 </body>
 </html>

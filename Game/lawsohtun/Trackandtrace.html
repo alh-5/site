@@ -102,7 +102,7 @@
             <thead>
                 <tr><th>TIMESTAMP</th><th>OWNER NAME</th><th>OWNER EPIC</th><th>RESIDENT NAME</th><th>LAST NAME</th>
                     <th>RESIDENT EPIC</th><th>GUARDIAN</th><th>DISTRICT</th><th>PINCODE</th><th>PHONE</th>
-                    <th>ADDRESS</th><th>RESIDENT ADDR</th><th>BLOCK</th><th>FAMILY JSON</th><th>COUNT</th><th>VIEW RECEIPT</th>
+                    <th>ADDRESS</th><th>RESIDENT ADDR</th><th>BLOCK</th><th>PARTICULAR</th><th>FAMILY JSON</th><th>COUNT</th><th>VIEW RECEIPT</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -129,13 +129,13 @@
 <script>
     // ======================= CONFIGURATION =======================
     // HARDCODED APPS SCRIPT URL (hidden from UI, no display)
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWy-K9lhmM-KkYXTntIyU7ohbabg7TyfRqyGsag24Xc_lnMJwF4u3Makdn-wT--HMF/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeNZQ01XSz2hFb-lp_QcG1nk3mhuP8ryguRTE7mMbHQIZ-8T8XB7-xqUWraXhrS34Z/exec";
     
     let registryData = [];
     let syncEnabled = false;
     let refreshInterval = null;
     
-    const REQUIRED_HEADERS = ["TIMESTAMP", "HOUSE OWNER NAME", "HOUSE OWNER EPIC", "RESIDENT NAME", "LAST NAME", "RESIDENT EPIC", "GUARDIAN NAME", "DISTRICT", "PINCODE", "PHONE NUMBER", "ADDRESS AS PER EPIC", "RESIDENT ADDRESS", "BLOCK", "FAMILY MEMBERS (JSON)"];
+    const REQUIRED_HEADERS = ["TIMESTAMP", "HOUSE OWNER NAME", "HOUSE OWNER EPIC", "RESIDENT NAME", "LAST NAME", "RESIDENT EPIC", "GUARDIAN NAME", "DISTRICT", "PINCODE", "PHONE NUMBER", "ADDRESS AS PER EPIC", "RESIDENT ADDRESS", "BLOCK", "PARTICULAR", "FAMILY MEMBERS (JSON)"];
     
     // Helper UI status
     function showStatus(msg, type = "success") {
@@ -170,7 +170,7 @@
         const flatValues = [
             entry["HOUSE OWNER NAME"], entry["HOUSE OWNER EPIC"], entry["RESIDENT NAME"], entry["LAST NAME"],
             entry["RESIDENT EPIC"], entry["GUARDIAN NAME"], entry["DISTRICT"], entry["PINCODE"],
-            entry["PHONE NUMBER"], entry["ADDRESS AS PER EPIC"], entry["RESIDENT ADDRESS"], entry["BLOCK"]
+            entry["PHONE NUMBER"], entry["ADDRESS AS PER EPIC"], entry["RESIDENT ADDRESS"], entry["BLOCK"], entry["PARTICULAR"]
         ];
         for (let val of flatValues) {
             if (val && val.toLowerCase().includes(term)) return true;
@@ -340,6 +340,7 @@
                 <div class="receipt-row"><span class="receipt-label">Address (EPIC):</span><span>${escapeHtml(entry["ADDRESS AS PER EPIC"] || '—')}</span></div>
                 <div class="receipt-row"><span class="receipt-label">Resident Address:</span><span>${escapeHtml(entry["RESIDENT ADDRESS"] || '—')}</span></div>
                 <div class="receipt-row"><span class="receipt-label">Block:</span><span>${escapeHtml(entry["BLOCK"] || '—')}</span></div>
+				<div class="receipt-row"><span class="receipt-label">PARTICULAR:</span><span>${escapeHtml(entry["PARTICULAR"] || '—')}</span></div>
                 <div style="margin-top: 14px;"><strong>👨‍👩‍👧‍👦 Family Members (${members.length})</strong>
                     <table class="family-members-table">
                         <thead><tr><th>#</th><th>Name</th><th>EPIC</th><th>Phone</th><th>Occupation</th></tr></thead>
