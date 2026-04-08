@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Trai_IIng_TAT</title>
+    <!-- html2canvas library for PNG generation -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* TOOLBAR - fully responsive flex wrap */
+        .toolbar {
+            background: #0f2b3d;
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .title p {
+            margin: 4px 0 0;
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        /* SEARCH GROUP - mobile first adjustments */
+        .search-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #1e3a4d;
+            padding: 10px 16px;
+            border-radius: 48px;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .search-group-flex {
+            display: flex;
+            flex: 2;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .search-area select {
+            background: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            flex: 2;
+            min-width: 140px;
+        }
+
+        .search-area button {
+            background: #2c7da0;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .search-area button:hover {
+            background: #1f6390;
+        }
+
+        .reset-mobile {
+            background: #4b6e8a !important;
+        }
+
+        .search-hint {
+            font-size: 0.65rem;
+            color: #9bb7c9;
+            margin-left: 4px;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* stats bar responsive */
+        .stats {
+            background: #f1f5f9;
+            padding: 10px 20px;
+            font-size: 0.75rem;
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .refresh-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .refresh-btn {
+            background: #2c7da0;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #cbd5e1;
+            border-top-color: #0f2b3d;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* TABLE WRAPPER - horizontal scroll on mobile */
+        .table-wrapper {
+            padding: 16px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            background: white;
+            border-radius: 16px;
+            min-width: 600px;
+        }
+
+        .data-table th {
+            background: #1e2a3e;
+            color: #f1f5f9;
+            padding: 10px 6px;
+            font-weight: 600;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 8px 6px;
+            color: #0f172a;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+
+        .data-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .view-png-btn {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .view-png-btn:hover {
+            background: #2563eb;
+            transform: scale(0.96);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 48px;
+            color: #64748b;
+        }
+
+        /* MODAL RESPONSIVE */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 28px;
+            max-width: 94vw;
+            width: auto;
+            max-height: 90vh;
+            overflow: auto;
+            padding: 16px 18px 22px 18px;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .png-preview-container {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .modal-actions button {
+            background: #1e2a3e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .modal-actions button.download {
+            background: #10b981;
+        }
+
+        .modal-actions button.close {
+            background: #6c757d;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            z-index: 3000;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 90vw;
+            white-space: normal;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: #fef2f2;
+            border-radius: 20px;
+            margin: 16px;
+        }
+
+        .error-state h3 {
+            color: #b91c1c;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .error-state p {
+            color: #4b5563;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+
+        .error-state button {
+            background: #3b82f6;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .block-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* ============= MOBILE SPECIFIC FIXES ============= */
+        @media (max-width: 680px) {
+            body {
+                padding: 8px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 14px;
+            }
+
+            .search-area {
+                flex-direction: column;
+                align-items: stretch;
+                background: transparent;
+                padding: 0;
+                gap: 10px;
+            }
+
+            .search-group-flex {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+                background: #1e3a4d;
+                padding: 12px 14px;
+                border-radius: 36px;
+            }
+
+            .search-area select {
+                flex: 2;
+                min-width: 120px;
+                font-size: 0.8rem;
+                padding: 10px 12px;
+            }
+
+            .search-area button {
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+                padding: 10px 12px;
+                font-size: 0.75rem;
+            }
+
+            .search-hint {
+                text-align: center;
+                margin-top: 2px;
+                font-size: 0.6rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .refresh-status {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .table-wrapper {
+                padding: 12px 8px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 6px 4px;
+                font-size: 0.65rem;
+            }
+
+            .view-png-btn {
+                padding: 4px 8px;
+                font-size: 0.6rem;
+            }
+
+            .modal-card {
+                padding: 12px 12px 18px 12px;
+                max-width: 96vw;
+            }
+
+            .modal-actions button {
+                padding: 8px 16px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* For very narrow devices (<=480px) */
+        @media (max-width: 480px) {
+            .search-group-flex {
+                flex-direction: column;
+            }
+
+            .search-area select {
+                width: 100%;
+            }
+
+            .search-area button {
+                width: 100%;
+            }
+
+            .title h1 {
+                font-size: 1.1rem;
+            }
+
+            .refresh-btn {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="toolbar">
+        <div class="title">
+            <h1>📋 Trai_IIng_TAT</h1>
+            <p>Lawsohtun House Owner Tracker</p>
+        </div>
+        <div class="search-area">
+            <div class="search-group-flex">
+                <select id="searchInput">
+                    <option value="ALL BLOCK">ALL BLOCK</option>
+                    <option value="BLOCK 1">BLOCK 1</option>
+                    <option value="BLOCK 2">BLOCK 2</option>
+                    <option value="BLOCK 3">BLOCK 3</option>
+                    <option value="BLOCK 4">BLOCK 4</option>
+                    <option value="BLOCK 5">BLOCK 5</option>
+                    <option value="BLOCK 6">BLOCK 6</option>
+                </select>
+                <button id="searchBtn">🔍 Search</button>
+                <button id="resetBtn" class="reset-mobile">⟳ Reset</button>
+            </div>
+            <span class="search-hint">🔎 Searching by Block (exact match / partial)</span>
+        </div>
+    </div>
+    <div class="stats" id="statsBar">
+        <span id="recordCount">📡 Connecting to Database...</span>
+        <div class="refresh-status">
+            <span>🔄 Live data</span>
+            <button id="refreshDataBtn" class="refresh-btn">⟳ Refresh</button>
+        </div>
+    </div>
+    <div class="table-wrapper">
+        <table class="data-table" id="dataTable">
+            <thead id="tableHeader"></thead>
+            <tbody id="tableBody">
+                <tr><td colspan="20" style="text-align:center; padding:40px;">⏳ Loading data from Database...<div class="spinner" style="display:inline-block; margin-left:12px;"></div></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for PNG preview & download -->
+<div id="pngModal" class="modal-overlay">
+    <div class="modal-card">
+        <div id="modalPngContainer" class="png-preview-container" style="min-width: 260px;"></div>
+        <div class="modal-actions">
+            <button id="modalDownloadBtn" class="download">⬇️ Download PNG</button>
+            <button id="modalCloseBtn" class="close">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="toastMsg" class="toast-msg">✅ PNG ready for download!</div>
+
+<script>
+    // ======================== GOOGLE SHEETS INTEGRATION ========================
+    // YOUR GOOGLE APPS SCRIPT WEB APP URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIYqrYS-kCyudZfHKJc_VVb23GV6Lwd68fOC4SbfixI7FWIMB_h3yYyDQM5fNhsODGow/exec";
+    
+    // Global state - NO SAMPLE DATA
+    let masterData = [];
+    let currentFilteredData = [];
+    let currentHeaders = [];
+    
+    // Fields to display in PNG card
+    const PNG_DISPLAY_FIELDS = ["KYRTENG", "JAIT", "Phone Number", "EPIC Address", "Rental Address", "Block", "Iingwai No"];
+    
+    // DOM elements
+    const thead = document.getElementById("tableHeader");
+    const tbody = document.getElementById("tableBody");
+    const recordCountSpan = document.getElementById("recordCount");
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const refreshBtn = document.getElementById("refreshDataBtn");
+    const modalOverlay = document.getElementById("pngModal");
+    const modalContainer = document.getElementById("modalPngContainer");
+    const toast = document.getElementById("toastMsg");
+    
+    // Helper: Show toast message
+    function showToastMessage(msg, isError = false) {
+        toast.innerText = msg || (isError ? "⚠️ Error" : "✅ Done");
+        toast.style.background = isError ? "#b91c1c" : "#1f2937";
+        toast.style.opacity = "1";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.background = "#1f2937";
+        }, 2800);
+    }
+    
+    // Display error state
+    function showErrorState(errorMessage, technicalDetails = "") {
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+        const existingError = document.querySelector('.error-state');
+        if (existingError) existingError.remove();
+        const wrapper = document.querySelector('.table-wrapper');
+        const table = document.getElementById('dataTable');
+        if (table) table.style.display = 'none';
+        const errorDiv = document.createElement('div'); 
+        errorDiv.className = 'error-state';
+        errorDiv.innerHTML = `
+            <h3>⚠️ Unable to Load Data from Database</h3>
+            <p>${errorMessage}</p>
+            ${technicalDetails ? `<p style="font-size:0.7rem; color:#6b7280;">${technicalDetails}</p>` : ''}
+            <button id="errorRetryBtn">⟳ Retry Connection</button>
+            <p style="margin-top: 20px; font-size:0.7rem; color:#9ca3af;">Lawsohtun Monitoring System</p>
+        `;
+        wrapper.insertBefore(errorDiv, wrapper.firstChild);
+        recordCountSpan.innerHTML = "❌ Connection failed - no data loaded";
+        const retryBtn = document.getElementById("errorRetryBtn");
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => {
+                if (errorDiv) errorDiv.remove();
+                if (table) table.style.display = '';
+                fetchSheetData(true);
+            });
+        }
+    }
+    
+    function hideErrorState() {
+        const errorDiv = document.querySelector('.error-state');
+        if (errorDiv) errorDiv.remove();
+        const table = document.getElementById('dataTable');
+        if (table) table.style.display = '';
+    }
+    
+    function showLoadingState() {
+        hideErrorState();
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+        const loadingRow = document.createElement('tr');
+        const loadingTd = document.createElement('td');
+        loadingTd.colSpan = 20;
+        loadingTd.style.textAlign = 'center';
+        loadingTd.style.padding = '60px';
+        loadingTd.innerHTML = '⏳ Fetching live data from Database... <div class="spinner" style="display:inline-block; margin-left:12px;"></div>';
+        loadingRow.appendChild(loadingTd);
+        tbody.appendChild(loadingRow);
+        recordCountSpan.innerHTML = "🔄 Connecting to Database...";
+    }
+    
+    // Fetch data from Google Apps Script
+    async function fetchSheetData(showSuccessToast = false) {
+        showLoadingState();
+        if (!SCRIPT_URL || SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+            showErrorState("Script URL not configured.", "Please replace SCRIPT_URL with your actual Google Apps Script Web App URL.");
+            masterData = [];
+            currentFilteredData = [];
+            currentHeaders = [];
+            return false;
+        }
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
+            const response = await fetch(SCRIPT_URL, { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const records = await response.json();
+            if (!Array.isArray(records)) throw new Error("Response is not an array. Your doGet() must return a JSON array.");
+            if (records.length === 0) throw new Error("Sheet contains no data rows.");
+            if (typeof records[0] !== 'object' || records[0] === null) throw new Error("Invalid data format: expected array of objects.");
+            const dynamicHeaders = Object.keys(records[0]);
+            if (dynamicHeaders.length === 0) throw new Error("No columns found.");
+            currentHeaders = dynamicHeaders;
+            masterData = records;
+            currentFilteredData = [...masterData];
+            if (showSuccessToast) showToastMessage(`✅ Loaded ${masterData.length} records from Google Sheets`);
+            return true;
+        } catch (err) {
+            console.error("Sheet fetch error:", err);
+            let errorMsg = "Failed to fetch data from Google Sheets.";
+            let techDetails = err.message;
+            if (err.name === 'AbortError') {
+                errorMsg = "Request timeout.";
+                techDetails = "The request took too long to respond.";
+            } else if (err.message.includes('Failed to fetch')) {
+                errorMsg = "Network error - Cannot reach the Apps Script URL.";
+                techDetails = "Make sure Web App is deployed with proper access (Anyone with link).";
+            } else if (err.message.includes('JSON')) {
+                errorMsg = "Invalid response from server.";
+                techDetails = "Your doGet() might not be returning valid JSON.";
+            }
+            showErrorState(errorMsg, techDetails);
+            masterData = [];
+            currentFilteredData = [];
+            currentHeaders = [];
+            return false;
+        }
+    }
+    
+    // Render dynamic table with action column
+    function renderTable(data) {
+        hideErrorState();
+        if (!thead || !tbody) return;
+        if (!data || data.length === 0) {
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+            const emptyRow = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = Math.max(currentHeaders.length + 1, 2);
+            td.className = 'no-results';
+            td.innerHTML = '📭 No records found. Click Refresh to load data from Database.';
+            emptyRow.appendChild(td);
+            tbody.appendChild(emptyRow);
+            recordCountSpan.innerHTML = `📊 0 records`;
+            return;
+        }
+        if (!currentHeaders.length && data.length) {
+            currentHeaders = Object.keys(data[0]);
+        }
+        thead.innerHTML = '';
+        const headerRow = document.createElement('tr');
+        currentHeaders.forEach(header => {
+            const th = document.createElement('th');
+            th.innerText = header;
+            headerRow.appendChild(th);
+        });
+        const actionTh = document.createElement('th');
+        actionTh.innerText = "📸 Action";
+        actionTh.style.textAlign = "center";
+        headerRow.appendChild(actionTh);
+        thead.appendChild(headerRow);
+        
+        tbody.innerHTML = '';
+        data.forEach((row) => {
+            const tr = document.createElement('tr');
+            currentHeaders.forEach(key => {
+                const td = document.createElement('td');
+                let value = row[key] !== undefined && row[key] !== null ? row[key] : '';
+                if (key === "Block" && value) {
+                    td.innerHTML = `<span class="block-badge">${escapeHtml(value)}</span>`;
+                } else {
+                    td.innerText = value;
+                }
+                tr.appendChild(td);
+            });
+            const actionTd = document.createElement('td');
+            actionTd.style.textAlign = "center";
+            actionTd.style.whiteSpace = "nowrap";
+            const btn = document.createElement('button');
+            btn.innerText = "🖼️ View PNG";
+            btn.className = "view-png-btn";
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                generateIndividualPNG(row);
+            });
+            actionTd.appendChild(btn);
+            tr.appendChild(actionTd);
+            tbody.appendChild(tr);
+        });
+        recordCountSpan.innerHTML = `📊 Showing ${data.length} of ${masterData.length} records | 🔍 Searching in 'Block' column`;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // PNG Generator: Shows only the specified fields
+    async function generateIndividualPNG(record) {
+        const cardContainer = document.createElement('div');
+        cardContainer.style.backgroundColor = 'white';
+        cardContainer.style.width = '780px';
+        cardContainer.style.maxWidth = '100%';
+        cardContainer.style.padding = '24px 28px';
+        cardContainer.style.borderRadius = '32px';
+        cardContainer.style.fontFamily = "'Segoe UI', 'Roboto', sans-serif";
+        cardContainer.style.boxShadow = '0 20px 35px -12px rgba(0,0,0,0.25)';
+        cardContainer.style.border = '1px solid #e2edf2';
+        
+        const headerArea = document.createElement('div');
+        headerArea.style.background = 'linear-gradient(135deg, #0f2b3d 0%, #1e4a6e 100%)';
+        headerArea.style.margin = '-24px -28px 24px -28px';
+        headerArea.style.padding = '20px 28px';
+        headerArea.style.borderRadius = '32px 32px 24px 24px';
+        headerArea.style.color = 'white';
+        const badgeId = record["Sl. No."] || record["KYRTENG"] || record["JAIT"] || record["Submission ID"] || "CARD";
+        headerArea.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:8px;">
+                <div>
+                    <h2 style="margin:0; font-size: 1.4rem;">🏠 HOUSE OWNER DETAILS</h2>
+                    <p style="margin:6px 0 0; opacity:0.8;">Official Record • Lawsohtun Tracker</p>
+                </div>
+                <div style="background:rgba(255,255,255,0.2); padding:5px 12px; border-radius:60px;">
+                    <span style="font-weight:bold; font-size:0.75rem;">#${String(badgeId).substring(0, 14)}</span>
+                </div>
+            </div>
+        `;
+        cardContainer.appendChild(headerArea);
+        
+        const infoGrid = document.createElement('div');
+        infoGrid.style.display = 'flex';
+        infoGrid.style.flexDirection = 'column';
+        infoGrid.style.gap = '12px';
+        infoGrid.style.marginBottom = '20px';
+        
+        const createFieldRow = (label, value) => {
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.borderBottom = '1px solid #eef2f6';
+            wrapper.style.padding = '8px 0';
+            wrapper.style.alignItems = 'flex-start';
+            wrapper.style.flexWrap = 'wrap';
+            const labelSpan = document.createElement('div');
+            labelSpan.innerText = label;
+            labelSpan.style.width = '130px';
+            labelSpan.style.flexShrink = '0';
+            labelSpan.style.fontSize = '0.7rem';
+            labelSpan.style.textTransform = 'uppercase';
+            labelSpan.style.letterSpacing = '0.5px';
+            labelSpan.style.color = '#5b6e8c';
+            labelSpan.style.fontWeight = '600';
+            const valueSpan = document.createElement('div');
+            const displayValue = (value && value.toString().trim() !== "") ? value : "—";
+            valueSpan.innerText = displayValue;
+            valueSpan.style.fontSize = '0.85rem';
+            valueSpan.style.fontWeight = '500';
+            valueSpan.style.color = '#0b2b3d';
+            valueSpan.style.wordBreak = 'break-word';
+            valueSpan.style.flex = '1';
+            wrapper.appendChild(labelSpan);
+            wrapper.appendChild(valueSpan);
+            return wrapper;
+        };
+        
+        const fieldsToShow = [
+            { key: "KYRTENG", label: "KYRTENG" },
+            { key: "JAIT", label: "JAIT" },
+            { key: "Phone Number", label: "PHONE NUMBER" },
+            { key: "EPIC Address", label: "EPIC ADDRESS" },
+            { key: "Rental Address", label: "RENTAL ADDRESS" },
+            { key: "Block", label: "BLOCK" },
+            { key: "Iingwai No", label: "IINGWAI NO" }
+        ];
+        
+        fieldsToShow.forEach(field => {
+            let value = record[field.key];
+            if (value === undefined || value === null) value = "";
+            infoGrid.appendChild(createFieldRow(field.label, value));
+        });
+        cardContainer.appendChild(infoGrid);
+        
+        const footer = document.createElement('div');
+        footer.style.marginTop = '16px';
+        footer.style.paddingTop = '14px';
+        footer.style.borderTop = '2px dashed #cbd5e1';
+        footer.style.display = 'flex';
+        footer.style.justifyContent = 'space-between';
+        footer.style.fontSize = '0.65rem';
+        footer.style.color = '#4a627a';
+        footer.style.flexWrap = 'wrap';
+        footer.innerHTML = `
+            <div>🔒 Digitally Verified Record</div>
+            <div>📅 Generated: ${new Date().toLocaleString()}</div>
+            <div>⚡ Trai_IIng_TAT System</div>
+        `;
+        cardContainer.appendChild(footer);
+        
+        modalContainer.innerHTML = '';
+        modalContainer.appendChild(cardContainer);
+        modalOverlay.classList.add("active");
+        
+        try {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            const canvas = await html2canvas(cardContainer, {
+                scale: 2.5,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: false
+            });
+            const pngDataUrl = canvas.toDataURL("image/png");
+            const downloadBtn = document.getElementById("modalDownloadBtn");
+            const newDownloadBtn = downloadBtn.cloneNode(true);
+            downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
+            newDownloadBtn.addEventListener('click', (e) => {
+                let fileName = "voter_card";
+                if (record["KYRTENG"] && record["KYRTENG"].toString().trim()) {
+                    fileName = record["KYRTENG"].toString().replace(/[^a-z0-9]/gi, '_');
+                } else if (record["JAIT"] && record["JAIT"].toString().trim()) {
+                    fileName = record["JAIT"].toString().replace(/[^a-z0-9]/gi, '_');
+                } else if (record["Block"] && record["Block"].toString().trim()) {
+                    fileName = record["Block"].toString().replace(/[^a-z0-9]/gi, '_');
+                } else {
+                    fileName = `record_${Date.now()}`;
+                }
+                const filename = `TraiIIng_${fileName}_${Date.now()}.png`;
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = pngDataUrl;
+                link.click();
+                showToastMessage("✅ PNG downloaded successfully!");
+            });
+            const closeBtn = document.getElementById("modalCloseBtn");
+            const newCloseBtn = closeBtn.cloneNode(true);
+            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+            newCloseBtn.addEventListener('click', () => {
+                modalOverlay.classList.remove("active");
+                modalContainer.innerHTML = '';
+            });
+            const outsideHandler = (e) => {
+                if (e.target === modalOverlay) {
+                    modalOverlay.classList.remove("active");
+                    modalContainer.innerHTML = '';
+                    modalOverlay.removeEventListener('click', outsideHandler);
+                }
+            };
+            modalOverlay.removeEventListener('click', modalOverlay._outsideHandler);
+            modalOverlay._outsideHandler = outsideHandler;
+            modalOverlay.addEventListener('click', outsideHandler);
+        } catch (err) {
+            console.error("PNG generation error:", err);
+            modalContainer.innerHTML = `<div style="padding:30px;color:red;">PNG generation error: ${err.message}</div>`;
+        }
+    }
+    
+    // Search ONLY in the "Block" column
+    function performSearch() {
+        if (masterData.length === 0) {
+            showToastMessage("No data loaded. Please refresh first.", true);
+            return;
+        }
+        const selectedValue = searchInput.value.trim();
+        let term = selectedValue === "ALL BLOCK" ? "" : selectedValue.trim().toLowerCase();
+        
+        if (!term) {
+            currentFilteredData = [...masterData];
+            renderTable(currentFilteredData);
+            showToastMessage(`Showing all ${masterData.length} records`);
+            return;
+        }
+        
+        let blockHeader = null;
+        for (let header of currentHeaders) {
+            if (header.toLowerCase() === "block") {
+                blockHeader = header;
+                break;
+            }
+        }
+        if (!blockHeader) {
+            showToastMessage("⚠️ 'Block' column not found. Cannot search.", true);
+            currentFilteredData = [...masterData];
+            renderTable(currentFilteredData);
+            return;
+        }
+        const filtered = masterData.filter(row => {
+            const blockValue = row[blockHeader];
+            if (blockValue === undefined || blockValue === null) return false;
+            return String(blockValue).toLowerCase().includes(term);
+        });
+        currentFilteredData = filtered;
+        renderTable(currentFilteredData);
+        if (filtered.length === 0) {
+            showToastMessage(`No records found with Block containing "${term}"`, false);
+        } else {
+            showToastMessage(`Found ${filtered.length} record(s) in Block "${term}"`);
+        }
+    }
+    
+    function resetSearch() {
+        searchInput.value = "ALL BLOCK";
+        if (masterData.length) {
+            currentFilteredData = [...masterData];
+            renderTable(currentFilteredData);
+            showToastMessage(`Reset filter. Showing all ${masterData.length} records.`);
+        } else {
+            renderTable([]);
+        }
+    }
+    
+    async function refreshData() {
+        recordCountSpan.innerHTML = "🔄 Refreshing from Database... <span class='spinner'></span>";
+        const success = await fetchSheetData(true);
+        if (success && masterData.length) {
+            currentFilteredData = [...masterData];
+            renderTable(currentFilteredData);
+            showToastMessage(`✅ Loaded ${masterData.length} records`);
+        } else if (!success) {
+            renderTable([]);
+        } else {
+            renderTable([]);
+        }
+    }
+    
+    async function init() {
+        await fetchSheetData(false);
+        if (masterData.length) {
+            currentFilteredData = [...masterData];
+            renderTable(currentFilteredData);
+        } else {
+            renderTable([]);
+        }
+        searchBtn.addEventListener("click", performSearch);
+        resetBtn.addEventListener("click", resetSearch);
+        refreshBtn.addEventListener("click", refreshData);
+        searchInput.addEventListener("change", performSearch);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove("active");
+                modalContainer.innerHTML = '';
+            }
+        });
+    }
+    init();
+</script>
+</body>
+</html>
