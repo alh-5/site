@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LedgerPDF - PDF Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            color: #5f6368;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .folder-info {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            border: 1px solid #e0e0e0;
+        }
+
+        .folder-info strong {
+            color: #2c5364;
+            font-size: 16px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            outline: none;
+            background: white;
+        }
+
+        .search-box input:focus {
+            border-color: #2c5364;
+            box-shadow: 0 0 0 3px rgba(44,83,100,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #666;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #999;
+            display: none;
+            padding: 5px;
+        }
+
+        .stats {
+            background: #e8f0fe;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .pdf-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pdf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .pdf-preview {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pdf-icon {
+            font-size: 64px;
+            filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pdf-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pdf-info {
+            padding: 20px;
+        }
+
+        .pdf-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #202124;
+            margin-bottom: 8px;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .pdf-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .view-link {
+            color: #2c5364;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* PDF Viewer Modal - No download buttons */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            height: 90%;
+            top: 5%;
+        }
+
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* Hide download button in Google Viewer */
+        .pdf-frame {
+            pointer-events: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 45px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #bbb;
+            transform: scale(1.1);
+        }
+
+        .loading, .error, .no-results, .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .loading {
+            color: #2c5364;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2c5364;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .instruction-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .instruction-box code {
+            background: #ffecb3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #34a853;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Disable right-click on PDF frame to prevent save as */
+        .pdf-frame {
+            pointer-events: auto;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                height: 95%;
+                padding: 10px;
+            }
+            .close-modal {
+                right: 20px;
+                font-size: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>
+            📄 LedgerPDF
+            <span style="font-size: 14px; background: #e8f0fe; padding: 4px 12px; border-radius: 20px;">View Only</span>
+        </h1>
+        <div class="subtitle">Browse and view PDFs from your GitHub repository</div>
+        
+        <div class="folder-info">
+            📂 GitHub Folder: <strong>LedgerPDF/</strong><br>
+            <span style="font-size: 12px; color: #666;">💡 Click any PDF to view it - No download option available</span>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search PDFs by name...">
+                <button class="clear-btn" id="clearSearch">✕</button>
+            </div>
+        </div>
+
+        <div class="stats" id="stats" style="display: none;">
+            <span>📊 Total: <span id="totalCount">0</span> PDFs</span>
+            <span>🔍 Showing: <span id="shownCount">0</span></span>
+            <span class="stat-badge" id="searchBadge"></span>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="loading">
+            <div class="spinner"></div>
+            <div>Loading PDFs from LedgerPDF folder...</div>
+        </div>
+    </div>
+</div>
+
+<!-- PDF Viewer Modal - View Only -->
+<div id="pdfModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <div class="modal-content">
+        <iframe id="pdfFrame" class="pdf-frame" src=""></iframe>
+    </div>
+</div>
+
+<script>
+    // ==================== CONFIGURATION ====================
+    const PDF_FOLDER = 'LedgerPDF';
+    const BRANCH = 'main';
+    
+    let pdfFiles = [];
+    let currentSearchTerm = '';
+    
+    // DOM Elements
+    const contentDiv = document.getElementById('content');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const statsDiv = document.getElementById('stats');
+    const totalCountSpan = document.getElementById('totalCount');
+    const shownCountSpan = document.getElementById('shownCount');
+    const searchBadgeSpan = document.getElementById('searchBadge');
+    const pdfModal = document.getElementById('pdfModal');
+    const pdfFrame = document.getElementById('pdfFrame');
+    const closeModal = document.querySelector('.close-modal');
+    
+    // Show toast notification
+    function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.background = isError ? '#c5221f' : '#34a853';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    // Escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Get view-only PDF URL (using Google's viewer to prevent download)
+    function getViewOnlyUrl(rawPdfUrl) {
+        // Use Google Docs Viewer which doesn't provide download button by default
+        return `https://docs.google.com/viewer?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
+    }
+    
+    // Fetch PDF list from GitHub
+    async function fetchPDFsFromGitHub() {
+        try {
+            // Get repo info from current URL
+            let owner = '';
+            let repo = '';
+            
+            if (window.location.hostname.includes('github.io')) {
+                const pathParts = window.location.pathname.split('/');
+                if (pathParts.length > 1) {
+                    repo = pathParts[1];
+                    owner = window.location.hostname.split('.')[0];
+                }
+            }
+            
+            if (owner && repo) {
+                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${PDF_FOLDER}`;
+                const response = await fetch(apiUrl);
+                
+                if (response.ok) {
+                    const files = await response.json();
+                    const pdfs = files.filter(file => 
+                        file.name.toLowerCase().endsWith('.pdf') && file.type === 'file'
+                    ).map(file => ({
+                        name: file.name,
+                        url: file.download_url,
+                        size: file.size,
+                        path: file.path
+                    }));
+                    
+                    return pdfs;
+                }
+            }
+            
+            return [];
+            
+        } catch (error) {
+            console.error('Error fetching from GitHub API:', error);
+            return [];
+        }
+    }
+    
+    // Load PDFs
+    async function loadPDFs() {
+        contentDiv.innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>📡 Scanning LedgerPDF folder...</div>
+                <div style="font-size: 12px; margin-top: 10px;">Looking for PDFs in the LedgerPDF directory</div>
+            </div>
+        `;
+        
+        try {
+            let pdfs = await fetchPDFsFromGitHub();
+            
+            if (pdfs && pdfs.length > 0) {
+                pdfFiles = pdfs;
+                renderPDFs();
+                showToast(`✅ Found ${pdfFiles.length} PDF(s) - Click to view`);
+            } else {
+                pdfFiles = [];
+                showEmptyState();
+            }
+        } catch (error) {
+            console.error('Error loading PDFs:', error);
+            showEmptyState();
+        }
+    }
+    
+    // Show empty state
+    function showEmptyState() {
+        contentDiv.innerHTML = `
+            <div class="empty-state">
+                <div style="font-size: 64px; margin-bottom: 20px;">📭</div>
+                <h3>No PDFs Found in LedgerPDF Folder</h3>
+                <p>Add PDF files to the <strong>LedgerPDF</strong> folder in your GitHub repository.</p>
+                <div class="instruction-box" style="margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <h3>📘 How to add PDFs to LedgerPDF:</h3>
+                    <div style="margin-top: 15px;">
+                        <strong>Upload via GitHub Web Interface</strong>
+                        <ol style="margin-left: 20px; margin-top: 5px; line-height: 1.8;">
+                            <li>Go to your GitHub repository</li>
+                            <li>Click on the <strong>LedgerPDF</strong> folder (create it if needed)</li>
+                            <li>Click <strong>"Add file"</strong> → <strong>"Upload files"</strong></li>
+                            <li>Drag and drop your PDF files</li>
+                            <li>Commit the changes</li>
+                            <li>Refresh this page</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        `;
+        statsDiv.style.display = 'none';
+    }
+    
+    // Render PDFs
+    function renderPDFs() {
+        let filteredPDFs = pdfFiles;
+        if (currentSearchTerm.trim()) {
+            const term = currentSearchTerm.toLowerCase();
+            filteredPDFs = pdfFiles.filter(pdf => 
+                pdf.name.toLowerCase().includes(term)
+            );
+        }
+        
+        totalCountSpan.textContent = pdfFiles.length;
+        shownCountSpan.textContent = filteredPDFs.length;
+        
+        if (currentSearchTerm) {
+            searchBadgeSpan.textContent = `🔍 "${escapeHtml(currentSearchTerm)}"`;
+            searchBadgeSpan.style.display = 'inline-block';
+        } else {
+            searchBadgeSpan.textContent = '';
+            searchBadgeSpan.style.display = 'none';
+        }
+        statsDiv.style.display = pdfFiles.length > 0 ? 'flex' : 'none';
+        
+        if (pdfFiles.length === 0) {
+            showEmptyState();
+            return;
+        }
+        
+        if (filteredPDFs.length === 0) {
+            contentDiv.innerHTML = `
+                <div class="no-results">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+                    <h3>No matching PDFs found</h3>
+                    <p>No PDF contains "${escapeHtml(currentSearchTerm)}" in the name</p>
+                    <button onclick="clearSearch()" style="margin-top: 20px; background: linear-gradient(135deg, #0f2027 0%, #203a43 100%); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Clear Search</button>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = `<div class="grid">`;
+        filteredPDFs.forEach((pdf, index) => {
+            const fileName = pdf.name.replace(/\.pdf$/i, '');
+            const displayName = fileName.length > 50 ? fileName.substring(0, 47) + '...' : fileName;
+            
+            html += `
+                <div class="pdf-card" style="animation-delay: ${index * 0.05}s" onclick="openPDF('${pdf.url}', '${escapeHtml(pdf.name)}')">
+                    <div class="pdf-preview">
+                        <div class="pdf-icon">📄</div>
+                        <div class="pdf-badge">VIEW ONLY</div>
+                    </div>
+                    <div class="pdf-info">
+                        <div class="pdf-title" title="${escapeHtml(pdf.name)}">${escapeHtml(displayName)}</div>
+                        <div class="pdf-meta">
+                            <span>📄 Ledger Document</span>
+                            <span class="view-link">👁️ View Only →</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        contentDiv.innerHTML = html;
+    }
+    
+    // Open PDF in modal (view only)
+    function openPDF(pdfUrl, pdfName) {
+        // Use Google Docs Viewer for view-only experience
+        const viewOnlyUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
+        pdfFrame.src = viewOnlyUrl;
+        pdfModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Close modal
+    function closePDFModal() {
+        pdfModal.style.display = 'none';
+        pdfFrame.src = '';
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Search functions
+    function handleSearch() {
+        currentSearchTerm = searchInput.value;
+        clearSearchBtn.style.display = currentSearchTerm ? 'block' : 'none';
+        renderPDFs();
+    }
+    
+    window.clearSearch = function() {
+        searchInput.value = '';
+        currentSearchTerm = '';
+        clearSearchBtn.style.display = 'none';
+        renderPDFs();
+    };
+    
+    // Event Listeners
+    searchInput.addEventListener('input', handleSearch);
+    clearSearchBtn.addEventListener('click', () => window.clearSearch());
+    closeModal.addEventListener('click', closePDFModal);
+    window.addEventListener('click', (e) => {
+        if (e.target === pdfModal) closePDFModal();
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && pdfModal.style.display === 'block') {
+            closePDFModal();
+        }
+    });
+    
+    // Disable right-click on PDF frame (optional)
+    document.addEventListener('contextmenu', function(e) {
+        if (e.target.closest('.pdf-frame')) {
+            e.preventDefault();
+            showToast('⚠️ Download is disabled', true);
+            return false;
+        }
+    });
+    
+    // Initialize
+    loadPDFs();
+    
+    console.log('LedgerPDF Viewer Loaded - View Only Mode');
+    console.log('📁 Looking for PDFs in the "LedgerPDF" folder');
+    console.log('🔒 Download functionality is disabled');
+</script>
+</body>
+</html>
