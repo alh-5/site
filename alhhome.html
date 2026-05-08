@@ -1187,6 +1187,12 @@
                             <i class="fas fa-file-invoice-dollar"></i>
                             R/O Order
                         </button>
+						
+						<button class="tab-btn" data-tab="ledgers">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            Account Ledger's
+                        </button>
+						
                         <button class="tab-btn" data-tab="requirement">
                             <i class="fas fa-clipboard-list"></i>
                             Requirement
@@ -1267,6 +1273,27 @@
                                 Open RO Order Website
                             </a>
                             <p class="link-note">Click to access R/O order</p>
+                        </div>
+                    </div>
+					
+					 <div class="tab-content" id="ledgers-tab">
+                        <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> R/O Retail Outlet</h2>
+                        <p class="tab-desc">Streamline Account process with our dedicated RO management system. Handle Ledger's, Sales requests, all in one place. Improve Oeder Compilation efficiency, reduce errors, and enhance customer satisfaction with our comprehensive RO management solution.</p>
+                        
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Easy Account Statement Searchable</li>
+                            <li><i class="fas fa-check-circle"></i> Track Ledgers and estimated completion times</li>
+                            <li><i class="fas fa-check-circle"></i> Manage customer Lube information and service history</li>
+                            <li><i class="fas fa-check-circle"></i> Generate service estimates and final invoices</li>
+                            <li><i class="fas fa-check-circle"></i> Integration with Sales And Purchase for parts usage tracking</li>
+                        </ul>
+                        
+                        <div class="website-link-container">
+                            <a href="ledger.html" target="_blank" class="website-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open Account Ledger's Website
+                            </a>
+                            <p class="link-note">Click to access Account Ledger's</p>
                         </div>
                     </div>
                     
@@ -1506,6 +1533,7 @@
                 // For this demo, we'll show an alert instead
                 const siteName = this.textContent.includes('Bazaar') ? 'Bazaar Order' :
                                 this.textContent.includes('RO') ? 'RO Order' :
+								this.textContent.includes('ledgers') ? 'RO Order' :
                                 this.textContent.includes('Requirements') ? 'Requirements' :
 								this.textContent.includes('invtracker') ? 'Invoice Status' :
 								this.textContent.includes('hpincentive') ? 'HP Incentive' :
