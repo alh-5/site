@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LedgerPDF - Secure PDF Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Password Modal */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .password-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .password-box h2 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .password-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .password-box input:focus {
+            border-color: #2c5364;
+        }
+
+        .password-box button {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .error-msg {
+            color: #c5221f;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: none;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            color: #5f6368;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .folder-info {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            border: 1px solid #e0e0e0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            outline: none;
+            background: white;
+        }
+
+        .search-box input:focus {
+            border-color: #2c5364;
+            box-shadow: 0 0 0 3px rgba(44,83,100,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #666;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #999;
+            display: none;
+            padding: 5px;
+        }
+
+        /* Autocomplete Suggestions */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .suggestion-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background: #f1f3f4;
+        }
+
+        .stats {
+            background: #e8f0fe;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .pdf-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pdf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .pdf-preview {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .pdf-icon {
+            font-size: 64px;
+            filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pdf-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pdf-info {
+            padding: 20px;
+        }
+
+        .pdf-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #202124;
+            margin-bottom: 12px;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .view-btn, .download-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-btn {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #1557b0;
+            transform: translateY(-1px);
+        }
+
+        .download-btn {
+            background: #34a853;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: #2d8e47;
+            transform: translateY(-1px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            height: 90%;
+            top: 5%;
+        }
+
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 45px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #bbb;
+            transform: scale(1.1);
+        }
+
+        .loading, .error, .no-results, .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2c5364;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #34a853;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                height: 95%;
+            }
+            .close-modal {
+                right: 20px;
+                font-size: 35px;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div id="passwordOverlay" class="password-overlay">
+        <div class="password-box">
+            <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+            <h2>Secure Access Required</h2>
+            <p>Please enter password to access LedgerPDF</p>
+            <input type="password" id="passwordInput" placeholder="Enter password" autofocus>
+            <button onclick="checkPassword()">Unlock Vault</button>
+            <div id="errorMsg" class="error-msg">❌ Incorrect password. Please try again.</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>
+                    📄 Auto Lube House
+                    <span style="font-size: 14px; padding: 4px 12px; border-radius: 20px;">Secure LedgerPDF</span>
+                </h1>
+                <div class="subtitle">Secure PDF Management System - View and Download Your Documents</div>
+                
+                <div class="controls">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search PDFs...">
+                        <button class="clear-btn" id="clearSearch">✕</button>
+                        <div id="suggestions" class="suggestions"></div>
+                    </div>
+                </div>
+
+                <div class="stats" id="stats" style="display: none;">
+                    <span>📊 Total Documents: <span id="totalCount">0</span></span>
+                    <span>🔍 Showing: <span id="shownCount">0</span></span>
+                    <span class="stat-badge" id="searchBadge"></span>
+                </div>
+            </div>
+
+            <div id="content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Loading PDFs from LedgerPDF folder...</div>
+                    <div style="font-size: 12px; margin-top: 10px; color: #666;">Please wait while we scan your documents</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div id="pdfModal" class="modal">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content">
+            <iframe id="pdfFrame" class="pdf-frame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const PASSWORD = '2026';
+        const PDF_FOLDER = 'LedgerPDF';
+        
+        let pdfFiles = [];
+        let currentSearchTerm = '';
+        
+        // Password Check Function
+        window.checkPassword = function() {
+            const inputPassword = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (inputPassword === PASSWORD) {
+                document.getElementById('passwordOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadPDFs();
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+            }
+        };
+        
+        // Allow Enter key for password
+        document.getElementById('passwordInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // DOM Elements
+        const contentDiv = document.getElementById('content');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const statsDiv = document.getElementById('stats');
+        const totalCountSpan = document.getElementById('totalCount');
+        const shownCountSpan = document.getElementById('shownCount');
+        const searchBadgeSpan = document.getElementById('searchBadge');
+        const pdfModal = document.getElementById('pdfModal');
+        const pdfFrame = document.getElementById('pdfFrame');
+        const closeModal = document.querySelector('.close-modal');
+        const suggestionsDiv = document.getElementById('suggestions');
+        
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = isError ? '#c5221f' : '#34a853';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // Update autocomplete suggestions
+        function updateSuggestions() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            if (!searchTerm) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            const matches = pdfFiles
+                .map(pdf => pdf.name.replace(/\.pdf$/i, ''))
+                .filter(name => name.toLowerCase().includes(searchTerm))
+                .slice(0, 10);
+            
+            if (matches.length > 0) {
+                suggestionsDiv.innerHTML = matches.map(match => 
+                    `<div class="suggestion-item" onclick="selectSuggestion('${escapeHtml(match)}')">
+                        🔍 ${escapeHtml(match)}
+                     </div>`
+                ).join('');
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }
+        
+        // Select suggestion
+        window.selectSuggestion = function(suggestion) {
+            searchInput.value = suggestion;
+            suggestionsDiv.style.display = 'none';
+            handleSearch();
+        };
+        
+        // Fetch PDF list from GitHub
+        async function fetchPDFsFromGitHub() {
+            try {
+                let owner = '';
+                let repo = '';
+                
+                if (window.location.hostname.includes('github.io')) {
+                    const pathParts = window.location.pathname.split('/');
+                    if (pathParts.length > 1) {
+                        repo = pathParts[1];
+                        owner = window.location.hostname.split('.')[0];
+                    }
+                }
+                
+                if (owner && repo) {
+                    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${PDF_FOLDER}`;
+                    const response = await fetch(apiUrl);
+                    
+                    if (response.ok) {
+                        const files = await response.json();
+                        const pdfs = files.filter(file => 
+                            file.name.toLowerCase().endsWith('.pdf') && file.type === 'file'
+                        ).map(file => ({
+                            name: file.name,
+                            url: file.download_url,
+                            size: file.size,
+                            path: file.path
+                        }));
+                        
+                        return pdfs;
+                    }
+                }
+                
+                // Demo PDFs for testing if no GitHub repo detected
+                return [
+                    { name: "Sample Ledger 2024.pdf", url: "#", size: 1024000 },
+                    { name: "Annual Report.pdf", url: "#", size: 2048000 },
+                    { name: "Financial Statements.pdf", url: "#", size: 512000 }
+                ];
+                
+            } catch (error) {
+                console.error('Error fetching from GitHub API:', error);
+                return [];
+            }
+        }
+        
+        // Load PDFs
+        async function loadPDFs() {
+            contentDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>📡 Scanning LedgerPDF folder...</div>
+                    <div style="font-size: 12px; margin-top: 10px;">Fetching documents from repository</div>
+                </div>
+            `;
+            
+            try {
+                let pdfs = await fetchPDFsFromGitHub();
+                
+                if (pdfs && pdfs.length > 0) {
+                    pdfFiles = pdfs;
+                    renderPDFs();
+                    showToast(`✅ Successfully loaded ${pdfFiles.length} PDF(s)`);
+                } else {
+                    pdfFiles = [];
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading PDFs:', error);
+                showEmptyState();
+            }
+        }
+        
+        // Show empty state
+        function showEmptyState() {
+            contentDiv.innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 64px; margin-bottom: 20px;">📭</div>
+                    <h3>No PDFs Found in LedgerPDF Folder</h3>
+                    <p>Add PDF files to the <strong>LedgerPDF</strong> folder in your Data.</p>
+                    <div style="margin-top: 20px; padding: 15px; background: #f1f3f4; border-radius: 8px;">
+                        <strong>📘 How to add PDFs:</strong><br>
+                        1. Go to your Data Base<br>
+                        2. Create a folder named <code>LedgerPDF</code><br>
+                        3. Upload your PDF files to that folder<br>
+                        4. Refresh this page
+                    </div>
+                </div>
+            `;
+            statsDiv.style.display = 'none';
+        }
+        
+        // Render PDFs with search
+        function renderPDFs() {
+            let filteredPDFs = pdfFiles;
+            if (currentSearchTerm.trim()) {
+                const term = currentSearchTerm.toLowerCase();
+                filteredPDFs = pdfFiles.filter(pdf => 
+                    pdf.name.toLowerCase().includes(term)
+                );
+            }
+            
+            totalCountSpan.textContent = pdfFiles.length;
+            shownCountSpan.textContent = filteredPDFs.length;
+            
+            if (currentSearchTerm) {
+                searchBadgeSpan.textContent = `🔍 "${escapeHtml(currentSearchTerm)}"`;
+                searchBadgeSpan.style.display = 'inline-block';
+            } else {
+                searchBadgeSpan.textContent = '';
+                searchBadgeSpan.style.display = 'none';
+            }
+            statsDiv.style.display = pdfFiles.length > 0 ? 'flex' : 'none';
+            
+            if (pdfFiles.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            if (filteredPDFs.length === 0) {
+                contentDiv.innerHTML = `
+                    <div class="no-results">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+                        <h3>No matching PDFs found</h3>
+                        <p>No PDF contains "${escapeHtml(currentSearchTerm)}" in the name</p>
+                        <button onclick="clearSearch()" style="margin-top: 20px; background: linear-gradient(135deg, #0f2027 0%, #203a43 100%); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Clear Search</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `<div class="grid">`;
+            filteredPDFs.forEach((pdf, index) => {
+                const fileName = pdf.name.replace(/\.pdf$/i, '');
+                const displayName = fileName.length > 50 ? fileName.substring(0, 47) + '...' : fileName;
+                const downloadUrl = pdf.url;
+                const viewUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdf.url)}&embedded=true`;
+                
+                html += `
+                    <div class="pdf-card" style="animation-delay: ${index * 0.05}s">
+                        <div class="pdf-preview" onclick="openPDF('${viewUrl}')">
+                            <div class="pdf-icon">📄</div>
+                            <div class="pdf-badge">DOCUMENT</div>
+                        </div>
+                        <div class="pdf-info">
+                            <div class="pdf-title" title="${escapeHtml(pdf.name)}">${escapeHtml(displayName)}</div>
+                            <div class="button-group">
+                                <button class="view-btn" onclick="openPDF('${viewUrl}')">
+                                    👁️ View Online
+                                </button>
+                                <a href="${downloadUrl}" download="${escapeHtml(pdf.name)}" class="download-btn" onclick="showToast('📥 Downloading ${escapeHtml(pdf.name)}...')">
+                                    ⬇️ Download PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            contentDiv.innerHTML = html;
+        }
+        
+        // Open PDF in modal
+        window.openPDF = function(viewUrl) {
+            if (viewUrl && viewUrl !== '#') {
+                pdfFrame.src = viewUrl;
+                pdfModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            } else {
+                showToast('❌ PDF URL not available', true);
+            }
+        };
+        
+        // Close modal
+        function closePDFModal() {
+            pdfModal.style.display = 'none';
+            pdfFrame.src = '';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Search handler
+        function handleSearch() {
+            currentSearchTerm = searchInput.value;
+            clearSearchBtn.style.display = currentSearchTerm ? 'block' : 'none';
+            updateSuggestions();
+            renderPDFs();
+        }
+        
+        window.clearSearch = function() {
+            searchInput.value = '';
+            currentSearchTerm = '';
+            clearSearchBtn.style.display = 'none';
+            suggestionsDiv.style.display = 'none';
+            renderPDFs();
+        };
+        
+        // Event Listeners
+        searchInput.addEventListener('input', function() {
+            handleSearch();
+        });
+        
+        searchInput.addEventListener('focus', function() {
+            if (searchInput.value) {
+                updateSuggestions();
+            }
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+        
+        clearSearchBtn.addEventListener('click', () => window.clearSearch());
+        closeModal.addEventListener('click', closePDFModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === pdfModal) closePDFModal();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && pdfModal.style.display === 'block') {
+                closePDFModal();
+            }
+        });
+        
+        console.log('✅ LedgerPDF Secure Viewer Loaded Successfully');
+        console.log('🔒 Password protection: ENABLED');
+        console.log('📁 PDF Folder: LedgerPDF/');
+        console.log('💡 Features: Search | Auto-suggest | View | Download');
+    </script>
+</body>
+</html>
