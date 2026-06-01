@@ -3,1196 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primary Calculator</title>
+    <title>Primary Calculator - ALH Purchase System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SheetJS library for Excel file handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        /* Magnetic wave background effect */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 20%),
-                radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 40% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 20%);
-            z-index: -1;
-            animation: waveMove 20s infinite linear;
-        }
-        
-        @keyframes waveMove {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            25% {
-                transform: translate(-10px, 10px) rotate(1deg);
-            }
-            50% {
-                transform: translate(0, 20px) rotate(0deg);
-            }
-            75% {
-                transform: translate(10px, 10px) rotate(-1deg);
-            }
-            100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-        }
-        
-        /* ALH Spinning Logo */
-        .alh-logo-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .alh-logo {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #D4AF37, #FFD700, #D4AF37);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: #1a1a1a;
-            animation: spin 4s linear infinite;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .alh-logo:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
-            animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 5px 30px rgba(212, 175, 55, 0.3);
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        header {
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
-            color: white;
-            padding: 25px 30px;
-            text-align: center;
-            position: relative;
-        }
-        
-        header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-        }
-        
-        header p {
-            font-size: 1.05rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 25px;
-        }
-        
-        .left-panel {
-            flex: 1;
-            min-width: 350px;
-            padding-right: 25px;
-            border-right: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .right-panel {
-            flex: 2;
-            min-width: 500px;
-            padding-left: 25px;
-        }
-        
-        .section-title {
-            font-size: 1.4rem;
-            color: #2c3e50;
-            margin-bottom: 18px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .section-title i {
-            margin-right: 10px;
-            color: #3498db;
-        }
-        
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .table-header .section-title {
-            margin-bottom: 0;
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-        
-        .table-controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .search-container {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-        
-        .search-input {
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            min-width: 200px;
-            transition: all 0.3s;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-        
-        .btn-search {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
-        
-        .btn-search:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        .btn-search.active {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
-        }
-        
-        .btn-sort {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
-        
-        .btn-sort:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        .btn-sort.active {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
-        }
-        
-        .search-summary {
-            background-color: #e1f5fe;
-            padding: 8px 15px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #0277bd;
-            border-left: 4px solid #0288d1;
-            display: none;
-        }
-        
-        .search-summary strong {
-            font-weight: 600;
-        }
-        
-        .summary-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .summary-header h3 {
-            font-size: 1.2rem;
-            color: #2c3e50;
-            margin: 0;
-        }
-        
-        .summary-mode {
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-            background-color: #e1f5fe;
-            color: #0277bd;
-        }
-        
-        .summary-mode.search-mode {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .summary-mode.all-mode {
-            background-color: #fff3e0;
-            color: #ef6c00;
-        }
-        
-        .import-section {
-            background-color: rgba(248, 250, 252, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border: 1px dashed #cbd5e1;
-        }
-        
-        .file-input-wrapper {
-            margin-bottom: 15px;
-        }
-        
-        .file-input-label {
-            display: inline-block;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-            margin-bottom: 10px;
-            border: none;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .file-input-label:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        #fileInput {
-            display: none;
-        }
-        
-        .file-info {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 10px;
-        }
-        
-        .sample-file {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f1f5f9;
-            border-radius: 6px;
-        }
-        
-        .sample-file a {
-            color: #3498db;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .sample-file a:hover {
-            text-decoration: underline;
-        }
-        
-        .sku-input-section {
-            margin-bottom: 25px;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #475569;
-        }
-        
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: white;
-        }
-        
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-        
-        .quadruple-input {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .quadruple-input .input-group {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        
-        .dual-input {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .dual-input .input-group {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 5px 0;
-        }
-        
-        .btn i {
-            margin-right: 8px;
-        }
-        
-        .btn:hover {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-        
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        .btn-excel {
-            background: linear-gradient(135deg, #217346, #1a5c38);
-        }
-        
-        .btn-excel:hover {
-            background: linear-gradient(135deg, #1a5c38, #217346);
-            box-shadow: 0 5px 15px rgba(33, 115, 70, 0.3);
-        }
-        
-        .btn-pdf {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-        
-        .btn-pdf:hover {
-            background: linear-gradient(135deg, #c0392b, #e74c3c);
-            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
-        }
-        
-        .btn-gold {
-            background: linear-gradient(135deg, #D4AF37, #FFD700);
-            color: #1a1a1a;
-        }
-        
-        .btn-gold:hover {
-            background: linear-gradient(135deg, #FFD700, #D4AF37);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-        }
-        
-        .btn-refresh {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-        }
-        
-        .btn-refresh:hover {
-            background: linear-gradient(135deg, #8e44ad, #9b59b6);
-            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
-        }
-        
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .button-group .btn {
-            flex: 1;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%); padding: 20px; min-height: 100vh; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 20%); z-index: -1; animation: waveMove 20s infinite linear; }
+        @keyframes waveMove { 0% { transform: translate(0, 0); } 25% { transform: translate(-10px, 10px); } 50% { transform: translate(0, 20px); } 75% { transform: translate(10px, 10px); } 100% { transform: translate(0, 0); } }
+        .alh-logo-container { position: fixed; top: 20px; right: 20px; z-index: 1000; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+        .alh-logo { width: 50px; height: 50px; background: linear-gradient(135deg, #D4AF37, #FFD700, #D4AF37); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #1a1a1a; animation: spin 4s linear infinite; box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); cursor: pointer; transition: all 0.3s ease; }
+        .alh-logo:hover { transform: scale(1.1); animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .container { max-width: 1400px; margin: 0 auto; background-color: rgba(255, 255, 255, 0.95); border-radius: 12px; box-shadow: 0 5px 30px rgba(212, 175, 55, 0.3); overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.2); }
+        header { background: linear-gradient(135deg, #2c3e50, #4a6491); color: white; padding: 25px 30px; text-align: center; }
+        header h1 { font-size: 2.2rem; margin-bottom: 8px; }
+        .main-content { display: flex; flex-wrap: wrap; padding: 25px; gap: 25px; }
+        .left-panel { flex: 1; min-width: 350px; }
+        .right-panel { flex: 2; min-width: 500px; }
+        .section-title { font-size: 1.3rem; color: #2c3e50; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid rgba(212, 175, 55, 0.3); display: flex; align-items: center; justify-content: space-between; }
+        .section-title i { margin-right: 10px; color: #3498db; }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .table-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-container { display: flex; gap: 5px; align-items: center; }
+        .search-input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; min-width: 200px; }
+        .btn-search, .btn-sort { background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 6px; padding: 8px 15px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-search:hover, .btn-sort:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.3); }
+        .btn-search.active, .btn-sort.active { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .search-summary { background-color: #e1f5fe; padding: 8px 15px; border-radius: 6px; margin-top: 10px; display: none; font-size: 0.9rem; }
+        .import-section { background-color: rgba(248, 250, 252, 0.9); padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px dashed #cbd5e1; }
+        .file-input-label { display: inline-block; background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 12px 20px; border-radius: 6px; cursor: pointer; text-align: center; width: 100%; transition: all 0.3s; }
+        .file-input-label:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.3); }
+        #fileInput, #resultsFileInput { display: none; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #475569; }
+        .input-group input, .input-group select { width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; background: white; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,0.2); }
+        .quadruple-input { display: flex; gap: 10px; }
+        .quadruple-input .input-group { flex: 1; margin-bottom: 0; }
+        .btn { padding: 12px 24px; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46,204,113,0.3); }
+        .btn-secondary { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .btn-excel { background: linear-gradient(135deg, #217346, #1a5c38); }
+        .btn-pdf { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .btn-gold { background: linear-gradient(135deg, #D4AF37, #FFD700); color: #1a1a1a; }
+        .btn-refresh { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .button-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .button-group .btn { flex: 1; min-width: 140px; }
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 0.8rem; table-layout: auto; }
+        .results-table th { background: linear-gradient(135deg, #2c3e50, #4a6491); color: white; padding: 10px 6px; white-space: nowrap; }
+        .results-table td { padding: 10px 6px; border-bottom: 1px solid #eaeaea; vertical-align: top; }
+        /* SKU Name column - wrap text and allow full display */
+        .results-table td:nth-child(7) { 
+            white-space: normal; 
+            word-wrap: break-word; 
+            word-break: break-word;
+            max-width: 220px;
             min-width: 150px;
         }
-        
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            font-size: 0.9rem;
-            background: white;
-        }
-        
-        .results-table th {
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
-            color: white;
-            text-align: left;
-            padding: 12px 10px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        
-        .results-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #eaeaea;
-        }
-        
-        .results-table tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        
-        .results-table tr:hover {
-            background-color: #f1f5f9;
-        }
-        
-        .highlight {
-            background-color: #fff9e6 !important;
-            font-weight: 600;
-        }
-        
-        .search-highlight {
-            background-color: #e1f5fe !important;
-            font-weight: 600;
-            border-left: 3px solid #3498db;
-        }
-        
-        .order-badge {
-            display: inline-block;
-            background-color: #3498db;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-        
-        .invoice-badge {
-            display: inline-block;
-            background-color: #9b59b6;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-        
-        .date-badge {
-            display: inline-block;
-            background-color: #2ecc71;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-        
-        .location-badge {
-            display: inline-block;
-            background-color: #e67e22;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-        
-        .imported-data {
-            margin-top: 30px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .imported-data table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-        
-        .imported-data th {
-            background-color: #f1f5f9;
-            padding: 10px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            border-bottom: 1px solid #cbd5e1;
-        }
-        
-        .imported-data td {
-            padding: 10px;
-            border-bottom: 1px solid #eaeaea;
-        }
-        
-        .empty-message {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-            font-style: italic;
-        }
-        
-        .error-message {
-            color: #e74c3c;
-            background-color: #fee;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .success-message {
-            color: #27ae60;
-            background-color: #effff4;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .instructions {
-            background-color: #f0f9ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #0369a1;
-            border-left: 4px solid #0ea5e9;
-        }
-        
-        .summary-section {
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .summary-items-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        
-        .summary-item {
-            flex: 1;
-            min-width: 150px;
-            margin: 5px;
-            padding: 10px;
-            text-align: center;
-            background-color: white;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-        }
-        
-        .summary-label {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-        
-        .summary-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #64748b;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-            margin-top: 20px;
-            background: rgba(248, 250, 252, 0.9);
-        }
-        
-        .calculation-note {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-            font-style: italic;
-        }
-        
-        .orders-summary {
-            margin-top: 25px;
-            background-color: #f8fafc;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(212, 175, 55, 0.1);
-        }
-        
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eaeaea;
-        }
-        
-        .order-item:last-child {
-            border-bottom: none;
-        }
-        
-        /* Golden accents */
-        .gold-accent {
-            border-color: #D4AF37;
-        }
-        
-        .gold-text {
-            color: #D4AF37;
-        }
-        
-        /* Import buttons group */
-        .import-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .import-buttons .btn {
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
-            position: relative;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eaeaea;
-        }
-        
-        .modal-header h3 {
-            color: #2c3e50;
-            margin: 0;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #64748b;
-        }
-        
-        .modal-body {
-            margin-bottom: 20px;
-        }
-        
-        .column-mapping {
-            margin-bottom: 20px;
-        }
-        
-        .mapping-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 8px;
-            background-color: #f8fafc;
-            border-radius: 6px;
-        }
-        
-        .mapping-label {
-            flex: 1;
-            font-weight: 600;
-            color: #475569;
-        }
-        
-        .mapping-select {
-            flex: 2;
-            padding: 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .left-panel, .right-panel {
-                padding: 0;
-                border: none;
-            }
-            
-            .left-panel {
-                margin-bottom: 30px;
-                padding-bottom: 20px;
-                border-bottom: 1px solid #eaeaea;
-            }
-            
-            .summary-items-container {
-                flex-direction: column;
-            }
-            
-            .quadruple-input, .dual-input {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .results-table {
-                font-size: 0.8rem;
-            }
-            
-            .results-table th, .results-table td {
-                padding: 8px 5px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .alh-logo-container {
-                top: 10px;
-                right: 10px;
-                width: 40px;
-                height: 40px;
-            }
-            
-            .alh-logo {
-                width: 35px;
-                height: 35px;
-                font-size: 14px;
-            }
-            
-            .import-buttons {
-                flex-direction: column;
-            }
-            
-            .import-buttons .btn {
-                min-width: 100%;
-            }
-            
-            .modal-content {
-                width: 95%;
-                margin: 10% auto;
-            }
-            
-            .table-controls {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .search-container {
-                width: 100%;
-            }
-            
-            .search-input {
-                min-width: 100%;
-            }
-            
-            .btn-sort, .btn-search {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+        .results-table tr:nth-child(even) { background-color: #f8fafc; }
+        .results-table tr:hover { background-color: #f1f5f9; }
+        .highlight { background-color: #fff9e6 !important; font-weight: 600; }
+        .order-badge, .invoice-badge, .date-badge, .location-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 3px; }
+        .order-badge { background-color: #3498db; color: white; }
+        .invoice-badge { background-color: #9b59b6; color: white; }
+        .date-badge { background-color: #2ecc71; color: white; }
+        .location-badge { background-color: #e67e22; color: white; }
+        .imported-data { margin-top: 30px; max-height: 300px; overflow-y: auto; }
+        .imported-data table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .imported-data th { background-color: #f1f5f9; padding: 8px; text-align: left; position: sticky; top: 0; }
+        .imported-data td { padding: 8px; border-bottom: 1px solid #eaeaea; }
+        .empty-message { text-align: center; padding: 40px 20px; color: #94a3b8; font-style: italic; }
+        .error-message { color: #e74c3c; background-color: #fee; padding: 10px; border-radius: 6px; margin-top: 10px; display: none; }
+        .success-message { color: #27ae60; background-color: #effff4; padding: 10px; border-radius: 6px; margin-top: 10px; display: none; }
+        .summary-section { background: linear-gradient(135deg, #f8fafc, #e2e8f0); padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .summary-items-container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .summary-item { flex: 1; min-width: 110px; padding: 10px; text-align: center; background: white; border-radius: 6px; }
+        .summary-value { font-size: 1.3rem; font-weight: 700; color: #2c3e50; }
+        .orders-summary { margin-top: 25px; background-color: #f8fafc; padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto; }
+        .order-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eaeaea; font-size: 0.8rem; }
+        .order-item:last-child { border-bottom: none; }
+        .calculation-note { font-size: 0.75rem; color: #666; margin-top: 5px; font-style: italic; }
+        footer { text-align: center; padding: 20px; color: #64748b; border-top: 1px solid rgba(212, 175, 55, 0.2); margin-top: 20px; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 10% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; }
+        @keyframes slideDown { from { top: -100px; opacity: 0; } to { top: 20px; opacity: 1; } }
+        @media (max-width: 768px) { .main-content { flex-direction: column; } .quadruple-input { flex-direction: column; gap: 15px; } .table-controls { flex-direction: column; } .search-container { width: 100%; } .search-input { flex: 1; } }
     </style>
 </head>
 <body>
-    <!-- ALH Spinning Logo -->
-    <div class="alh-logo-container">
-        <div class="alh-logo" title="ALH Purchase System">
-            ALH
-        </div>
-    </div>
-    
+    <div class="alh-logo-container"><div class="alh-logo" title="ALH Purchase System">ALH</div></div>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-boxes"></i> Primary Calculator</h1>
-            <p>Calculate Purchase in real-time with Order Tracking</p>
-        </header>
-        
+        <header><h1><i class="fas fa-boxes"></i> Primary Calculator</h1><p>Calculate Purchase in real-time with Order Tracking</p></header>
         <div class="main-content">
             <div class="left-panel">
                 <div class="import-section">
                     <h2 class="section-title"><i class="fas fa-file-import"></i> Import SKU Data</h2>
-                    <div class="file-input-wrapper">
-                        <label for="fileInput" class="file-input-label">
-                            <i class="fas fa-file-excel"></i> Choose UOM File
-                        </label>
-                        <input type="file" id="fileInput" accept=".xlsx, .xls">
-                        <div id="fileName" class="file-info"></div>
+                    <div class="file-input-wrapper"><label for="fileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose UOM File (Excel)</label><input type="file" id="fileInput" accept=".xlsx, .xls, .csv"></div>
+                    <div id="fileName" class="file-info" style="margin-top: 10px; font-size: 0.8rem; color: #666;"></div>
+                    <div class="import-buttons" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" id="downloadSampleBtn"><i class="fas fa-download"></i> Download Sample UOM</button>
+                        <button class="btn btn-gold" id="importResultsBtn"><i class="fas fa-file-import"></i> Import Purchase Data</button>
+                        <button class="btn btn-refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh SKU List</button>
                     </div>
-                    
-                    <div class="import-buttons">
-                        <button class="btn btn-secondary" id="uploadBtn" onclick="window.location.href='https://alh-5.github.io/site/Advance Stock/UOM.xlsx';">
-                            <i class="fas fa-chart-pie"></i> Download UOM
-                        </button>
-                        
-                        <button class="btn btn-gold" id="importResultsBtn">
-                            <i class="fas fa-file-import"></i> Import Purchase
-                        </button>
-                        
-                        <button class="btn btn-refresh" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i> Refresh SKU List
-                        </button>
-                    </div>
-                    
                     <div id="importError" class="error-message"></div>
                     <div id="importSuccess" class="success-message"></div>
                 </div>
-                
                 <div class="sku-input-section">
                     <h2 class="section-title"><i class="fas fa-calculator"></i> Enter SKU Details</h2>
-                    
                     <div class="quadruple-input">
-                        <div class="input-group">
-                            <label for="dateInput">Date (dd mmm yyyy) *</label>
-                            <input type="text" id="dateInput" value="" placeholder="e.g., 01 Jan 2026">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="locationInput">Location *</label>
-                            <select id="locationInput">
-                                <option value="">Select Location</option>
-                                <option value="Guwahati">Guwahati</option>
-                                <option value="Jorhat">Jorhat</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="invoiceNumber">Invoice Number *</label>
-                            <input type="text" id="invoiceNumber" placeholder="Enter SAP Invoice Number" value="">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="seedNumber">MRP *</label>
-                            <input type="text" id="seedNumber" placeholder="Enter MRP" value="">
-                        </div>
+                        <div class="input-group"><label>Date *</label><input type="text" id="dateInput" placeholder="01 Jan 2026"></div>
+                        <div class="input-group"><label>Location *</label><select id="locationInput"><option value="">Select</option><option value="Guwahati">Guwahati</option><option value="Jorhat">Jorhat</option><option value="Other">Other</option></select></div>
+                        <div class="input-group"><label>Invoice # *</label><input type="text" id="invoiceNumber" placeholder="SAP Invoice Number"></div>
                     </div>
-                    
-                    <div class="input-group">
-                        <label for="skuCode">SKU Code</label>
-                        <input type="text" id="skuCode" placeholder="Enter SKU code">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="quantity">Quantity</label>
-                        <input type="number" id="quantity" placeholder="Enter quantity" min="1" value="">
-                    </div>
-                    
-                    <div class="input-group" id="totalAmountContainer">
-                        <label for="totalAmount">Total Amount ($)</label>
-                        <input type="number" id="totalAmount" placeholder="Enter total amount" min="0.01" step="0.01" value="">
-                        <div class="calculation-note">Total Amount will be calculated as Per Case / Bucket / Barrel.</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="priceOption">Price Calculation Method</label>
-                        <select id="priceOption">
-                            <option value="total">Enter Total Amount (Calculate Per Case)</option>
-                            <option value="perCase">Enter Per Case Amount (Calculate Total)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group" id="perCaseInputContainer" style="display: none;">
-                        <label for="perCaseAmount">Per Case Amount ($)</label>
-                        <input type="number" id="perCaseAmount" placeholder="Enter per case amount" min="0.01" step="0.01" value="0.00">
-                        <div class="calculation-note">Total Amount will be calculated as Per Case Amount × Quantity</div>
-                    </div>
-                                                          
-                    <div class="button-group">
-                        <button id="addBtn" class="btn"><i class="fas fa-plus-circle"></i> Add to Results</button>
-                        <button id="clearBtn" class="btn btn-secondary"><i class="fas fa-trash-alt"></i> Clear All</button>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button id="saveDataBtn" class="btn btn-gold"><i class="fas fa-save"></i> Save Data</button>
-                        <button id="loadDataBtn" class="btn btn-secondary"><i class="fas fa-folder-open"></i> Load Data</button>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button id="exportBtn" class="btn btn-excel"><i class="fas fa-file-export"></i> Export to Excel</button>
-                        <button id="exportPdfBtn" class="btn btn-pdf"><i class="fas fa-file-pdf"></i> Export to PDF</button>
-                    </div>
-                    
-                    <div class="orders-summary">
-                        <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Orders Summary</h3>
-                        <div id="ordersList">
-                            <p class="empty-message" style="padding: 10px;">No orders yet</p>
-                        </div>
-                    </div>
+                    <div class="input-group"><label>MRP *</label><input type="text" id="seedNumber" placeholder="Enter MRP"></div>
+                    <div class="input-group"><label>SKU Code</label><input type="text" id="skuCode" placeholder="Enter SKU code"></div>
+                    <div class="input-group"><label>Quantity</label><input type="number" id="quantity" placeholder="Quantity" min="1"></div>
+                    <div class="input-group" id="totalAmountContainer"><label>Total Amount ($)</label><input type="number" id="totalAmount" placeholder="Total amount" min="0.01" step="0.01"><div class="calculation-note">Total Amount / Quantity = Per Case</div></div>
+                    <div class="input-group"><label>Price Method</label><select id="priceOption"><option value="total">Enter Total Amount</option><option value="perCase">Enter Per Case Amount</option></select></div>
+                    <div class="input-group" id="perCaseInputContainer" style="display: none;"><label>Per Case Amount ($)</label><input type="number" id="perCaseAmount" placeholder="Per case amount" min="0.01" step="0.01"><div class="calculation-note">Per Case × Quantity = Total</div></div>
+                    <div class="button-group"><button id="addBtn" class="btn"><i class="fas fa-plus-circle"></i> Add to Results</button><button id="clearBtn" class="btn btn-secondary"><i class="fas fa-trash-alt"></i> Clear All</button></div>
+                    <div class="button-group"><button id="saveDataBtn" class="btn btn-gold"><i class="fas fa-save"></i> Save Data</button><button id="loadDataBtn" class="btn btn-secondary"><i class="fas fa-folder-open"></i> Load Data</button></div>
+                    <div class="button-group"><button id="exportBtn" class="btn btn-excel"><i class="fas fa-file-excel"></i> Export to Excel</button><button id="exportPdfBtn" class="btn btn-pdf"><i class="fas fa-file-pdf"></i> Export to PDF</button></div>
+                    <div class="orders-summary"><h3 class="section-title"><i class="fas fa-clipboard-list"></i> Orders Summary</h3><div id="ordersList"><p class="empty-message">No orders yet</p></div></div>
                 </div>
             </div>
-            
             <div class="right-panel">
-                <div class="table-header">
-                    <h2 class="section-title"><i class="fas fa-list-alt"></i> Results Table</h2>
-                    <div class="table-controls">
-                        <div class="search-container">
-                            <input type="text" id="invoiceSearchInput" class="search-input" placeholder="Search by Invoice Number...">
-                            <button id="searchInvoiceBtn" class="btn-search">
-                                <i class="fas fa-search"></i> Search
-                            </button>
-                        </div>
-                        <button id="sortByInvoiceBtn" class="btn-sort">
-                            <i class="fas fa-sort-alpha-down"></i> Sort by Invoice
-                        </button>
-                        <button id="sortByNameBtn" class="btn-sort">
-                            <i class="fas fa-sort-alpha-down"></i> Sort by SKU Name
-                        </button>
-                        <button id="resetSortBtn" class="btn-sort">
-                            <i class="fas fa-undo"></i> Show All
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="searchSummary" class="search-summary">
-                    Showing <span id="searchCount">0</span> of <span id="totalCount">0</span> results for invoice: "<span id="searchTerm"></span>"
-                </div>
-                
-                <div class="table-container">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Order #</th>
-                                <th>Date</th>
-                                <th>Location</th>
-                                <th>Invoice</th>
-                                <th>MRP</th>
-                                <th>SKU Code</th>
-                                <th>SKU Name</th>
-                                <th>Quantity</th>
-                                <th>UOM</th>
-                                <th>Total Liters</th>
-                                <th>Per Case ($)</th>
-                                <th>Total ($)</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsBody">
-                            <tr>
-                                <td colspan="13" class="empty-message">No results yet. Import SKU data and enter a SKU code to get started.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="summary-section">
-                    <div class="summary-header">
-                        <h3><i class="fas fa-chart-bar"></i> Summary</h3>
-                        <div id="summaryMode" class="summary-mode all-mode">All Results</div>
-                    </div>
-                    <div class="summary-items-container">
-                        <div class="summary-item">
-                            <div class="summary-label">Total Items</div>
-                            <div class="summary-value" id="totalItems">0</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Total Orders</div>
-                            <div class="summary-value" id="totalOrders">0</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Total Quantity</div>
-                            <div class="summary-value" id="totalQuantity">0</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Total Liters</div>
-                            <div class="summary-value" id="totalLiters">0.00</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Total Amount</div>
-                            <div class="summary-value" id="totalAmountSum">$0.00</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="imported-data">
-                    <h2 class="section-title"><i class="fas fa-database"></i> Imported SKU Data</h2>
-                    <table id="importedDataTable">
-                        <thead>
-                            <tr>
-                                <th>SKU Code</th>
-                                <th>SKU Name</th>
-                                <th>UOM</th>
-                            </tr>
-                        </thead>
-                        <tbody id="importedDataBody">
-                            <tr>
-                                <td colspan="3" class="empty-message">No data imported yet. Upload an Excel file to see SKU data here.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div class="table-header"><h2 class="section-title"><i class="fas fa-list-alt"></i> Results Table</h2><div class="table-controls"><div class="search-container"><input type="text" id="invoiceSearchInput" class="search-input" placeholder="Search by Invoice..."><button id="searchInvoiceBtn" class="btn-search"><i class="fas fa-search"></i> Search</button></div><button id="sortByInvoiceBtn" class="btn-sort"><i class="fas fa-sort-alpha-down"></i> Sort Invoice</button><button id="sortByNameBtn" class="btn-sort"><i class="fas fa-sort-alpha-down"></i> Sort SKU Name</button><button id="resetSortBtn" class="btn-sort"><i class="fas fa-undo"></i> Show All</button></div></div>
+                <div id="searchSummary" class="search-summary">Showing <span id="searchCount">0</span> of <span id="totalCount">0</span> results for "<span id="searchTerm"></span>"</div>
+                <div style="overflow-x: auto;"><table class="results-table"><thead><tr><th>Ord#</th><th>Date</th><th>Location</th><th>Invoice</th><th>MRP</th><th>SKU Code</th><th>SKU Name</th><th>Qty</th><th>UOM</th><th>Total L</th><th>Per Case</th><th>Total</th><th></th></tr></thead><tbody id="resultsBody"><tr><td colspan="13" class="empty-message">No results yet. Import SKU data and add items.</td></tr></tbody></table></div>
+                <div class="summary-section"><div class="summary-header"><h3><i class="fas fa-chart-bar"></i> Summary</h3><div id="summaryMode" style="font-size:0.8rem;padding:4px 8px;background:#e1f5fe;border-radius:4px;">All Results</div></div><div class="summary-items-container"><div class="summary-item"><div class="summary-label">Total Items</div><div class="summary-value" id="totalItems">0</div></div><div class="summary-item"><div class="summary-label">Total Orders</div><div class="summary-value" id="totalOrders">0</div></div><div class="summary-item"><div class="summary-label">Total Qty</div><div class="summary-value" id="totalQuantity">0</div></div><div class="summary-item"><div class="summary-label">Total Liters</div><div class="summary-value" id="totalLiters">0.00</div></div><div class="summary-item"><div class="summary-label">Total Amount</div><div class="summary-value" id="totalAmountSum">$0.00</div></div></div></div>
+                <div class="imported-data"><h2 class="section-title"><i class="fas fa-database"></i> Imported SKU Data</h2><table id="importedDataTable"><thead><tr><th>SKU Code</th><th>SKU Name</th><th>UOM (Liters/Unit)</th></tr></thead><tbody id="importedDataBody"><tr><td colspan="3" class="empty-message">No SKU data. Upload UOM file.</td></tr></tbody></table></div>
             </div>
         </div>
-        
-        <footer>
-            <p>SKU Purchase system dbareh &copy; 2026 | Purchase Calculation</p>
-        </footer>
+        <footer><p>SKU Purchase System &copy; 2026 | Auto Lube House</p></footer>
     </div>
-
-    <!-- Import Results Modal -->
-    <div id="importResultsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-file-import"></i> Import Not Received Data</h3>
-                <button class="close-modal" onclick="closeImportModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="file-input-wrapper">
-                    <label for="resultsFileInput" class="file-input-label">
-                        <i class="fas fa-file-excel"></i> Choose Not Received Data
-                    </label>
-                    <input type="file" id="resultsFileInput" accept=".xlsx, .xls" style="display: none;">
-                    <div id="resultsFileName" class="file-info"></div>
-                </div>
-                                                
-                <div id="importResultsError" class="error-message"></div>
-                <div id="importResultsSuccess" class="success-message"></div>
-            </div>
-            <div class="button-group">
-                <button class="btn" onclick="processResultsFile()"><i class="fas fa-upload"></i> Import</button>
-                <button class="btn btn-secondary" onclick="closeImportModal()"><i class="fas fa-times"></i> Cancel</button>
-            </div>
-        </div>
-    </div>
+    <div id="importResultsModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-file-import"></i> Import Purchase Data</h3><button class="close-modal" onclick="closeImportModal()">&times;</button></div><div class="modal-body"><div class="file-input-wrapper"><label for="resultsFileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose Excel File</label><input type="file" id="resultsFileInput" accept=".xlsx, .xls"><div id="resultsFileName" style="margin-top:8px;font-size:0.8rem;"></div></div><div id="importResultsError" class="error-message"></div><div id="importResultsSuccess" class="success-message"></div></div><div class="button-group"><button class="btn" onclick="processResultsFile()"><i class="fas fa-upload"></i> Import</button><button class="btn btn-secondary" onclick="closeImportModal()"><i class="fas fa-times"></i> Cancel</button></div></div></div>
 
     <script>
-        // Sample SKU data
-        const sampleSKUData = [];
-        
+        // State
         let importedSKUs = [];
-        let allResults = []; // Store ALL results (complete dataset)
-        let filteredResults = []; // Store currently displayed results (search results or all)
+        let allResults = [];
+        let filteredResults = [];
         let orderCounter = {};
         let currentFileData = null;
-        let currentSort = {
-            field: null,
-            direction: 'asc' // 'asc' or 'desc'
-        };
+        let currentSort = { field: null, direction: 'asc' };
         let isSearchActive = false;
         let currentSearchTerm = '';
         
         // DOM elements
-        const fileInput = document.getElementById('fileInput');
-        const fileName = document.getElementById('fileName');
-        const resultsFileInput = document.getElementById('resultsFileInput');
-        const resultsFileName = document.getElementById('resultsFileName');
         const dateInput = document.getElementById('dateInput');
         const locationInput = document.getElementById('locationInput');
         const invoiceNumberInput = document.getElementById('invoiceNumber');
@@ -1201,8 +164,9 @@
         const quantityInput = document.getElementById('quantity');
         const totalAmountInput = document.getElementById('totalAmount');
         const priceOption = document.getElementById('priceOption');
-        const perCaseInputContainer = document.getElementById('perCaseInputContainer');
         const perCaseAmountInput = document.getElementById('perCaseAmount');
+        const perCaseInputContainer = document.getElementById('perCaseInputContainer');
+        const totalAmountContainer = document.getElementById('totalAmountContainer');
         const addBtn = document.getElementById('addBtn');
         const clearBtn = document.getElementById('clearBtn');
         const exportBtn = document.getElementById('exportBtn');
@@ -1216,12 +180,6 @@
         const importError = document.getElementById('importError');
         const importSuccess = document.getElementById('importSuccess');
         const ordersList = document.getElementById('ordersList');
-        const totalAmountContainer = document.getElementById('totalAmountContainer');
-        const importResultsModal = document.getElementById('importResultsModal');
-        const importResultsError = document.getElementById('importResultsError');
-        const importResultsSuccess = document.getElementById('importResultsSuccess');
-        
-        // Search elements
         const invoiceSearchInput = document.getElementById('invoiceSearchInput');
         const searchInvoiceBtn = document.getElementById('searchInvoiceBtn');
         const sortByInvoiceBtn = document.getElementById('sortByInvoiceBtn');
@@ -1230,9 +188,7 @@
         const searchSummary = document.getElementById('searchSummary');
         const searchCount = document.getElementById('searchCount');
         const totalCount = document.getElementById('totalCount');
-        const searchTerm = document.getElementById('searchTerm');
-        
-        // Summary elements
+        const searchTermSpan = document.getElementById('searchTerm');
         const summaryMode = document.getElementById('summaryMode');
         const totalItemsEl = document.getElementById('totalItems');
         const totalOrdersEl = document.getElementById('totalOrders');
@@ -1240,357 +196,32 @@
         const totalLitersEl = document.getElementById('totalLiters');
         const totalAmountSumEl = document.getElementById('totalAmountSum');
         
-        // Local Storage Keys
-        const STORAGE_KEYS = {
-            SKU_DATA: 'purchase_calculator_sku_data',
-            RESULTS_DATA: 'purchase_calculator_results',
-            ORDER_COUNTER: 'purchase_calculator_order_counter'
-        };
+        const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         
-        // Month names for formatting
-        const monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ];
-        
-        // Format date to "dd mmm yyyy" format
         function formatDateToDDMMMYYYY(dateStr) {
-            // If already in correct format, return as is
-            if (typeof dateStr === 'string' && /^\d{2} [A-Za-z]{3} \d{4}$/.test(dateStr)) {
-                // Capitalize month name properly
-                const parts = dateStr.split(' ');
-                if (parts.length === 3) {
-                    const day = parts[0];
-                    const month = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
-                    const year = parts[2];
-                    return `${day} ${month} ${year}`;
-                }
-                return dateStr;
-            }
-            
-            // Try to parse the date string
-            let date;
-            if (dateStr instanceof Date) {
-                date = dateStr;
-            } else if (typeof dateStr === 'string') {
-                // Try multiple date formats
-                date = parseDateString(dateStr);
-            } else {
-                // Default to current date
-                date = new Date();
-            }
-            
-            if (!date || isNaN(date.getTime())) {
-                // Return current date if parsing fails
-                date = new Date();
-            }
-            
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = monthNames[date.getMonth()];
-            const year = date.getFullYear();
-            
-            return `${day} ${month} ${year}`;
-        }
-        
-        // Parse date string from various formats
-        function parseDateString(dateStr) {
-            if (!dateStr) return new Date();
-            
-            // Try ISO format first (YYYY-MM-DD)
+            if (typeof dateStr === 'string' && /^\d{2} [A-Za-z]{3} \d{4}$/.test(dateStr)) return dateStr;
             let date = new Date(dateStr);
-            if (!isNaN(date.getTime())) return date;
-            
-            // Try DD/MM/YYYY or MM/DD/YYYY
-            const parts = dateStr.split(/[/\- ]/);
-            if (parts.length === 3) {
-                // Check if it's likely DD/MM/YYYY or MM/DD/YYYY
-                const day = parseInt(parts[0]);
-                const month = parseInt(parts[1]) - 1;
-                const year = parseInt(parts[2]);
-                
-                if (day > 0 && day <= 31 && month >= 0 && month < 12 && year > 0) {
-                    // Try as DD/MM/YYYY first
-                    date = new Date(year, month, day);
-                    if (!isNaN(date.getTime())) return date;
-                    
-                    // Try as MM/DD/YYYY
-                    date = new Date(year, day - 1, month + 1);
-                    if (!isNaN(date.getTime())) return date;
-                }
-            }
-            
-            // Try Excel serial date (number of days since 1900)
-            const excelSerial = parseFloat(dateStr);
-            if (!isNaN(excelSerial) && excelSerial > 0) {
-                // Excel date system (1900 date system with leap year bug)
-                const excelBaseDate = new Date(1899, 11, 30); // December 30, 1899
-                const millisecondsPerDay = 24 * 60 * 60 * 1000;
-                date = new Date(excelBaseDate.getTime() + (excelSerial * millisecondsPerDay));
-                if (!isNaN(date.getTime())) return date;
-            }
-            
-            // Return current date as fallback
-            return new Date();
+            if (isNaN(date.getTime())) date = new Date();
+            return `${String(date.getDate()).padStart(2,'0')} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
         }
         
-        // Set default date to today in "dd mmm yyyy" format
-        function setDefaultDate() {
-            const today = new Date();
-            dateInput.value = formatDateToDDMMMYYYY(today);
-        }
+        function setDefaultDate() { dateInput.value = formatDateToDDMMMYYYY(new Date()); }
         
-        // Get order number for invoice+seed combination
-        function getOrderNumber(invoice, seed) {
-            const key = `${invoice}_${seed}`;
-            if (!orderCounter[key]) {
-                orderCounter[key] = 1;
-            } else {
-                orderCounter[key]++;
-            }
+        function getOrderNumber(inv, mrp) {
+            const key = `${inv}_${mrp}`;
+            if (!orderCounter[key]) orderCounter[key] = 1;
+            else orderCounter[key]++;
             return orderCounter[key];
         }
         
-        // Sort results by field
-        function sortResults(resultsArray, field, direction = 'asc') {
-            if (resultsArray.length === 0) return resultsArray;
-            
-            const sortedResults = [...resultsArray];
-            
-            sortedResults.sort((a, b) => {
-                let aValue = a[field];
-                let bValue = b[field];
-                
-                // Handle string comparison
-                if (typeof aValue === 'string' && typeof bValue === 'string') {
-                    aValue = aValue.toLowerCase();
-                    bValue = bValue.toLowerCase();
-                    return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-                }
-                
-                // Handle number comparison
-                if (direction === 'asc') {
-                    return aValue - bValue;
-                } else {
-                    return bValue - aValue;
-                }
-            });
-            
-            return sortedResults;
+        function showNotification(msg, type) {
+            const n = document.createElement('div');
+            n.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:8px;font-weight:600;z-index:10000;background:${type==='success'?'#2ecc71':type==='warning'?'#e67e22':'#3498db'};color:white;animation:slideDown 0.3s ease;box-shadow:0 5px 20px rgba(0,0,0,0.2);`;
+            n.textContent = msg;
+            document.body.appendChild(n);
+            setTimeout(() => n.remove(), 3000);
         }
         
-        // Apply sorting to currently displayed results
-        function applySort(field) {
-            // Toggle direction if same field
-            if (currentSort.field === field) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.field = field;
-                currentSort.direction = 'asc';
-            }
-            
-            // Update button states
-            updateControlButtons();
-            
-            // Sort currently displayed results
-            filteredResults = sortResults(filteredResults, field, currentSort.direction);
-            
-            // Update table
-            updateResultsTable();
-            saveResultsToStorage();
-        }
-        
-        // Search by invoice number
-        function searchByInvoice(invoiceNumber) {
-            if (!invoiceNumber || invoiceNumber.trim() === '') {
-                resetSearch();
-                return;
-            }
-            
-            currentSearchTerm = invoiceNumber.trim().toLowerCase();
-            isSearchActive = true;
-            
-            // Filter all results based on search term
-            filteredResults = allResults.filter(item => 
-                item.invoice.toLowerCase().includes(currentSearchTerm)
-            );
-            
-            // Reset sort when searching
-            currentSort.field = null;
-            currentSort.direction = 'asc';
-            
-            // Update UI
-            updateResultsTable();
-            updateControlButtons();
-            updateSummary();
-            
-            // Update search input with search term
-            invoiceSearchInput.value = currentSearchTerm;
-            
-            // Update search summary
-            updateSearchSummary();
-            
-            // Show search results count
-            if (filteredResults.length === 0) {
-                showNotification(`No results found for invoice: "${currentSearchTerm}"`, 'warning');
-            } else {
-                showNotification(`Found ${filteredResults.length} result(s) for invoice: "${currentSearchTerm}"`, 'success');
-            }
-        }
-        
-        // Update search summary display
-        function updateSearchSummary() {
-            if (isSearchActive) {
-                searchCount.textContent = filteredResults.length;
-                totalCount.textContent = allResults.length;
-                searchTerm.textContent = currentSearchTerm;
-                searchSummary.style.display = 'block';
-            } else {
-                searchSummary.style.display = 'none';
-            }
-        }
-        
-        // Reset search and show all results
-        function resetSearch() {
-            isSearchActive = false;
-            currentSearchTerm = '';
-            invoiceSearchInput.value = '';
-            
-            // Show all results
-            filteredResults = [...allResults];
-            
-            // Reset sort
-            currentSort.field = null;
-            currentSort.direction = 'asc';
-            
-            // Update UI
-            updateResultsTable();
-            updateControlButtons();
-            updateSummary();
-            updateSearchSummary();
-            
-            showNotification('Showing all results', 'info');
-        }
-        
-        // Update control button states
-        function updateControlButtons() {
-            // Update sort by invoice button
-            if (currentSort.field === 'invoice') {
-                const sortIcon = currentSort.direction === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up';
-                sortByInvoiceBtn.classList.add('active');
-                sortByInvoiceBtn.innerHTML = `<i class="fas ${sortIcon}"></i> Invoice ${currentSort.direction === 'asc' ? '(A-Z)' : '(Z-A)'}`;
-            } else {
-                sortByInvoiceBtn.classList.remove('active');
-                sortByInvoiceBtn.innerHTML = `<i class="fas fa-sort-alpha-down"></i> Sort by Invoice`;
-            }
-            
-            // Update sort by name button
-            if (currentSort.field === 'name') {
-                const sortIcon = currentSort.direction === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up';
-                sortByNameBtn.classList.add('active');
-                sortByNameBtn.innerHTML = `<i class="fas ${sortIcon}"></i> SKU Name ${currentSort.direction === 'asc' ? '(A-Z)' : '(Z-A)'}`;
-            } else {
-                sortByNameBtn.classList.remove('active');
-                sortByNameBtn.innerHTML = `<i class="fas fa-sort-alpha-down"></i> Sort by SKU Name`;
-            }
-            
-            // Update search button
-            if (isSearchActive) {
-                searchInvoiceBtn.classList.add('active');
-                searchInvoiceBtn.innerHTML = `<i class="fas fa-times"></i> Clear Search`;
-            } else {
-                searchInvoiceBtn.classList.remove('active');
-                searchInvoiceBtn.innerHTML = `<i class="fas fa-search"></i> Search`;
-            }
-            
-            // Update reset button text
-            if (isSearchActive || currentSort.field) {
-                resetSortBtn.innerHTML = `<i class="fas fa-undo"></i> Reset View`;
-            } else {
-                resetSortBtn.innerHTML = `<i class="fas fa-undo"></i> Show All`;
-            }
-        }
-        
-        // Update summary mode indicator
-        function updateSummaryMode() {
-            if (isSearchActive) {
-                summaryMode.textContent = 'Search Results';
-                summaryMode.className = 'summary-mode search-mode';
-            } else {
-                summaryMode.textContent = 'All Results';
-                summaryMode.className = 'summary-mode all-mode';
-            }
-        }
-        
-        // Show notification
-        function showNotification(message, type = 'info') {
-            // Remove any existing notifications
-            const existingNotification = document.querySelector('.custom-notification');
-            if (existingNotification) {
-                existingNotification.remove();
-            }
-            
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `custom-notification ${type}`;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                padding: 12px 20px;
-                border-radius: 6px;
-                font-weight: 600;
-                z-index: 10000;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                animation: slideDown 0.3s ease;
-            `;
-            
-            // Set style based on type
-            if (type === 'success') {
-                notification.style.backgroundColor = '#2ecc71';
-                notification.style.color = 'white';
-            } else if (type === 'warning') {
-                notification.style.backgroundColor = '#e67e22';
-                notification.style.color = 'white';
-            } else if (type === 'error') {
-                notification.style.backgroundColor = '#e74c3c';
-                notification.style.color = 'white';
-            } else {
-                notification.style.backgroundColor = '#3498db';
-                notification.style.color = 'white';
-            }
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.style.animation = 'slideUp 0.3s ease';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
-                        }
-                    }, 300);
-                }
-            }, 3000);
-        }
-        
-        // Add CSS for notification animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideDown {
-                from { top: -100px; opacity: 0; }
-                to { top: 20px; opacity: 1; }
-            }
-            @keyframes slideUp {
-                from { top: 20px; opacity: 1; }
-                to { top: -100px; opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Toggle between total amount and per case amount input
         priceOption.addEventListener('change', function() {
             if (this.value === 'perCase') {
                 perCaseInputContainer.style.display = 'block';
@@ -1601,1128 +232,448 @@
             }
         });
         
-        // Clear quantity and total amount after adding SKU
         function clearInputFields() {
             quantityInput.value = "";
             totalAmountInput.value = "";
             perCaseAmountInput.value = "";
             skuCodeInput.value = "";
-            
-            // Update placeholder based on available SKUs
-            if (importedSKUs.length > 0) {
-                skuCodeInput.placeholder = `Enter SKU code (${importedSKUs.length} SKUs available)`;
-            } else {
-                skuCodeInput.placeholder = "Enter SKU code";
-            }
-            
             skuCodeInput.focus();
         }
         
-        // Function to process file data
+        function updateImportedDataTable() {
+            if (!importedSKUs.length) {
+                importedDataBody.innerHTML = '<tr><td colspan="3" class="empty-message">No SKU data. Upload UOM file.软</tr>';
+                skuCodeInput.placeholder = "Enter SKU code";
+                return;
+            }
+            importedDataBody.innerHTML = importedSKUs.map(s => `<tr><td>${escapeHtml(s.code)}</td><td>${escapeHtml(s.name)}NonNull<td>${s.uom.toFixed(2)}</td></tr>`).join('');
+            skuCodeInput.placeholder = `SKU code (${importedSKUs.length} available)`;
+        }
+        
+        function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+        
         function processFileData(fileData) {
             try {
-                const data = new Uint8Array(fileData);
-                const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-                
-                // Get the first worksheet
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                
-                // Convert to JSON
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                
-                if (jsonData.length === 0) {
-                    throw new Error('The Excel file appears to be empty.');
-                }
-                
-                const newSKUs = [];
-                let startRow = 0;
-                
-                // Check if first row contains headers
-                const firstRow = jsonData[0];
-                if (firstRow && firstRow.length >= 3 && 
-                    (firstRow[0].toString().toLowerCase().includes('sku') || 
-                     firstRow[1].toString().toLowerCase().includes('name') ||
-                     firstRow[2].toString().toLowerCase().includes('uom'))) {
-                    startRow = 1; // Skip header row
-                }
-                
-                // Process each row
-                for (let i = startRow; i < jsonData.length; i++) {
-                    const row = jsonData[i];
-                    if (!row || row.length < 3) continue;
-                    
-                    const code = row[0] ? row[0].toString().trim() : '';
-                    const name = row[1] ? row[1].toString().trim() : '';
-                    const uomValue = row[2];
-                    
-                    // Handle uom value (could be string or number)
-                    let uom = 0;
-                    if (typeof uomValue === 'number') {
-                        uom = uomValue;
-                    } else if (typeof uomValue === 'string') {
-                        uom = parseFloat(uomValue.replace(/[^0-9.]/g, ''));
-                    }
-                    
-                    if (code && name && !isNaN(uom) && uom > 0) {
-                        newSKUs.push({code, name, uom});
+                const workbook = XLSX.read(new Uint8Array(fileData), { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                let newSKUs = [];
+                for (let i = 0; i < json.length; i++) {
+                    const row = json[i];
+                    if (row && row.length >= 3) {
+                        const code = row[0]?.toString().trim();
+                        const name = row[1]?.toString().trim();
+                        const uom = parseFloat(row[2]);
+                        if (code && name && !isNaN(uom) && uom > 0) {
+                            newSKUs.push({ code, name, uom });
+                        }
                     }
                 }
-                
-                if (newSKUs.length === 0) {
-                    throw new Error('No valid SKU data found in the file. Please check the format (SKU Code, SKU Name, UOM columns required).');
-                }
-                
+                if (newSKUs.length === 0) throw new Error('No valid SKU data found. Ensure columns: SKU Code, SKU Name, UOM');
                 importedSKUs = newSKUs;
                 updateImportedDataTable();
                 clearInputFields();
-                
-                // Save to localStorage
                 saveSKUDataToStorage();
-                
-                importSuccess.textContent = `Successfully imported ${newSKUs.length} SKU records from the Excel file.`;
+                importSuccess.textContent = `✅ Imported ${newSKUs.length} SKU records`;
                 importSuccess.style.display = 'block';
                 importError.style.display = 'none';
-                
-                // Show refresh button as active
-                refreshBtn.innerHTML = '<i class="fas fa-check-circle"></i> SKU List Loaded';
-                refreshBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
-                setTimeout(() => {
-                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh SKU List';
-                    refreshBtn.style.background = '';
-                }, 2000);
-                
-            } catch (error) {
-                importError.textContent = `Error importing file: ${error.message}`;
+                showNotification(`Imported ${newSKUs.length} SKUs`, 'success');
+            } catch (e) {
+                importError.textContent = `Error: ${e.message}`;
                 importError.style.display = 'block';
                 importSuccess.style.display = 'none';
+                showNotification(e.message, 'warning');
             }
         }
         
-        // Handle file import
-        fileInput.addEventListener('change', function(e) {
+        document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            
-            fileName.textContent = `Selected: ${file.name} (${(file.size/1024).toFixed(2)} KB)`;
+            document.getElementById('fileName').textContent = `📄 ${file.name}`;
             importError.style.display = 'none';
             importSuccess.style.display = 'none';
-            
             const reader = new FileReader();
-            reader.onload = function(event) {
-                currentFileData = event.target.result;
+            reader.onload = ev => {
+                currentFileData = ev.target.result;
                 processFileData(currentFileData);
             };
-            
             reader.readAsArrayBuffer(file);
         });
         
-        // Save SKU data to localStorage
-        function saveSKUDataToStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEYS.SKU_DATA, JSON.stringify(importedSKUs));
-                console.log('SKU data saved to localStorage');
-            } catch (error) {
-                console.error('Error saving SKU data:', error);
-            }
-        }
+        document.getElementById('downloadSampleBtn').addEventListener('click', function() {
+            const sample = [["SKU_CODE", "SKU_NAME", "UOM_LITERS"], ["MOTUL_7100", "Motul 7100 10W50 Fully Synthetic", 1.0], ["CASTROL_POWER1", "Castrol Power1 Ultimate 10W40", 1.0], ["SHELL_ADVANCE", "Shell Advance Ultra 4T 10W40", 1.0]];
+            const ws = XLSX.utils.aoa_to_sheet(sample);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "UOM_Sample");
+            XLSX.writeFile(wb, "UOM_Sample.xlsx");
+        });
         
-        // Save results data to localStorage
-        function saveResultsToStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEYS.RESULTS_DATA, JSON.stringify(allResults));
-                localStorage.setItem(STORAGE_KEYS.ORDER_COUNTER, JSON.stringify(orderCounter));
-                console.log('Results data saved to localStorage');
-            } catch (error) {
-                console.error('Error saving results data:', error);
-            }
-        }
-        
-        // Load data from localStorage
+        function saveSKUDataToStorage() { localStorage.setItem('purchase_sku_data', JSON.stringify(importedSKUs)); }
+        function saveResultsToStorage() { localStorage.setItem('purchase_results', JSON.stringify(allResults)); localStorage.setItem('purchase_order_counter', JSON.stringify(orderCounter)); }
         function loadDataFromStorage() {
-            try {
-                // Load SKU data
-                const savedSKUData = localStorage.getItem(STORAGE_KEYS.SKU_DATA);
-                if (savedSKUData) {
-                    importedSKUs = JSON.parse(savedSKUData);
-                    updateImportedDataTable();
-                    console.log('SKU data loaded from localStorage');
-                }
-                
-                // Load results data
-                const savedResults = localStorage.getItem(STORAGE_KEYS.RESULTS_DATA);
-                const savedOrderCounter = localStorage.getItem(STORAGE_KEYS.ORDER_COUNTER);
-                
-                if (savedResults) {
-                    allResults = JSON.parse(savedResults);
-                    // Convert any dates to correct format
-                    allResults.forEach(result => {
-                        result.date = formatDateToDDMMMYYYY(result.date);
-                    });
-                    
-                    // Set filtered results to all results initially
-                    filteredResults = [...allResults];
-                    
-                    if (savedOrderCounter) {
-                        orderCounter = JSON.parse(savedOrderCounter);
-                    }
-                    
-                    updateResultsTable();
-                    updateSummary();
-                    updateOrdersSummary();
-                    console.log('Results data loaded from localStorage');
-                }
-            } catch (error) {
-                console.error('Error loading data from localStorage:', error);
+            const sku = localStorage.getItem('purchase_sku_data');
+            if (sku) { importedSKUs = JSON.parse(sku); updateImportedDataTable(); }
+            const res = localStorage.getItem('purchase_results');
+            if (res) {
+                allResults = JSON.parse(res);
+                allResults.forEach(r => r.date = formatDateToDDMMMYYYY(r.date));
+                filteredResults = [...allResults];
+                updateResultsTable();
+                updateSummary();
+                updateOrdersSummary();
             }
+            const oc = localStorage.getItem('purchase_order_counter');
+            if (oc) orderCounter = JSON.parse(oc);
+            showNotification('Data loaded from storage', 'success');
         }
         
-        // Save Data button click
-        saveDataBtn.addEventListener('click', function() {
-            saveSKUDataToStorage();
-            saveResultsToStorage();
-            
-            showNotification('All data saved successfully!', 'success');
-        });
+        saveDataBtn.onclick = () => { saveSKUDataToStorage(); saveResultsToStorage(); showNotification('All data saved!', 'success'); };
+        loadDataBtn.onclick = () => { loadDataFromStorage(); };
+        refreshBtn.onclick = () => { if (currentFileData) processFileData(currentFileData); else showNotification('Please import a UOM file first', 'warning'); };
         
-        // Load Data button click
-        loadDataBtn.addEventListener('click', function() {
-            loadDataFromStorage();
-            showNotification(`Data loaded successfully! ${allResults.length} results and ${importedSKUs.length} SKUs loaded.`, 'success');
-        });
-        
-        // Refresh button event listener
-        refreshBtn.addEventListener('click', function() {
-            if (!currentFileData) {
-                importError.textContent = 'No file loaded yet. Please import an Excel file first.';
-                importError.style.display = 'block';
-                return;
-            }
-            
-            // Show loading state
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-            refreshBtn.disabled = true;
-            
-            // Simulate processing delay
-            setTimeout(() => {
-                try {
-                    processFileData(currentFileData);
-                    importSuccess.textContent = `SKU list refreshed successfully. ${importedSKUs.length} records loaded.`;
-                    importSuccess.style.display = 'block';
-                    
-                    // Reset button state
-                    refreshBtn.innerHTML = '<i class="fas fa-check-circle"></i> Refreshed!';
-                    refreshBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
-                    
-                    setTimeout(() => {
-                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh SKU List';
-                        refreshBtn.style.background = '';
-                        refreshBtn.disabled = false;
-                    }, 1500);
-                    
-                } catch (error) {
-                    importError.textContent = `Error refreshing SKU list: ${error.message}`;
-                    importError.style.display = 'block';
-                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh SKU List';
-                    refreshBtn.disabled = false;
-                }
-            }, 500);
-        });
-        
-        // Update the imported data table
-        function updateImportedDataTable() {
-            if (importedSKUs.length === 0) {
-                importedDataBody.innerHTML = '<tr><td colspan="3" class="empty-message">No data imported yet. Upload an Excel file to see SKU data here.</td></tr>';
-                return;
-            }
-            
-            let html = '';
-            importedSKUs.forEach(sku => {
-                html += `
-                <tr>
-                    <td>${sku.code}</td>
-                    <td>${sku.name}</td>
-                    <td>${sku.uom.toFixed(2)}</td>
-                </tr>
-                `;
-            });
-            
-            importedDataBody.innerHTML = html;
-        }
-        
-        // Update orders summary
         function updateOrdersSummary() {
-            if (filteredResults.length === 0) {
-                ordersList.innerHTML = '<p class="empty-message" style="padding: 10px;">No orders yet</p>';
-                return;
-            }
-            
-            // Group results by invoice+seed combination
-            const orderGroups = {};
-            filteredResults.forEach(result => {
-                const key = `${result.invoice}_${result.seed}`;
-                if (!orderGroups[key]) {
-                    orderGroups[key] = {
-                        invoice: result.invoice,
-                        seed: result.seed,
-                        date: result.date,
-                        location: result.location,
-                        orderNumber: result.orderNumber,
-                        items: []
-                    };
-                }
-                if (!orderGroups[key].items.includes(result.code)) {
-                    orderGroups[key].items.push(result.code);
-                }
+            if (!filteredResults.length) { ordersList.innerHTML = '<p class="empty-message">No orders yet</p>'; return; }
+            const groups = {};
+            filteredResults.forEach(r => {
+                const key = `${r.invoice}_${r.seed}`;
+                if (!groups[key]) groups[key] = { orderNumber: r.orderNumber, date: r.date, location: r.location, invoice: r.invoice, seed: r.seed, items: [] };
+                if (!groups[key].items.includes(r.code)) groups[key].items.push(r.code);
             });
-            
-            let html = '';
-            Object.values(orderGroups).forEach(group => {
-                html += `
-                <div class="order-item">
-                    <div>
-                        <span class="order-badge">Order ${group.orderNumber}</span>
-                        <span class="date-badge">${group.date}</span>
-                        <span class="location-badge">${group.location}</span>
-                        <strong>${group.invoice}</strong> / ${group.seed}
-                    </div>
-                    <div>${group.items.length} SKUs</div>
-                </div>
-                `;
-            });
-            
-            ordersList.innerHTML = html;
+            ordersList.innerHTML = Object.values(groups).map(g => `<div class="order-item"><div><span class="order-badge">Order ${g.orderNumber}</span> <span class="date-badge">${g.date}</span> <span class="location-badge">${g.location}</span> <strong>${g.invoice}</strong> / ${g.seed}</div><div>${g.items.length} SKUs</div></div>`).join('');
         }
         
-        // Remove item from results
-        function removeResult(index) {
-            if (confirm('Are you sure you want to remove this item?')) {
-                // Get the item from filtered results
-                const itemToRemove = filteredResults[index];
-                
-                // Find and remove from allResults
-                const allResultsIndex = allResults.findIndex(item => item.id === itemToRemove.id);
-                if (allResultsIndex !== -1) {
-                    allResults.splice(allResultsIndex, 1);
-                }
-                
-                // Remove from filteredResults
-                filteredResults.splice(index, 1);
-                
-                // If in search mode, we need to reapply search
-                if (isSearchActive) {
-                    filteredResults = allResults.filter(item => 
-                        item.invoice.toLowerCase().includes(currentSearchTerm)
-                    );
-                }
-                
+        window.removeResult = function(idx) {
+            if (confirm('Remove this item?')) {
+                const item = filteredResults[idx];
+                allResults = allResults.filter(i => i.id !== item.id);
+                filteredResults = filteredResults.filter(i => i.id !== item.id);
+                if (isSearchActive) filteredResults = allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm));
                 updateResultsTable();
                 updateSummary();
                 updateOrdersSummary();
                 saveResultsToStorage();
-                showNotification('Item removed successfully', 'success');
+                showNotification('Item removed', 'success');
             }
-        }
+        };
         
-        // Add SKU to results
-        addBtn.addEventListener('click', function() {
+        addBtn.onclick = function() {
             const date = dateInput.value.trim();
-            const location = locationInput.value.trim();
-            const invoice = invoiceNumberInput.value.trim();
-            const seed = seedNumberInput.value.trim();
-            const skuCode = skuCodeInput.value.trim();
-            const quantity = parseFloat(quantityInput.value);
+            const loc = locationInput.value;
+            const inv = invoiceNumberInput.value.trim();
+            const mrp = seedNumberInput.value.trim();
+            const code = skuCodeInput.value.trim();
+            const qty = parseFloat(quantityInput.value);
             
-            // Validation
-            if (!date) {
-                showNotification('Please enter a Date in "dd mmm yyyy" format (e.g., 01 Jan 2026)', 'warning');
+            if (!date || !loc || !inv || !mrp || !code || isNaN(qty) || qty <= 0) {
+                showNotification('Please fill all required fields', 'warning');
                 return;
             }
-            
-            // Validate date format
-            const formattedDate = formatDateToDDMMMYYYY(date);
-            if (!formattedDate || formattedDate.includes('Invalid')) {
-                showNotification('Please enter a valid date in "dd mmm yyyy" format (e.g., 01 Jan 2026)', 'warning');
-                return;
-            }
-            
-            if (!location) {
-                showNotification('Please select a Location', 'warning');
-                return;
-            }
-            
-            if (!invoice) {
-                showNotification('Please enter an Invoice Number', 'warning');
-                return;
-            }
-            
-            if (!seed) {
-                showNotification('Please enter a MRP', 'warning');
-                return;
-            }
-            
-            if (!skuCode) {
-                showNotification('Please enter a SKU code', 'warning');
-                return;
-            }
-            
-            if (isNaN(quantity) || quantity <= 0) {
-                showNotification('Please enter a valid quantity (greater than 0)', 'warning');
-                return;
-            }
-            
-            // Find the SKU in imported data
-            const sku = importedSKUs.find(item => item.code.toUpperCase() === skuCode.toUpperCase());
-            
+            const fmtDate = formatDateToDDMMMYYYY(date);
+            const sku = importedSKUs.find(s => s.code.toUpperCase() === code.toUpperCase());
             if (!sku) {
-                showNotification(`SKU code "${skuCode}" not found in imported data. Please check the code and try again.`, 'warning');
+                showNotification(`SKU "${code}" not found. Import UOM file first.`, 'warning');
                 return;
             }
-            
-            // Get order number for this invoice+seed combination
-            const orderNumber = getOrderNumber(invoice, seed);
-            
-            // Calculate based on selected price option
-            let totalAmount, perCaseAmount;
-            
+            const orderNum = getOrderNumber(inv, mrp);
+            let totalAmt, perCase;
             if (priceOption.value === 'total') {
-                totalAmount = parseFloat(totalAmountInput.value);
-                if (isNaN(totalAmount) || totalAmount <= 0) {
-                    showNotification('Please enter a valid total amount (greater than 0)', 'warning');
-                    return;
-                }
-                perCaseAmount = totalAmount / quantity;
+                totalAmt = parseFloat(totalAmountInput.value);
+                if (isNaN(totalAmt) || totalAmt <= 0) { showNotification('Enter valid total amount', 'warning'); return; }
+                perCase = totalAmt / qty;
             } else {
-                perCaseAmount = parseFloat(perCaseAmountInput.value);
-                if (isNaN(perCaseAmount) || perCaseAmount <= 0) {
-                    showNotification('Please enter a valid per case amount (greater than 0)', 'warning');
-                    return;
-                }
-                totalAmount = perCaseAmount * quantity;
+                perCase = parseFloat(perCaseAmountInput.value);
+                if (isNaN(perCase) || perCase <= 0) { showNotification('Enter valid per case amount', 'warning'); return; }
+                totalAmt = perCase * qty;
             }
-            
-            // Calculate total liters
-            const totalLiters = sku.uom * quantity;
-            
-            // Create new result
             const result = {
-                orderNumber: orderNumber,
-                date: formattedDate,
-                location: location,
-                invoice: invoice,
-                seed: seed,
-                code: sku.code,
-                name: sku.name,
-                quantity: quantity,
-                uom: sku.uom,
-                totalLiters: totalLiters,
-                perCaseAmount: perCaseAmount,
-                totalAmount: totalAmount,
-                id: Date.now() + Math.random() // Unique ID for removal
+                orderNumber: orderNum, date: fmtDate, location: loc, invoice: inv, seed: mrp,
+                code: sku.code, name: sku.name, quantity: qty, uom: sku.uom,
+                totalLiters: sku.uom * qty, perCaseAmount: perCase, totalAmount: totalAmt,
+                id: Date.now()
             };
-            
-            // Add to allResults (complete dataset)
             allResults.push(result);
-            
-            // Add to filteredResults if it matches current search
-            if (isSearchActive) {
-                if (result.invoice.toLowerCase().includes(currentSearchTerm)) {
-                    filteredResults.push(result);
-                }
-            } else {
-                filteredResults.push(result);
-            }
-            
+            filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
             updateResultsTable();
             updateSummary();
             updateOrdersSummary();
-            
-            // Save to localStorage
             saveResultsToStorage();
-            
-            // Clear input fields for next entry
             clearInputFields();
-            
-            // Reset date to today for next entry
             setDefaultDate();
-            
-            showNotification('SKU added successfully to results', 'success');
-        });
+            showNotification('SKU added successfully', 'success');
+        };
         
-        // Update the results table
+        // Update results table with FULL SKU NAME display (no truncation, text wraps)
         function updateResultsTable() {
-            if (filteredResults.length === 0) {
-                resultsBody.innerHTML = '<tr><td colspan="13" class="empty-message">No results yet. Import SKU data and enter a SKU code to get started.</td></tr>';
+            if (!filteredResults.length) {
+                resultsBody.innerHTML = '<tr><td colspan="13" class="empty-message">No results. Add SKU items above.</td></tr>';
                 return;
             }
-            
-            let html = '';
-            filteredResults.forEach((result, index) => {
-                // Check if this result matches the current search
-                const isSearchMatch = isSearchActive && 
-                    result.invoice.toLowerCase().includes(currentSearchTerm);
-                
-                // Highlight the most recent entry
-                const highlightClass = index === filteredResults.length - 1 ? 'highlight' : '';
-                const searchClass = isSearchMatch ? 'search-highlight' : '';
-                
-                html += `
-                <tr class="${highlightClass} ${searchClass}" data-id="${result.id}">
-                    <td><span class="order-badge">${result.orderNumber}</span></td>
-                    <td><span class="date-badge">${result.date}</span></td>
-                    <td><span class="location-badge">${result.location}</span></td>
-                    <td><span class="invoice-badge">${result.invoice}</span></td>
-                    <td>${result.seed}</td>
-                    <td>${result.code}</td>
-                    <td>${result.name}</td>
-                    <td>${result.quantity}</td>
-                    <td>${result.uom.toFixed(2)}</td>
-                    <td>${result.totalLiters.toFixed(2)}</td>
-                    <td>$${result.perCaseAmount.toFixed(2)}</td>
-                    <td>$${result.totalAmount.toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="removeResult(${index})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
+            resultsBody.innerHTML = filteredResults.map((r, i) => `
+                <tr class="${i === filteredResults.length-1 ? 'highlight' : ''}">
+                    <td><span class="order-badge">${r.orderNumber}</span></td>
+                    <td><span class="date-badge">${r.date}</span></td>
+                    <td><span class="location-badge">${r.location}</span></td>
+                    <td><span class="invoice-badge">${escapeHtml(r.invoice)}</span></td>
+                    <td>${escapeHtml(r.seed)}</td>
+                    <td>${escapeHtml(r.code)}</td>
+                    <td style="white-space: normal; word-wrap: break-word; word-break: break-word;">${escapeHtml(r.name)}</td>
+                    <td>${r.quantity}</td>
+                    <td>${r.uom.toFixed(2)}</td>
+                    <td>${r.totalLiters.toFixed(2)}</td>
+                    <td>$${r.perCaseAmount.toFixed(2)}</td>
+                    <td>$${r.totalAmount.toFixed(2)}</td>
+                    <td><button class="btn btn-secondary" style="padding:4px 8px;font-size:0.7rem;" onclick="removeResult(${i})"><i class="fas fa-trash"></i></button></td>
                 </tr>
-                `;
-            });
-            
-            resultsBody.innerHTML = html;
+            `).join('');
         }
         
-        // Update the summary section (Now calculates only displayed/search results)
         function updateSummary() {
-            const dataToCalculate = filteredResults;
-            
-            const totalItems = dataToCalculate.length;
-            
-            // Count unique orders (based on invoice+seed+orderNumber combination)
-            const orderSet = new Set();
-            dataToCalculate.forEach(item => {
-                orderSet.add(`${item.invoice}_${item.seed}_${item.orderNumber}`);
+            const data = filteredResults;
+            totalItemsEl.textContent = data.length;
+            const orderSet = new Set(data.map(i => `${i.invoice}_${i.seed}_${i.orderNumber}`));
+            totalOrdersEl.textContent = orderSet.size;
+            totalQuantityEl.textContent = data.reduce((s, i) => s + i.quantity, 0);
+            totalLitersEl.textContent = data.reduce((s, i) => s + i.totalLiters, 0).toFixed(2);
+            totalAmountSumEl.textContent = `$${data.reduce((s, i) => s + i.totalAmount, 0).toFixed(2)}`;
+        }
+        
+        function sortResults(arr, field, dir) {
+            return [...arr].sort((a, b) => {
+                let av = a[field], bv = b[field];
+                if (typeof av === 'string') return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                return dir === 'asc' ? av - bv : bv - av;
             });
-            const totalOrders = orderSet.size;
-            
-            const totalQuantity = dataToCalculate.reduce((sum, item) => sum + item.quantity, 0);
-            const totalLiters = dataToCalculate.reduce((sum, item) => sum + item.totalLiters, 0);
-            const totalAmount = dataToCalculate.reduce((sum, item) => sum + item.totalAmount, 0);
-            
-            totalItemsEl.textContent = totalItems;
-            totalOrdersEl.textContent = totalOrders;
-            totalQuantityEl.textContent = totalQuantity;
-            totalLitersEl.textContent = totalLiters.toFixed(2);
-            totalAmountSumEl.textContent = `$${totalAmount.toFixed(2)}`;
-            
-            // Update summary mode and search summary
-            updateSummaryMode();
+        }
+        
+        function applySort(field) {
+            if (currentSort.field === field) currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            else { currentSort.field = field; currentSort.direction = 'asc'; }
+            filteredResults = sortResults(filteredResults, field, currentSort.direction);
+            updateResultsTable();
+            updateControlButtons();
+        }
+        
+        function searchByInvoice(term) {
+            if (!term.trim()) { resetSearch(); return; }
+            currentSearchTerm = term.trim().toLowerCase();
+            isSearchActive = true;
+            filteredResults = allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm));
+            currentSort.field = null;
+            updateResultsTable();
+            updateSummary();
+            updateControlButtons();
             updateSearchSummary();
+            showNotification(`Found ${filteredResults.length} result(s)`, 'info');
         }
         
-        // Clear all results
-        clearBtn.addEventListener('click', function() {
-            if (allResults.length === 0) {
-                showNotification('No results to clear.', 'info');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to clear all results? This will also reset order counters.')) {
-                allResults = [];
-                filteredResults = [];
-                orderCounter = {};
-                isSearchActive = false;
-                currentSearchTerm = '';
-                invoiceSearchInput.value = '';
-                updateResultsTable();
-                updateSummary();
-                updateOrdersSummary();
-                saveResultsToStorage();
-                updateControlButtons();
-                updateSearchSummary();
-                showNotification('All results cleared successfully', 'success');
-            }
-        });
+        function resetSearch() {
+            isSearchActive = false;
+            currentSearchTerm = '';
+            invoiceSearchInput.value = '';
+            filteredResults = [...allResults];
+            currentSort.field = null;
+            updateResultsTable();
+            updateSummary();
+            updateControlButtons();
+            updateSearchSummary();
+            showNotification('Showing all results', 'info');
+        }
         
-        // Search button event listeners
-        searchInvoiceBtn.addEventListener('click', function() {
+        function updateSearchSummary() {
             if (isSearchActive) {
-                resetSearch();
+                searchCount.textContent = filteredResults.length;
+                totalCount.textContent = allResults.length;
+                searchTermSpan.textContent = currentSearchTerm;
+                searchSummary.style.display = 'block';
+                summaryMode.textContent = '🔍 Search Results';
             } else {
-                const searchTerm = invoiceSearchInput.value.trim();
-                if (searchTerm) {
-                    searchByInvoice(searchTerm);
-                } else {
-                    showNotification('Please enter an invoice number to search', 'warning');
-                }
+                searchSummary.style.display = 'none';
+                summaryMode.textContent = '📊 All Results';
             }
-        });
-        
-        // Add Enter key support for search
-        invoiceSearchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchInvoiceBtn.click();
-            }
-        });
-        
-        // Sort buttons event listeners
-        sortByInvoiceBtn.addEventListener('click', function() {
-            applySort('invoice');
-        });
-        
-        sortByNameBtn.addEventListener('click', function() {
-            applySort('name');
-        });
-        
-        resetSortBtn.addEventListener('click', function() {
-            resetSearch();
-        });
-        
-        // Import Results button click
-        importResultsBtn.addEventListener('click', function() {
-            openImportModal();
-        });
-        
-        // Open import modal
-        function openImportModal() {
-            importResultsModal.style.display = 'block';
-            resultsFileName.textContent = '';
-            importResultsError.style.display = 'none';
-            importResultsSuccess.style.display = 'none';
         }
         
-        // Close import modal
-        function closeImportModal() {
-            importResultsModal.style.display = 'none';
-            resultsFileInput.value = '';
+        function updateControlButtons() {
+            sortByInvoiceBtn.innerHTML = currentSort.field === 'invoice' ? `<i class="fas ${currentSort.direction === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up'}"></i> Invoice` : '<i class="fas fa-sort-alpha-down"></i> Sort Invoice';
+            sortByNameBtn.innerHTML = currentSort.field === 'name' ? `<i class="fas ${currentSort.direction === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up'}"></i> SKU Name` : '<i class="fas fa-sort-alpha-down"></i> Sort SKU Name';
+            searchInvoiceBtn.innerHTML = isSearchActive ? '<i class="fas fa-times"></i> Clear' : '<i class="fas fa-search"></i> Search';
+            resetSortBtn.innerHTML = (isSearchActive || currentSort.field) ? '<i class="fas fa-undo"></i> Reset' : '<i class="fas fa-undo"></i> Show All';
         }
         
-        // Handle results file input
-        resultsFileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            resultsFileName.textContent = `Selected: ${file.name} (${(file.size/1024).toFixed(2)} KB)`;
-        });
+        searchInvoiceBtn.onclick = () => { if (isSearchActive) resetSearch(); else searchByInvoice(invoiceSearchInput.value); };
+        invoiceSearchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchInvoiceBtn.click(); });
+        sortByInvoiceBtn.onclick = () => applySort('invoice');
+        sortByNameBtn.onclick = () => applySort('name');
+        resetSortBtn.onclick = resetSearch;
+        clearBtn.onclick = () => { if (confirm('Clear all results?')) { allResults = []; filteredResults = []; orderCounter = {}; isSearchActive = false; currentSearchTerm = ''; invoiceSearchInput.value = ''; updateResultsTable(); updateSummary(); updateOrdersSummary(); saveResultsToStorage(); updateControlButtons(); showNotification('All cleared', 'success'); } };
         
-        // Process results file
-        function processResultsFile() {
-            const file = resultsFileInput.files[0];
-            if (!file) {
-                importResultsError.textContent = 'Please select a file first.';
-                importResultsError.style.display = 'block';
-                return;
-            }
-            
+        importResultsBtn.onclick = () => document.getElementById('importResultsModal').style.display = 'block';
+        window.closeImportModal = function() { document.getElementById('importResultsModal').style.display = 'none'; document.getElementById('resultsFileInput').value = ''; };
+        document.querySelector('.close-modal').onclick = closeImportModal;
+        window.onclick = e => { if (e.target === document.getElementById('importResultsModal')) closeImportModal(); };
+        
+        window.processResultsFile = function() {
+            const file = document.getElementById('resultsFileInput').files[0];
+            if (!file) { document.getElementById('importResultsError').textContent = 'Select a file'; document.getElementById('importResultsError').style.display = 'block'; return; }
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function(ev) {
                 try {
-                    const data = new Uint8Array(event.target.result);
-                    const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    // Convert to JSON with headers
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                    
-                    if (jsonData.length < 2) {
-                        throw new Error('The file does not contain enough data.');
-                    }
-                    
-                    // Get headers from first row
-                    const headers = jsonData[0];
-                    
-                    // Find column indices
-                    const orderIndex = headers.findIndex(h => h.toString().toLowerCase().includes('order'));
-                    const dateIndex = headers.findIndex(h => h.toString().toLowerCase().includes('date'));
-                    const locationIndex = headers.findIndex(h => h.toString().toLowerCase().includes('location'));
-                    const invoiceIndex = headers.findIndex(h => h.toString().toLowerCase().includes('invoice'));
-                    const seedIndex = headers.findIndex(h => h.toString().toLowerCase().includes('seed'));
-                    const skuCodeIndex = headers.findIndex(h => h.toString().toLowerCase().includes('sku') && h.toString().toLowerCase().includes('code'));
-                    const skuNameIndex = headers.findIndex(h => h.toString().toLowerCase().includes('sku') && h.toString().toLowerCase().includes('name'));
-                    const quantityIndex = headers.findIndex(h => h.toString().toLowerCase().includes('quantity'));
-                    const uomIndex = headers.findIndex(h => h.toString().toLowerCase().includes('uom'));
-                    const totalLitersIndex = headers.findIndex(h => h.toString().toLowerCase().includes('total') && h.toString().toLowerCase().includes('liters'));
-                    const perCaseIndex = headers.findIndex(h => h.toString().toLowerCase().includes('per') && h.toString().toLowerCase().includes('case'));
-                    const totalIndex = headers.findIndex(h => h.toString().toLowerCase().includes('total') && !h.toString().toLowerCase().includes('liters'));
-                    
-                    // Process each data row
-                    let importedCount = 0;
-                    for (let i = 1; i < jsonData.length; i++) {
-                        const row = jsonData[i];
-                        if (!row || row.length === 0) continue;
-                        
-                        // Extract data based on column indices
-                        const orderNumber = orderIndex >= 0 ? parseInt(row[orderIndex]) || 1 : 1;
-                        const date = dateIndex >= 0 ? formatDateToDDMMMYYYY(row[dateIndex]) : formatDateToDDMMMYYYY(new Date());
-                        const location = locationIndex >= 0 ? String(row[locationIndex] || '').trim() : 'Guwahati';
-                        const invoice = invoiceIndex >= 0 ? String(row[invoiceIndex] || '').trim() : '';
-                        const seed = seedIndex >= 0 ? String(row[seedIndex] || '').trim() : '';
-                        const code = skuCodeIndex >= 0 ? String(row[skuCodeIndex] || '').trim() : '';
-                        const name = skuNameIndex >= 0 ? String(row[skuNameIndex] || '').trim() : '';
-                        const quantity = quantityIndex >= 0 ? parseFloat(row[quantityIndex]) || 1 : 1;
-                        const uom = uomIndex >= 0 ? parseFloat(row[uomIndex]) || 0 : 0;
-                        const totalLiters = totalLitersIndex >= 0 ? parseFloat(row[totalLitersIndex]) || 0 : (uom * quantity);
-                        const perCaseAmount = perCaseIndex >= 0 ? parseFloat(String(row[perCaseIndex]).replace(/[^0-9.]/g, '')) || 0 : 0;
-                        const totalAmount = totalIndex >= 0 ? parseFloat(String(row[totalIndex]).replace(/[^0-9.]/g, '')) || 0 : (perCaseAmount * quantity);
-                        
-                        if (!invoice || !seed || !code) {
-                            continue; // Skip invalid rows
+                    const workbook = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    let count = 0;
+                    for (let i = 1; i < json.length; i++) {
+                        const row = json[i];
+                        if (row && row.length >= 6) {
+                            const inv = String(row[3] || '').trim();
+                            const mrp = String(row[4] || '').trim();
+                            const code = String(row[5] || '').trim();
+                            const name = String(row[6] || '').trim();
+                            const qty = parseFloat(row[7]) || 1;
+                            const uom = parseFloat(row[8]) || 0;
+                            const liters = parseFloat(row[9]) || 0;
+                            const perCase = parseFloat(row[10]) || 0;
+                            const total = parseFloat(row[11]) || 0;
+                            if (inv && mrp && code) {
+                                const key = `${inv}_${mrp}`;
+                                if (!orderCounter[key]) orderCounter[key] = 1;
+                                allResults.push({
+                                    orderNumber: orderCounter[key]++,
+                                    date: formatDateToDDMMMYYYY(row[1] || new Date()),
+                                    location: String(row[2] || 'Guwahati').trim(),
+                                    invoice: inv, seed: mrp, code: code, name: name,
+                                    quantity: qty, uom: uom, totalLiters: liters,
+                                    perCaseAmount: perCase, totalAmount: total,
+                                    id: Date.now() + Math.random()
+                                });
+                                count++;
+                            }
                         }
-                        
-                        // Update order counter
-                        const key = `${invoice}_${seed}`;
-                        if (!orderCounter[key] || orderNumber > orderCounter[key]) {
-                            orderCounter[key] = orderNumber;
-                        }
-                        
-                        // Add to results
-                        const result = {
-                            orderNumber: orderNumber,
-                            date: date,
-                            location: location,
-                            invoice: invoice,
-                            seed: seed,
-                            code: code,
-                            name: name,
-                            quantity: quantity,
-                            uom: uom,
-                            totalLiters: totalLiters,
-                            perCaseAmount: perCaseAmount,
-                            totalAmount: totalAmount,
-                            id: Date.now() + Math.random()
-                        };
-                        
-                        allResults.push(result);
-                        importedCount++;
                     }
-                    
-                    if (importedCount > 0) {
-                        // Update filtered results
-                        if (isSearchActive) {
-                            filteredResults = allResults.filter(item => 
-                                item.invoice.toLowerCase().includes(currentSearchTerm)
-                            );
-                        } else {
-                            filteredResults = [...allResults];
-                        }
-                        
-                        updateResultsTable();
-                        updateSummary();
-                        updateOrdersSummary();
-                        saveResultsToStorage();
-                        
-                        importResultsSuccess.textContent = `Successfully imported ${importedCount} results from the Excel file.`;
-                        importResultsSuccess.style.display = 'block';
-                        importResultsError.style.display = 'none';
-                        
-                        showNotification(`Successfully imported ${importedCount} results from the Excel file.`, 'success');
-                        
-                        setTimeout(() => {
-                            closeImportModal();
-                        }, 2000);
-                    } else {
-                        throw new Error('No valid results found in the file.');
-                    }
-                    
-                } catch (error) {
-                    importResultsError.textContent = `Error importing results: ${error.message}`;
-                    importResultsError.style.display = 'block';
-                    importResultsSuccess.style.display = 'none';
+                    if (count) {
+                        filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
+                        updateResultsTable(); updateSummary(); updateOrdersSummary(); saveResultsToStorage();
+                        document.getElementById('importResultsSuccess').textContent = `✅ Imported ${count} records`;
+                        document.getElementById('importResultsSuccess').style.display = 'block';
+                        document.getElementById('importResultsError').style.display = 'none';
+                        showNotification(`Imported ${count} purchase records`, 'success');
+                        setTimeout(() => closeImportModal(), 1500);
+                    } else throw new Error('No valid records found');
+                } catch (e) {
+                    document.getElementById('importResultsError').textContent = `Error: ${e.message}`;
+                    document.getElementById('importResultsError').style.display = 'block';
                 }
             };
-            
             reader.readAsArrayBuffer(file);
-        }
+        };
         
-        // Export results to Excel
-        exportBtn.addEventListener('click', function() {
-            if (filteredResults.length === 0) {
-                showNotification('No results to export.', 'warning');
-                return;
-            }
-            
-            // Prepare data for export
-            const exportData = [
-                ["Order #", "Date", "Location", "Invoice Number", "MRP", "SKU Code", "SKU Name", "Quantity", "UOM", "Total Liters", "Per Case Amount ($)", "Total Amount ($)"]
-            ];
-            
-            filteredResults.forEach(result => {
-                exportData.push([
-                    result.orderNumber,
-                    result.date,
-                    result.location,
-                    result.invoice,
-                    result.seed,
-                    result.code,
-                    result.name,
-                    result.quantity,
-                    result.uom,
-                    result.totalLiters,
-                    result.perCaseAmount,
-                    result.totalAmount
-                ]);
-            });
-            
-            // Add summary row
-            const totalQuantity = filteredResults.reduce((sum, item) => sum + item.quantity, 0);
-            const totalLiters = filteredResults.reduce((sum, item) => sum + item.totalLiters, 0);
-            const totalAmount = filteredResults.reduce((sum, item) => sum + item.totalAmount, 0);
-            
-            exportData.push(["", "", "", "", "", "", "", "", "", "", "", ""]);
-            exportData.push(["TOTALS", "", "", "", "", "", totalQuantity, "", totalLiters.toFixed(2), "", `$${totalAmount.toFixed(2)}`]);
-            
-            // Create worksheet
-            const ws = XLSX.utils.aoa_to_sheet(exportData);
-            
-            // Create workbook
+        exportBtn.onclick = function() {
+            if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
+            const data = [["Order #","Date","Location","Invoice","MRP","SKU Code","SKU Name","Quantity","UOM","Total Liters","Per Case ($)","Total ($)"]];
+            filteredResults.forEach(r => data.push([r.orderNumber, r.date, r.location, r.invoice, r.seed, r.code, r.name, r.quantity, r.uom.toFixed(2), r.totalLiters.toFixed(2), r.perCaseAmount.toFixed(2), r.totalAmount.toFixed(2)]));
+            const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "SKU Results");
-            
-            // Generate file and download
-            const wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'binary'});
-            
-            function s2ab(s) {
-                const buf = new ArrayBuffer(s.length);
-                const view = new Uint8Array(buf);
-                for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-                return buf;
-            }
-            
-            const blob = new Blob([s2ab(wbout)], {type: 'application/octet-stream'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = isSearchActive 
-                ? `Purchase_sku_results_Invoice_${currentSearchTerm}_${formatDateToDDMMMYYYY(new Date()).replace(/ /g, '_')}.xlsx`
-                : `Purchase_sku_results_${formatDateToDDMMMYYYY(new Date()).replace(/ /g, '_')}.xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showNotification('Results exported to Excel successfully', 'success');
-        });
+            XLSX.utils.book_append_sheet(wb, ws, "Purchase_Results");
+            XLSX.writeFile(wb, `Purchase_Results_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.xlsx`);
+            showNotification('Exported to Excel', 'success');
+        };
         
-        // Export results to PDF - IMPROVED CLARITY WITH BETTER READABILITY
-        exportPdfBtn.addEventListener('click', function() {
-            if (filteredResults.length === 0) {
-                showNotification('No results to export.', 'warning');
-                return;
-            }
-            
+        // PDF Export with Portrait Orientation and Summary Displayed
+        exportPdfBtn.onclick = function() {
+            if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            
-            // Calculate dimensions
+            // Set to Portrait orientation (default is portrait, but we explicitly set it)
+            const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
             const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 10;
             
-            // Use margins for readability
-            const margin = 10; // Increased margin for better readability
-            const contentWidth = pageWidth - (margin * 2);
-            
-            // Title at the very top
-            doc.setFontSize(20); // Increased font size
-            doc.setTextColor(44, 62, 80);
-            doc.text('AUTO LUBE HOUSE - NOT RECEIVED PURCHASE REPORT', pageWidth / 2, margin + 10, {align: 'center'});
-            
-            // Date and time
-            doc.setFontSize(11); // Increased font size
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Generated: ${formatDateToDDMMMYYYY(new Date())} ${new Date().toLocaleTimeString()}`, pageWidth / 2, margin + 18, {align: 'center'});
-            
-            // Add search filter note if active
-            if (isSearchActive) {
-                doc.setFontSize(10);
-                doc.setTextColor(231, 76, 60);
-                doc.text(`Filtered by Invoice: ${currentSearchTerm}`, pageWidth / 2, margin + 24, {align: 'center'});
+            // Header
+            doc.setFontSize(14); doc.setTextColor(44,62,80);
+            doc.text('AUTO LUBE HOUSE - PURCHASE REPORT', pageWidth/2, margin+8, { align: 'center' });
+            doc.setFontSize(9); doc.setTextColor(100,100,100);
+            doc.text(`Generated: ${formatDateToDDMMMYYYY(new Date())}`, pageWidth/2, margin+14, { align: 'center' });
+            if (isSearchActive) { 
+                doc.setFontSize(9); doc.setTextColor(231,76,60); 
+                doc.text(`Filtered: ${currentSearchTerm}`, pageWidth/2, margin+19, { align: 'center' }); 
             }
             
-            // Prepare table data
-            const tableData = filteredResults.map(result => [
-                result.orderNumber.toString(),
-                result.date,
-                result.location,
-                result.invoice,
-                result.seed,
-                result.code,
-                result.name,
-                result.quantity.toString(),
-                result.uom.toFixed(2),
-                result.totalLiters.toFixed(2),
-                `$${result.perCaseAmount.toFixed(2)}`,
-                `$${result.totalAmount.toFixed(2)}`
+            // Table Headers & Body - For portrait, adjust column widths to fit
+            const headers = [['Ord#','Date','Loc','Invoice','MRP','SKU Code','SKU Name','Qty','UOM','Total L','Per Case','Total']];
+            const body = filteredResults.map(r => [
+                r.orderNumber, r.date, r.location, r.invoice, r.seed, 
+                r.code, r.name, r.quantity, r.uom.toFixed(1), 
+                r.totalLiters.toFixed(1), `$${r.perCaseAmount.toFixed(2)}`, `$${r.totalAmount.toFixed(2)}`
             ]);
             
-            // Start table position (right after title)
-            const startY = isSearchActive ? margin + 30 : margin + 25;
+            // Calculate summary stats
+            const totalQty = filteredResults.reduce((s,i)=>s+i.quantity,0);
+            const totalLit = filteredResults.reduce((s,i)=>s+i.totalLiters,0);
+            const totalAmt = filteredResults.reduce((s,i)=>s+i.totalAmount,0);
+            const uniqueOrders = new Set(filteredResults.map(i=>`${i.invoice}_${i.seed}`)).size;
+            const summaryText = `Total Items: ${filteredResults.length} | Total Orders: ${uniqueOrders} | Total Qty: ${totalQty} | Total Liters: ${totalLit.toFixed(2)} | Total Amount: $${totalAmt.toFixed(2)}`;
             
-            // Calculate column widths - optimized for readability
-            const columnWidths = [
-                12,   // Order # (12mm)
-                17,   // Date (18mm)
-                17,   // Location (18mm)
-                26,   // Invoice (20mm)
-                26,   // Seed (18mm)
-                21,   // SKU Code (18mm)
-                45,   // SKU Name (45mm - widest for text)
-                15,   // Quantity (15mm)
-                17,   // UOM (12mm)
-                18,   // Total Liters (18mm)
-                21,   // Per Case ($) (20mm)
-                25    // Total ($) (20mm)
-            ];
-            
-            // Adjust if total width exceeds contentWidth
-            const totalWidth = columnWidths.reduce((sum, width) => sum + width, 0);
-            if (totalWidth > contentWidth) {
-                const scaleFactor = contentWidth / totalWidth;
-                columnWidths.forEach((width, index) => {
-                    columnWidths[index] = Math.floor(width * scaleFactor);
-                });
-            }
-            
-            // Create table with improved readability
+            // AutoTable with column styles optimized for portrait
             doc.autoTable({
-                head: [['Order #', 'Date', 'Location', 'Invoice', 'MRP', 'SKU Code', 'SKU Name', 'Qty', 'UOM', 'Total Liters', 'Per Case ($)', 'Total ($)']],
-                body: tableData,
-                startY: startY,
+                head: headers,
+                body: body,
+                startY: isSearchActive ? margin+24 : margin+20,
                 theme: 'grid',
-                headStyles: {
-                    fillColor: [44, 62, 80],
-                    textColor: [255, 255, 255],
-                    fontSize: 07, // Increased font size
-                    fontStyle: 'bold',
-                    halign: 'center',
-                    cellPadding: 3, // Increased padding
-                    minCellHeight: 8
+                headStyles: { fillColor: [44,62,80], textColor: [255,255,255], fontSize: 7, halign: 'center', cellPadding: 1 },
+                bodyStyles: { fontSize: 6.5, cellPadding: 1.5, valign: 'top' },
+                columnStyles: { 
+                    0: { cellWidth: 8, halign: 'center' },   // Ord#
+                    1: { cellWidth: 12, halign: 'center' },  // Date
+                    2: { cellWidth: 14, halign: 'center' },  // Location
+                    3: { cellWidth: 16, halign: 'center' },  // Invoice
+                    4: { cellWidth: 12, halign: 'center' },  // MRP
+                    5: { cellWidth: 15, halign: 'center' },  // SKU Code
+                    6: { cellWidth: 40, halign: 'left', cellWrap: true }, // SKU Name - wrapped
+                    7: { cellWidth: 8, halign: 'center' },   // Qty
+                    8: { cellWidth: 10, halign: 'center' },  // UOM
+                    9: { cellWidth: 11, halign: 'center' },  // Total L
+                    10: { cellWidth: 14, halign: 'center' }, // Per Case
+                    11: { cellWidth: 18, halign: 'center' }  // Total
                 },
-                bodyStyles: {
-                    fontSize: 07, // Increased font size
-                    cellPadding: 2.5, // Increased padding
-                    lineWidth: 0.2,
-                    lineColor: [150, 150, 150], // Darker lines for better visibility
-                    minCellHeight: 7,
-                    overflow: 'linebreak'
-                },
-                columnStyles: {
-                    0: { 
-                        cellWidth: columnWidths[0],
-                        halign: 'center'
-                    },
-                    1: { 
-                        cellWidth: columnWidths[1],
-                        halign: 'center'
-                    },
-                    2: { 
-                        cellWidth: columnWidths[2],
-                        halign: 'center'
-                    },
-                    3: { 
-                        cellWidth: columnWidths[3],
-                        halign: 'center'
-                    },
-                    4: { 
-                        cellWidth: columnWidths[4],
-                        halign: 'center'
-                    },
-                    5: { 
-                        cellWidth: columnWidths[5],
-                        halign: 'center'
-                    },
-                    6: { 
-                        cellWidth: columnWidths[6],
-                        halign: 'left',
-                        fontStyle: 'normal'
-                    },
-                    7: { 
-                        cellWidth: columnWidths[7],
-                        halign: 'center'
-                    },
-                    8: { 
-                        cellWidth: columnWidths[8],
-                        halign: 'center'
-                    },
-                    9: { 
-                        cellWidth: columnWidths[9],
-                        halign: 'center'
-                    },
-                    10: { 
-                        cellWidth: columnWidths[10],
-                        halign: 'center'
-                    },
-                    11: { 
-                        cellWidth: columnWidths[11],
-                        halign: 'center'
-                    }
-                },
-                styles: {
-                    lineWidth: 0.2,
-                    lineColor: [150, 150, 150], // Darker lines
-                    fontSize: 9,
-                    cellPadding: 2.5,
-                    font: 'helvetica' // Clearer font
-                },
-                alternateRowStyles: {
-                    fillColor: [245, 247, 250] // Slightly darker alternate rows for better readability
-                },
-                margin: { 
-                    left: margin, 
-                    right: margin, 
-                    top: startY,
-                    bottom: margin
-                },
-                tableWidth: contentWidth,
-                showHead: 'everyPage',
-                didDrawPage: function (data) {
-                    // Add page number with larger font
-                    const pageCount = doc.internal.getNumberOfPages();
-                    doc.setFontSize(10);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth / 2, pageHeight - margin/2, {align: 'center'});
+                margin: { left: margin, right: margin },
+                tableWidth: pageWidth - margin*2,
+                didDrawPage: function(data) {
+                    // Page number at bottom
+                    doc.setFontSize(7);
+                    doc.text(`Page ${data.pageNumber}`, pageWidth/2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
                 }
             });
             
-            // Calculate final Y position
-            let finalY = doc.lastAutoTable.finalY || startY + 30;
+            // Get final Y position after table
+            let finalY = doc.lastAutoTable.finalY + 5;
+            const pageHeight = doc.internal.pageSize.getHeight();
             
-            // Add summary section if there's space
-            if (finalY < pageHeight - 40) {
-                doc.setFontSize(08); // Increased font size
-                doc.setTextColor(44, 62, 80);
-                
-                // Draw a separator line
-                doc.setDrawColor(212, 175, 55);
-                doc.setLineWidth(0.8); // Thicker line
-                doc.line(margin, finalY + 8, pageWidth - margin, finalY + 8);
-                
-                finalY += 15;
-                
-                // Summary data - only from displayed/search results
-                const totalItems = filteredResults.length;
-                const totalQuantity = filteredResults.reduce((sum, item) => sum + item.quantity, 0);
-                const totalLiters = filteredResults.reduce((sum, item) => sum + item.totalLiters, 0);
-                const totalAmount = filteredResults.reduce((sum, item) => sum + item.totalAmount, 0);
-                
-                // Count unique orders
-                const orderSet = new Set();
-                filteredResults.forEach(item => {
-                    orderSet.add(`${item.invoice}_${item.seed}_${item.orderNumber}`);
-                });
-                const totalOrders = orderSet.size;
-                
-                // Summary box with better styling
-                doc.setFillColor(245, 247, 250);
-                doc.rect(margin, finalY, pageWidth - (margin * 2), 28, 'F');
-                doc.setDrawColor(212, 175, 55);
-                doc.setLineWidth(0.5);
-                doc.rect(margin, finalY, pageWidth - (margin * 2), 28);
-                
-                // Summary text with improved formatting
-                doc.setFontSize(14);
-                doc.setTextColor(44, 62, 80);
-                doc.text('SUMMARY', margin + 8, finalY + 10);
-                
-                doc.setFontSize(10);
-                doc.text(`Total Items: ${totalItems}`, margin + 8, finalY + 18);
-                doc.text(`Total Orders: ${totalOrders}`, margin + 8, finalY + 24);
-                
-                doc.text(`Total Quantity: ${totalQuantity}`, margin + 70, finalY + 18);
-                doc.text(`Total Liters: ${totalLiters.toFixed(2)}`, margin + 70, finalY + 24);
-                
-                // Highlight total amount
-                doc.setFontSize(12);
-                doc.setTextColor(46, 204, 113); // Green color for emphasis
-                doc.text(`Total Amount: $${totalAmount.toFixed(2)}`, margin + 140, finalY + 21);
+            // Add summary box - if not enough space, add new page
+            if (finalY + 20 > pageHeight) {
+                doc.addPage();
+                finalY = margin + 10;
             }
             
-            // Add footer at the very bottom
-            doc.setFontSize(9);
-            doc.setTextColor(100, 100, 100);
-            doc.text('SKU Purchase System - dbareh © 2026 | Auto Lube House Purchase Report', pageWidth / 2, pageHeight - margin/3, {align: 'center'});
+            // Draw summary box with border and gold accent
+            doc.setFillColor(245, 247, 250);
+            doc.rect(margin, finalY, pageWidth - margin*2, 20, 'F');
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(0.5);
+            doc.rect(margin, finalY, pageWidth - margin*2, 20);
+            doc.setFontSize(10);
+            doc.setTextColor(44, 62, 80);
+            doc.text('SUMMARY', margin + 5, finalY + 7);
+            doc.setFontSize(8);
+            doc.setTextColor(80, 80, 80);
+            doc.text(summaryText, margin + 5, finalY + 15);
             
-            // Save the PDF
-            const fileName = isSearchActive 
-                ? `Purchase_Report_Invoice_${currentSearchTerm}_${formatDateToDDMMMYYYY(new Date()).replace(/ /g, '_')}.pdf`
-                : `Purchase_Report_${formatDateToDDMMMYYYY(new Date()).replace(/ /g, '_')}.pdf`;
-            
-            doc.save(fileName);
-            
-            showNotification('Results exported to PDF successfully', 'success');
-        });
+            doc.save(`Purchase_Report_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.pdf`);
+            showNotification('PDF exported (portrait) with summary', 'success');
+        };
         
-        // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
-            // Set default date to today
             setDefaultDate();
-            
-            // Set default location to Guwahati
             locationInput.value = "Guwahati";
-            
-            // Load data from localStorage automatically
             loadDataFromStorage();
-            
-            // Focus on date input field
-            dateInput.focus();
-            
-            // Set up click events for import modal
-            document.getElementById('importResultsBtn').addEventListener('click', openImportModal);
-            document.querySelector('.close-modal').addEventListener('click', closeImportModal);
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
-                if (event.target === importResultsModal) {
-                    closeImportModal();
-                }
-            });
-            
-            // Add keyboard shortcut for adding SKU (Ctrl + Enter)
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    addBtn.click();
-                }
-            });
-            
-            // Initialize imported SKUs if none loaded
-            if (importedSKUs.length === 0) {
-                importedSKUs = [];
-                updateImportedDataTable();
-            }
-            
-            // Update SKU placeholder
-            skuCodeInput.placeholder = `Enter SKU code (${importedSKUs.length} SKUs available)`;
-            
-            // Set up results file input click
-            document.querySelector('[for="resultsFileInput"]').addEventListener('click', function() {
-                resultsFileInput.click();
-            });
-            
-            // Add date format hint to date input
-            dateInput.addEventListener('focus', function() {
-                if (!this.value) {
-                    setDefaultDate();
-                }
-            });
-            
-            // Validate date format on blur
-            dateInput.addEventListener('blur', function() {
-                if (this.value && !/^\d{2} [A-Za-z]{3} \d{4}$/.test(this.value)) {
-                    // Try to format the date
-                    const formatted = formatDateToDDMMMYYYY(this.value);
-                    if (formatted && !formatted.includes('Invalid')) {
-                        this.value = formatted;
-                    } else {
-                        showNotification('Please use "dd mmm yyyy" format (e.g., 01 Jan 2026)', 'warning');
-                        setDefaultDate();
-                    }
-                }
-            });
-            
-            // Initialize control buttons
             updateControlButtons();
-            updateSummaryMode();
-            updateSearchSummary();
         });
     </script>
 </body>
