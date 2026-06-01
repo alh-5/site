@@ -980,8 +980,8 @@
                         </div>
                         
                         <div class="input-group">
-                            <label for="seedNumber">Seed Number *</label>
-                            <input type="text" id="seedNumber" placeholder="Enter Seed Number" value="">
+                            <label for="seedNumber">MRP *</label>
+                            <input type="text" id="seedNumber" placeholder="Enter MRP" value="">
                         </div>
                     </div>
                     
@@ -1957,7 +1957,7 @@
             }
             
             if (!seed) {
-                showNotification('Please enter a Seed Number', 'warning');
+                showNotification('Please enter a MRP', 'warning');
                 return;
             }
             
@@ -2344,7 +2344,7 @@
             
             // Prepare data for export
             const exportData = [
-                ["Order #", "Date", "Location", "Invoice Number", "Seed Number", "SKU Code", "SKU Name", "Quantity", "UOM", "Total Liters", "Per Case Amount ($)", "Total Amount ($)"]
+                ["Order #", "Date", "Location", "Invoice Number", "MRP", "SKU Code", "SKU Name", "Quantity", "UOM", "Total Liters", "Per Case Amount ($)", "Total Amount ($)"]
             ];
             
             filteredResults.forEach(result => {
@@ -2485,7 +2485,7 @@
             
             // Create table with improved readability
             doc.autoTable({
-                head: [['Order #', 'Date', 'Location', 'Invoice', 'Seed', 'SKU Code', 'SKU Name', 'Qty', 'UOM', 'Total Liters', 'Per Case ($)', 'Total ($)']],
+                head: [['Order #', 'Date', 'Location', 'Invoice', 'MRP', 'SKU Code', 'SKU Name', 'Qty', 'UOM', 'Total Liters', 'Per Case ($)', 'Total ($)']],
                 body: tableData,
                 startY: startY,
                 theme: 'grid',
