@@ -106,7 +106,7 @@
                     <div class="file-input-wrapper"><label for="fileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose UOM File (Excel)</label><input type="file" id="fileInput" accept=".xlsx, .xls, .csv"></div>
                     <div id="fileName" class="file-info" style="margin-top: 10px; font-size: 0.8rem; color: #666;"></div>
                     <div class="import-buttons" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-                        <button class="btn btn-secondary" id="downloadSampleBtn"><i class="fas fa-download"></i> Download Sample UOM</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='https://alh-5.github.io/site/Advance Stock/UOM.xlsx';"><i class="fas fa-download"></i> Download Sample UOM</button>
                         <button class="btn btn-gold" id="importResultsBtn"><i class="fas fa-file-import"></i> Import Purchase Data</button>
                         <button class="btn btn-refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh SKU List</button>
                     </div>
@@ -303,7 +303,7 @@
         });
         
         document.getElementById('downloadSampleBtn').addEventListener('click', function() {
-            const sample = [["SKU_CODE", "SKU_NAME", "UOM_LITERS"], ["MOTUL_7100", "Motul 7100 10W50 Fully Synthetic", 1.0], ["CASTROL_POWER1", "Castrol Power1 Ultimate 10W40", 1.0], ["SHELL_ADVANCE", "Shell Advance Ultra 4T 10W40", 1.0]];
+            const sample = [["SKU_CODE", "SKU_NAME", "UOM_LITERS"], ["7688203", "MGO 5W-30-4 X 3 L", 12], ["7600203", "MGO 20W-40 - 4 X 3 L", 12], ["7472184", "SERVO FLT CF4 15W-40-20 X 1 L", 20]];
             const ws = XLSX.utils.aoa_to_sheet(sample);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "UOM_Sample");
