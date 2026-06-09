@@ -106,7 +106,7 @@
                     <div class="file-input-wrapper"><label for="fileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose UOM File (Excel)</label><input type="file" id="fileInput" accept=".xlsx, .xls, .csv"></div>
                     <div id="fileName" class="file-info" style="margin-top: 10px; font-size: 0.8rem; color: #666;"></div>
                     <div class="import-buttons" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-                        <button class="btn btn-secondary" onclick="window.location.href='https://alh-5.github.io/site/Advance Stock/UOM.xlsx';"><i class="fas fa-download"></i> Download Sample UOM</button>
+                        <button class="btn btn-secondary" id="downloadSampleBtn"><i class="fas fa-download"></i> Download Sample UOM</button>
                         <button class="btn btn-gold" id="importResultsBtn"><i class="fas fa-file-import"></i> Import Purchase Data</button>
                         <button class="btn btn-refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh SKU List</button>
                     </div>
@@ -122,7 +122,7 @@
                     </div>
                    
                     <div class="input-group"><label>SKU Code</label><input type="text" id="skuCode" placeholder="Enter SKU code"></div>
-					<div class="input-group"><label>MRP *</label><input type="text" id="seedNumber" placeholder="Enter MRP"></div>
+                    <div class="input-group"><label>MRP *</label><input type="text" id="seedNumber" placeholder="Enter MRP"></div>
                     <div class="input-group"><label>Quantity</label><input type="number" id="quantity" placeholder="Quantity" min="1"></div>
                     <div class="input-group" id="totalAmountContainer"><label>Total Amount ($)</label><input type="number" id="totalAmount" placeholder="Total amount" min="0.01" step="0.01"><div class="calculation-note">Total Amount / Quantity = Per Case</div></div>
                     <div class="input-group"><label>Price Method</label><select id="priceOption"><option value="total">Enter Total Amount</option><option value="perCase">Enter Per Case Amount</option></select></div>
@@ -143,7 +143,7 @@
         </div>
         <footer><p>SKU Purchase System &copy; 2026 | Auto Lube House</p></footer>
     </div>
-    <div id="importResultsModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-file-import"></i> Import Purchase Data</h3><button class="close-modal" onclick="closeImportModal()">&times;</button></div><div class="modal-body"><div class="file-input-wrapper"><label for="resultsFileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose Excel File</label><input type="file" id="resultsFileInput" accept=".xlsx, .xls"><div id="resultsFileName" style="margin-top:8px;font-size:0.8rem;"></div></div><div id="importResultsError" class="error-message"></div><div id="importResultsSuccess" class="success-message"></div></div><div class="button-group"><button class="btn" onclick="processResultsFile()"><i class="fas fa-upload"></i> Import</button><button class="btn btn-secondary" onclick="closeImportModal()"><i class="fas fa-times"></i> Cancel</button></div></div></div>
+    <div id="importResultsModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-file-import"></i> Import Purchase Data</h3><button class="close-modal" onclick="closeImportModal()">&times;</button></div><div class="modal-body"><div class="file-input-wrapper"><label for="resultsFileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose Excel File</label><input type="file" id="resultsFileInput" accept=".xlsx, .xls"><div id="resultsFileName" style="margin-top:8px;font-size:0.8rem;"></div></div><div id="importResultsError" class="error-message"></div><div id="importResultsSuccess" class="success-message"></div></div><div class="button-group"><button class="btn" id="processResultsBtn"><i class="fas fa-upload"></i> Import</button><button class="btn btn-secondary" onclick="closeImportModal()"><i class="fas fa-times"></i> Cancel</button></div></div></div>
 
     <script>
         // State
@@ -238,17 +238,17 @@
             totalAmountInput.value = "";
             perCaseAmountInput.value = "";
             skuCodeInput.value = "";
-			seedNumberInput.value = "";  // Clear MRP field
+            seedNumberInput.value = "";  // Clear MRP field
             skuCodeInput.focus();
         }
         
         function updateImportedDataTable() {
             if (!importedSKUs.length) {
-                importedDataBody.innerHTML = '<tr><td colspan="3" class="empty-message">No SKU data. Upload UOM file.软</tr>';
+                importedDataBody.innerHTML = '<tr><td colspan="3" class="empty-message">No SKU data. Upload UOM file.</td></tr>';
                 skuCodeInput.placeholder = "Enter SKU code";
                 return;
             }
-            importedDataBody.innerHTML = importedSKUs.map(s => `<tr><td>${escapeHtml(s.code)}</td><td>${escapeHtml(s.name)}NonNull<td>${s.uom.toFixed(2)}</td></tr>`).join('');
+            importedDataBody.innerHTML = importedSKUs.map(s => `<tr><td>${escapeHtml(s.code)}</td><td>${escapeHtml(s.name)}</td><td>${s.uom.toFixed(2)}</td></tr>`).join('');
             skuCodeInput.placeholder = `SKU code (${importedSKUs.length} available)`;
         }
         
@@ -262,7 +262,7 @@
                 let newSKUs = [];
                 for (let i = 0; i < json.length; i++) {
                     const row = json[i];
-                    if (row && row.length >= 3) {
+                    if (row && row.length >= 3 && i > 0) { // Skip header row
                         const code = row[0]?.toString().trim();
                         const name = row[1]?.toString().trim();
                         const uom = parseFloat(row[2]);
@@ -302,13 +302,17 @@
             reader.readAsArrayBuffer(file);
         });
         
-        document.getElementById('downloadSampleBtn').addEventListener('click', function() {
-            const sample = [["SKU_CODE", "SKU_NAME", "UOM_LITERS"], ["7688203", "MGO 5W-30-4 X 3 L", 12], ["7600203", "MGO 20W-40 - 4 X 3 L", 12], ["7472184", "SERVO FLT CF4 15W-40-20 X 1 L", 20]];
-            const ws = XLSX.utils.aoa_to_sheet(sample);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "UOM_Sample");
-            XLSX.writeFile(wb, "UOM_Sample.xlsx");
-        });
+        // Fixed download sample button
+        const downloadSampleBtn = document.getElementById('downloadSampleBtn');
+        if (downloadSampleBtn) {
+            downloadSampleBtn.addEventListener('click', function() {
+                const sample = [["SKU_CODE", "SKU_NAME", "UOM_LITERS"], ["7688203", "MGO 5W-30-4 X 3 L", 12], ["7600203", "MGO 20W-40 - 4 X 3 L", 12], ["7472184", "SERVO FLT CF4 15W-40-20 X 1 L", 20]];
+                const ws = XLSX.utils.aoa_to_sheet(sample);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "UOM_Sample");
+                XLSX.writeFile(wb, "UOM_Sample.xlsx");
+            });
+        }
         
         function saveSKUDataToStorage() { localStorage.setItem('purchase_sku_data', JSON.stringify(importedSKUs)); }
         function saveResultsToStorage() { localStorage.setItem('purchase_results', JSON.stringify(allResults)); localStorage.setItem('purchase_order_counter', JSON.stringify(orderCounter)); }
@@ -509,64 +513,105 @@
         clearBtn.onclick = () => { if (confirm('Clear all results?')) { allResults = []; filteredResults = []; orderCounter = {}; isSearchActive = false; currentSearchTerm = ''; invoiceSearchInput.value = ''; updateResultsTable(); updateSummary(); updateOrdersSummary(); saveResultsToStorage(); updateControlButtons(); showNotification('All cleared', 'success'); } };
         
         importResultsBtn.onclick = () => document.getElementById('importResultsModal').style.display = 'block';
-        window.closeImportModal = function() { document.getElementById('importResultsModal').style.display = 'none'; document.getElementById('resultsFileInput').value = ''; };
-        document.querySelector('.close-modal').onclick = closeImportModal;
+        window.closeImportModal = function() { 
+            document.getElementById('importResultsModal').style.display = 'none'; 
+            document.getElementById('resultsFileInput').value = ''; 
+            document.getElementById('importResultsError').style.display = 'none';
+            document.getElementById('importResultsSuccess').style.display = 'none';
+        };
+        if (document.querySelector('.close-modal')) {
+            document.querySelector('.close-modal').onclick = closeImportModal;
+        }
         window.onclick = e => { if (e.target === document.getElementById('importResultsModal')) closeImportModal(); };
         
-        window.processResultsFile = function() {
-            const file = document.getElementById('resultsFileInput').files[0];
-            if (!file) { document.getElementById('importResultsError').textContent = 'Select a file'; document.getElementById('importResultsError').style.display = 'block'; return; }
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                try {
-                    const workbook = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                    let count = 0;
-                    for (let i = 1; i < json.length; i++) {
-                        const row = json[i];
-                        if (row && row.length >= 6) {
-                            const inv = String(row[3] || '').trim();
-                            const mrp = String(row[4] || '').trim();
-                            const code = String(row[5] || '').trim();
-                            const name = String(row[6] || '').trim();
-                            const qty = parseFloat(row[7]) || 1;
-                            const uom = parseFloat(row[8]) || 0;
-                            const liters = parseFloat(row[9]) || 0;
-                            const perCase = parseFloat(row[10]) || 0;
-                            const total = parseFloat(row[11]) || 0;
-                            if (inv && mrp && code) {
-                                const key = `${inv}_${mrp}`;
-                                if (!orderCounter[key]) orderCounter[key] = 1;
-                                allResults.push({
-                                    orderNumber: orderCounter[key]++,
-                                    date: formatDateToDDMMMYYYY(row[1] || new Date()),
-                                    location: String(row[2] || 'Guwahati').trim(),
-                                    invoice: inv, seed: mrp, code: code, name: name,
-                                    quantity: qty, uom: uom, totalLiters: liters,
-                                    perCaseAmount: perCase, totalAmount: total,
-                                    id: Date.now() + Math.random()
-                                });
-                                count++;
+        // Fixed process results file - using button click instead of inline onclick
+        const processResultsBtn = document.getElementById('processResultsBtn');
+        if (processResultsBtn) {
+            processResultsBtn.onclick = function() {
+                const file = document.getElementById('resultsFileInput').files[0];
+                const importResultsError = document.getElementById('importResultsError');
+                const importResultsSuccess = document.getElementById('importResultsSuccess');
+                
+                if (!file) { 
+                    importResultsError.textContent = 'Please select a file first';
+                    importResultsError.style.display = 'block'; 
+                    return; 
+                }
+                
+                importResultsError.style.display = 'none';
+                importResultsSuccess.style.display = 'none';
+                
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = new Uint8Array(ev.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                        
+                        let count = 0;
+                        for (let i = 1; i < json.length; i++) { // Skip header row
+                            const row = json[i];
+                            if (row && row.length >= 12) {
+                                const inv = String(row[3] || '').trim();
+                                const mrp = String(row[4] || '').trim();
+                                const code = String(row[5] || '').trim();
+                                const name = String(row[6] || '').trim();
+                                const qty = parseFloat(row[7]) || 1;
+                                const uom = parseFloat(row[8]) || 0;
+                                const liters = parseFloat(row[9]) || 0;
+                                const perCase = parseFloat(row[10]) || 0;
+                                const total = parseFloat(row[11]) || 0;
+                                
+                                if (inv && mrp && code && name) {
+                                    const key = `${inv}_${mrp}`;
+                                    if (!orderCounter[key]) orderCounter[key] = 1;
+                                    allResults.push({
+                                        orderNumber: orderCounter[key]++,
+                                        date: formatDateToDDMMMYYYY(row[1] || new Date()),
+                                        location: String(row[2] || 'Guwahati').trim(),
+                                        invoice: inv, 
+                                        seed: mrp, 
+                                        code: code, 
+                                        name: name,
+                                        quantity: qty, 
+                                        uom: uom, 
+                                        totalLiters: liters,
+                                        perCaseAmount: perCase, 
+                                        totalAmount: total,
+                                        id: Date.now() + Math.random()
+                                    });
+                                    count++;
+                                }
                             }
                         }
+                        
+                        if (count > 0) {
+                            filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
+                            updateResultsTable(); 
+                            updateSummary(); 
+                            updateOrdersSummary(); 
+                            saveResultsToStorage();
+                            importResultsSuccess.textContent = `✅ Successfully imported ${count} records`;
+                            importResultsSuccess.style.display = 'block';
+                            showNotification(`Imported ${count} purchase records`, 'success');
+                            setTimeout(() => closeImportModal(), 1500);
+                        } else {
+                            throw new Error('No valid records found. Please check the file format.');
+                        }
+                    } catch (e) {
+                        importResultsError.textContent = `Error: ${e.message}`;
+                        importResultsError.style.display = 'block';
+                        showNotification(e.message, 'warning');
                     }
-                    if (count) {
-                        filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
-                        updateResultsTable(); updateSummary(); updateOrdersSummary(); saveResultsToStorage();
-                        document.getElementById('importResultsSuccess').textContent = `✅ Imported ${count} records`;
-                        document.getElementById('importResultsSuccess').style.display = 'block';
-                        document.getElementById('importResultsError').style.display = 'none';
-                        showNotification(`Imported ${count} purchase records`, 'success');
-                        setTimeout(() => closeImportModal(), 1500);
-                    } else throw new Error('No valid records found');
-                } catch (e) {
-                    document.getElementById('importResultsError').textContent = `Error: ${e.message}`;
-                    document.getElementById('importResultsError').style.display = 'block';
-                }
+                };
+                reader.onerror = function() {
+                    importResultsError.textContent = 'Error reading file';
+                    importResultsError.style.display = 'block';
+                };
+                reader.readAsArrayBuffer(file);
             };
-            reader.readAsArrayBuffer(file);
-        };
+        }
         
         exportBtn.onclick = function() {
             if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
@@ -582,6 +627,13 @@
         // PDF Export with Portrait Orientation and Summary Displayed
         exportPdfBtn.onclick = function() {
             if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
+            
+            // Check if jsPDF is loaded
+            if (typeof window.jspdf === 'undefined') {
+                showNotification('PDF library loading. Please try again.', 'warning');
+                return;
+            }
+            
             const { jsPDF } = window.jspdf;
             // Set to Portrait orientation (default is portrait, but we explicitly set it)
             const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -614,58 +666,63 @@
             const summaryText = `Total Items: ${filteredResults.length} | Total Orders: ${uniqueOrders} | Total Qty: ${totalQty} | Total Liters: ${totalLit.toFixed(2)} | Total Amount: $${totalAmt.toFixed(2)}`;
             
             // AutoTable with column styles optimized for portrait
-            doc.autoTable({
-                head: headers,
-                body: body,
-                startY: isSearchActive ? margin+24 : margin+20,
-                theme: 'grid',
-                headStyles: { fillColor: [44,62,80], textColor: [255,255,255], fontSize: 7, halign: 'center', cellPadding: 1 },
-                bodyStyles: { fontSize: 6.5, cellPadding: 1.5, valign: 'top' },
-                columnStyles: { 
-                    0: { cellWidth: 8, halign: 'center' },   // Ord#
-                    1: { cellWidth: 12, halign: 'center' },  // Date
-                    2: { cellWidth: 14, halign: 'center' },  // Location
-                    3: { cellWidth: 16, halign: 'center' },  // Invoice
-                    4: { cellWidth: 12, halign: 'center' },  // MRP
-                    5: { cellWidth: 15, halign: 'center' },  // SKU Code
-                    6: { cellWidth: 40, halign: 'left', cellWrap: true }, // SKU Name - wrapped
-                    7: { cellWidth: 8, halign: 'center' },   // Qty
-                    8: { cellWidth: 10, halign: 'center' },  // UOM
-                    9: { cellWidth: 11, halign: 'center' },  // Total L
-                    10: { cellWidth: 14, halign: 'center' }, // Per Case
-                    11: { cellWidth: 18, halign: 'center' }  // Total
-                },
-                margin: { left: margin, right: margin },
-                tableWidth: pageWidth - margin*2,
-                didDrawPage: function(data) {
-                    // Page number at bottom
-                    doc.setFontSize(7);
-                    doc.text(`Page ${data.pageNumber}`, pageWidth/2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
+            if (typeof doc.autoTable === 'function') {
+                doc.autoTable({
+                    head: headers,
+                    body: body,
+                    startY: isSearchActive ? margin+24 : margin+20,
+                    theme: 'grid',
+                    headStyles: { fillColor: [44,62,80], textColor: [255,255,255], fontSize: 7, halign: 'center', cellPadding: 1 },
+                    bodyStyles: { fontSize: 6.5, cellPadding: 1.5, valign: 'top' },
+                    columnStyles: { 
+                        0: { cellWidth: 8, halign: 'center' },   // Ord#
+                        1: { cellWidth: 12, halign: 'center' },  // Date
+                        2: { cellWidth: 14, halign: 'center' },  // Location
+                        3: { cellWidth: 16, halign: 'center' },  // Invoice
+                        4: { cellWidth: 12, halign: 'center' },  // MRP
+                        5: { cellWidth: 15, halign: 'center' },  // SKU Code
+                        6: { cellWidth: 40, halign: 'left', cellWrap: true }, // SKU Name - wrapped
+                        7: { cellWidth: 8, halign: 'center' },   // Qty
+                        8: { cellWidth: 10, halign: 'center' },  // UOM
+                        9: { cellWidth: 11, halign: 'center' },  // Total L
+                        10: { cellWidth: 14, halign: 'center' }, // Per Case
+                        11: { cellWidth: 18, halign: 'center' }  // Total
+                    },
+                    margin: { left: margin, right: margin },
+                    tableWidth: pageWidth - margin*2,
+                    didDrawPage: function(data) {
+                        // Page number at bottom
+                        doc.setFontSize(7);
+                        doc.text(`Page ${data.pageNumber}`, pageWidth/2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
+                    }
+                });
+                
+                // Get final Y position after table
+                let finalY = doc.lastAutoTable.finalY + 5;
+                const pageHeight = doc.internal.pageSize.getHeight();
+                
+                // Add summary box - if not enough space, add new page
+                if (finalY + 20 > pageHeight) {
+                    doc.addPage();
+                    finalY = margin + 10;
                 }
-            });
-            
-            // Get final Y position after table
-            let finalY = doc.lastAutoTable.finalY + 5;
-            const pageHeight = doc.internal.pageSize.getHeight();
-            
-            // Add summary box - if not enough space, add new page
-            if (finalY + 20 > pageHeight) {
-                doc.addPage();
-                finalY = margin + 10;
+                
+                // Draw summary box with border and gold accent
+                doc.setFillColor(245, 247, 250);
+                doc.rect(margin, finalY, pageWidth - margin*2, 20, 'F');
+                doc.setDrawColor(212, 175, 55);
+                doc.setLineWidth(0.5);
+                doc.rect(margin, finalY, pageWidth - margin*2, 20);
+                doc.setFontSize(10);
+                doc.setTextColor(44, 62, 80);
+                doc.text('SUMMARY', margin + 5, finalY + 7);
+                doc.setFontSize(8);
+                doc.setTextColor(80, 80, 80);
+                doc.text(summaryText, margin + 5, finalY + 15);
+            } else {
+                showNotification('PDF autoTable not loaded. Please refresh.', 'warning');
+                return;
             }
-            
-            // Draw summary box with border and gold accent
-            doc.setFillColor(245, 247, 250);
-            doc.rect(margin, finalY, pageWidth - margin*2, 20, 'F');
-            doc.setDrawColor(212, 175, 55);
-            doc.setLineWidth(0.5);
-            doc.rect(margin, finalY, pageWidth - margin*2, 20);
-            doc.setFontSize(10);
-            doc.setTextColor(44, 62, 80);
-            doc.text('SUMMARY', margin + 5, finalY + 7);
-            doc.setFontSize(8);
-            doc.setTextColor(80, 80, 80);
-            doc.text(summaryText, margin + 5, finalY + 15);
             
             doc.save(`Purchase_Report_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.pdf`);
             showNotification('PDF exported (portrait) with summary', 'success');
