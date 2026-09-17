@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKU Processor - Clean Product Names</title>
+    <!-- Include SheetJS library for XLSX processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: normal;
+        }
+        
+        .upload-section {
+            background-color: #f8f9fa;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .upload-section:hover {
+            background-color: #edf7ff;
+        }
+        
+        .upload-section h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        
+        .file-label:hover {
+            background-color: #2980b9;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .supported-formats {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 10px;
+        }
+        
+        .process-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            margin: 5px;
+        }
+        
+        .process-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .process-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .instructions {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .instructions h4 {
+            margin-top: 0;
+            color: #d35400;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions h4 i {
+            margin-right: 10px;
+        }
+        
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .example {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .example-item {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-bottom: 1px dashed #bdc3c7;
+        }
+        
+        .example-item:last-child {
+            border-bottom: none;
+        }
+        
+        .original {
+            color: #7f8c8d;
+        }
+        
+        .arrow {
+            color: #3498db;
+            margin: 0 10px;
+        }
+        
+        .processed {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .table-container.show {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            min-width: 800px;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+            padding: 14px 16px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background-color: #f5f9ff;
+        }
+        
+        .original-sku {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .results-info {
+            background-color: #e8f6f3;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .results-info.show {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .results-stats {
+            font-size: 16px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .download-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .export-xlsx {
+            background-color: #2ecc71;
+        }
+        
+        .export-xlsx:hover {
+            background-color: #27ae60;
+        }
+        
+        .export-csv {
+            background-color: #3498db;
+        }
+        
+        .export-csv:hover {
+            background-color: #2980b9;
+        }
+        
+        .export-original {
+            background-color: #e67e22;
+        }
+        
+        .export-original:hover {
+            background-color: #d35400;
+        }
+        
+        .clear-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .clear-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        .error {
+            background-color: #ffeaea;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .columns-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .columns-info.show {
+            display: block;
+        }
+        
+        .columns-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .column-tag {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .required {
+            background-color: #e74c3c;
+        }
+        
+        .detected {
+            background-color: #2ecc71;
+        }
+        
+        .detected-info {
+            margin-left: 5px;
+            font-size: 10px;
+            background: white;
+            color: #2ecc71;
+            border-radius: 2px;
+            padding: 1px 3px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .file-format-note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .cleaning-info {
+            background-color: #e8f6f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .cleaning-info.show {
+            display: block;
+        }
+        
+        .cleaning-rule {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        
+        .cleaning-rule i {
+            color: #2ecc71;
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .upload-section {
+                padding: 20px;
+            }
+            
+            .results-info {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SKU Processor - Clean Product Names <span class="logo">XLSX Import</span></h1>
+        
+        
+        <div class="upload-section">
+            <h3>Upload Excel File</h3>
+            <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls,.xlsm">
+            <label for="excelFile" class="file-label">📁 Choose Excel File</label>
+            <div class="file-info" id="fileInfo">No file selected</div>
+            <div class="supported-formats">Supported formats: .xlsx, .xls, .xlsm</div>
+            
+            <button id="processBtn" class="process-btn" disabled>🔧 Process & Clean Names</button>
+            <button id="clearBtn" class="clear-btn" disabled>🗑️ Clear Data</button>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Processing Excel file...</div>
+        </div>
+        
+        <div class="error" id="errorMessage"></div>
+        
+        <div class="columns-info" id="columnsInfo">
+            <strong>Detected Columns in File:</strong>
+            <div class="columns-list" id="columnsList"></div>
+        </div>
+        
+        <div class="results-info" id="resultsInfo">
+            <div class="results-stats">
+                ✅ Cleaned <span id="rowCount">0</span> product names
+            </div>
+            <div class="action-buttons">
+                <button id="downloadXlsxBtn" class="download-btn export-xlsx">📥 Cleaned XLSX</button>
+                <button id="downloadCsvBtn" class="download-btn export-csv">📄 Cleaned CSV</button>
+                <button id="downloadOriginalBtn" class="download-btn export-original">📋 Original Data</button>
+            </div>
+        </div>
+        
+        <div class="table-container" id="tableContainer">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>SKU Code</th>
+                        <th>Original SKU Name</th>
+                        <th>Cleaned Product Name</th>
+                        <th>UOM</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            SKU Processor v4.0 | Clean Product Names Only | No Promotional Text
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const excelFileInput = document.getElementById('excelFile');
+            const fileInfo = document.getElementById('fileInfo');
+            const processBtn = document.getElementById('processBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const tableContainer = document.getElementById('tableContainer');
+            const tableBody = document.getElementById('tableBody');
+            const resultsInfo = document.getElementById('resultsInfo');
+            const rowCount = document.getElementById('rowCount');
+            const downloadXlsxBtn = document.getElementById('downloadXlsxBtn');
+            const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+            const downloadOriginalBtn = document.getElementById('downloadOriginalBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const columnsInfo = document.getElementById('columnsInfo');
+            const columnsList = document.getElementById('columnsList');
+            const cleaningInfo = document.getElementById('cleaningInfo');
+            const loading = document.getElementById('loading');
+            
+            let processedData = [];
+            let originalData = [];
+            let worksheetData = null;
+            let workbook = null;
+            let columnDetection = {};
+            
+            // Function to clean SKU name - FIXED VERSION
+            function cleanSkuName(skuName) {
+                if (!skuName || typeof skuName !== 'string') return skuName || '';
+                
+                // Convert to string and trim
+                skuName = skuName.toString().trim();
+                
+                // Define patterns to remove - everything after dash with size/volume
+                // This regex captures all common patterns like:
+                // -20 X 1 L PROMO
+                // -10x1.8 L
+                // -2 X 7 L
+                // -5 X 2 KG BUC
+                // etc.
+                
+                // Main pattern: dash followed by numbers, optional space, x/X, numbers, optional decimal, unit, and any text after
+                const mainPattern = /-\s*\d+\s*[xX]\s*\d+(\.\d+)?\s*[A-Za-z]*.*$/;
+                
+                // Alternative pattern for different formats
+                const altPattern1 = /-\s*\d+\s*[Ll]\s*.*$/i; // e.g., -20 L PROMO
+                const altPattern2 = /-\s*\d+\s*[Mm][Ll]\s*.*$/i; // e.g., -500 ML
+                const altPattern3 = /-\s*\d+\s*[Kk][Gg]\s*.*$/i; // e.g., -5 KG
+                
+                // Remove promotional text patterns that might appear without size
+                const promoPatterns = [
+                    /\s+-\s*PROMO.*$/i,
+                    /\s+-\s*BUC.*$/i,
+                    /\s+-\s*PACK.*$/i,
+                    /\s+-\s*OFFER.*$/i,
+                    /\s+-\s*DEAL.*$/i,
+                    /\s+-\s*SPECIAL.*$/i,
+                    /\s+-\s*BUNDLE.*$/i,
+                    /\s+-\s*COMBO.*$/i
+                ];
+                
+                let cleaned = skuName;
+                
+                // Try main pattern first
+                if (mainPattern.test(cleaned)) {
+                    cleaned = cleaned.replace(mainPattern, '').trim();
+                }
+                // Try alternative patterns
+                else if (altPattern1.test(cleaned)) {
+                    cleaned = cleaned.replace(altPattern1, '').trim();
+                }
+                else if (altPattern2.test(cleaned)) {
+                    cleaned = cleaned.replace(altPattern2, '').trim();
+                }
+                else if (altPattern3.test(cleaned)) {
+                    cleaned = cleaned.replace(altPattern3, '').trim();
+                }
+                
+                // Remove any remaining promotional text
+                promoPatterns.forEach(pattern => {
+                    if (pattern.test(cleaned)) {
+                        cleaned = cleaned.replace(pattern, '').trim();
+                    }
+                });
+                
+                // Also handle cases where there's just a dash with promotional text
+                const dashPromoPattern = /-\s*(PROMO|BUC|PACK|OFFER|DEAL|SPECIAL|BUNDLE|COMBO).*$/i;
+                if (dashPromoPattern.test(cleaned)) {
+                    cleaned = cleaned.replace(dashPromoPattern, '').trim();
+                }
+                
+                // Trim any trailing dash or hyphen that might be left
+                cleaned = cleaned.replace(/\s*-\s*$/, '').trim();
+                
+                // Return the cleaned name, or original if empty
+                return cleaned || skuName;
+            }
+            
+            // Test the cleaning function with examples
+            function testCleaningFunction() {
+                const testCases = [
+                    { input: "SERVO GEAR HP 90-20 X 1 L PROMO", expected: "SERVO GEAR HP 90" },
+                    { input: "MAHINDRA MAXIMILE ELITE-10x1.8 L", expected: "MAHINDRA MAXIMILE ELITE" },
+                    { input: "MAXIMILE PREMIUM ECO-2 X 7 L", expected: "MAXIMILE PREMIUM ECO" },
+                    { input: "PRODUCT NAME-20 X 1 L BUC", expected: "PRODUCT NAME" },
+                    { input: "ITEM ABC-5 X 2 KG PROMO PACK", expected: "ITEM ABC" },
+                    { input: "TEST PRODUCT-500 ML SPECIAL", expected: "TEST PRODUCT" },
+                    { input: "ANOTHER ITEM-10 L PROMO OFFER", expected: "ANOTHER ITEM" },
+                    { input: "SIMPLE PRODUCT-PROMO", expected: "SIMPLE PRODUCT" },
+                    { input: "CLEAN NAME-BUC", expected: "CLEAN NAME" },
+                    { input: "NO DASH PRODUCT", expected: "NO DASH PRODUCT" }
+                ];
+                
+                console.log("Testing cleaning function:");
+                testCases.forEach(test => {
+                    const result = cleanSkuName(test.input);
+                    const passed = result === test.expected;
+                    console.log(`${passed ? '✓' : '✗'} "${test.input}" → "${result}" ${passed ? '' : `(expected: "${test.expected}")`}`);
+                });
+            }
+            
+            // Run test on load
+            testCleaningFunction();
+            
+            // Function to detect columns based on content patterns
+            function detectColumns(headers, sampleRows) {
+                const columnScores = {};
+                
+                // Common patterns for each column type
+                const skuCodePatterns = [
+                    'sku', 'code', 'item', 'product code', 'item code', 
+                    'sku code', 'product id', 'item id', 'article', 'art'
+                ];
+                
+                const skuNamePatterns = [
+                    'name', 'description', 'product', 'item name', 
+                    'sku name', 'product name', 'description', 'desc'
+                ];
+                
+                const uomPatterns = [
+                    'uom', 'unit', 'measure', 'unit of measure', 
+                    'packing', 'size', 'unit size', 'qty', 'quantity'
+                ];
+                
+                // Score each column based on header name and sample data
+                headers.forEach((header, index) => {
+                    if (!header) return;
+                    
+                    const headerLower = header.toString().toLowerCase().trim();
+                    let scores = { skuCode: 0, skuName: 0, uom: 0 };
+                    
+                    // Score based on header name
+                    skuCodePatterns.forEach(pattern => {
+                        if (headerLower.includes(pattern)) scores.skuCode += 3;
+                    });
+                    
+                    skuNamePatterns.forEach(pattern => {
+                        if (headerLower.includes(pattern)) scores.skuName += 3;
+                    });
+                    
+                    uomPatterns.forEach(pattern => {
+                        if (headerLower.includes(pattern)) scores.uom += 3;
+                    });
+                    
+                    // Score based on sample data patterns
+                    sampleRows.forEach(row => {
+                        const cellValue = row[index] ? row[index].toString().trim() : '';
+                        
+                        // SKU Code patterns: alphanumeric, specific formats
+                        if (/^[A-Za-z0-9]{3,}-?[A-Za-z0-9]*$/.test(cellValue)) {
+                            scores.skuCode += 1;
+                        }
+                        
+                        // SKU Name patterns: longer text, descriptive
+                        if (cellValue.length > 10 && /[A-Za-z\s]/.test(cellValue)) {
+                            scores.skuName += 1;
+                        }
+                        
+                        // UOM patterns: short codes (PC, KG, L, EA, PCS, BOX, BTL, SET, PK, CTN, BAG, ROLL, M, CM, MM)
+                        if (/^(PC|KG|L|EA|PCS|BOX|BTL|SET|PK|CTN|BAG|ROLL|M|CM|MM|ML|G|MG)$/i.test(cellValue)) {
+                            scores.uom += 2;
+                        }
+                        if (cellValue.length <= 5 && /^[A-Za-z0-9\/]+$/.test(cellValue)) {
+                            scores.uom += 1;
+                        }
+                    });
+                    
+                    columnScores[index] = scores;
+                });
+                
+                // Determine best matches
+                const result = {
+                    skuCode: { index: -1, confidence: 0, header: '' },
+                    skuName: { index: -1, confidence: 0, header: '' },
+                    uom: { index: -1, confidence: 0, header: '' }
+                };
+                
+                // Find best match for each column type
+                Object.keys(columnScores).forEach(colIndex => {
+                    const scores = columnScores[colIndex];
+                    
+                    if (scores.skuCode > result.skuCode.confidence) {
+                        result.skuCode.index = parseInt(colIndex);
+                        result.skuCode.confidence = scores.skuCode;
+                        result.skuCode.header = headers[colIndex];
+                    }
+                    
+                    if (scores.skuName > result.skuName.confidence) {
+                        result.skuName.index = parseInt(colIndex);
+                        result.skuName.confidence = scores.skuName;
+                        result.skuName.header = headers[colIndex];
+                    }
+                    
+                    if (scores.uom > result.uom.confidence) {
+                        result.uom.index = parseInt(colIndex);
+                        result.uom.confidence = scores.uom;
+                        result.uom.header = headers[colIndex];
+                    }
+                });
+                
+                return result;
+            }
+            
+            // Handle file selection
+            excelFileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    const fileSize = (e.target.files[0].size / 1024).toFixed(2);
+                    fileInfo.textContent = `${fileName} (${fileSize} KB)`;
+                    processBtn.disabled = false;
+                    errorMessage.classList.remove('show');
+                    cleaningInfo.classList.add('show');
+                } else {
+                    fileInfo.textContent = 'No file selected';
+                    processBtn.disabled = true;
+                    clearBtn.disabled = true;
+                }
+            });
+            
+            // Process the Excel file
+            processBtn.addEventListener('click', function() {
+                if (!excelFileInput.files.length) return;
+                
+                const file = excelFileInput.files[0];
+                const reader = new FileReader();
+                
+                loading.classList.add('show');
+                errorMessage.classList.remove('show');
+                
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        workbook = XLSX.read(data, { type: 'array' });
+                        
+                        // Get first worksheet
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        
+                        // Convert to JSON
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        
+                        if (jsonData.length < 2) {
+                            throw new Error('Excel file is empty or has no data rows');
+                        }
+                        
+                        // Get headers (first row)
+                        const headers = jsonData[0];
+                        
+                        // Get sample rows for pattern detection
+                        const sampleRows = jsonData.slice(1, Math.min(6, jsonData.length));
+                        
+                        // Detect columns
+                        columnDetection = detectColumns(headers, sampleRows);
+                        
+                        // Check if we have detected all required columns
+                        if (columnDetection.skuCode.index === -1 || 
+                            columnDetection.skuName.index === -1 || 
+                            columnDetection.uom.index === -1) {
+                            
+                            let missingColumns = [];
+                            if (columnDetection.skuCode.index === -1) missingColumns.push('SKU Code');
+                            if (columnDetection.skuName.index === -1) missingColumns.push('SKU Name');
+                            if (columnDetection.uom.index === -1) missingColumns.push('UOM');
+                            
+                            throw new Error(`Could not detect required columns: ${missingColumns.join(', ')}. Please ensure your file has these columns.`);
+                        }
+                        
+                        // Clear previous data
+                        tableBody.innerHTML = '';
+                        processedData = [];
+                        originalData = [];
+                        
+                        // Display detected columns
+                        columnsList.innerHTML = '';
+                        headers.forEach((header, index) => {
+                            if (!header && header !== 0) return;
+                            
+                            const columnTag = document.createElement('div');
+                            columnTag.className = 'column-tag';
+                            columnTag.textContent = header.toString();
+                            
+                            // Highlight detected columns
+                            if (index === columnDetection.skuCode.index) {
+                                columnTag.classList.add('detected');
+                                columnTag.innerHTML = `${header} <span class="detected-info">SKU Code</span>`;
+                            } else if (index === columnDetection.skuName.index) {
+                                columnTag.classList.add('detected');
+                                columnTag.innerHTML = `${header} <span class="detected-info">SKU Name</span>`;
+                            } else if (index === columnDetection.uom.index) {
+                                columnTag.classList.add('detected');
+                                columnTag.innerHTML = `${header} <span class="detected-info">UOM</span>`;
+                            }
+                            
+                            columnsList.appendChild(columnTag);
+                        });
+                        
+                        columnsInfo.classList.add('show');
+                        
+                        // Process each row (skip header row)
+                        for (let i = 1; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            
+                            // Skip empty rows
+                            if (!row || row.length === 0) continue;
+                            
+                            const skuCode = row[columnDetection.skuCode.index] || '';
+                            const originalSkuName = row[columnDetection.skuName.index] || '';
+                            const uom = row[columnDetection.uom.index] || '';
+                            
+                            // Clean the SKU name using the fixed function
+                            const cleanedSkuName = cleanSkuName(originalSkuName);
+                            
+                            // Store original and processed data
+                            const processedRow = {
+                                skuCode: skuCode.toString().trim(),
+                                originalSkuName: originalSkuName.toString().trim(),
+                                cleanedSkuName: cleanedSkuName,
+                                uom: uom.toString().trim(),
+                                originalRow: row // Store entire original row
+                            };
+                            
+                            processedData.push(processedRow);
+                            originalData.push(row);
+                            
+                            // Add row to table
+                            const tableRow = document.createElement('tr');
+                            tableRow.innerHTML = `
+                                <td>${processedRow.skuCode}</td>
+                                <td><span class="original-sku">${processedRow.originalSkuName}</span></td>
+                                <td><strong>${processedRow.cleanedSkuName}</strong></td>
+                                <td>${processedRow.uom}</td>
+                            `;
+                            tableBody.appendChild(tableRow);
+                        }
+                        
+                        // Show table and results info
+                        tableContainer.classList.add('show');
+                        resultsInfo.classList.add('show');
+                        rowCount.textContent = processedData.length;
+                        errorMessage.classList.remove('show');
+                        clearBtn.disabled = false;
+                        
+                        // Store worksheet data for export
+                        worksheetData = worksheet;
+                        
+                    } catch (error) {
+                        errorMessage.textContent = `Error processing file: ${error.message}`;
+                        errorMessage.classList.add('show');
+                        console.error(error);
+                    } finally {
+                        loading.classList.remove('show');
+                    }
+                };
+                
+                reader.onerror = function() {
+                    errorMessage.textContent = 'Error reading file. Please try again.';
+                    errorMessage.classList.add('show');
+                    loading.classList.remove('show');
+                };
+                
+                reader.readAsArrayBuffer(file);
+            });
+            
+            // Clear data
+            clearBtn.addEventListener('click', function() {
+                tableBody.innerHTML = '';
+                processedData = [];
+                originalData = [];
+                worksheetData = null;
+                workbook = null;
+                columnDetection = {};
+                tableContainer.classList.remove('show');
+                resultsInfo.classList.remove('show');
+                columnsInfo.classList.remove('show');
+                excelFileInput.value = '';
+                fileInfo.textContent = 'No file selected';
+                processBtn.disabled = true;
+                clearBtn.disabled = true;
+                errorMessage.classList.remove('show');
+            });
+            
+            // Download cleaned data as XLSX
+            downloadXlsxBtn.addEventListener('click', function() {
+                if (processedData.length === 0) return;
+                
+                // Create a new workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Prepare data for worksheet
+                const exportData = [
+                    ['SKU Code', 'Cleaned Product Name', 'UOM'], // Headers
+                    ...processedData.map(row => [row.skuCode, row.cleanedSkuName, row.uom])
+                ];
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'Cleaned Product Names');
+                
+                // Generate and download file
+                const fileName = `cleaned_products_${new Date().getTime()}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+            });
+            
+            // Download cleaned data as CSV
+            downloadCsvBtn.addEventListener('click', function() {
+                if (processedData.length === 0) return;
+                
+                // Create CSV content
+                let csvContent = 'SKU Code,Cleaned Product Name,UOM\n';
+                
+                processedData.forEach(row => {
+                    csvContent += `"${row.skuCode}","${row.cleanedSkuName}","${row.uom}"\n`;
+                });
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `cleaned_products_${new Date().getTime()}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            });
+            
+            // Download original data
+            downloadOriginalBtn.addEventListener('click', function() {
+                if (!workbook || !worksheetData) return;
+                
+                // Get the original worksheet
+                const firstSheetName = workbook.SheetNames[0];
+                const originalWorksheet = workbook.Sheets[firstSheetName];
+                
+                // Create a new workbook with the original data
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, originalWorksheet, 'Original Data');
+                
+                // Generate and download file
+                const fileName = `original_sku_data_${new Date().getTime()}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+            });
+            
+            // Initialize clear button state
+            clearBtn.disabled = true;
+            
+            // Show cleaning info on load
+            cleaningInfo.classList.add('show');
+        });
+    </script>
+</body>
+</html>

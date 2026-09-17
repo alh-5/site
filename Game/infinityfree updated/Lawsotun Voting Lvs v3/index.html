@@ -1,0 +1,3074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawsohtun Voting System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Full CSS from previous version – unchanged */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Container */
+        #appContainer {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 25px 75px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid #4CAF50;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title p {
+            color: #ecf0f1;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #2ecc71);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            padding: 0 20px;
+        }
+
+        .tab-btn {
+            padding: 18px 30px;
+            background: none;
+            border: none;
+            border-bottom: 4px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .tab-btn.active {
+            color: #4CAF50;
+            border-bottom-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Voting Form */
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4CAF50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        /* Candidate Grid */
+        .candidate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .candidate-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .candidate-card.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .candidate-image {
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .candidate-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .candidate-card:hover .candidate-image img {
+            transform: scale(1.05);
+        }
+
+        .candidate-vote-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .candidate-details {
+            padding: 15px;
+        }
+
+        .candidate-name {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .candidate-bio {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .candidate-votes-count {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .votes-label {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .votes-number {
+            font-weight: 700;
+            color: #4CAF50;
+            font-size: 1.1rem;
+        }
+
+        .votes-progress {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .votes-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2ecc71);
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+
+        /* Live Votes Counter */
+        .live-votes-counter {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-pulse {
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .total-votes-display {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .total-votes-number {
+            font-size: 1.8rem;
+            color: #ffdd59;
+        }
+
+        .refresh-votes-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-votes-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg);
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .file-preview {
+            height: 120px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        /* Contact Toggle */
+        .contact-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-success {
+            background: rgba(76, 175, 80, 0.1);
+            border: 2px solid #4CAF50;
+            color: #2e7d32;
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid #e74c3c;
+            color: #c0392b;
+        }
+
+        /* Voting Status */
+        .voting-status-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .voting-status-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        /* Validation Messages */
+        .validation-message {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .error {
+            color: #e74c3c;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Admin Panel */
+        .admin-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* Analytics Tab - Transparent Design */
+        #analyticsTab {
+            background: transparent !important;
+            color: white;
+        }
+
+        #analyticsTab .admin-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        #analyticsTab h2,
+        #analyticsTab h3 {
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #analyticsTab .stat-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        #analyticsTab .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #analyticsTab .stat-label {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        #analyticsTab .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        #analyticsTab .btn-primary {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(46, 204, 113, 0.8));
+        }
+
+        #analyticsTab .btn-secondary {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.8), rgba(41, 128, 185, 0.8));
+        }
+
+        #analyticsTab .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        #analyticsTab .progress-bar {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        #analyticsTab .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #2ecc71);
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        /* Analytics Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Candidate List for Admin */
+        .candidate-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .candidate-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .candidate-item-image {
+            width: 70px;
+            height: 90px;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .candidate-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .candidate-item-info {
+            flex-grow: 1;
+        }
+
+        .candidate-item-name {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .candidate-item-bio {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .candidate-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Receipt Modal */
+        .receipt-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .receipt-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .receipt-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .receipt-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Remove number input arrows */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .form-container,
+            .admin-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .candidate-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .candidate-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .candidate-item-image {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .candidate-item-actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .live-votes-counter {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title h1 {
+                font-size: 1.8rem;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .modal-content,
+            .receipt-content {
+                padding: 20px;
+            }
+
+            .candidate-vote-badge {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+        }
+
+        /* Additional Styles */
+        .badge {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .warning-box {
+            background: rgba(241, 196, 15, 0.1);
+            border: 2px solid #f1c40f;
+            color: #d35400;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .warning-box.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2ecc71);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(76, 175, 80, 0.1);
+            border-radius: 50%;
+            border-top-color: #4CAF50;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        /* Shake Animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt-content, .receipt-content * {
+                visibility: visible;
+            }
+            .receipt-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <div style="margin-bottom: 30px;">
+                <i class="fas fa-user-shield fa-3x" style="color: #4CAF50; margin-bottom: 15px;"></i>
+                <h2 style="color: #2c3e50; margin-bottom: 10px;">Administrator Login</h2>
+                <p style="color: #666; margin-bottom: 20px;">Enter password to access admin features</p>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="adminPassword" class="form-control" placeholder="Enter admin password" autocomplete="off">
+                <div id="admin-password-validation" class="validation-message"></div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button onclick="authenticateAdmin()" class="btn btn-primary" style="flex: 1;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button onclick="closeAdminLoginModal()" class="btn btn-outline" style="flex: 1;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+            
+            <p style="margin-top: 20px; color: #999; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Lawsohtun_Voting_System
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="appContainer">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1>
+                    <i class="fas fa-vote-yea"></i>
+                    <div>
+                        Lawsohtun Voting System
+                        <div id="headerSubtitle" style="font-size: 1rem; font-weight: normal; margin-top: 5px;">Transparent and Secure</div>
+                    </div>
+                </h1>
+                <div id="adminBadge" class="badge" style="display: none;">
+                    <i class="fas fa-user-shield"></i> Administrator Mode
+                </div>
+            </div>
+            
+            <div class="header-buttons">
+                <button onclick="logout()" class="btn btn-outline" id="userModeBtn" style="display: none;">
+                    <i class="fas fa-user"></i> Voter Mode Active
+                </button>
+                <button onclick="openAdminLoginModal()" class="btn btn-secondary" id="adminModeBtn">
+                    <i class="fas fa-user-shield"></i> Admin Mode
+                </button>
+                <button onclick="testSheetsConnection()" class="btn btn-outline">
+                    <i class="fas fa-plug"></i> Test Connection
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('voting')">
+                <i class="fas fa-vote-yea"></i> Voting
+            </button>
+            <button class="tab-btn" onclick="switchTab('admin')" id="adminTabBtn" style="display: none;">
+                <i class="fas fa-user-shield"></i> Admin Panel
+            </button>
+            <button class="tab-btn" onclick="switchTab('analytics')" id="analyticsTabBtn" style="display: none;">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+        <!-- Voting Tab -->
+        <div id="votingTab" class="tab-content active">
+            <!-- Live Votes Counter -->
+            <div class="live-votes-counter">
+                <div class="live-indicator">
+                    <div class="live-pulse"></div>
+                    <span><strong>LIVE VOTES</strong></span>
+                </div>
+                <div class="total-votes-display">
+                    Total Votes: <span class="total-votes-number" id="liveTotalVotes">0</span>
+                </div>
+                <button onclick="refreshLiveVotes()" class="refresh-votes-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <!-- Voting Status -->
+            <div class="voting-status-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: white; margin: 0;"><i class="fas fa-clock"></i> Voting Status</h3>
+                    <span id="votingStatus" class="badge">Voting: NOT CONFIGURED</span>
+                </div>
+                
+                <div class="voting-status-info">
+                    <div class="status-item">
+                        <div class="status-label">Voting Start Time</div>
+                        <div class="status-value" id="votingStartTime">Not set</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Voting End Time</div>
+                        <div class="status-value" id="votingEndTime">Not set</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Connection Status</div>
+                        <div class="status-value" id="sheetsStatusText">Not connected</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Alert -->
+            <div id="configAlert" class="warning-box" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div id="configMessage">Admin needs to configure voting first</div>
+            </div>
+
+            <!-- Duplicate Warning -->
+            <div id="duplicateWarning" class="warning-box">
+                <i class="fas fa-exclamation-circle"></i>
+                <div id="duplicateMessage">User has already voted!</div>
+            </div>
+
+            <!-- Voter Dashboard -->
+            <div class="stats-grid" id="voterStats" style="display: none;">
+                <div class="stat-card">
+                    <i class="fas fa-vote-yea fa-2x" style="color: #4CAF50;"></i>
+                    <div class="stat-value" id="totalVotesStat">0</div>
+                    <div class="stat-label">Total Votes Cast</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users fa-2x" style="color: #3498db;"></i>
+                    <div class="stat-value" id="candidatesStat">0</div>
+                    <div class="stat-label">Candidates</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chart-line fa-2x" style="color: #9b59b6;"></i>
+                    <div class="stat-value" id="votingStatusStat">Inactive</div>
+                    <div class="stat-label">Voting Activity</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-hourglass-half fa-2x" style="color: #f39c12;"></i>
+                    <div class="stat-value" id="timeRemainingStat">N/A</div>
+                    <div class="stat-label">Time Remaining</div>
+                </div>
+            </div>
+
+            <!-- Voting Form -->
+            <form id="votingForm" class="form-container">
+                <!-- Personal Details Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Voter Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user-circle"></i> Full Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Enter your full name" onblur="checkDuplicateVoter(true)">
+                        <div id="name-validation" class="validation-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age"><i class="fas fa-birthday-cake"></i> Age</label>
+                        <input type="number" id="age" class="form-control" placeholder="Enter your age" min="18" max="120" onblur="checkDuplicateVoter()">
+                        <div id="age-validation" class="validation-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="epicNumber"><i class="fas fa-id-card"></i> EPIC Number</label>
+                        <input type="text" id="epicNumber" class="form-control" placeholder="Enter your EPIC number" onblur="checkDuplicateVoter()">
+                        <div id="epic-validation" class="validation-message"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address"><i class="fas fa-home"></i> Address</label>
+                        <textarea id="address" class="form-control" placeholder="Enter your complete address" rows="3"></textarea>
+                        <div id="address-validation" class="validation-message"></div>
+                    </div>
+                    
+                    <!-- Contact Toggle - Phone is default active -->
+                    <div class="contact-toggle">
+					    
+						<div class="toggle-btn active" id="phoneToggle" onclick="toggleContact('phone')">
+                            <i class="fas fa-phone"></i> Phone
+                        </div>
+					    
+                        <div class="toggle-btn" id="emailToggle" onclick="toggleContact('email')">
+                            <i class="fas fa-envelope"></i> Email
+                        </div>
+                        
+                    </div>
+					
+					 <!-- Phone field is visible by default, numeric only -->
+                    <div class="form-group" id="phoneField">
+                        <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="number" id="phone" class="form-control" placeholder="Enter your phone number (10-15 digits)" 
+                               pattern="[0-9]*" inputmode="numeric" min="1000000000" max="999999999999999"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);">
+                        <div id="phone-validation" class="validation-message">Enter only numbers (10-15 digits)</div>
+                    </div>
+                    
+                    <!-- Email field is hidden by default -->
+                    <div class="form-group" id="emailField" style="display: none;">
+                        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                    </div>
+                    
+                   
+                    
+                    <div id="contact-validation" class="validation-message"></div>
+                </div>
+
+                <!-- Document Upload & Candidate Selection -->
+                <div class="form-section">
+                    <h3><i class="fas fa-file-upload"></i> Documents & Selection</h3>
+                    
+                    <div class="form-group">
+                        <label for="epicDocument"><i class="fas fa-file-image"></i> Upload EPIC Document</label>
+                        <input type="file" id="epicDocument" class="form-control" accept="image/*">
+                        <div id="epic-doc-validation" class="validation-message"></div>
+                        <div class="file-preview" id="epic-preview">
+                            <span>EPIC preview will appear here</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="selfie"><i class="fas fa-camera"></i> Selfie with EPIC</label>
+                        <input type="file" id="selfie" class="form-control" accept="image/*">
+                        <div id="selfie-validation" class="validation-message"></div>
+                        <div class="file-preview" id="selfie-preview">
+                            <span>Selfie preview will appear here</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Select Your Candidate</label>
+                        <div id="candidate-validation" class="validation-message"></div>
+                        <div id="candidateGrid" class="candidate-grid">
+                            <!-- Candidates will be loaded here -->
+                            <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                                <i class="fas fa-spinner fa-spin fa-2x" style="margin-bottom: 15px;"></i>
+                                <p>Loading candidates...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;" disabled>
+                        <i class="fas fa-paper-plane"></i> Submit Vote
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="adminTab" class="tab-content">
+            <div class="admin-section">
+                <!-- Voting Time Configuration -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-clock"></i> Set Voting Time</h3>
+                    
+                    <form id="votingTimeForm">
+                        <div class="form-group">
+                            <label for="votingStart">Voting Start Time</label>
+                            <input type="datetime-local" id="votingStart" class="form-control">
+                            <div id="start-time-validation" class="validation-message"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="votingEnd">Voting End Time</label>
+                            <input type="datetime-local" id="votingEnd" class="form-control">
+                            <div id="end-time-validation" class="validation-message"></div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 25px;">
+                            <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                <i class="fas fa-save"></i> Set Voting Time
+                            </button>
+                            <button type="button" onclick="setDefaultVotingTime()" class="btn btn-secondary" style="flex: 1;">
+                                <i class="fas fa-magic"></i> Set Default
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Add Candidate -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-user-plus"></i> Add Candidate</h3>
+                    
+                    <form id="addCandidateForm">
+                        <div class="form-group">
+                            <label for="candidateName">Candidate Name</label>
+                            <input type="text" id="candidateName" class="form-control" placeholder="Enter candidate name">
+                            <div id="candidate-name-validation" class="validation-message"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="candidateBio">Candidate Bio</label>
+                            <textarea id="candidateBio" class="form-control" placeholder="Enter candidate biography" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="candidateImage">Candidate Image</label>
+                            <input type="file" id="candidateImage" class="form-control" accept="image/*">
+                            <div id="candidate-image-validation" class="validation-message"></div>
+                            <div class="file-preview" id="candidate-image-preview" style="height: 180px;">
+                                <span>Passport photo preview</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-plus-circle"></i> Add Candidate
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Candidate List -->
+            <div class="admin-card" style="margin-top: 30px;">
+                <h3><i class="fas fa-users"></i> Current Candidates</h3>
+                <div id="adminCandidatesList">
+                    <!-- Candidates list will be loaded here -->
+                    <div style="text-align: center; padding: 30px; color: #666;">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p>Loading candidates...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analyticsTab" class="tab-content">
+            <!-- Analytics Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2><i class="fas fa-chart-bar"></i> Voting Analytics</h2>
+                <div style="display: flex; gap: 15px;">
+                    <button onclick="exportVotesToCSV()" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Export CSV
+                    </button>
+                    <button onclick="printAnalytics()" class="btn btn-secondary">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button onclick="refreshAnalytics()" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-vote-yea fa-2x" style="color: #4CAF50;"></i>
+                    <div class="stat-value" id="totalVotes">0</div>
+                    <div class="stat-label">Total Votes</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-crown fa-2x" style="color: #f39c12;"></i>
+                    <div class="stat-value" id="topCandidate">-</div>
+                    <div class="stat-label">Leading Candidate</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chart-line fa-2x" style="color: #9b59b6;"></i>
+                    <div class="stat-value" id="votingActivity">-</div>
+                    <div class="stat-label">Voting Activity</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-history fa-2x" style="color: #3498db;"></i>
+                    <div class="stat-value" id="lastUpdate">Now</div>
+                    <div class="stat-label">Last Updated</div>
+                </div>
+            </div>
+
+            <!-- Candidate Votes Chart -->
+            <div class="admin-card" style="margin-top: 30px;">
+                <h3><i class="fas fa-chart-bar"></i> Candidate Performance</h3>
+                <div id="candidateVotesChart" style="margin-top: 20px;">
+                    <!-- Chart will be loaded here -->
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p>Loading voting data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="receipt-modal">
+        <div class="receipt-content">
+            <div class="receipt-header">
+                <div style="font-size: 3rem; color: #4CAF50; margin-bottom: 10px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 style="color: #2c3e50; margin-bottom: 5px;">Vote Successfully Submitted!</h2>
+                <p style="color: #666; margin-bottom: 20px;">Your vote has been recorded securely</p>
+            </div>
+            
+            <div class="receipt-details">
+                <div class="receipt-item">
+                    <span>Receipt ID:</span>
+                    <span id="receiptId" style="font-weight: 600; color: #2c3e50;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Date & Time:</span>
+                    <span id="receiptDateTime" style="font-weight: 600;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Voter Name:</span>
+                    <span id="receiptName" style="font-weight: 600;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>EPIC Number:</span>
+                    <span id="receiptEpic" style="font-weight: 600;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Age:</span>
+                    <span id="receiptAge" style="font-weight: 600;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Contact:</span>
+                    <span id="receiptContact" style="font-weight: 600;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Selected Candidate:</span>
+                    <span id="receiptCandidate" style="font-weight: 600; color: #4CAF50;"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Storage Status:</span>
+                    <span id="receiptSheetsId" style="font-weight: 600;"></span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 10px; border: 2px solid #4CAF50;">
+                <i class="fas fa-shield-alt" style="color: #4CAF50; margin-right: 10px;"></i>
+                <span style="color: #2e7d32; font-weight: 600;">Your vote is encrypted and securely stored in the system.</span>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button onclick="downloadReceipt()" class="btn btn-primary" style="flex: 1;">
+                    <i class="fas fa-download"></i> Download Receipt
+                </button>
+                <button onclick="closeReceipt()" class="btn btn-outline" style="flex: 1;">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+            
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #ddd; text-align: center;">
+                <p style="color: #999; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> A PDF receipt has been automatically downloaded.
+                    Keep this receipt for your records.
+                </p>
+                <p style="color: #666; margin-top: 10px; font-weight: 600;" id="receiptUniqueId"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced version of the Lawsohtun Voting System
+        // Global variables
+        let isAdminMode = false;
+        let currentUserRole = 'user'; // Default to user
+        let receiptData = {};
+        let contactType = 'phone'; // Default to phone (changed from 'email')
+        let selectedCandidateId = null;
+        let candidates = [];
+        let votingTime = { start: null, end: null };
+        let isVotingConfigured = false;
+        let candidateVotes = {}; // Store candidate votes data
+        let totalVotes = 0;
+        let liveUpdateInterval = null;
+        
+        // IMPORTANT: Your Google Apps Script URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywv2lslSbHLN9FUpkuVcct6WLAth0FlUXwlfFAg66SEyhCS9aZIsWRT2FPQuArmXBu/exec';
+        
+        // File to Base64 conversion helper
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        // Initialize the application when page loads
+        window.onload = async function() {
+            // Set default values for datetime inputs
+            const now = new Date();
+            const defaultStart = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            const defaultEnd = new Date(now.getTime() + 7*24*60*60*1000 - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            
+            if (document.getElementById('votingStart')) {
+                document.getElementById('votingStart').value = defaultStart;
+            }
+            if (document.getElementById('votingEnd')) {
+                document.getElementById('votingEnd').value = defaultEnd;
+            }
+            
+            // Add phone number validation and set default contact to phone
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                // Ensure only numbers are entered
+                phoneInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.value.length > 15) {
+                        this.value = this.value.slice(0, 15);
+                    }
+                });
+            }
+            
+            // Set default contact type
+            contactType = 'phone';
+            // Ensure UI reflects phone as default
+            document.getElementById('phoneToggle').classList.add('active');
+            document.getElementById('emailToggle').classList.remove('active');
+            document.getElementById('phoneField').style.display = 'block';
+            document.getElementById('emailField').style.display = 'none';
+            
+            // Start in user mode by default
+            switchToUserMode();
+            
+            // Initialize the app
+            await initApp();
+            
+            // Update voter dashboard
+            updateVoterDashboard();
+            
+            // Start auto-refresh for voting status
+            setInterval(updateVotingTimeStatus, 60000); // Update every minute
+            setInterval(updateVoterDashboard, 30000); // Update dashboard every 30 seconds
+            
+            // Start live votes update
+            startLiveVotesUpdate();
+        };
+        
+        // Start live votes update interval
+        function startLiveVotesUpdate() {
+            // Update immediately
+            updateCandidateVotes();
+            
+            // Set interval for updates (every 30 seconds)
+            if (liveUpdateInterval) {
+                clearInterval(liveUpdateInterval);
+            }
+            liveUpdateInterval = setInterval(updateCandidateVotes, 30000);
+        }
+        
+        // Update candidate votes display
+        async function updateCandidateVotes() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAnalytics&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    candidateVotes = data.data.candidateVotes || {};
+                    totalVotes = data.data.totalVotes || 0;
+                    
+                    // Update live total votes display
+                    document.getElementById('liveTotalVotes').textContent = totalVotes;
+                    
+                    // Update candidate cards with vote counts
+                    updateCandidateCardsWithVotes();
+                    
+                    // Update voter dashboard stats
+                    document.getElementById('totalVotesStat').textContent = totalVotes;
+                }
+            } catch (error) {
+                console.error('Error updating candidate votes:', error);
+            }
+        }
+        
+        // Update candidate cards with vote counts
+        function updateCandidateCardsWithVotes() {
+            const candidateCards = document.querySelectorAll('.candidate-card');
+            
+            candidateCards.forEach(card => {
+                const candidateName = card.getAttribute('data-name');
+                if (candidateName && candidateVotes[candidateName] !== undefined) {
+                    const votes = candidateVotes[candidateName];
+                    const votePercentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+                    
+                    // Update vote badge
+                    const voteBadge = card.querySelector('.candidate-vote-badge');
+                    if (voteBadge) {
+                        voteBadge.innerHTML = `<i class="fas fa-vote-yea"></i> ${votes}`;
+                    }
+                    
+                    // Update vote count display
+                    const votesNumber = card.querySelector('.votes-number');
+                    if (votesNumber) {
+                        votesNumber.textContent = votes;
+                    }
+                    
+                    // Update progress bar
+                    const progressBar = card.querySelector('.votes-progress-bar');
+                    if (progressBar) {
+                        progressBar.style.width = `${votePercentage}%`;
+                    }
+                }
+            });
+        }
+        
+        // Refresh live votes manually
+        function refreshLiveVotes() {
+            updateCandidateVotes();
+            
+            // Show refresh animation
+            const refreshBtn = document.querySelector('.refresh-votes-btn');
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refreshed';
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                    }, 1000);
+                }, 500);
+            }
+            
+            showStatus('Live votes updated!', 'success');
+        }
+        
+        // Enhanced logout function
+        function logout() {
+            if (isAdminMode) {
+                if (confirm("Are you sure you want to logout from Admin Mode?")) {
+                    // Reset to user mode
+                    switchToUserMode();
+                    
+                    // Reset all forms
+                    resetVotingForm();
+                    resetCandidateForm();
+                    
+                    // Clear any admin data
+                    document.querySelectorAll('.admin-card input, .admin-card textarea').forEach(element => {
+                        element.value = '';
+                    });
+                    
+                    // Reset admin form fields
+                    if (document.getElementById('votingTimeForm')) {
+                        document.getElementById('votingTimeForm').reset();
+                    }
+                    
+                    // Stop live updates if any
+                    if (liveUpdateInterval) {
+                        clearInterval(liveUpdateInterval);
+                        liveUpdateInterval = null;
+                    }
+                    
+                    // Show logout message
+                    showStatus('Successfully logged out from Admin Mode!', 'success');
+                    
+                    // Force refresh to ensure clean state
+                    setTimeout(() => {
+                        loadCandidates();
+                        checkVotingConfiguration();
+                        updateVoterDashboard();
+                        startLiveVotesUpdate();
+                    }, 500);
+                }
+            } else {
+                showStatus('You are already in Voter Mode.', 'info');
+            }
+        }
+        
+        // Show status message
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('statusMessage');
+            const icon = type === 'success' ? 'check-circle' : 
+                        type === 'error' ? 'exclamation-circle' : 
+                        type === 'info' ? 'info-circle' : 'check-circle';
+            
+            statusDiv.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Update voter dashboard
+        async function updateVoterDashboard() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAnalytics&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalVotesStat').textContent = data.data.totalVotes || 0;
+                    document.getElementById('candidatesStat').textContent = candidates.length || 0;
+                    document.getElementById('votingStatusStat').textContent = data.data.votingActivity || 'Inactive';
+                    
+                    // Calculate time remaining if voting is active
+                    if (votingTime.start && votingTime.end) {
+                        const now = new Date();
+                        const endDate = new Date(votingTime.end);
+                        
+                        if (now < endDate) {
+                            const timeDiff = endDate - now;
+                            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                            
+                            if (days > 0) {
+                                document.getElementById('timeRemainingStat').textContent = `${days}d ${hours}h`;
+                            } else if (hours > 0) {
+                                document.getElementById('timeRemainingStat').textContent = `${hours}h ${minutes}m`;
+                            } else {
+                                document.getElementById('timeRemainingStat').textContent = `${minutes}m`;
+                            }
+                        } else {
+                            document.getElementById('timeRemainingStat').textContent = 'Ended';
+                        }
+                    } else {
+                        document.getElementById('timeRemainingStat').textContent = 'N/A';
+                    }
+                    
+                    document.getElementById('voterStats').style.display = 'grid';
+                }
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+            }
+        }
+        
+        // Test Google Sheets connection
+        async function testSheetsConnection() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=test&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('sheetsStatusText').textContent = 
+                        `Total Votes: ${data.data.totalVotes || 0}, Candidates: ${data.data.totalCandidates || 0}, ID_Proof: ${data.data.cloudinaryConfigured ? 'Configured' : 'Processing'}`;
+                    document.getElementById('sheetsStatusText').style.color = '#FFFFFF';
+                    
+                    showStatus('Connection successful!', 'success');
+                    
+                    // Load voting time and candidates after successful connection
+                    await loadVotingTime();
+                    await loadCandidates();
+                    
+                    // Check if voting is configured
+                    checkVotingConfiguration();
+                    
+                    // Start live updates
+                    startLiveVotesUpdate();
+                    
+                    return true;
+                } else {
+                    document.getElementById('sheetsStatusText').textContent = 
+                        'Connection failed: ' + (data.message || 'Unknown error');
+                    document.getElementById('sheetsStatusText').style.color = '#e74c3c';
+                    showStatus('Google Sheets connection failed. Please check your setup.', 'error');
+                }
+            } catch (error) {
+                console.error('Sheets connection error:', error);
+                document.getElementById('sheetsStatusText').textContent = 
+                    'Connection failed. Please check your Google Script URL and CORS settings.';
+                document.getElementById('sheetsStatusText').style.color = '#e74c3c';
+                showStatus('Google Sheets connection failed. Please check configuration.', 'error');
+            }
+            return false;
+        }
+        
+        // Check if voting is properly configured
+        function checkVotingConfiguration() {
+            const hasCandidates = candidates.length > 0;
+            const hasVotingTime = votingTime.start && votingTime.end;
+            
+            isVotingConfigured = hasCandidates && hasVotingTime;
+            
+            const configAlert = document.getElementById('configAlert');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (!isVotingConfigured) {
+                let message = '';
+                if (!hasCandidates && !hasVotingTime) {
+                    message = 'Admin needs to add candidates and set voting time first.';
+                } else if (!hasCandidates) {
+                    message = 'Admin needs to add candidates first.';
+                } else if (!hasVotingTime) {
+                    message = 'Admin needs to set voting time first.';
+                }
+                
+                configAlert.style.display = 'flex';
+                document.getElementById('configMessage').textContent = message;
+                submitBtn.disabled = true;
+                submitBtn.title = 'Please wait..';
+            } else {
+                configAlert.style.display = 'none';
+                // Submit button will be enabled by duplicate check or form validation
+            }
+            
+            return isVotingConfigured;
+        }
+        
+        // Check for duplicate voter
+        async function checkDuplicateVoter(showAlert = false) {
+            const name = document.getElementById('name').value.trim();
+            const age = document.getElementById('age').value;
+            const epic = document.getElementById('epicNumber').value.trim();
+            
+            if (!name || !age || !epic) {
+                return false;
+            }
+            
+            // Temporarily enable button while checking
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').innerHTML = '<span class="spinner"></span> Checking...';
+            
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&age=${age}&epic=${encodeURIComponent(epic)}&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.isDuplicate) {
+                    document.getElementById('duplicateWarning').classList.add('show');
+                    document.getElementById('duplicateMessage').textContent = data.reason;
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vote';
+                    
+                    if (showAlert) {
+                        alert(`User has already voted! Reason: ${data.reason}`);
+                    }
+                    return true;
+                } else {
+                    document.getElementById('duplicateWarning').classList.remove('show');
+                    // Only enable submit if voting is configured
+                    document.getElementById('submitBtn').disabled = !isVotingConfigured;
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vote';
+                    
+                    if (showAlert) {
+                        showStatus("No duplicate found. You can proceed to vote.", 'success');
+                    }
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error checking duplicate:', error);
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vote';
+                
+                if (showAlert) {
+                    showStatus("Error checking for duplicates. Please try again.", 'error');
+                }
+                return false;
+            }
+        }
+        
+        // Save vote to Google Sheets with Cloudinary upload
+        async function saveToGoogleSheets(voteData, epicFile, selfieFile) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'saveVote');
+                formData.append('name', voteData.name);
+                formData.append('age', voteData.age);
+                formData.append('epic', voteData.epic);
+                formData.append('address', voteData.address);
+                formData.append('contactType', voteData.contactType);
+                formData.append('contact', voteData.contact);
+                formData.append('candidateId', voteData.candidateId);
+                formData.append('candidateName', voteData.candidateName);
+                formData.append('receiptId', voteData.receiptId);
+                formData.append('votingTimeStart', voteData.votingTimeStart || '');
+                formData.append('votingTimeEnd', voteData.votingTimeEnd || '');
+                
+                // Convert files to base64 and add to form data
+                if (epicFile) {
+                    const epicBase64 = await fileToBase64(epicFile);
+                    formData.append('epicDocumentBase64', epicBase64);
+                }
+                
+                if (selfieFile) {
+                    const selfieBase64 = await fileToBase64(selfieFile);
+                    formData.append('selfieBase64', selfieBase64);
+                }
+                
+                console.log('Sending vote data with images...');
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                console.log('Response from Google Script:', result);
+                
+                if (result.success) {
+                    return { 
+                        success: true, 
+                        recordId: result.data.recordId, 
+                        message: result.message,
+                        epicDocumentUrl: result.data.epicDocumentUrl || '',
+                        selfieUrl: result.data.selfieUrl || ''
+                    };
+                } else {
+                    return { success: false, error: result.message || 'Failed to save to Google Sheets' };
+                }
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+                return { success: false, error: error.toString() };
+            }
+        }
+        
+        // Load voting time from Google Sheets
+        async function loadVotingTime() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getVotingTime&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    votingTime.start = data.data.start;
+                    votingTime.end = data.data.end;
+                    
+                    // Update form fields if they exist
+                    if (document.getElementById('votingStart') && votingTime.start) {
+                        // Format for datetime-local input
+                        const startDate = new Date(votingTime.start);
+                        const startFormatted = startDate.toISOString().slice(0, 16);
+                        document.getElementById('votingStart').value = startFormatted;
+                    }
+                    if (document.getElementById('votingEnd') && votingTime.end) {
+                        const endDate = new Date(votingTime.end);
+                        const endFormatted = endDate.toISOString().slice(0, 16);
+                        document.getElementById('votingEnd').value = endFormatted;
+                    }
+                    
+                    updateVotingTimeStatus();
+                }
+            } catch (error) {
+                console.error('Error loading voting time:', error);
+            }
+        }
+        
+        // Load candidates from Google Sheets
+        async function loadCandidates() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCandidates&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    candidates = data.data || [];
+                    
+                    if (currentUserRole === 'user' || currentUserRole === null) {
+                        loadCandidatesForVoting();
+                    } else if (currentUserRole === 'admin') {
+                        loadCandidatesForAdmin();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading candidates:', error);
+            }
+        }
+        
+        // Set default voting time (admin function)
+        function setDefaultVotingTime() {
+            // Set default start time to now
+            const now = new Date();
+            const startTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            
+            // Set default end time to 7 days from now
+            const endDate = new Date(now);
+            endDate.setDate(endDate.getDate() + 7);
+            const endTime = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            
+            document.getElementById('votingStart').value = startTime;
+            document.getElementById('votingEnd').value = endTime;
+            
+            showStatus('Default voting time set (Now to 7 days from now). Click "Set Voting Time" to save.', 'success');
+        }
+        
+        // Open admin login modal
+        function openAdminLoginModal() {
+            document.getElementById('adminLoginModal').style.display = 'flex';
+        }
+        
+        // Close admin login modal
+        function closeAdminLoginModal() {
+            document.getElementById('adminLoginModal').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('admin-password-validation').textContent = '';
+        }
+        
+        // Authenticate admin
+        function authenticateAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            const validationDiv = document.getElementById('admin-password-validation');
+            
+            if (password === '1908') {
+                // Successfully authenticated
+                isAdminMode = true;
+                currentUserRole = 'admin';
+                
+                // Show admin features
+                document.getElementById('adminTabBtn').style.display = 'flex';
+                document.getElementById('analyticsTabBtn').style.display = 'flex';
+                document.getElementById('adminBadge').style.display = 'flex';
+                document.getElementById('headerSubtitle').textContent = 'Administrator Panel';
+                
+                // Update button states
+                document.getElementById('userModeBtn').style.display = 'flex';
+                document.getElementById('userModeBtn').innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout Admin';
+                document.getElementById('adminModeBtn').innerHTML = '<i class="fas fa-user-shield"></i> Admin Mode Active';
+                document.getElementById('adminModeBtn').style.backgroundColor = 'rgba(76, 175, 80, 0.3)';
+                
+                // Close modal
+                closeAdminLoginModal();
+                
+                // Show success message
+                showStatus('Successfully logged in as Administrator!', 'success');
+                
+                // Switch to admin tab
+                switchTab('admin');
+            } else {
+                // Authentication failed
+                validationDiv.textContent = 'Incorrect password. Please try again.';
+                validationDiv.className = 'validation-message error';
+                
+                // Shake animation for error
+                const modal = document.getElementById('adminLoginModal');
+                modal.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    modal.style.animation = '';
+                }, 500);
+            }
+        }
+        
+        // Switch to user mode
+        function switchToUserMode() {
+            isAdminMode = false;
+            currentUserRole = 'user';
+            
+            // Hide admin features
+            document.getElementById('adminTabBtn').style.display = 'none';
+            document.getElementById('analyticsTabBtn').style.display = 'none';
+            document.getElementById('adminBadge').style.display = 'none';
+            document.getElementById('headerSubtitle').textContent = 'Cast Your Vote Securely';
+            
+            // Update button states
+            document.getElementById('userModeBtn').style.display = 'none';
+            document.getElementById('adminModeBtn').innerHTML = '<i class="fas fa-user-shield"></i> Admin Mode';
+            document.getElementById('adminModeBtn').style.backgroundColor = '';
+            
+            // Switch to voting tab
+            switchTab('voting');
+            
+            // Show status message
+            showStatus('You are now in Voter Mode. Cast your vote!', 'success');
+        }
+        
+        // Tab switching
+        async function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and activate button
+            const tabElement = document.getElementById(tabName + 'Tab');
+            const buttonElement = document.querySelector(`.tab-btn[onclick*="${tabName}"]`);
+            
+            if (tabElement) tabElement.classList.add('active');
+            if (buttonElement) buttonElement.classList.add('active');
+            
+            // Check admin access for admin and analytics tabs
+            if ((tabName === 'admin' || tabName === 'analytics') && !isAdminMode) {
+                openAdminLoginModal();
+                switchTab('voting');
+                return;
+            }
+            
+            // Update content based on tab
+            if (tabName === 'voting') {
+                updateVotingTimeStatus();
+                await loadCandidates();
+                checkVotingConfiguration();
+                updateVoterDashboard();
+                updateCandidateVotes();
+            } else if (tabName === 'admin') {
+                await loadCandidates();
+            } else if (tabName === 'analytics') {
+                await loadAnalytics();
+            }
+        }
+        
+        // Toggle between email and phone
+        function toggleContact(type) {
+            contactType = type;
+            
+            // Update toggle button styles
+            document.getElementById('emailToggle').classList.toggle('active', type === 'email');
+            document.getElementById('phoneToggle').classList.toggle('active', type === 'phone');
+            
+            // Show/hide the appropriate field
+            document.getElementById('emailField').style.display = type === 'email' ? 'block' : 'none';
+            document.getElementById('phoneField').style.display = type === 'phone' ? 'block' : 'none';
+            
+            // Clear validation message
+            document.getElementById('contact-validation').textContent = '';
+        }
+        
+        // Load candidates for voting page with vote counts
+        function loadCandidatesForVoting() {
+            const candidateGrid = document.getElementById('candidateGrid');
+            
+            if (candidates.length === 0) {
+                candidateGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                        <i class="fas fa-users fa-3x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No candidates available. Please check back later.</p>
+                        <p style="font-size: 0.9rem; color: #999; margin-top: 10px;">Admin needs to add candidates first.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            candidateGrid.innerHTML = '';
+            
+            candidates.forEach((candidate, index) => {
+                const candidateCard = document.createElement('div');
+                candidateCard.className = 'candidate-card';
+                candidateCard.dataset.id = index;
+                candidateCard.setAttribute('data-name', candidate.name || '');
+                candidateCard.onclick = () => selectCandidateForVoting(index);
+                
+                // Get vote count for this candidate
+                const voteCount = candidateVotes[candidate.name] || 0;
+                const votePercentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
+                
+                candidateCard.innerHTML = `
+                    <div class="candidate-image">
+                        ${candidate.image ? 
+                            `<img src="${candidate.image}" alt="${candidate.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"180\" height=\"150\"><rect width=\"100%\" height=\"100%\" fill=\"%23f8f9fa\"/><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" dy=\".3em\" font-family=\"Arial\" fill=\"%23ccc\">No Image</text></svg>'">` : 
+                            `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 10px; border: 2px solid #eee; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <i class="fas fa-user-tie fa-4x" style="color: #ccc;"></i>
+                            </div>`
+                        }
+                        <div class="candidate-vote-badge">
+                            <i class="fas fa-vote-yea"></i> ${voteCount}
+                        </div>
+                    </div>
+                    <div class="candidate-details">
+                        <div class="candidate-name">${candidate.name || 'Unnamed Candidate'}</div>
+                        ${candidate.bio ? `<div class="candidate-bio">${candidate.bio}</div>` : ''}
+                        <div class="candidate-votes-count">
+                            <span class="votes-label">Votes:</span>
+                            <span class="votes-number">${voteCount}</span>
+                        </div>
+                        <div class="votes-progress">
+                            <div class="votes-progress-bar" style="width: ${votePercentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                candidateGrid.appendChild(candidateCard);
+            });
+        }
+        
+        // Select candidate for voting
+        function selectCandidateForVoting(candidateId) {
+            selectedCandidateId = candidateId;
+            
+            // Remove selected class from all cards
+            document.querySelectorAll('.candidate-card').forEach(card => {
+                card.classList.remove('selected');
+                const indicator = card.querySelector('.selection-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            });
+            
+            // Add selected class to clicked card
+            const selectedCard = document.querySelector(`.candidate-card[data-id="${candidateId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+                
+                // Add selection indicator
+                const existingIndicator = selectedCard.querySelector('.selection-indicator');
+                if (!existingIndicator) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'selection-indicator';
+                    indicator.innerHTML = '<i class="fas fa-check-circle"></i> Selected';
+                    indicator.style.position = 'absolute';
+                    indicator.style.top = '10px';
+                    indicator.style.left = '10px';
+                    indicator.style.background = '#4CAF50';
+                    indicator.style.color = 'white';
+                    indicator.style.padding = '5px 12px';
+                    indicator.style.borderRadius = '20px';
+                    indicator.style.fontSize = '0.8rem';
+                    indicator.style.fontWeight = '600';
+                    indicator.style.display = 'flex';
+                    indicator.style.alignItems = 'center';
+                    indicator.style.gap = '5px';
+                    indicator.style.zIndex = '10';
+                    selectedCard.querySelector('.candidate-image').appendChild(indicator);
+                }
+            }
+            
+            // Clear validation message
+            document.getElementById('candidate-validation').textContent = '';
+        }
+        
+        // Load candidates for admin page
+        function loadCandidatesForAdmin() {
+            const adminCandidatesList = document.getElementById('adminCandidatesList');
+            
+            if (candidates.length === 0) {
+                adminCandidatesList.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: #666;">
+                        <i class="fas fa-users fa-2x" style="margin-bottom: 10px; opacity: 0.5;"></i>
+                        <p>No candidates added yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            adminCandidatesList.innerHTML = '';
+            
+            candidates.forEach((candidate, index) => {
+                const candidateItem = document.createElement('div');
+                candidateItem.className = 'candidate-item';
+                
+                candidateItem.innerHTML = `
+                    <div class="candidate-item-image">
+                        ${candidate.image ? 
+                            `<img src="${candidate.image}" alt="${candidate.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"70\" height=\"90\"><rect width=\"100%\" height=\"100%\" fill=\"%23f8f9fa\"/><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" dy=\".3em\" font-family=\"Arial\" fill=\"%23ccc\" font-size=\"12\">No Image</text></svg>'">` : 
+                            `<i class="fas fa-user-tie fa-2x" style="color: #ccc;"></i>`
+                        }
+                    </div>
+                    <div class="candidate-item-info">
+                        <div class="candidate-item-name">${candidate.name || 'Unnamed Candidate'}</div>
+                        ${candidate.bio ? `<div class="candidate-item-bio">${candidate.bio}</div>` : ''}
+                        <div style="margin-top: 8px; color: #4CAF50; font-weight: 600;">
+                            <i class="fas fa-vote-yea"></i> Votes: ${candidateVotes[candidate.name] || 0}
+                        </div>
+                    </div>
+                    <div class="candidate-item-actions">
+                        <button onclick="deleteCandidate(${index})" class="btn btn-danger btn-sm" style="padding: 8px 15px;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                
+                adminCandidatesList.appendChild(candidateItem);
+            });
+        }
+        
+        // Add candidate (admin function) - UPDATED FOR CLOUDINARY
+        document.getElementById('addCandidateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('candidateName').value.trim();
+            const bio = document.getElementById('candidateBio').value.trim();
+            const imageFile = document.getElementById('candidateImage').files[0];
+            
+            // Validation
+            let isValid = true;
+            
+            if (name === '') {
+                document.getElementById('candidate-name-validation').textContent = "Please enter candidate name.";
+                document.getElementById('candidate-name-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('candidate-name-validation').textContent = "";
+            }
+            
+            if (isValid) {
+                try {
+                    // Convert image to base64 if exists
+                    let imageBase64 = '';
+                    if (imageFile) {
+                        imageBase64 = await fileToBase64(imageFile);
+                    }
+                    
+                    const params = new URLSearchParams();
+                    params.append('action', 'addCandidate');
+                    params.append('id', 'CAND-' + Date.now());
+                    params.append('name', name);
+                    params.append('bio', bio);
+                    if (imageBase64) {
+                        params.append('imageBase64', imageBase64);
+                    }
+                    
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        body: params
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showStatus('Candidate added successfully with image!', 'success');
+                        resetCandidateForm();
+                        await loadCandidates();
+                        checkVotingConfiguration();
+                    } else {
+                        showStatus('Failed to add candidate: ' + result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding candidate:', error);
+                    showStatus('Error adding candidate.', 'error');
+                }
+            }
+        });
+        
+        // Set voting time (admin function)
+        document.getElementById('votingTimeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const startTime = document.getElementById('votingStart').value;
+            const endTime = document.getElementById('votingEnd').value;
+            
+            // Validation
+            let isValid = true;
+            
+            if (!startTime) {
+                document.getElementById('start-time-validation').textContent = "Please set voting start time.";
+                document.getElementById('start-time-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('start-time-validation').textContent = "";
+            }
+            
+            if (!endTime) {
+                document.getElementById('end-time-validation').textContent = "Please set voting end time.";
+                document.getElementById('end-time-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('end-time-validation').textContent = "";
+            }
+            
+            if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+                document.getElementById('end-time-validation').textContent = "End time must be after start time.";
+                document.getElementById('end-time-validation').className = "validation-message error";
+                isValid = false;
+            }
+            
+            if (isValid) {
+                try {
+                    const params = new URLSearchParams();
+                    params.append('action', 'setVotingTime');
+                    params.append('start', startTime);
+                    params.append('end', endTime);
+                    
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        body: params
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        votingTime.start = startTime;
+                        votingTime.end = endTime;
+                        
+                        showStatus('Voting time set successfully!', 'success');
+                        updateVotingTimeStatus();
+                        checkVotingConfiguration();
+                    } else {
+                        showStatus('Failed to set voting time: ' + result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error setting voting time:', error);
+                    showStatus('Error setting voting time.', 'error');
+                }
+            }
+        });
+        
+        // Delete candidate
+        async function deleteCandidate(candidateIndex) {
+            if (confirm(`Are you sure you want to delete this candidate?`)) {
+                try {
+                    // Since we don't have a delete function in the Google Script,
+                    // we'll just remove it from the local array and reload
+                    candidates.splice(candidateIndex, 1);
+                    showStatus('Candidate deleted successfully!', 'success');
+                    await loadCandidates();
+                    checkVotingConfiguration();
+                } catch (error) {
+                    console.error('Error deleting candidate:', error);
+                    showStatus('Error deleting candidate.', 'error');
+                }
+            }
+        }
+        
+        // Update voting time status display
+        function updateVotingTimeStatus() {
+            const startTimeElement = document.getElementById('votingStartTime');
+            const endTimeElement = document.getElementById('votingEndTime');
+            const statusElement = document.getElementById('votingStatus');
+            
+            if (votingTime.start && votingTime.end) {
+                try {
+                    const startDate = new Date(votingTime.start);
+                    const endDate = new Date(votingTime.end);
+                    const now = new Date();
+                    
+                    // Format dates nicely
+                    const startFormatted = startDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const endFormatted = endDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    startTimeElement.textContent = startFormatted;
+                    endTimeElement.textContent = endFormatted;
+                    
+                    // Check if voting is currently active
+                    if (now >= startDate && now <= endDate) {
+                        statusElement.textContent = "Voting: ACTIVE";
+                        statusElement.className = "badge";
+                        statusElement.style.background = "#4CAF50";
+                    } else if (now < startDate) {
+                        statusElement.textContent = "Voting: NOT STARTED";
+                        statusElement.className = "badge";
+                        statusElement.style.background = "#f39c12";
+                    } else {
+                        statusElement.textContent = "Voting: ENDED";
+                        statusElement.className = "badge";
+                        statusElement.style.background = "#e74c3c";
+                    }
+                } catch (error) {
+                    console.error('Error parsing voting time:', error);
+                    startTimeElement.textContent = "Invalid date";
+                    endTimeElement.textContent = "Invalid date";
+                    statusElement.textContent = "Voting: CONFIG ERROR";
+                    statusElement.className = "badge";
+                    statusElement.style.background = "#e74c3c";
+                }
+            } else {
+                startTimeElement.textContent = "Not set";
+                endTimeElement.textContent = "Not set";
+                statusElement.textContent = "Please wait..";
+                statusElement.className = "badge";
+                statusElement.style.background = "#e74c3c";
+            }
+        }
+        
+        // Check if voting is currently allowed
+        function isVotingActive() {
+            if (!isVotingConfigured) {
+                return false;
+            }
+            
+            if (!votingTime.start || !votingTime.end) {
+                return false;
+            }
+            
+            try {
+                const now = new Date();
+                const startDate = new Date(votingTime.start);
+                const endDate = new Date(votingTime.end);
+                
+                return now >= startDate && now <= endDate;
+            } catch (error) {
+                console.error('Error checking voting time:', error);
+                return false;
+            }
+        }
+        
+        // Reset candidate form
+        function resetCandidateForm() {
+            document.getElementById('addCandidateForm').reset();
+            document.getElementById('candidate-image-preview').innerHTML = '<span>Passport photo preview</span>';
+            document.querySelectorAll('#addCandidateForm .validation-message').forEach(el => {
+                el.textContent = '';
+            });
+        }
+        
+        // Reset voting form
+        function resetVotingForm() {
+            document.getElementById('votingForm').reset();
+            document.getElementById('epic-preview').innerHTML = '<span>EPIC preview will appear here</span>';
+            document.getElementById('selfie-preview').innerHTML = '<span>Selfie preview will appear here</span>';
+            
+            // Reset to phone as default
+            toggleContact('phone');
+            
+            // Clear validation messages
+            document.querySelectorAll('#votingForm .validation-message').forEach(el => {
+                el.textContent = '';
+            });
+            
+            // Clear duplicate warning
+            document.getElementById('duplicateWarning').classList.remove('show');
+            
+            // Remove selected candidate
+            selectedCandidateId = null;
+            document.querySelectorAll('.candidate-card').forEach(card => {
+                card.classList.remove('selected');
+                const indicator = card.querySelector('.selection-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            });
+            
+            // Disable submit button until duplicate check
+            document.getElementById('submitBtn').disabled = true;
+        }
+        
+        // Preview uploaded images
+        document.getElementById('epicDocument').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('epic-preview');
+                    preview.innerHTML = `<img src="${event.target.result}" alt="EPIC Document Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+                }
+                reader.readAsDataURL(file);
+                document.getElementById('epic-doc-validation').textContent = "EPIC document uploaded successfully.";
+                document.getElementById('epic-doc-validation').className = "validation-message success";
+            }
+        });
+        
+        document.getElementById('selfie').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('selfie-preview');
+                    preview.innerHTML = `<img src="${event.target.result}" alt="Selfie Preview" style="max-width: 100%; max-height: 100%; object-fit: cover;">`;
+                }
+                reader.readAsDataURL(file);
+                document.getElementById('selfie-validation').textContent = "Selfie uploaded successfully.";
+                document.getElementById('selfie-validation').className = "validation-message success";
+            }
+        });
+        
+        document.getElementById('candidateImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('candidate-image-preview');
+                    preview.innerHTML = `<img src="${event.target.result}" alt="Candidate Image Preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
+                reader.readAsDataURL(file);
+                document.getElementById('candidate-image-validation').textContent = "";
+            }
+        });
+        
+        // Generate a unique receipt ID
+        function generateReceiptId() {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 10000);
+            return `VOTE-${timestamp}-${random}`;
+        }
+        
+        // Format date for receipt
+        function formatDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            return now.toLocaleDateString('en-US', options);
+        }
+        
+        // Generate and download PDF receipt
+        function generatePDFReceipt() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Receipt header
+            doc.setFontSize(24);
+            doc.setTextColor(44, 62, 80);
+            doc.text("VOTING RECEIPT", 105, 25, { align: "center" });
+            
+            doc.setFontSize(14);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Official Confirmation of Vote Submission", 105, 35, { align: "center" });
+            
+            // Add logo
+            doc.setFontSize(40);
+            doc.setTextColor(76, 175, 80);
+            doc.text("✓", 105, 55, { align: "center" });
+            
+            // Receipt details
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            
+            let yPos = 75;
+            
+            // Add receipt details
+            doc.setFont(undefined, 'bold');
+            doc.text("Receipt ID:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.receiptId, 70, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("Date & Time:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.dateTime, 70, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("Voter Name:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.name, 70, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("EPIC Number:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.epic, 70, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("Age:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.age, 70, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("Contact:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.contact, 70, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("Selected Candidate:", 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(receiptData.candidate, 70, yPos);
+            
+            yPos += 20;
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(76, 175, 80);
+            doc.text("✓ LAWSOHTUN", 20, yPos);
+            
+            yPos += 10;
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text("This receipt confirms that your vote has been successfully submitted", 20, yPos);
+            yPos += 6;
+            doc.text("Recorded in the voting system.", 20, yPos);
+            
+            yPos += 10;
+            doc.text("You voted for: " + receiptData.candidate, 20, yPos);
+            
+            yPos += 15;
+            doc.setFont(undefined, 'bold');
+            doc.text("Important Information:", 20, yPos);
+            yPos += 8;
+            doc.setFont(undefined, 'normal');
+            doc.text("1. Keep this receipt for your records", 20, yPos);
+            yPos += 6;
+            doc.text("2. This serves as proof of vote submission", 20, yPos);
+            yPos += 6;
+            doc.text("3. Contact support if you have questions", 20, yPos);
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text("Secure Voting System • © 2026 • This is an official document", 105, 280, { align: "center" });
+            
+            // Save the PDF
+            doc.save(`Voting_Receipt_${receiptData.receiptId}.pdf`);
+        }
+        
+        // Show receipt modal
+        async function showReceipt(data, sheetsResult) {
+            receiptData = data;
+            
+            // Populate receipt modal
+            document.getElementById('receiptId').textContent = data.receiptId;
+            document.getElementById('receiptDateTime').textContent = data.dateTime;
+            document.getElementById('receiptName').textContent = data.name;
+            document.getElementById('receiptEpic').textContent = data.epic;
+            document.getElementById('receiptAge').textContent = data.age;
+            document.getElementById('receiptContact').textContent = data.contact;
+            document.getElementById('receiptCandidate').textContent = data.candidate;
+            document.getElementById('receiptUniqueId').textContent = data.receiptId;
+            
+            if (sheetsResult && sheetsResult.success) {
+                let sheetsInfo = `Saved to Google Sheets (Record ID: ${sheetsResult.recordId || 'N/A'})`;
+                if (sheetsResult.epicDocumentUrl) {
+                    sheetsInfo += `<br>EPIC Document: <a href="${sheetsResult.epicDocumentUrl}" target="_blank">View</a>`;
+                }
+                if (sheetsResult.selfieUrl) {
+                    sheetsInfo += `<br>Selfie: <a href="${sheetsResult.selfieUrl}" target="_blank">View</a>`;
+                }
+                
+                document.getElementById('receiptSheetsId').innerHTML = sheetsInfo;
+                document.getElementById('receiptSheetsId').style.color = '#4CAF50';
+            } else {
+                document.getElementById('receiptSheetsId').textContent = sheetsResult?.error || 'Error saving to Google Sheets';
+                document.getElementById('receiptSheetsId').style.color = '#e74c3c';
+            }
+            
+            // Show modal
+            document.getElementById('receiptModal').style.display = 'flex';
+            
+            // Auto-download receipt after 1 second
+            setTimeout(() => {
+                generatePDFReceipt();
+            }, 1000);
+            
+            // Update live votes after submission
+            setTimeout(() => {
+                updateCandidateVotes();
+            }, 2000);
+        }
+        
+        // Download receipt (manual trigger)
+        function downloadReceipt() {
+            generatePDFReceipt();
+        }
+        
+        // Close receipt modal
+        function closeReceipt() {
+            document.getElementById('receiptModal').style.display = 'none';
+            resetVotingForm();
+        }
+        
+        // Validate email
+        function validateEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+        
+        // Validate phone - Now only numbers
+        function validatePhone(phone) {
+            // Remove all non-numeric characters
+            const digitsOnly = phone.replace(/\D/g, '');
+            // Check if it's 10-15 digits
+            return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+        }
+        
+        // Voting form submission - UPDATED FOR CLOUDINARY
+        document.getElementById('votingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Check if voting is configured
+            if (!isVotingConfigured) {
+                alert("Voting is not configured. Admin needs to set voting time and add candidates first.");
+                return;
+            }
+            
+            // Check if voting is active
+            if (!isVotingActive()) {
+                alert("Voting is not currently active. Please check the voting schedule.");
+                return;
+            }
+            
+            // Check if candidate is selected
+            if (selectedCandidateId === null || selectedCandidateId === undefined) {
+                alert("Please select a candidate.");
+                return;
+            }
+            
+            let isValid = true;
+            
+            // Validate name
+            const name = document.getElementById('name').value.trim();
+            if (name === '') {
+                document.getElementById('name-validation').textContent = "Please enter your full name.";
+                document.getElementById('name-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('name-validation').textContent = "";
+            }
+            
+            // Validate age
+            const age = document.getElementById('age').value;
+            if (age === '' || age < 18) {
+                document.getElementById('age-validation').textContent = "You must be at least 18 years old to vote.";
+                document.getElementById('age-validation').className = "validation-message error";
+                isValid = false;
+            } else if (age > 120) {
+                document.getElementById('age-validation').textContent = "Please enter a valid age.";
+                document.getElementById('age-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('age-validation').textContent = "";
+            }
+            
+            // Validate address
+            const address = document.getElementById('address').value.trim();
+            if (address === '') {
+                document.getElementById('address-validation').textContent = "Please enter your address.";
+                document.getElementById('address-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('address-validation').textContent = "";
+            }
+            
+            // Validate EPIC number
+            const epicNumber = document.getElementById('epicNumber').value.trim();
+            if (epicNumber === '') {
+                document.getElementById('epic-validation').textContent = "Please enter your EPIC number.";
+                document.getElementById('epic-validation').className = "validation-message error";
+                isValid = false;
+            } else if (epicNumber.length < 6) {
+                document.getElementById('epic-validation').textContent = "EPIC number should be at least 6 characters.";
+                document.getElementById('epic-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('epic-validation').textContent = "";
+            }
+            
+            // Validate contact information
+            let contactValue = '';
+            
+            if (contactType === 'email') {
+                contactValue = document.getElementById('email').value.trim();
+                if (contactValue === '') {
+                    document.getElementById('contact-validation').textContent = "Please enter your email address.";
+                    document.getElementById('contact-validation').className = "validation-message error";
+                    isValid = false;
+                } else if (!validateEmail(contactValue)) {
+                    document.getElementById('contact-validation').textContent = "Please enter a valid email address.";
+                    document.getElementById('contact-validation').className = "validation-message error";
+                    isValid = false;
+                } else {
+                    document.getElementById('contact-validation').textContent = "";
+                }
+            } else {
+                contactValue = document.getElementById('phone').value.trim();
+                if (contactValue === '') {
+                    document.getElementById('contact-validation').textContent = "Please enter your phone number.";
+                    document.getElementById('contact-validation').className = "validation-message error";
+                    isValid = false;
+                } else if (!validatePhone(contactValue)) {
+                    document.getElementById('contact-validation').textContent = "Please enter a valid phone number (10-15 digits, numbers only).";
+                    document.getElementById('contact-validation').className = "validation-message error";
+                    isValid = false;
+                } else {
+                    document.getElementById('contact-validation').textContent = "";
+                }
+            }
+            
+            // Validate candidate selection
+            if (selectedCandidateId === null) {
+                document.getElementById('candidate-validation').textContent = "Please select a candidate.";
+                document.getElementById('candidate-validation').className = "validation-message error";
+                isValid = false;
+            } else {
+                document.getElementById('candidate-validation').textContent = "";
+            }
+            
+            // Validate EPIC document
+            const epicFile = document.getElementById('epicDocument').files[0];
+            if (!epicFile) {
+                document.getElementById('epic-doc-validation').textContent = "Please upload your EPIC document.";
+                document.getElementById('epic-doc-validation').className = "validation-message error";
+                isValid = false;
+            }
+            
+            // Validate selfie
+            const selfieFile = document.getElementById('selfie').files[0];
+            if (!selfieFile) {
+                document.getElementById('selfie-validation').textContent = "Please upload your selfie with EPIC.";
+                document.getElementById('selfie-validation').className = "validation-message error";
+                isValid = false;
+            }
+            
+            // If form is valid, show loading and process submission
+            if (isValid) {
+                // Disable submit button and show loading
+                const submitBtn = document.getElementById('submitBtn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+                submitBtn.disabled = true;
+                
+                try {
+                    // Get candidate details
+                    const selectedCandidate = candidates[selectedCandidateId];
+                    
+                    if (!selectedCandidate) {
+                        alert("Invalid candidate selected. Please try again.");
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                    
+                    // Prepare vote data
+                    const voteData = {
+                        receiptId: generateReceiptId(),
+                        timestamp: new Date().toISOString(),
+                        name: name,
+                        age: age,
+                        address: address,
+                        epic: epicNumber,
+                        contactType: contactType,
+                        contact: contactValue,
+                        candidateId: selectedCandidateId,
+                        candidateName: selectedCandidate.name,
+                        votingTimeStart: votingTime.start,
+                        votingTimeEnd: votingTime.end
+                    };
+                    
+                    // Save to Google Sheets with Cloudinary upload
+                    const sheetsResult = await saveToGoogleSheets(voteData, epicFile, selfieFile);
+                    
+                    if (sheetsResult.success) {
+                        // Prepare receipt data
+                        const receiptData = {
+                            receiptId: voteData.receiptId,
+                            dateTime: formatDateTime(),
+                            name: name,
+                            age: age,
+                            epic: epicNumber,
+                            contact: contactValue,
+                            candidate: selectedCandidate.name
+                        };
+                        
+                        // Show receipt modal
+                        showReceipt(receiptData, sheetsResult);
+                        
+                        // Update voter dashboard
+                        updateVoterDashboard();
+                        
+                        // Update live votes
+                        updateCandidateVotes();
+                        
+                        // Show success message
+                        showStatus('Your vote has been successfully submitted with images uploaded!', 'success');
+                        
+                        // Reset form after a delay
+                        setTimeout(() => {
+                            resetVotingForm();
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = true; // Keep disabled until duplicate check
+                        }, 3000);
+                    } else {
+                        alert(`Failed to submit vote: ${sheetsResult.error}`);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                    
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alert('An error occurred while submitting your vote. Please try again.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        });
+        
+        // Load analytics data
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAnalytics&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update total votes
+                    document.getElementById('totalVotes').textContent = data.data.totalVotes || 0;
+                    
+                    // Update top candidate
+                    document.getElementById('topCandidate').textContent = data.data.topCandidate || 'No votes yet';
+                    
+                    // Update voting activity
+                    const activity = data.data.votingActivity || 'Not configured';
+                    const activityColor = activity === 'Active' ? '#4CAF50' : 
+                                         activity === 'Not started' ? '#f39c12' : 
+                                         activity === 'Ended' ? '#e74c3c' : '#666';
+                    document.getElementById('votingActivity').innerHTML = `<span style="color: ${activityColor};">● ${activity}</span>`;
+                    
+                    // Update last update time
+                    document.getElementById('lastUpdate').textContent = 'Now';
+                    
+                    // Update chart
+                    const chartDiv = document.getElementById('candidateVotesChart');
+                    const candidateVotes = data.data.candidateVotes || {};
+                    
+                    if (Object.keys(candidateVotes).length > 0) {
+                        const sortedCandidates = Object.entries(candidateVotes)
+                            .sort((a, b) => b[1] - a[1]);
+                        
+                        chartDiv.innerHTML = `
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                ${sortedCandidates.map(([name, count]) => {
+                                    const percentage = data.data.totalVotes > 0 ? (count / data.data.totalVotes * 100).toFixed(1) : 0;
+                                    return `
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 500;">
+                                                <span style="color: #333;">${name}</span>
+                                                <span style="color: #4CAF50;">${count} votes (${percentage}%)</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: ${percentage}%;"></div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                    } else {
+                        chartDiv.innerHTML = '<p style="color: #666; text-align: center; padding: 40px;">No voting data available yet</p>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+        
+        // Export votes to CSV
+        async function exportVotesToCSV() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getVotes&timestamp=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    // Convert to CSV
+                    const headers = ['Timestamp', 'Name', 'Age', 'EPIC', 'Address', 'Contact', 'Candidate', 'Receipt ID', 'EPIC Document URL', 'Selfie URL'];
+                    const csvRows = [
+                        headers.join(','),
+                        ...data.data.map(vote => [
+                            vote.timestamp ? new Date(vote.timestamp).toLocaleString() : '',
+                            `"${vote.name || ''}"`,
+                            vote.age || '',
+                            `"${vote.epic || ''}"`,
+                            `"${vote.address || ''}"`,
+                            `"${vote.contact || ''}"`,
+                            `"${vote.candidateName || ''}"`,
+                            `"${vote.receiptId || ''}"`,
+                            `"${vote.epicDocumentUrl || ''}"`,
+                            `"${vote.selfieUrl || ''}"`
+                        ].join(','))
+                    ];
+                    
+                    const csvString = csvRows.join('\n');
+                    const blob = new Blob([csvString], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `voting_data_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    showStatus(`Exported ${data.data.length} votes to CSV file.`, 'success');
+                } else {
+                    showStatus('No votes to export.', 'info');
+                }
+            } catch (error) {
+                console.error('CSV export error:', error);
+                showStatus('Failed to export CSV.', 'error');
+            }
+        }
+        
+        // Print analytics
+        function printAnalytics() {
+            const printContent = document.getElementById('analyticsTab').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div style="padding: 30px; font-family: Arial, sans-serif; background: white; color: #333;">
+                    <h1 style="color: #2c3e50; border-bottom: 3px solid #4CAF50; padding-bottom: 15px; margin-bottom: 30px;">
+                        <i class="fas fa-vote-yea"></i> Lawsohtun Voting System - Analytics Report
+                    </h1>
+                    <div style="color: #666; margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <strong>Generated on:</strong> ${new Date().toLocaleString()}
+                    </div>
+                    ${printContent}
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        }
+        
+        // Refresh analytics
+        function refreshAnalytics() {
+            loadAnalytics();
+            showStatus('Analytics data refreshed.', 'success');
+        }
+        
+        // Initialize the application
+        async function initApp() {
+            // Test connection
+            await testSheetsConnection();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+infinityfree servodata23
+servodata23@gmail.com
+password rbgfUm1cVE
+
+MySQL Username
+if0_41107786
+
+MySQL Password
+rbgfUm1cVE
+
+MySQL Hostname
+sql303.infinityfree.com
+
+MySQL Port (optional)
+3306
+
+Database Name
+if0_41107786_lawsohtun
+
+
+appscript API
+webapp
+
+const SHEET_ID = 'google sheet id';

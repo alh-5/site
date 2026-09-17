@@ -1,0 +1,16 @@
+servodata98@gmail.com
+heaveninvesment.gt.tc
+password MmBKs5dtPWMbdh
+
+username if0_40960042
+password MmBKs5dtPWMbdh
+
+website heaveninvesment.gt.tc
+
+MYSQLDatabase if0_40960042_talent_coins
+
+MySQL Host Name sql100.infinityfree.com
+
+run first https://heaveninvestment/api/init_database.php
+
+then https://heaveninvestment/api/test_connection.php

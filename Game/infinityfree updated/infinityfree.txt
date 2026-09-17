@@ -1,0 +1,24 @@
+servodata5@gmail.com
+
+Account Label
+Website for dbtambola.ct.ws
+
+Account Password
+DxpZFUeYhfKDqcd
+
+
+Username
+if0_40876592 
+
+
+DAta Base
+database name
+if0_40876592_tambola
+user name
+if0_40876592
+MySQL Host Name
+sql213.infinityfree.com
+
+file to host in infinityfree.com where MySQL DB Name "if0_40876592_tambola", MySQL User Name "if0_40876592" , MySQL Password "DxpZFUeYhfKDqcd",  MySQL Host Name "sql213.infinityfree.com", 
+website site "https://dbtambola.ct.ws/"
+admin "dbareh" password "1908"

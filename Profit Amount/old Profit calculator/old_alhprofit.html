@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Profit Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .upload-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .upload-box {
+            flex: 1;
+            min-width: 300px;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background-color: #e8f4fc;
+            transform: translateY(-5px);
+        }
+
+        .upload-box h3 {
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+
+        .upload-box input {
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .download-btn {
+            background-color: #27ae60;
+        }
+
+        .download-btn:hover {
+            background-color: #219653;
+        }
+
+        .calculate-btn {
+            background-color: #e67e22;
+        }
+
+        .calculate-btn:hover {
+            background-color: #d35400;
+        }
+
+        .sample-btn {
+            background-color: #9b59b6;
+        }
+
+        .sample-btn:hover {
+            background-color: #8e44ad;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #f1f8ff;
+        }
+
+        .profit-positive {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .profit-negative {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .instructions {
+            background-color: #fef9e7;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .instructions h3 {
+            color: #d35400;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .data-format {
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .data-format h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+
+        .data-format ul {
+            margin-left: 20px;
+        }
+
+        .data-format li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-section {
+                flex-direction: column;
+            }
+            
+            .summary {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .button-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Profit Calculator</h1>
+        
+       
+        
+        <div class="upload-section">
+            <div class="upload-box">
+                <h3>Import Order Data</h3>
+                <p>Upload XLSX file with Sku Code, Sku Name, Quantity</p>
+                <input type="file" id="orderFile" accept=".xlsx, .xls">
+                <div class="button-group">
+                    <button onclick="importOrderData()">Import Orders</button>
+                    <button class="sample-btn" onclick="downloadSampleOrder()">Download Sample Order XLSX</button>
+                </div>
+            </div>
+            
+            <div class="upload-box">
+                <h3>Import Sales Amount</h3>
+                <p>Upload XLSX file with Sku Code and SalesAmount</p>
+                <input type="file" id="salesFile" accept=".xlsx, .xls">
+                <div class="button-group">
+                    <button onclick="importSalesData()">Import Sales</button>
+                    <button class="sample-btn" onclick="window.location.href='https://alh-5.github.io/alh/Profit Amount/sales_data.xlsx'">Download Sales XLSX</button>
+                </div>
+            </div>
+            
+            <div class="upload-box">
+                <h3>Import Purchase Amount</h3>
+                <p>Upload XLSX file with Sku Code and PurchaseAmount</p>
+                <input type="file" id="purchaseFile" accept=".xlsx, .xls">
+                <div class="button-group">
+                    <button onclick="importPurchaseData()">Import Purchases</button>
+                    <button class="sample-btn" onclick="window.location.href='https://alh-5.github.io/alh/Profit Amount/purchase_data.xlsx'">Download Purchase XLSX</button>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="calculate-btn" onclick="calculateProfit()">Calculate Profit</button>
+        </div>
+        
+        <div id="tableContainer"></div>
+        
+        <div class="summary" id="summarySection" style="display: none;">
+            <div class="summary-item">
+                <div class="summary-value" id="totalOrders">0</div>
+                <div class="summary-label">Total Orders</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="totalSales">$0.00</div>
+                <div class="summary-label">Total Sales</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="totalPurchases">$0.00</div>
+                <div class="summary-label">Total Purchases</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="totalProfit">$0.00</div>
+                <div class="summary-label">Total Profit</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+            <button class="download-btn" onclick="downloadXLSX()">Download XLSX</button>
+        </div>
+    </div>
+
+    <script>
+        let orderData = [];
+        let salesData = [];
+        let purchaseData = [];
+        let profitData = [];
+
+        // Sample data for download
+        const sampleOrderData = [
+            { "Sku Code": "SKU-001", "Sku Name": "SERVO PRIDE 40 - 20x1L - HDPE", Quantity: 1 },
+            { "Sku Code": "SKU-002", "Sku Name": "SERVO PRIDE 40 - 4x5L - HDPE", Quantity: 3 },
+            { "Sku Code": "SKU-003", "Sku Name": "SERVO GEAR HP 90-40X1/2L-HDPE", Quantity: 2 },
+            { "Sku Code": "SKU-004", "Sku Name": "SERVO GEAR HP 90-20X1L-HDPE", Quantity: 1 },
+            { "Sku Code": "SKU-005", "Sku Name": "SERVO GEAR HP 90 - 4x5L - HDPE", Quantity: 5 }
+        ];
+
+        const sampleSalesData = [
+            { "Sku Code": "SKU-001", SalesAmount: 1200.00 },
+            { "Sku Code": "SKU-002", SalesAmount: 75.00 },
+            { "Sku Code": "SKU-003", SalesAmount: 150.00 },
+            { "Sku Code": "SKU-004", SalesAmount: 350.00 },
+            { "Sku Code": "SKU-005", SalesAmount: 250.00 }
+        ];
+
+        const samplePurchaseData = [
+            { "Sku Code": "SKU-001", PurchaseAmount: 800.00 },
+            { "Sku Code": "SKU-002", PurchaseAmount: 45.00 },
+            { "Sku Code": "SKU-003", PurchaseAmount: 90.00 },
+            { "Sku Code": "SKU-004", PurchaseAmount: 220.00 },
+            { "Sku Code": "SKU-005", PurchaseAmount: 150.00 }
+        ];
+
+        function downloadSampleOrder() {
+            const ws = XLSX.utils.json_to_sheet(sampleOrderData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Orders");
+            XLSX.writeFile(wb, "sample_order_data.xlsx");
+        }
+
+        function downloadSampleSales() {
+            const ws = XLSX.utils.json_to_sheet(sampleSalesData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sales");
+            XLSX.writeFile(wb, "sample_sales_data.xlsx");
+        }
+
+        function downloadSamplePurchase() {
+            const ws = XLSX.utils.json_to_sheet(samplePurchaseData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Purchases");
+            XLSX.writeFile(wb, "sample_purchase_data.xlsx");
+        }
+
+        function importOrderData() {
+            const fileInput = document.getElementById('orderFile');
+            if (fileInput.files.length === 0) {
+                alert('Please select a file to import order data.');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    orderData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // Validate order data format
+                    if (orderData.length > 0) {
+                        const firstRow = orderData[0];
+                        if (!firstRow.hasOwnProperty('Sku Code') || !firstRow.hasOwnProperty('Sku Name') || !firstRow.hasOwnProperty('Quantity')) {
+                            alert('Invalid order data format. Please use the sample format with Sku Code, Sku Name, and Quantity columns.');
+                            orderData = [];
+                            return;
+                        }
+                    }
+                    
+                    alert(`Successfully imported ${orderData.length} order records.`);
+                } catch (error) {
+                    alert('Error reading order file: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function importSalesData() {
+            const fileInput = document.getElementById('salesFile');
+            if (fileInput.files.length === 0) {
+                alert('Please select a file to import sales data.');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    salesData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // Validate sales data format
+                    if (salesData.length > 0) {
+                        const firstRow = salesData[0];
+                        if (!firstRow.hasOwnProperty('Sku Code') || !firstRow.hasOwnProperty('SalesAmount')) {
+                            alert('Invalid sales data format. Please use the sample format with Sku Code and SalesAmount columns.');
+                            salesData = [];
+                            return;
+                        }
+                    }
+                    
+                    alert(`Successfully imported ${salesData.length} sales records.`);
+                } catch (error) {
+                    alert('Error reading sales file: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function importPurchaseData() {
+            const fileInput = document.getElementById('purchaseFile');
+            if (fileInput.files.length === 0) {
+                alert('Please select a file to import purchase data.');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    purchaseData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // Validate purchase data format
+                    if (purchaseData.length > 0) {
+                        const firstRow = purchaseData[0];
+                        if (!firstRow.hasOwnProperty('Sku Code') || !firstRow.hasOwnProperty('PurchaseAmount')) {
+                            alert('Invalid purchase data format. Please use the sample format with Sku Code and PurchaseAmount columns.');
+                            purchaseData = [];
+                            return;
+                        }
+                    }
+                    
+                    alert(`Successfully imported ${purchaseData.length} purchase records.`);
+                } catch (error) {
+                    alert('Error reading purchase file: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function calculateProfit() {
+            if (orderData.length === 0) {
+                alert('Please import order data first.');
+                return;
+            }
+            
+            if (salesData.length === 0) {
+                alert('Please import sales data first.');
+                return;
+            }
+            
+            if (purchaseData.length === 0) {
+                alert('Please import purchase data first.');
+                return;
+            }
+            
+            profitData = [];
+            
+            // Create mappings for sales and purchase data for quick lookup
+            const salesMap = new Map();
+            salesData.forEach(sale => {
+                const skuCode = sale['Sku Code'];
+                const salesAmount = sale.SalesAmount;
+                salesMap.set(skuCode, salesAmount);
+            });
+            
+            const purchaseMap = new Map();
+            purchaseData.forEach(purchase => {
+                const skuCode = purchase['Sku Code'];
+                const purchaseAmount = purchase.PurchaseAmount;
+                purchaseMap.set(skuCode, purchaseAmount);
+            });
+            
+            // Calculate profit for each order
+            orderData.forEach(order => {
+                const skuCode = order['Sku Code'];
+                const quantity = order.Quantity;
+                
+                const salesAmount = salesMap.get(skuCode) || 0;
+                const purchaseAmount = purchaseMap.get(skuCode) || 0;
+                
+                // Calculate profit per Case and total profit for the order
+                const profitPerCase = salesAmount - purchaseAmount;
+                const totalProfit = profitPerCase * quantity;
+                
+                // Create a new object with all order data plus sales, purchase, and profit
+                const profitRecord = {...order};
+                profitRecord.SalesAmount = salesAmount;
+                profitRecord.PurchaseAmount = purchaseAmount;
+                profitRecord.ProfitPerCase = profitPerCase;
+                profitRecord.TotalProfit = totalProfit;
+                
+                profitData.push(profitRecord);
+            });
+            
+            displayProfitTable();
+            updateSummary();
+        }
+
+        function displayProfitTable() {
+            const container = document.getElementById('tableContainer');
+            
+            if (profitData.length === 0) {
+                container.innerHTML = '<p>No data to display. Please calculate profit first.</p>';
+                return;
+            }
+            
+            // Define the columns we want to show in the table
+            const headers = ['Sku Code', 'Sku Name', 'Quantity', 'SalesAmount', 'PurchaseAmount', 'ProfitPerCase', 'TotalProfit'];
+            const headerLabels = ['SKU Code', 'SKU Name', 'Quantity', 'Sales Amount', 'Purchase Amount', 'Profit Per Case', 'Total Profit'];
+            
+            let tableHTML = '<table><thead><tr>';
+            
+            // Create table headers
+            headerLabels.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            
+            tableHTML += '</tr></thead><tbody>';
+            
+            // Create table rows
+            profitData.forEach(row => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    let value = row[header];
+                    
+                    // Format currency values with color coding for profits
+                    if (header === 'TotalProfit' || header === 'ProfitPerCase') {
+                        const profitClass = value >= 0 ? 'profit-positive' : 'profit-negative';
+                        value = `<span class="${profitClass}">$${value.toFixed(2)}</span>`;
+                    } else if (typeof value === 'number' && (header === 'SalesAmount' || header === 'PurchaseAmount')) {
+                        value = `$${value.toFixed(2)}`;
+                    }
+                    
+                    tableHTML += `<td>${value}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            
+            tableHTML += '</tbody></table>';
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function updateSummary() {
+            const totalOrders = profitData.length;
+            const totalSales = profitData.reduce((sum, row) => sum + (row.SalesAmount * row.Quantity || 0), 0);
+            const totalPurchases = profitData.reduce((sum, row) => sum + (row.PurchaseAmount * row.Quantity || 0), 0);
+            const totalProfit = profitData.reduce((sum, row) => sum + (row.TotalProfit || 0), 0);
+            
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalSales').textContent = `$${totalSales.toFixed(2)}`;
+            document.getElementById('totalPurchases').textContent = `$${totalPurchases.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalProfit.toFixed(2)}`;
+            
+            document.getElementById('summarySection').style.display = 'flex';
+        }
+
+        function downloadPDF() {
+            if (profitData.length === 0) {
+                alert('No data available to download. Please calculate profit first.');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(16);
+            doc.text('Order Profit Report', 14, 15);
+            
+            // Prepare data for the table
+            const headers = ['Sku Code', 'Sku Name', 'Quantity', 'SalesAmount', 'PurchaseAmount', 'ProfitPerCase', 'TotalProfit'];
+            const headerLabels = ['SKU Code', 'SKU Name', 'Quantity', 'Sales Amount', 'Purchase Amount', 'Profit Per Case', 'Total Profit'];
+            
+            const tableData = profitData.map(row => {
+                return headers.map(header => {
+                    let value = row[header];
+                    if (typeof value === 'number' && (header === 'SalesAmount' || header === 'PurchaseAmount' || header === 'ProfitPerCase' || header === 'TotalProfit')) {
+                        return `$${value.toFixed(2)}`;
+                    }
+                    return value;
+                });
+            });
+            
+            // Add table
+            doc.autoTable({
+                head: [headerLabels],
+                body: tableData,
+                startY: 20,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [52, 152, 219] }
+            });
+            
+            // Add summary
+            const totalSales = profitData.reduce((sum, row) => sum + (row.SalesAmount * row.Quantity || 0), 0);
+            const totalPurchases = profitData.reduce((sum, row) => sum + (row.PurchaseAmount * row.Quantity || 0), 0);
+            const totalProfit = profitData.reduce((sum, row) => sum + (row.TotalProfit || 0), 0);
+            
+            const finalY = doc.lastAutoTable.finalY || 100;
+            doc.text(`Total Orders: ${profitData.length}`, 14, finalY + 10);
+            doc.text(`Total Sales: $${totalSales.toFixed(2)}`, 14, finalY + 20);
+            doc.text(`Total Purchases: $${totalPurchases.toFixed(2)}`, 14, finalY + 30);
+            doc.text(`Total Profit: $${totalProfit.toFixed(2)}`, 14, finalY + 40);
+            
+            // Save the PDF
+            doc.save('order_profit_report.pdf');
+        }
+
+        function downloadXLSX() {
+            if (profitData.length === 0) {
+                alert('No data available to download. Please calculate profit first.');
+                return;
+            }
+            
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Prepare data for the worksheet
+            const headers = ['Sku Code', 'Sku Name', 'Quantity', 'SalesAmount', 'PurchaseAmount', 'ProfitPerCase', 'TotalProfit'];
+            const headerLabels = ['SKU Code', 'SKU Name', 'Quantity', 'Sales Amount', 'Purchase Amount', 'Profit Per Case', 'Total Profit'];
+            
+            const wsData = [headerLabels];
+            
+            profitData.forEach(row => {
+                const rowData = headers.map(header => {
+                    let value = row[header];
+                    if (typeof value === 'number' && (header === 'SalesAmount' || header === 'PurchaseAmount' || header === 'ProfitPerCase' || header === 'TotalProfit')) {
+                        return value.toFixed(2);
+                    }
+                    return value;
+                });
+                wsData.push(rowData);
+            });
+            
+            // Create worksheet
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Profit Report');
+            
+            // Save the file
+            XLSX.writeFile(wb, 'order_profit_report.xlsx');
+        }
+    </script>
+</body>
+</html>
