@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 
-<title>Auto Lube House - Money Receipt</title>
+<title>Digital Money Receipt</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -75,7 +75,7 @@ button:hover{
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:12px;
+    gap:42px;
     padding:15px 8px;
 }
 
@@ -84,6 +84,7 @@ button:hover{
     height:8cm;
     transform-origin:top center;
     flex:none;
+    margin-top:42px;
 }
 
 /* =========================
@@ -100,7 +101,7 @@ button:hover{
 
     position:relative;
 
-    overflow:hidden;
+    overflow:visible;
 
     box-shadow:0 0 8px #777;
 
@@ -405,8 +406,8 @@ select.requiredEmpty{
 .receiptActions{
     position:absolute;
 
-    top:2px;
-    left:2px;
+    top:-42px;
+    left:0;
 
     display:flex;
 
@@ -629,6 +630,7 @@ select.requiredEmpty{
         height:80mm !important;
 
         transform:none !important;
+        margin-top:0 !important;
     }
 
     .receipt{
@@ -900,6 +902,20 @@ function amountToWords(value){
     }
 
     return text + " Only";
+}
+
+/* ==================================================
+   ALWAYS SYNC AMOUNT IN WORDS BEFORE SHARE/SEND
+   ================================================== */
+
+function syncAmountInWords(receipt){
+
+    const amountEl = receipt.querySelector(".amount");
+    const rupeesEl = receipt.querySelector(".rupees");
+
+    if(amountEl && rupeesEl){
+        rupeesEl.value = amountToWords(amountEl.value);
+    }
 }
 
 
@@ -1617,6 +1633,9 @@ function buildReceiptId(receipt){
 
 async function saveToSheet(receipt){
 
+    /* Make sure the latest amount is reflected in words */
+    syncAmountInWords(receipt);
+
     if(!SHEET_WEBAPP_URL || SHEET_WEBAPP_URL.indexOf("PASTE_YOUR") === 0){
         console.warn("Sheet URL not configured.");
         return { ok: false, skipped: true };
@@ -1858,6 +1877,9 @@ function shareWhatsApp(id){
 
     if(!receipt) return;
 
+    /* Always refresh amount in words before sharing */
+    syncAmountInWords(receipt);
+
     if(!checkReceivedFrom(receipt)) return;
     if(!checkSerial(receipt)) return;
     if(!checkAmount(receipt)) return;
@@ -1926,6 +1948,9 @@ function sendWhatsApp(id){
 
     if(!receipt) return;
 
+    /* Always refresh amount in words before sending */
+    syncAmountInWords(receipt);
+
     if(!checkReceivedFrom(receipt)) return;
     if(!checkSerial(receipt)) return;
     if(!checkAmount(receipt)) return;
@@ -1955,6 +1980,9 @@ function sendSMS(id){
     const receipt = document.getElementById("receipt_" + id);
 
     if(!receipt) return;
+
+    /* Always refresh amount in words before sending */
+    syncAmountInWords(receipt);
 
     if(!checkReceivedFrom(receipt)) return;
     if(!checkSerial(receipt)) return;
@@ -1995,6 +2023,9 @@ function downloadImage(id){
     const receipt = document.getElementById("receipt_" + id);
 
     if(!receipt) return;
+
+    /* Always refresh amount in words before generating image */
+    syncAmountInWords(receipt);
 
     if(!checkReceivedFrom(receipt)) return;
     if(!checkSerial(receipt)) return;
