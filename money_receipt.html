@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+
+<title>Auto Lube House - Money Receipt</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    background:#eee;
+    font-family:Georgia,"Times New Roman",serif;
+    color:#222;
+    -webkit-text-size-adjust:100%;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.toolbar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#222;
+    color:white;
+    padding:10px;
+    text-align:center;
+    font-family:Arial,sans-serif;
+
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+}
+
+button{
+    padding:9px 14px;
+    border:0;
+    border-radius:5px;
+    background:white;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:13px;
+    white-space:nowrap;
+    -webkit-tap-highlight-color:transparent;
+}
+
+button:hover{
+    background:#ddd;
+}
+
+#count{
+    font-size:13px;
+    width:100%;
+    text-align:center;
+    margin-top:2px;
+}
+
+/* =========================
+   RECEIPT AREA
+========================= */
+
+#receiptsContainer{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    padding:15px 8px;
+}
+
+.receiptScaler{
+    width:16cm;
+    height:8cm;
+    transform-origin:top center;
+    flex:none;
+}
+
+/* =========================
+   RECEIPT
+========================= */
+
+.receipt{
+    width:16cm;
+    height:8cm;
+
+    background:#f5a8bd;
+
+    padding:0.42cm 0.55cm;
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:0 0 8px #777;
+
+    flex:none;
+}
+
+.top{
+    position:relative;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:center;
+
+    min-height:1.15cm;
+}
+
+.servo{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    font-family:Arial,sans-serif;
+
+    font-weight:900;
+
+    font-size:20px;
+
+    line-height:1;
+
+    color:#333;
+}
+
+.servo small{
+    display:block;
+
+    font-size:6px;
+
+    letter-spacing:.7px;
+
+    margin-top:2px;
+}
+
+.heading{
+    width:100%;
+
+    text-align:center;
+
+    line-height:1.05;
+}
+
+.title{
+    font-size:18px;
+
+    font-weight:bold;
+
+    letter-spacing:.3px;
+}
+
+.company{
+    font-size:17px;
+
+    font-weight:bold;
+
+    margin-top:2px;
+}
+
+.subtitle{
+    font-size:8px;
+
+    font-weight:bold;
+
+    font-style:italic;
+
+    margin-top:2px;
+}
+
+.sl{
+    position:absolute;
+
+    right:5.5mm;
+    top:5mm;
+
+    font-size:9px;
+
+    font-weight:bold;
+}
+
+.sl input{
+    width:22mm !important;
+
+    text-align:left;
+
+    font-weight:bold;
+
+    font-size:9px;
+
+    padding-left:2px;
+}
+
+.date{
+    position:absolute;
+
+    right:5.5mm;
+    top:13mm;
+
+    font-size:9px;
+}
+
+.date input{
+    width:28mm !important;
+}
+
+.field{
+    font-size:9px;
+
+    display:flex;
+
+    align-items:baseline;
+
+    gap:4px;
+}
+
+label{
+    white-space:nowrap;
+    font-weight:bold;
+}
+
+input{
+    border:0;
+
+    border-bottom:1px dotted #333;
+
+    background:transparent;
+
+    outline:0;
+
+    font:9px Georgia,"Times New Roman",serif;
+
+    color:#111;
+
+    width:100%;
+
+    padding:1px 2px;
+}
+
+input::placeholder{
+    font-weight:bold;
+    color:#555;
+    opacity:1;
+}
+
+select{
+    border:0;
+
+    border-bottom:1px dotted #333;
+
+    background:transparent;
+
+    outline:0;
+
+    font:9px Georgia,"Times New Roman",serif;
+
+    color:#111;
+
+    width:100%;
+
+    padding:1px 2px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #333 50%),
+        linear-gradient(135deg, #333 50%, transparent 50%);
+    background-position:
+        calc(100% - 6px) center,
+        calc(100% - 3px) center;
+    background-size:
+        3px 3px,
+        3px 3px;
+    background-repeat: no-repeat;
+}
+
+select:focus{
+    outline:0;
+}
+
+input.requiredEmpty{
+    border-bottom:1px solid #b00020;
+    background:rgba(255,0,0,0.08);
+}
+
+select.requiredEmpty{
+    border-bottom:1px solid #b00020;
+    background:rgba(255,0,0,0.08);
+}
+
+.field.hiddenField{
+    display:none !important;
+}
+
+.waWrap{
+    display:flex;
+
+    align-items:baseline;
+
+    width:100%;
+
+    border-bottom:1px dotted #333;
+}
+
+.waWrap.requiredEmpty{
+    border-bottom:1px solid #b00020;
+    background:rgba(255,0,0,0.08);
+}
+
+.waPrefix{
+    font:9px Georgia,"Times New Roman",serif;
+
+    color:#111;
+
+    padding:1px 2px 1px 2px;
+
+    white-space:nowrap;
+
+    font-weight:bold;
+}
+
+.waWrap input{
+    border-bottom:0 !important;
+
+    padding-left:2px;
+
+    background:transparent !important;
+}
+
+.full{
+    margin-top:5px;
+}
+
+.row{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+    margin-top:5px;
+}
+
+.bottomline{
+    margin-top:6px;
+}
+
+.signature{
+    position:absolute;
+
+    right:7mm;
+    bottom:7.5mm;
+
+    font-size:9px;
+
+    font-weight:bold;
+
+    font-style:italic;
+}
+
+.for-company{
+    position:absolute;
+
+    left:5.5mm;
+    bottom:3mm;
+
+    font-weight:bold;
+
+    font-style:italic;
+
+    font-size:9px;
+}
+
+.brand{
+    position:absolute;
+
+    right:5.5mm;
+    bottom:2.5mm;
+
+    font-family:Arial,sans-serif;
+
+    font-weight:bold;
+
+    font-size:11px;
+}
+
+.receiptActions{
+    position:absolute;
+
+    top:2px;
+    left:2px;
+
+    display:flex;
+
+    gap:4px;
+
+    z-index:5;
+}
+
+.receiptActions button{
+    font-family:Arial,sans-serif;
+    font-size:10px;
+    padding:3px 8px;
+    border-radius:3px;
+    background:#075E54;
+    color:white;
+    margin:0;
+    border:0;
+    cursor:pointer;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.receiptActions button:hover{
+    opacity:0.85;
+}
+
+.receiptActions .shareBtn{
+    background:#128C7E;
+}
+
+.receiptActions .smsBtn{
+    background:#0b5ed7;
+}
+
+.receiptActions .dlBtn{
+    background:#333;
+}
+
+.receiptActions .deleteReceipt{
+    background:#b00020;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toast{
+    position:fixed;
+
+    left:50%;
+
+    bottom:30px;
+
+    transform:translateX(-50%) translateY(120%);
+
+    background:#075E54;
+
+    color:white;
+
+    padding:14px 20px;
+
+    border-radius:8px;
+
+    font-family:Arial,sans-serif;
+
+    font-size:13px;
+
+    line-height:1.4;
+
+    max-width:90%;
+
+    width:340px;
+
+    box-shadow:0 6px 24px rgba(0,0,0,0.35);
+
+    z-index:9999;
+
+    text-align:center;
+
+    opacity:0;
+
+    transition:
+        transform .35s ease,
+        opacity .35s ease;
+
+    pointer-events:none;
+}
+
+#toast.show{
+    transform:translateX(-50%) translateY(0);
+
+    opacity:1;
+
+    pointer-events:auto;
+}
+
+#toast strong{
+    display:block;
+
+    font-size:14px;
+
+    margin-bottom:4px;
+}
+
+#toast .closeToast{
+    display:inline-block;
+
+    margin-top:10px;
+
+    background:white;
+
+    color:#075E54;
+
+    padding:6px 14px;
+
+    border-radius:4px;
+
+    font-size:12px;
+
+    border:0;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+/* MOBILE */
+
+@media screen and (max-width: 700px){
+
+    button{
+        padding:10px 12px;
+        font-size:12px;
+        flex:1 1 auto;
+        min-width:90px;
+    }
+
+    #receiptsContainer{
+        padding:10px 0;
+        gap:20px;
+        overflow:hidden;
+    }
+
+    .receiptActions button{
+        font-size:11px;
+        padding:4px 8px;
+    }
+
+    #toast{
+        bottom:15px;
+        padding:12px 16px;
+        font-size:12px;
+    }
+}
+
+@media screen and (max-width: 400px){
+
+    button{
+        font-size:11px;
+        padding:9px 8px;
+    }
+
+    .receiptActions button{
+        font-size:10px;
+        padding:3px 6px;
+    }
+}
+
+/* PRINT */
+
+@media print{
+
+    html,
+    body{
+
+        width:210mm;
+
+        height:297mm;
+
+        margin:0;
+
+        padding:0;
+
+        background:white;
+    }
+
+    .toolbar,
+    .instructions,
+    .receiptActions,
+    #toast{
+
+        display:none !important;
+    }
+
+    #receiptsContainer{
+
+        width:210mm;
+
+        height:297mm;
+
+        padding:10mm 0 0 0;
+
+        margin:0;
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+
+        gap:3mm;
+
+        overflow:hidden;
+    }
+
+    .receiptScaler{
+
+        width:160mm !important;
+
+        height:80mm !important;
+
+        transform:none !important;
+    }
+
+    .receipt{
+        width:160mm;
+
+        height:80mm;
+
+        margin:0;
+
+        padding:4.2mm 5.5mm;
+
+        box-shadow:none;
+
+        flex:none;
+
+        page-break-inside:avoid;
+
+        break-inside:avoid;
+    }
+
+    @page{
+        size:A4 portrait;
+        margin:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div class="toolbar">
+
+    <button onclick="addReceipt()">
+        ➕ Add Receipt
+    </button>
+
+    <button onclick="window.print()">
+        🖨 Print A4
+    </button>
+
+    <button onclick="clearAll()">
+        Clear All
+    </button>
+
+    <span id="count">
+        Receipts: 1 / 3
+    </span>
+
+</div>
+
+
+<div id="receiptsContainer"></div>
+
+
+<div id="toast">
+
+    <strong id="toastTitle"></strong>
+
+    <span id="toastMessage"></span>
+
+    <br>
+
+    <button class="closeToast" onclick="hideToast()">
+        Got it
+    </button>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   ⚠️  PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+================================================== */
+
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwR7ZvkcdIe3mE2g8iLjjF36TBlN-rv9xwpo_hUDH1401QmtRuoFQRd_BocCcHzwC5k/exec";
+
+
+/* ==================================================
+   RECEIPT COUNT
+================================================== */
+
+let receiptCount = 0;
+
+const MAX_RECEIPTS = 3;
+
+const DEFAULT_COUNTRY_CODE = "91";
+
+
+/* ==================================================
+   WEB SHARE API SUPPORT CHECK
+================================================== */
+
+function canShareFiles(){
+
+    if(!navigator.canShare) return false;
+
+    try{
+        const testFile = new File(
+            ["test"], "test.png", { type: "image/png" }
+        );
+        return navigator.canShare({ files: [testFile] });
+    }catch(e){
+        return false;
+    }
+}
+
+const SHARE_SUPPORTED = canShareFiles();
+
+
+/* ==================================================
+   TOAST HELPERS
+================================================== */
+
+let toastTimer = null;
+
+function showToast(title, message, duration){
+
+    const toast = document.getElementById("toast");
+
+    document.getElementById("toastTitle").textContent = title;
+    document.getElementById("toastMessage").textContent = message;
+
+    toast.classList.add("show");
+
+    if(toastTimer) clearTimeout(toastTimer);
+
+    if(duration && duration > 0){
+        toastTimer = setTimeout(hideToast, duration);
+    }
+}
+
+function hideToast(){
+
+    document.getElementById("toast").classList.remove("show");
+
+    if(toastTimer){
+        clearTimeout(toastTimer);
+        toastTimer = null;
+    }
+}
+
+
+/* ==================================================
+   TODAY'S DATE
+================================================== */
+
+function todayISO(){
+
+    const d = new Date();
+
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+
+    return yyyy + "-" + mm + "-" + dd;
+}
+
+
+/* ==================================================
+   MOBILE PREVIEW SCALING
+================================================== */
+
+function updateScaling(){
+
+    const scalers = document.querySelectorAll(".receiptScaler");
+
+    const RECEIPT_WIDTH_PX = 16 * 37.7952755906;
+
+    const container = document.getElementById("receiptsContainer");
+
+    const available =
+        (container ? container.clientWidth : window.innerWidth) - 16;
+
+    let scale = 1;
+
+    if(available < RECEIPT_WIDTH_PX){
+        scale = available / RECEIPT_WIDTH_PX;
+    }
+
+    scalers.forEach(function(s){
+
+        s.style.transform = "scale(" + scale + ")";
+
+        const scaledHeight = (8 * 37.7952755906) * scale;
+
+        s.style.height = scaledHeight + "px";
+
+        s.dataset.scale = scale;
+    });
+}
+
+window.addEventListener("resize", updateScaling);
+
+window.addEventListener("orientationchange", function(){
+    setTimeout(updateScaling, 200);
+});
+
+
+/* ==================================================
+   NUMBER TO WORDS
+================================================== */
+
+const ones = [
+    "", "One", "Two", "Three", "Four", "Five",
+    "Six", "Seven", "Eight", "Nine", "Ten",
+    "Eleven", "Twelve", "Thirteen", "Fourteen",
+    "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+];
+
+const tens = [
+    "", "", "Twenty", "Thirty", "Forty",
+    "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+];
+
+function below100(n){
+    if(n < 20) return ones[n];
+    return tens[Math.floor(n / 10)] +
+        (n % 10 ? " " + ones[n % 10] : "");
+}
+
+function below1000(n){
+    if(n < 100) return below100(n);
+    return ones[Math.floor(n / 100)] +
+        " Hundred" +
+        (n % 100 ? " " + below100(n % 100) : "");
+}
+
+function indianWords(n){
+
+    n = Math.floor(n);
+
+    if(n === 0) return "Zero";
+
+    let parts = [];
+
+    if(n >= 10000000){
+        parts.push(indianWords(Math.floor(n / 10000000)) + " Crore");
+        n %= 10000000;
+    }
+    if(n >= 100000){
+        parts.push(indianWords(Math.floor(n / 100000)) + " Lakh");
+        n %= 100000;
+    }
+    if(n >= 1000){
+        parts.push(indianWords(Math.floor(n / 1000)) + " Thousand");
+        n %= 1000;
+    }
+    if(n > 0) parts.push(below1000(n));
+
+    return parts.join(" ");
+}
+
+function amountToWords(value){
+
+    const num = parseFloat(String(value).replace(/,/g,""));
+
+    if(!Number.isFinite(num) || num < 0) return "";
+
+    const rupees = Math.floor(num);
+    const paise = Math.round((num - rupees) * 100);
+
+    let text = "Rupees " + indianWords(rupees);
+
+    if(paise > 0){
+        text += " and " + indianWords(paise) + " Paise";
+    }
+
+    return text + " Only";
+}
+
+
+/* ==================================================
+   GET FULL WHATSAPP NUMBER
+================================================== */
+
+function getFullWhatsAppNumber(receipt){
+
+    const waEl = receipt.querySelector(".whatsapp_no");
+
+    if(!waEl) return "";
+
+    let digits = (waEl.value || "").replace(/\D/g, "");
+
+    if(!digits) return "";
+
+    digits = digits.replace(/^0+/, "");
+
+    if(digits.length >= 12 && digits.startsWith(DEFAULT_COUNTRY_CODE)){
+        return digits;
+    }
+
+    return DEFAULT_COUNTRY_CODE + digits;
+}
+
+
+/* ==================================================
+   BUILD FILE NAME
+================================================== */
+
+function buildReceiptFileName(receipt){
+
+    const rawName = getField(receipt, "received_from");
+    const rawSlno = getField(receipt, "slno");
+
+    let name = rawName.toUpperCase()
+        .replace(/[^A-Z0-9]+/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+
+    let slno = rawSlno.toUpperCase()
+        .replace(/[^A-Z0-9]+/g, "")
+        .replace(/^_+|_+$/g, "");
+
+    let parts = [];
+    if(name) parts.push(name);
+    if(slno) parts.push(slno);
+
+    let filename = parts.length ? parts.join("_") : "Receipt";
+
+    return filename + ".png";
+}
+
+
+/* ==================================================
+   APPLY PAYMENT MODE RULES
+================================================== */
+
+function applyPaymentModeRules(receipt){
+
+    const modeEl = receipt.querySelector('[name="payment_mode"]');
+    const mode = modeEl ? (modeEl.value || "") : "";
+
+    const bankEl = receipt.querySelector('[name="bank_name"]');
+    const chequeNoEl = receipt.querySelector('[name="cheque_no"]');
+    const chequeDateEl = receipt.querySelector('[name="cheque_date"]');
+
+    const bankField = bankEl ? bankEl.closest(".field") : null;
+    const chequeNoField = chequeNoEl ? chequeNoEl.closest(".field") : null;
+    const chequeDateField = chequeDateEl ? chequeDateEl.closest(".field") : null;
+
+    [bankEl, chequeNoEl, chequeDateEl].forEach(function(el){
+        if(el) el.classList.remove("requiredEmpty");
+    });
+
+    if(mode === "Cheque"){
+
+        [bankField, chequeNoField, chequeDateField].forEach(function(f){
+            if(f) f.classList.remove("hiddenField");
+        });
+
+        if(chequeDateEl && !chequeDateEl.value){
+            chequeDateEl.value = todayISO();
+        }
+
+        if(bankEl && !(bankEl.value || "").trim()){
+            bankEl.classList.add("requiredEmpty");
+        }
+        if(chequeNoEl && !(chequeNoEl.value || "").trim()){
+            chequeNoEl.classList.add("requiredEmpty");
+        }
+    }
+    else if(mode === "Cash"){
+
+        [bankField, chequeNoField, chequeDateField].forEach(function(f){
+            if(f) f.classList.add("hiddenField");
+        });
+
+        if(bankEl) bankEl.value = "";
+        if(chequeNoEl) chequeNoEl.value = "";
+        if(chequeDateEl) chequeDateEl.value = "";
+    }
+    else if(mode === "Online Transfer"){
+
+        if(bankField) bankField.classList.remove("hiddenField");
+        if(chequeNoField) chequeNoField.classList.add("hiddenField");
+        if(chequeDateField) chequeDateField.classList.add("hiddenField");
+
+        if(chequeNoEl) chequeNoEl.value = "";
+        if(chequeDateEl) chequeDateEl.value = "";
+
+        if(bankEl && !(bankEl.value || "").trim()){
+            bankEl.classList.add("requiredEmpty");
+        }
+    }
+    else{
+
+        [bankField, chequeNoField, chequeDateField].forEach(function(f){
+            if(f) f.classList.remove("hiddenField");
+        });
+
+        if(chequeDateEl) chequeDateEl.value = "";
+    }
+}
+
+
+/* ==================================================
+   CREATE RECEIPT
+================================================== */
+
+function createReceipt(){
+
+    receiptCount++;
+
+    const scaler = document.createElement("div");
+    scaler.className = "receiptScaler";
+
+    const receipt = document.createElement("form");
+    receipt.className = "receipt";
+    receipt.id = "receipt_" + receiptCount;
+
+    receipt.onsubmit = function(){ return false; };
+
+    const today = todayISO();
+
+    receipt.innerHTML = `
+
+        <div class="receiptActions">
+
+            <button type="button" class="shareBtn"
+                onclick="shareWhatsApp(${receiptCount})">
+                📤 Share
+            </button>
+
+            <button type="button" class="waBtn"
+                onclick="sendWhatsApp(${receiptCount})">
+                📱 WhatsApp
+            </button>
+
+            <button type="button" class="smsBtn"
+                onclick="sendSMS(${receiptCount})">
+                📩 SMS
+            </button>
+
+            <button type="button" class="deleteReceipt"
+                onclick="removeReceipt(${receiptCount})">
+                ✕
+            </button>
+
+        </div>
+
+        <div class="top">
+            <div class="servo">
+                SERVO
+                <small>WORLD-CLASS LUBRICANTS</small>
+            </div>
+            <div class="heading">
+                <div class="title">MONEY RECEIPT</div>
+                <div class="company">AUTO LUBE HOUSE</div>
+                <div class="subtitle">
+                    Iewduh, Bara Bazar, Shillong - 793002
+                </div>
+            </div>
+        </div>
+
+        <div class="sl">
+            Sl. No.
+            <input class="serial requiredEmpty uppercaseInput"
+                name="slno" maxlength="6"
+                placeholder="XXXXXX" value="">
+        </div>
+
+        <div class="date field">
+            <label>Date:</label>
+            <input type="date" name="date" value="${today}">
+        </div>
+
+        <div class="full field">
+            <label>Received from:</label>
+            <input class="received_from requiredEmpty uppercaseInput"
+                name="received_from">
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label>Invoice No.:</label>
+                <input class="uppercaseInput" name="invoice_no">
+            </div>
+            <div class="field">
+                <label>Payment Mode:</label>
+                <select class="payment_mode requiredEmpty" name="payment_mode">
+                    <option value=""></option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Online Transfer">Online Transfer</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="field bankField">
+                <label>Bank Name:</label>
+                <input class="uppercaseInput" name="bank_name">
+            </div>
+            <div class="field chequeNoField">
+                <label>Cheque No.:</label>
+                <input class="uppercaseInput" name="cheque_no">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="field chequeDateField">
+                <label>Cheque Date:</label>
+                <input type="date" name="cheque_date"
+                    value="" placeholder="dd/mm/yyyy">
+            </div>
+            <div class="field">
+                <label>Amount:</label>
+                <input class="amount requiredEmpty"
+                    name="amount" inputmode="decimal"
+                    placeholder="0.00">
+            </div>
+        </div>
+
+        <div class="full field">
+            <label>WhatsApp No.:</label>
+            <div class="waWrap requiredEmpty">
+                <span class="waPrefix">+91</span>
+                <input class="whatsapp_no" name="whatsapp_no"
+                    inputmode="numeric" type="tel"
+                    maxlength="10"
+                    placeholder="10-digit mobile number">
+            </div>
+        </div>
+
+        <div class="bottomline field">
+            <label>Amount in words:</label>
+            <input class="rupees" name="rupees" readonly
+                placeholder="Amount in words">
+        </div>
+
+        <div class="signature">Customer's Signature</div>
+        <div class="for-company">For Auto Lube House</div>
+        <div class="brand">IndianOil</div>
+
+    `;
+
+    scaler.appendChild(receipt);
+
+
+    /* AUTO-UPPERCASE */
+
+    receipt.querySelectorAll(".uppercaseInput").forEach(function(input){
+
+        input.addEventListener("input", function(){
+
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const upper = this.value.toUpperCase();
+
+            if(this.value !== upper){
+                this.value = upper;
+                try{ this.setSelectionRange(start, end); }catch(e){}
+            }
+        });
+    });
+
+
+    /* AMOUNT */
+
+    const amount = receipt.querySelector(".amount");
+    const rupees = receipt.querySelector(".rupees");
+
+    amount.addEventListener("input", function(){
+
+        rupees.value = amountToWords(amount.value);
+
+        if(this.value.trim().length > 0){
+            this.classList.remove("requiredEmpty");
+        } else {
+            this.classList.add("requiredEmpty");
+        }
+    });
+
+
+    /* RECEIVED FROM */
+
+    const receivedFrom = receipt.querySelector(".received_from");
+
+    receivedFrom.addEventListener("input", function(){
+        if(this.value.trim().length > 0){
+            this.classList.remove("requiredEmpty");
+        } else {
+            this.classList.add("requiredEmpty");
+        }
+    });
+
+
+    /* SERIAL */
+
+    const serial = receipt.querySelector(".serial");
+
+    serial.addEventListener("input", function(){
+
+        this.value = this.value.toUpperCase()
+            .replace(/[^A-Z0-9]/g, "")
+            .substring(0,6);
+
+        if(this.value.length > 0){
+            this.classList.remove("requiredEmpty");
+        } else {
+            this.classList.add("requiredEmpty");
+        }
+    });
+
+
+    /* WHATSAPP */
+
+    const wa = receipt.querySelector(".whatsapp_no");
+    const waWrap = receipt.querySelector(".waWrap");
+
+    wa.addEventListener("input", function(){
+
+        this.value = this.value.replace(/[^\d]/g, "").substring(0,10);
+
+        if(this.value.length > 0){
+            waWrap.classList.remove("requiredEmpty");
+        } else {
+            waWrap.classList.add("requiredEmpty");
+        }
+    });
+
+
+    /* BANK */
+
+    const bank = receipt.querySelector('[name="bank_name"]');
+
+    bank.addEventListener("input", function(){
+
+        if(this.value.trim().length > 0){
+            this.classList.remove("requiredEmpty");
+        } else {
+            const mode = receipt.querySelector('[name="payment_mode"]').value;
+            if(mode === "Cheque" || mode === "Online Transfer"){
+                this.classList.add("requiredEmpty");
+            }
+        }
+    });
+
+
+    /* CHEQUE NO */
+
+    const chequeNo = receipt.querySelector('[name="cheque_no"]');
+
+    chequeNo.addEventListener("input", function(){
+
+        if(this.value.trim().length > 0){
+            this.classList.remove("requiredEmpty");
+        } else {
+            const mode = receipt.querySelector('[name="payment_mode"]').value;
+            if(mode === "Cheque"){
+                this.classList.add("requiredEmpty");
+            }
+        }
+    });
+
+
+    /* CHEQUE DATE */
+
+    const chequeDate = receipt.querySelector('[name="cheque_date"]');
+
+    chequeDate.addEventListener("change", function(){
+
+        if(this.value){
+            this.classList.remove("requiredEmpty");
+        } else {
+            const mode = receipt.querySelector('[name="payment_mode"]').value;
+            if(mode === "Cheque"){
+                this.classList.add("requiredEmpty");
+            }
+        }
+    });
+
+
+    /* PAYMENT MODE */
+
+    const modeEl = receipt.querySelector('[name="payment_mode"]');
+
+    modeEl.addEventListener("change", function(){
+
+        if(this.value){
+            this.classList.remove("requiredEmpty");
+        } else {
+            this.classList.add("requiredEmpty");
+        }
+
+        applyPaymentModeRules(receipt);
+    });
+
+
+    return scaler;
+}
+
+
+/* ==================================================
+   ADD RECEIPT
+================================================== */
+
+function addReceipt(){
+
+    if(receiptCount >= MAX_RECEIPTS){
+        alert("Maximum 3 receipts can be printed on one A4 page.");
+        return;
+    }
+
+    const scaler = createReceipt();
+
+    document.getElementById("receiptsContainer").appendChild(scaler);
+
+    updateCount();
+    updateScaling();
+}
+
+
+/* ==================================================
+   REMOVE RECEIPT
+================================================== */
+
+function removeReceipt(id){
+
+    const receipt = document.getElementById("receipt_" + id);
+
+    if(receipt){
+
+        const scaler = receipt.parentElement;
+
+        if(scaler && scaler.classList.contains("receiptScaler")){
+            scaler.remove();
+        } else {
+            receipt.remove();
+        }
+
+        receiptCount--;
+        updateCount();
+        updateScaling();
+    }
+}
+
+
+function updateCount(){
+    document.getElementById("count").textContent =
+        "Receipts: " + receiptCount + " / " + MAX_RECEIPTS;
+}
+
+
+function clearAll(){
+
+    if(confirm("Clear all receipts?")){
+
+        document.getElementById("receiptsContainer").innerHTML = "";
+
+        receiptCount = 0;
+
+        addReceipt();
+    }
+}
+
+
+/* ==================================================
+   FORMAT / GET
+================================================== */
+
+function formatDate(value){
+
+    if(!value) return "";
+
+    const parts = value.split("-");
+
+    if(parts.length !== 3) return value;
+
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+}
+
+function getField(receipt, name){
+    const el = receipt.querySelector(`[name="${name}"]`);
+    if(!el) return "";
+    return (el.value || "").trim();
+}
+
+function isFieldHidden(receipt, name){
+    const el = receipt.querySelector(`[name="${name}"]`);
+    if(!el) return true;
+    const f = el.closest(".field");
+    return f ? f.classList.contains("hiddenField") : false;
+}
+
+
+/* ==================================================
+   VALIDATIONS
+================================================== */
+
+function checkReceivedFrom(receipt){
+
+    const el = receipt.querySelector(".received_from");
+    const val = el ? (el.value || "").trim() : "";
+
+    if(!val){
+        if(el){ el.classList.add("requiredEmpty"); el.focus(); }
+        alert("Please enter the name in 'Received from'.");
+        return false;
+    }
+
+    return true;
+}
+
+function checkSerial(receipt){
+
+    const serialEl = receipt.querySelector(".serial");
+    const serialValue = serialEl ? (serialEl.value || "").trim() : "";
+
+    if(!serialValue){
+        if(serialEl){ serialEl.classList.add("requiredEmpty"); serialEl.focus(); }
+        alert("Please enter the Sl. No. (serial number).");
+        return false;
+    }
+
+    return true;
+}
+
+function checkWhatsApp(receipt){
+
+    const waEl = receipt.querySelector(".whatsapp_no");
+    const waWrap = receipt.querySelector(".waWrap");
+    const waValue = waEl ? (waEl.value || "").trim() : "";
+
+    if(!waValue){
+        if(waWrap) waWrap.classList.add("requiredEmpty");
+        if(waEl) waEl.focus();
+        alert("Please enter the 10-digit WhatsApp number.");
+        return false;
+    }
+
+    const digits = waValue.replace(/\D/g, "");
+
+    if(digits.length !== 10){
+        if(waWrap) waWrap.classList.add("requiredEmpty");
+        if(waEl) waEl.focus();
+        alert("WhatsApp number must be exactly 10 digits.");
+        return false;
+    }
+
+    return true;
+}
+
+function checkAmount(receipt){
+
+    const amtEl = receipt.querySelector(".amount");
+    const amtValue = amtEl ? (amtEl.value || "").trim() : "";
+
+    if(!amtValue || parseFloat(amtValue) <= 0){
+        if(amtEl){ amtEl.classList.add("requiredEmpty"); amtEl.focus(); }
+        alert("Please enter a valid Amount (greater than 0).");
+        return false;
+    }
+
+    return true;
+}
+
+function checkPaymentMode(receipt){
+
+    const modeEl = receipt.querySelector('[name="payment_mode"]');
+    const mode = modeEl ? (modeEl.value || "") : "";
+
+    if(!mode){
+        if(modeEl){ modeEl.classList.add("requiredEmpty"); modeEl.focus(); }
+        alert("Please select a Payment Mode.");
+        return false;
+    }
+
+    if(mode === "Cash") return true;
+
+    const bankEl = receipt.querySelector('[name="bank_name"]');
+    const chequeNoEl = receipt.querySelector('[name="cheque_no"]');
+    const chequeDateEl = receipt.querySelector('[name="cheque_date"]');
+
+    let missing = [];
+    let firstEmpty = null;
+
+    if(bankEl && !(bankEl.value || "").trim()){
+        bankEl.classList.add("requiredEmpty");
+        missing.push("Bank Name");
+        if(!firstEmpty) firstEmpty = bankEl;
+    }
+
+    if(mode === "Cheque"){
+
+        if(chequeNoEl && !(chequeNoEl.value || "").trim()){
+            chequeNoEl.classList.add("requiredEmpty");
+            missing.push("Cheque No.");
+            if(!firstEmpty) firstEmpty = chequeNoEl;
+        }
+
+        if(chequeDateEl && !(chequeDateEl.value || "").trim()){
+            chequeDateEl.classList.add("requiredEmpty");
+            missing.push("Cheque Date");
+            if(!firstEmpty) firstEmpty = chequeDateEl;
+        }
+    }
+
+    if(missing.length > 0){
+        if(firstEmpty) firstEmpty.focus();
+        alert("Since Payment Mode is " + mode + ", please fill: " + missing.join(", "));
+        return false;
+    }
+
+    return true;
+}
+
+
+/* ==================================================
+   BUILD TEXT (WhatsApp format, with *bold* markers)
+================================================== */
+
+function buildWhatsAppText(receipt){
+
+    const mode = getField(receipt, "payment_mode");
+
+    const lines = [
+        "*AUTO LUBE HOUSE*",
+        "Iewduh, Bara Bazar, Shillong - 793002",
+        "*MONEY RECEIPT*",
+        "----------------------------------",
+        "*Sl. No.:* " + getField(receipt, "slno"),
+        "*Date:* " + formatDate(getField(receipt, "date")),
+        "*Received from:* " + getField(receipt, "received_from"),
+        "*Invoice No.:* " + getField(receipt, "invoice_no"),
+        "*Payment Mode:* " + mode
+    ];
+
+    if((mode === "Cheque" || mode === "Online Transfer") &&
+       !isFieldHidden(receipt, "bank_name")){
+        const bank = getField(receipt, "bank_name");
+        if(bank) lines.push("*Bank Name:* " + bank);
+    }
+
+    if(mode === "Cheque" && !isFieldHidden(receipt, "cheque_no")){
+        const cn = getField(receipt, "cheque_no");
+        if(cn) lines.push("*Cheque No.:* " + cn);
+    }
+
+    if(mode === "Cheque" && !isFieldHidden(receipt, "cheque_date")){
+        lines.push("*Cheque Date:* " + formatDate(getField(receipt, "cheque_date")));
+    }
+
+    lines.push("*Amount:* Rs. " + getField(receipt, "amount"));
+    lines.push("*In Words:* " + getField(receipt, "rupees"));
+    lines.push("----------------------------------");
+    lines.push("For Auto Lube House");
+    lines.push("_Thank you for your business!_");
+
+    return lines.join("\n");
+}
+
+
+/* ==================================================
+   BUILD PLAIN TEXT (for SMS — no markdown)
+================================================== */
+
+function buildPlainText(receipt){
+
+    return buildWhatsAppText(receipt)
+        .replace(/\*/g, "")
+        .replace(/_/g, "");
+}
+
+
+/* ==================================================
+   BUILD RECEIPT ID (for dedupe)
+================================================== */
+
+function buildReceiptId(receipt){
+
+    const slno = getField(receipt, "slno");
+    const wa = getField(receipt, "whatsapp_no");
+    const date = getField(receipt, "date");
+
+    return slno + "|" + wa + "|" + date;
+}
+
+
+/* ==================================================
+   SAVE TO GOOGLE SHEET (with in-memory guard)
+================================================== */
+
+async function saveToSheet(receipt){
+
+    if(!SHEET_WEBAPP_URL || SHEET_WEBAPP_URL.indexOf("PASTE_YOUR") === 0){
+        console.warn("Sheet URL not configured.");
+        return { ok: false, skipped: true };
+    }
+
+    const currentId = buildReceiptId(receipt);
+
+    if(receipt.dataset.sentId === currentId){
+        return { ok: true, duplicate: true };
+    }
+
+    const payload = {
+
+        receiptId: currentId,
+
+        slno:         getField(receipt, "slno"),
+        date:         formatDate(getField(receipt, "date")),
+        receivedFrom: getField(receipt, "received_from"),
+        invoiceNo:    getField(receipt, "invoice_no"),
+        paymentMode:  getField(receipt, "payment_mode"),
+        bankName:     getField(receipt, "bank_name"),
+        chequeNo:     getField(receipt, "cheque_no"),
+        chequeDate:   formatDate(getField(receipt, "cheque_date")),
+        amount:       getField(receipt, "amount"),
+        rupees:       getField(receipt, "rupees"),
+        whatsappNo:   getField(receipt, "whatsapp_no")
+    };
+
+    try{
+
+        await fetch(SHEET_WEBAPP_URL, {
+
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+        });
+
+        receipt.dataset.sentId = currentId;
+
+        return { ok: true };
+
+    }catch(err){
+
+        console.error("Sheet save failed", err);
+        return { ok: false, error: err };
+    }
+}
+
+
+/* ==================================================
+   RENDER CANVAS
+================================================== */
+
+function renderReceiptCanvas(receipt){
+
+    return new Promise(function(resolve, reject){
+
+        if(document.activeElement && document.activeElement.blur){
+            document.activeElement.blur();
+        }
+
+        const scaler = receipt.parentElement;
+
+        const savedTransform = scaler.style.transform;
+        const savedHeight = scaler.style.height;
+
+        if(scaler && scaler.classList.contains("receiptScaler")){
+            scaler.style.transform = "none";
+            scaler.style.height = "auto";
+        }
+
+        const actions = receipt.querySelector(".receiptActions");
+        if(actions) actions.style.visibility = "hidden";
+
+        const waWrap = receipt.querySelector(".waWrap");
+        let waWrapReplacement = null;
+
+        if(waWrap){
+
+            const waInput = waWrap.querySelector(".whatsapp_no");
+            const waValue = waInput ? (waInput.value || "").trim() : "";
+
+            const combined = document.createElement("span");
+
+            combined.textContent = "+91 " + waValue;
+            combined.style.font = "9px Georgia,'Times New Roman',serif";
+            combined.style.color = "#111";
+            combined.style.display = "inline-block";
+            combined.style.width = "100%";
+            combined.style.padding = "1px 2px";
+            combined.style.borderBottom = "1px solid #333";
+            combined.style.minHeight = "11px";
+            combined.style.whiteSpace = "nowrap";
+            combined.style.verticalAlign = "bottom";
+
+            waWrap.parentNode.replaceChild(combined, waWrap);
+
+            waWrapReplacement = { span: combined, wrap: waWrap };
+        }
+
+        const fields = receipt.querySelectorAll("input, select");
+        const replacements = [];
+
+        fields.forEach(function(field){
+
+            if(field.classList.contains("whatsapp_no")) return;
+
+            const wrapperField = field.closest(".field");
+            if(wrapperField && wrapperField.classList.contains("hiddenField")) return;
+
+            let value = field.value || "";
+
+            if(field.tagName === "SELECT"){
+                const opt = field.options[field.selectedIndex];
+                value = opt ? opt.text : "";
+            }
+
+            if(field.type === "date" && value){
+                const p = value.split("-");
+                if(p.length === 3){
+                    value = p[2] + "/" + p[1] + "/" + p[0];
+                }
+            }
+
+            const span = document.createElement("span");
+
+            span.textContent = value;
+            span.style.font = "9px Georgia,'Times New Roman',serif";
+            span.style.color = "#111";
+            span.style.display = "inline-block";
+            span.style.width = "100%";
+            span.style.padding = "1px 2px";
+            span.style.borderBottom = "1px solid #333";
+            span.style.minHeight = "11px";
+            span.style.whiteSpace = "nowrap";
+            span.style.overflow = "hidden";
+            span.style.textOverflow = "ellipsis";
+            span.style.verticalAlign = "bottom";
+
+            if(field.classList.contains("serial")){
+                span.style.width = "22mm";
+                span.style.textAlign = "left";
+                span.style.fontWeight = "bold";
+            }
+
+            const computed = window.getComputedStyle(field);
+            if(computed.width && computed.width !== "auto"){
+                span.style.width = computed.width;
+            }
+
+            field.parentNode.replaceChild(span, field);
+            replacements.push({ span: span, field: field });
+        });
+
+        function restoreAll(){
+
+            replacements.forEach(function(r){
+                if(r.span.parentNode){
+                    r.span.parentNode.replaceChild(r.field, r.span);
+                }
+            });
+
+            if(waWrapReplacement && waWrapReplacement.span.parentNode){
+                waWrapReplacement.span.parentNode.replaceChild(
+                    waWrapReplacement.wrap,
+                    waWrapReplacement.span
+                );
+            }
+
+            if(actions) actions.style.visibility = "visible";
+
+            if(scaler && scaler.classList.contains("receiptScaler")){
+                scaler.style.transform = savedTransform;
+                scaler.style.height = savedHeight;
+            }
+        }
+
+        html2canvas(receipt, {
+            scale: 3,
+            backgroundColor: "#f5a8bd",
+            useCORS: true,
+            logging: false,
+            windowWidth: receipt.scrollWidth,
+            windowHeight: receipt.scrollHeight
+        })
+        .then(function(canvas){ restoreAll(); resolve(canvas); })
+        .catch(function(err){ restoreAll(); reject(err); });
+    });
+}
+
+
+/* ==================================================
+   CANVAS → FILE
+================================================== */
+
+function canvasToFile(canvas, filename){
+
+    return new Promise(function(resolve, reject){
+
+        canvas.toBlob(function(blob){
+
+            if(!blob){
+                reject(new Error("Canvas to Blob failed"));
+                return;
+            }
+
+            const file = new File(
+                [blob], filename, { type: "image/png" }
+            );
+
+            resolve(file);
+
+        }, "image/png");
+    });
+}
+
+
+function saveCanvasAsFile(canvas, filename){
+
+    const link = document.createElement("a");
+
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+/* ==================================================
+   SHARE
+================================================== */
+
+function shareWhatsApp(id){
+
+    const receipt = document.getElementById("receipt_" + id);
+
+    if(!receipt) return;
+
+    if(!checkReceivedFrom(receipt)) return;
+    if(!checkSerial(receipt)) return;
+    if(!checkAmount(receipt)) return;
+    if(!checkWhatsApp(receipt)) return;
+    if(!checkPaymentMode(receipt)) return;
+
+    /* Save to Google Sheet */
+
+    saveToSheet(receipt);
+
+    if(!SHARE_SUPPORTED){
+        showToast(
+            "Share not supported",
+            "Your browser doesn't support file sharing.",
+            5000
+        );
+        return;
+    }
+
+    renderReceiptCanvas(receipt)
+    .then(function(canvas){
+
+        const filename = buildReceiptFileName(receipt);
+        return canvasToFile(canvas, filename);
+    })
+    .then(function(file){
+
+        const text = buildWhatsAppText(receipt);
+
+        const shareData = {
+            files: [file],
+            text: text,
+            title: "Money Receipt - Auto Lube House"
+        };
+
+        return navigator.share(shareData)
+        .catch(function(err){
+
+            if(err && err.name === "NotAllowedError") throw err;
+
+            return navigator.share({
+                files: [file],
+                title: "Money Receipt - Auto Lube House"
+            });
+        });
+    })
+    .then(function(){ hideToast(); })
+    .catch(function(err){
+
+        if(err && (err.name === "AbortError" || err.name === "NotAllowedError")) return;
+
+        console.error(err);
+
+        showToast("Sharing failed", "Please try again.", 5000);
+    });
+}
+
+
+/* ==================================================
+   WHATSAPP (TEXT ONLY)
+================================================== */
+
+function sendWhatsApp(id){
+
+    const receipt = document.getElementById("receipt_" + id);
+
+    if(!receipt) return;
+
+    if(!checkReceivedFrom(receipt)) return;
+    if(!checkSerial(receipt)) return;
+    if(!checkAmount(receipt)) return;
+    if(!checkWhatsApp(receipt)) return;
+    if(!checkPaymentMode(receipt)) return;
+
+    /* Save to Google Sheet */
+
+    saveToSheet(receipt);
+
+    const phone = getFullWhatsAppNumber(receipt);
+    const text = buildWhatsAppText(receipt);
+
+    const url = "https://wa.me/" + phone +
+        "?text=" + encodeURIComponent(text);
+
+    window.open(url, "_blank");
+}
+
+
+/* ==================================================
+   SMS (TEXT ONLY)
+================================================== */
+
+function sendSMS(id){
+
+    const receipt = document.getElementById("receipt_" + id);
+
+    if(!receipt) return;
+
+    if(!checkReceivedFrom(receipt)) return;
+    if(!checkSerial(receipt)) return;
+    if(!checkAmount(receipt)) return;
+    if(!checkWhatsApp(receipt)) return;
+    if(!checkPaymentMode(receipt)) return;
+
+    /* Save to Google Sheet */
+
+    saveToSheet(receipt);
+
+    const phone = getFullWhatsAppNumber(receipt);
+
+    /* Plain text — SMS apps don't render markdown */
+
+    const text = buildPlainText(receipt);
+
+    /* iOS wants &body=, Android wants ?body= */
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    const separator = isIOS ? "&" : "?";
+
+    const url =
+        "sms:" + phone +
+        separator + "body=" + encodeURIComponent(text);
+
+    window.location.href = url;
+}
+
+
+/* ==================================================
+   IMAGE DOWNLOAD
+================================================== */
+
+function downloadImage(id){
+
+    const receipt = document.getElementById("receipt_" + id);
+
+    if(!receipt) return;
+
+    if(!checkReceivedFrom(receipt)) return;
+    if(!checkSerial(receipt)) return;
+    if(!checkAmount(receipt)) return;
+    if(!checkWhatsApp(receipt)) return;
+    if(!checkPaymentMode(receipt)) return;
+
+    renderReceiptCanvas(receipt)
+    .then(function(canvas){
+
+        const filename = buildReceiptFileName(receipt);
+
+        saveCanvasAsFile(canvas, filename);
+
+        showToast(
+            "Image downloaded ✔",
+            "Receipt image saved as '" + filename + "'.",
+            5000
+        );
+    })
+    .catch(function(err){
+        console.error(err);
+        alert("Sorry, could not generate the image. Please try again.");
+    });
+}
+
+
+/* ==================================================
+   START
+================================================== */
+
+addReceipt();
+updateScaling();
+
+window.addEventListener("load", updateScaling);
+
+</script>
+
+</body>
+</html>
