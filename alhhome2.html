@@ -21,121 +21,6 @@
             position: relative;
         }
         
-        /* Central Magnetic Wave Background - Mobile Optimized */
-        .wave-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: radial-gradient(ellipse at center, #0a0800 0%, #000000 100%);
-        }
-        
-        /* Central Magnetic Wave */
-        .central-wave {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, 
-                rgba(255, 215, 0, 0.3) 0%,
-                rgba(255, 215, 0, 0.2) 20%,
-                rgba(255, 215, 0, 0.1) 40%,
-                transparent 70%);
-            animation: centralPulse 4s infinite alternate ease-in-out;
-            filter: blur(20px);
-            box-shadow: 
-                0 0 200px rgba(255, 215, 0, 0.3),
-                inset 0 0 100px rgba(255, 215, 0, 0.2);
-        }
-        
-        .wave-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            animation: waveRing 6s infinite linear;
-        }
-        
-        .ring-1 {
-            width: 700px;
-            height: 700px;
-            animation-delay: 0s;
-        }
-        
-        .ring-2 {
-            width: 900px;
-            height: 900px;
-            animation-delay: 1s;
-            border-width: 1px;
-        }
-        
-        .ring-3 {
-            width: 1100px;
-            height: 1100px;
-            animation-delay: 2s;
-            border-width: 1px;
-        }
-        
-        .ring-4 {
-            width: 1300px;
-            height: 1300px;
-            animation-delay: 3s;
-            border-width: 1px;
-        }
-        
-        @keyframes centralPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.6;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 0.8;
-            }
-        }
-        
-        @keyframes waveRing {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.5);
-                opacity: 0;
-            }
-        }
-        
-        .magnetic-field-lines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 30% 50%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%),
-                radial-gradient(circle at 70% 50%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%),
-                radial-gradient(circle at 50% 30%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%),
-                radial-gradient(circle at 50% 70%, transparent 50%, rgba(255, 215, 0, 0.03) 51%, transparent 52%);
-            animation: magneticMove 20s infinite linear;
-        }
-        
-        @keyframes magneticMove {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        
         /* Transparent container */
         .container {
             max-width: 1400px;
@@ -787,16 +672,6 @@
             .tab-btn:hover i {
                 transform: translateY(3px);
             }
-            
-            .central-wave {
-                width: 400px;
-                height: 400px;
-            }
-            
-            .ring-1 { width: 500px; height: 500px; }
-            .ring-2 { width: 600px; height: 600px; }
-            .ring-3 { width: 700px; height: 700px; }
-            .ring-4 { width: 800px; height: 800px; }
         }
         
         @media (max-width: 768px) {
@@ -959,17 +834,6 @@
                 font-size: 0.8rem;
             }
             
-            /* Reduced wave effect for mobile */
-            .central-wave {
-                width: 300px;
-                height: 300px;
-            }
-            
-            .ring-1 { width: 350px; height: 350px; }
-            .ring-2 { width: 400px; height: 400px; }
-            .ring-3 { width: 450px; height: 450px; }
-            .ring-4 { width: 500px; height: 500px; }
-            
             /* Stereo bars optimization for mobile */
             .stereo-bars {
                 padding: 0 10px;
@@ -1045,17 +909,6 @@
                 font-size: 0.95rem;
             }
             
-            /* Further reduced wave effect for small mobile */
-            .central-wave {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .ring-1 { width: 250px; height: 250px; }
-            .ring-2 { width: 300px; height: 300px; }
-            .ring-3 { width: 350px; height: 350px; }
-            .ring-4 { width: 400px; height: 400px; }
-            
             /* Adjust stereo bars for very small screens */
             .stereo-bars {
                 height: 3px;
@@ -1078,12 +931,6 @@
             .tab-btn {
                 padding: 12px 10px;
                 font-size: 0.9rem;
-            }
-            
-            .central-wave {
-                width: 150px;
-                height: 150px;
-                filter: blur(10px);
             }
         }
         
@@ -1122,16 +969,6 @@
     </style>
 </head>
 <body>
-    <!-- Central Magnetic Wave Background -->
-    <div class="wave-container">
-        <div class="central-wave"></div>
-        <div class="wave-ring ring-1"></div>
-        <div class="wave-ring ring-2"></div>
-        <div class="wave-ring ring-3"></div>
-        <div class="wave-ring ring-4"></div>
-        <div class="magnetic-field-lines"></div>
-    </div>
-    
     <div class="container">
         <!-- Header with Stereo Moving Effect -->
         <header>
@@ -1207,10 +1044,6 @@
                             <i class="fas fa-file-invoice-dollar"></i>
                             Monthly yearly Profit % Analys
                         </button>
-						
-						
-                       
-
                     </div>
                 </div>
                 
@@ -1229,7 +1062,7 @@
                         </ul>
                         
                         <div class="website-link-container">
-                            <a href= 'Challan_invoice.html'" target="_blank" class="website-link">
+                            <a href="Challan_invoice.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open Challan Invoice
                             </a>
@@ -1299,7 +1132,6 @@
                         </div>
                     </div>
 					
-					
 					<div class="tab-content" id="notrecieve-tab">
                         <h2 class="tab-title"><i class="fas fa-calculator"></i>Not Recieve Product Vs Availability</h2>
                         <p class="tab-desc">Make informed stock decisions with our comprehensive stock Availability tools. Track availability, analyze  and optimize reports that help you identify Stocks and efficiency improvements.</p>
@@ -1320,7 +1152,6 @@
                             <p class="link-note">Click to access Not Receive Product Vs Stock Availability dashboard</p>
                         </div>
                     </div>
-					
 					
 					<div class="tab-content" id="grade-tab">
                         <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i>Grade Analysis</h2>
@@ -1363,8 +1194,6 @@
                             <p class="link-note">Click to access Product Grade Analysis</p>
                         </div>
                     </div>
-                   
-
                 </div>
             </div>
         </main>
@@ -1435,33 +1264,8 @@
         // About button functionality
         const aboutBtn = document.getElementById('aboutBtn');
         aboutBtn.addEventListener('click', function() {
-            alert('About Auto Lube House\n\nProprietor:"Shekhar Podar" Auto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.\n\nOur central magnetic wave represents the flow of lubricants and the dynamic energy of our automotive solutions.');
+            alert('About Auto Lube House\n\nProprietor:"Shekhar Podar" Auto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.\n\nOur spinning ALH logo represents the dynamic energy of our automotive solutions.');
             animateStereoBars();
-        });
-        
-        // Simulate website links (in a real scenario these would be actual URLs)
-        const websiteLinks = document.querySelectorAll('.website-link');
-        
-        websiteLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                // In a real implementation, this would navigate to the actual website
-                // For this demo, we'll show an alert instead
-                const siteName = this.textContent.includes('Challan') ? 'Challan Invoice' :
-                                this.textContent.includes('PrimaryCalculator') ? 'Primary Calculator' :
-                                this.textContent.includes('Quotation') ? 'Quotation Invoice' :
-								this.textContent.includes('OrdersAvailability') ? 'Orders Availability' :
-								this.textContent.includes('notrecieve') ? 'Product Not Recieved' :
-								this.textContent.includes('grade') ? 'Grade' :
-								this.textContent.includes('myprofit') ? 'Monthly Profit' :
-                                'Profit Calculator';
-                
-                // Only show alert for demo purposes - in real use, remove this
-                if (this.getAttribute('href').includes('example.com')) {
-                    e.preventDefault();
-                    alert(`This would open the ${siteName} website in a new tab.\n\nIn a real implementation, this link would navigate to:\n${this.getAttribute('href')}`);
-                    animateStereoBars();
-                }
-            });
         });
         
         // Add hover effect to spinning icon
@@ -1486,40 +1290,6 @@
                 }, 10);
             });
         }
-        
-        // Interactive magnetic wave effect on mouse move
-        document.addEventListener('mousemove', function(e) {
-            const centralWave = document.querySelector('.central-wave');
-            const rings = document.querySelectorAll('.wave-ring');
-            
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            // Move central wave slightly based on mouse position
-            const waveX = (x - 0.5) * 20;
-            const waveY = (y - 0.5) * 20;
-            
-            centralWave.style.transform = `translate(calc(-50% + ${waveX}px), calc(-50% + ${waveY}px))`;
-            
-            // Move rings with different intensities
-            rings.forEach((ring, index) => {
-                const intensity = (index + 1) * 0.3;
-                const ringX = (x - 0.5) * 10 * intensity;
-                const ringY = (y - 0.5) * 10 * intensity;
-                
-                ring.style.transform = `translate(calc(-50% + ${ringX}px), calc(-50% + ${ringY}px))`;
-            });
-            
-            // Update stereo bars based on mouse movement
-            const bars = document.querySelectorAll('.stereo-bar');
-            const movement = Math.abs(e.movementX) + Math.abs(e.movementY);
-            const intensity = Math.min(movement / 10, 2);
-            
-            bars.forEach((bar, index) => {
-                const scale = 1 + (intensity * Math.sin(Date.now() / 200 + index));
-                bar.style.transform = `scaleY(${scale})`;
-            });
-        });
         
         // Random stereo bar movement when idle
         setInterval(() => {
