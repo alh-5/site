@@ -21,6 +21,7 @@
             position: relative;
         }
         
+        /* Transparent container */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -52,6 +53,7 @@
             gap: 30px;
         }
         
+        /* Stereo Moving Background Effect */
         .stereo-effect {
             position: absolute;
             top: 0;
@@ -71,10 +73,15 @@
         }
         
         @keyframes stereoMove {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
         
+        /* Header Stereo Bars */
         .stereo-bars {
             position: absolute;
             bottom: 0;
@@ -109,6 +116,7 @@
             50% { transform: scaleY(1.5); }
         }
         
+        /* Spinning icon in header left corner */
         .header-icon-container {
             display: flex;
             flex-direction: column;
@@ -184,10 +192,15 @@
         }
         
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
-            100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+            0% {
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            }
         }
         
+        /* Header text content */
         .header-content {
             flex: 1;
             position: relative;
@@ -234,8 +247,14 @@
         }
         
         @keyframes linePulse {
-            0% { width: 120px; opacity: 0.8; }
-            100% { width: 150px; opacity: 1; }
+            0% {
+                width: 120px;
+                opacity: 0.8;
+            }
+            100% {
+                width: 150px;
+                opacity: 1;
+            }
         }
         
         .subtitle {
@@ -251,10 +270,17 @@
         }
         
         @keyframes subtitleSlide {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
         
+        /* About button integrated into header */
         .about-btn {
             position: absolute;
             top: 15px;
@@ -281,8 +307,12 @@
         }
         
         @keyframes buttonFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
         }
         
         .about-btn:hover {
@@ -293,50 +323,46 @@
                 0 0 15px rgba(255, 215, 0, 0.2);
         }
         
-        /* ===== TAB LAYOUT – ROW ORIENTED ===== */
+        /* Transposed tab layout - Transparent */
         .tab-wrapper {
             display: flex;
-            flex-direction: column;      /* stack toggle + row of tabs + content */
-            gap: 15px;
+            gap: 30px;
             margin-top: 10px;
             flex: 1;
         }
         
-        /* Horizontal sidebar – all tabs in a single row */
+        /* Vertical tabs on the left - Transparent */
         .tab-sidebar {
-            width: 100%;
+            width: 300px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 15px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
             border: 1px solid rgba(255, 215, 0, 0.2);
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.3),
                 0 0 30px rgba(255, 215, 0, 0.05);
             position: relative;
             z-index: 2;
-            transition: max-height 0.3s ease;
         }
         
         .tab-header {
             display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
+            flex-direction: column;
             background: rgba(255, 255, 255, 0.05);
-            padding: 6px 8px;
-            width: 100%;
+            border-right: 1px solid rgba(255, 215, 0, 0.2);
+            flex: 1;
         }
         
         .tab-btn {
-            flex: 0 0 auto;
-            padding: 12px 18px;
+            padding: 25px 20px;
             background: transparent;
             border: none;
-            font-size: 0.95rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
@@ -344,18 +370,20 @@
             position: relative;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
             text-align: left;
-            border-radius: 40px;
-            white-space: nowrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .tab-btn:last-child {
+            border-bottom: none;
         }
         
         .tab-btn i {
-            font-size: 1.1rem;
-            width: 20px;
-            transition: all 0.2s ease;
+            font-size: 1.5rem;
+            width: 30px;
+            transition: all 0.3s ease;
         }
         
         .tab-btn::before {
@@ -372,7 +400,6 @@
         .tab-btn:hover {
             background: rgba(255, 215, 0, 0.1);
             color: #FFD700;
-            border-color: rgba(255, 215, 0, 0.3);
         }
         
         .tab-btn:hover::before {
@@ -380,22 +407,24 @@
         }
         
         .tab-btn:hover i {
-            transform: scale(1.1);
+            transform: translateX(5px);
             color: #88E788;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         
         .tab-btn.active {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.15);
             color: #FFD700;
-            border: 1px solid #FFD700;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+            border-left: 4px solid #FFD700;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1);
         }
         
         .tab-btn.active i {
             color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         
-        /* content area – below the row of tabs */
+        /* Tab content area - Transparent */
         .tab-content-area {
             flex: 1;
             background: rgba(255, 255, 255, 0.08);
@@ -415,7 +444,7 @@
         
         .tab-content {
             padding: 40px;
-            min-height: 400px;
+            min-height: 500px;
             display: none;
             flex: 1;
             flex-direction: column;
@@ -484,6 +513,7 @@
             font-size: 1.2rem;
         }
         
+        /* Website link buttons */
         .website-link-container {
             margin-top: auto;
             padding-top: 30px;
@@ -552,6 +582,7 @@
             font-style: italic;
         }
         
+        /* Footer - Transparent */
         footer {
             text-align: center;
             padding: 40px 0 20px;
@@ -577,6 +608,7 @@
             text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
         
+        /* MOBILE HAMBURGER MENU FOR TABS */
         .mobile-tab-toggle {
             display: none;
             background: rgba(255, 215, 0, 0.15);
@@ -587,7 +619,7 @@
             font-weight: 700;
             cursor: pointer;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
             z-index: 100;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -606,24 +638,48 @@
             transform: rotate(180deg);
         }
         
-        /* ===== RESPONSIVE: on smaller screens, tabs can wrap, but we keep row ===== */
+        /* MOBILE SPECIFIC STYLES */
         @media (max-width: 1024px) {
+            .tab-wrapper {
+                flex-direction: column;
+            }
+            
+            .tab-sidebar {
+                width: 100%;
+                flex-direction: row;
+            }
+            
             .tab-header {
-                flex-wrap: wrap;
-                justify-content: center;
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 215, 0, 0.2);
             }
+            
             .tab-btn {
-                padding: 10px 14px;
-                font-size: 0.9rem;
+                min-width: 200px;
+                border-bottom: none;
+                border-right: 1px solid rgba(255, 255, 255, 0.05);
+                justify-content: center;
+                text-align: center;
             }
-            .tab-btn i {
-                font-size: 1rem;
-                width: 18px;
+            
+            .tab-btn.active {
+                border-left: none;
+                border-bottom: 4px solid #FFD700;
+            }
+            
+            .tab-btn:hover i {
+                transform: translateY(3px);
             }
         }
         
         @media (max-width: 768px) {
-            .container { padding: 15px; }
+            /* Improved mobile header */
+            .container {
+                padding: 15px;
+            }
+            
             header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -631,6 +687,7 @@
                 padding: 20px;
                 position: relative;
             }
+            
             .header-icon-container {
                 flex-direction: row;
                 gap: 15px;
@@ -638,24 +695,36 @@
                 width: 100%;
                 justify-content: space-between;
             }
+            
             .spinning-icon {
                 width: 80px;
                 height: 80px;
                 font-size: 2.2rem;
             }
+            
             .icon-label {
                 margin-top: 0;
                 font-size: 0.8rem;
                 padding: 4px 10px;
             }
-            h1 { font-size: 2rem; line-height: 1.2; }
-            h1::after { width: 80px; height: 2px; }
+            
+            h1 {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+            
+            h1::after {
+                width: 80px;
+                height: 2px;
+            }
+            
             .subtitle {
                 font-size: 1rem;
                 line-height: 1.5;
                 margin-top: 8px;
                 padding-left: 10px;
             }
+            
             .about-btn {
                 position: relative;
                 top: auto;
@@ -670,39 +739,58 @@
                 margin-top: 15px;
             }
             
+            /* Mobile hamburger menu for tabs */
             .mobile-tab-toggle {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
+            
             .tab-sidebar {
+                width: 100%;
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height 0.4s ease;
-                border-radius: 15px;
+                transition: max-height 0.5s ease;
+                border-radius: 10px;
                 margin-bottom: 0;
+                order: 1;
             }
+            
             .tab-sidebar.active {
-                max-height: 600px;
-                margin-bottom: 10px;
+                max-height: 500px;
+                margin-bottom: 20px;
             }
+            
             .tab-header {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                padding: 10px;
-                gap: 6px;
+                flex-direction: column;
+                overflow: visible;
+                border-bottom: none;
             }
+            
             .tab-btn {
-                flex: 0 1 auto;
-                padding: 10px 14px;
-                font-size: 0.85rem;
-                white-space: nowrap;
+                min-width: 100%;
+                padding: 18px 15px;
+                font-size: 1rem;
+                justify-content: flex-start;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
+            
+            .tab-btn.active {
+                border-left: 4px solid #FFD700;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .tab-content-area {
+                order: 2;
+                width: 100%;
+            }
+            
             .tab-content {
                 padding: 25px;
                 min-height: auto;
             }
+            
             .tab-title {
                 font-size: 1.7rem;
                 flex-direction: column;
@@ -710,12 +798,17 @@
                 gap: 10px;
                 margin-bottom: 20px;
             }
-            .tab-title i { font-size: 1.5rem; }
+            
+            .tab-title i {
+                font-size: 1.5rem;
+            }
+            
             .tab-desc {
                 font-size: 1rem;
                 line-height: 1.6;
                 margin-bottom: 25px;
             }
+            
             .feature-list li {
                 padding: 12px 15px;
                 font-size: 0.95rem;
@@ -724,22 +817,46 @@
                 align-items: flex-start;
                 gap: 8px;
             }
-            .feature-list li i { font-size: 1.1rem; }
+            
+            .feature-list li i {
+                font-size: 1.1rem;
+            }
+            
             .website-link {
                 min-width: 100%;
                 padding: 14px 25px;
                 font-size: 1rem;
                 justify-content: center;
             }
-            .link-note { text-align: center; font-size: 0.8rem; }
-            .stereo-bars { padding: 0 10px; }
-            .stereo-bar { width: 3px; }
+            
+            .link-note {
+                text-align: center;
+                font-size: 0.8rem;
+            }
+            
+            /* Stereo bars optimization for mobile */
+            .stereo-bars {
+                padding: 0 10px;
+            }
+            
+            .stereo-bar {
+                width: 3px;
+            }
+            
+            /* Mobile-specific layout adjustments */
+            .tab-wrapper {
+                gap: 15px;
+            }
+            
             footer {
                 padding: 25px 15px;
                 margin-top: 40px;
                 font-size: 0.85rem;
             }
-            .footer-logo { font-size: 1rem; }
+            
+            .footer-logo {
+                font-size: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -748,55 +865,106 @@
                 align-items: flex-start;
                 gap: 8px;
             }
+            
             .spinning-icon {
                 width: 70px;
                 height: 70px;
                 font-size: 2rem;
             }
+            
             .icon-label {
                 align-self: flex-start;
                 font-size: 0.75rem;
             }
-            h1 { font-size: 1.8rem; }
-            .subtitle { font-size: 0.9rem; }
-            .tab-btn {
-                padding: 8px 12px;
-                font-size: 0.8rem;
+            
+            h1 {
+                font-size: 1.8rem;
             }
-            .tab-btn i { font-size: 0.9rem; width: 16px; }
-            .tab-content { padding: 20px; }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .tab-btn {
+                padding: 15px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .tab-btn i {
+                font-size: 1.2rem;
+                width: 25px;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
             .feature-list li {
                 padding: 10px 12px;
                 font-size: 0.9rem;
             }
+            
             .website-link {
                 padding: 12px 20px;
                 font-size: 0.95rem;
             }
-            .stereo-bars { height: 3px; }
-            .stereo-bar { width: 2px; }
-        }
-        
-        @media (max-width: 360px) {
-            h1 { font-size: 1.6rem; }
-            .tab-title { font-size: 1.5rem; }
-            .tab-btn {
-                padding: 6px 10px;
-                font-size: 0.75rem;
+            
+            /* Adjust stereo bars for very small screens */
+            .stereo-bars {
+                height: 3px;
+            }
+            
+            .stereo-bar {
+                width: 2px;
             }
         }
         
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .tab-title {
+                font-size: 1.5rem;
+            }
+            
+            .tab-btn {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Touch-friendly enhancements */
         @media (hover: none) and (pointer: coarse) {
-            .tab-btn:hover { background: transparent; }
-            .tab-btn.active:hover { background: rgba(255, 215, 0, 0.2); }
-            .website-link:hover { transform: none; }
+            .tab-btn:hover {
+                background: transparent;
+            }
+            
+            .tab-btn.active:hover {
+                background: rgba(255, 215, 0, 0.15);
+            }
+            
+            .website-link:hover {
+                transform: none;
+            }
+            
             .feature-list li:hover {
                 transform: none;
                 background: rgba(255, 215, 0, 0.08);
             }
-            .tab-btn { min-height: 44px; }
-            .website-link { min-height: 55px; }
-            .about-btn { min-height: 45px; }
+            
+            /* Better touch targets */
+            .tab-btn {
+                min-height: 60px;
+            }
+            
+            .website-link {
+                min-height: 55px;
+            }
+            
+            .about-btn {
+                min-height: 45px;
+            }
         }
     </style>
 </head>
@@ -804,7 +972,10 @@
     <div class="container">
         <!-- Header with Stereo Moving Effect -->
         <header>
+            <!-- Stereo Moving Background -->
             <div class="stereo-effect"></div>
+            
+            <!-- Stereo Bars -->
             <div class="stereo-bars">
                 <div class="stereo-bar"></div>
                 <div class="stereo-bar"></div>
@@ -825,6 +996,8 @@
             <div class="header-content">
                 <h1>Auto Lube House</h1>
                 <div class="subtitle">Premium Automotive Lubrication Solutions & Transparency System</div>
+                
+                <!-- About button integrated into header -->
                 <button class="about-btn" id="aboutBtn">
                     <i class="fas fa-info-circle"></i>
                     About ALH
@@ -834,50 +1007,60 @@
         
         <main>
             <div class="tab-wrapper">
-                <!-- mobile toggle only visible on small screens -->
+                <!-- Mobile tab toggle button -->
                 <button class="mobile-tab-toggle" id="mobileTabToggle">
                     <span>Navigation Menu</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 
-                <!-- TAB SIDEBAR NOW HORIZONTAL ROW -->
+                <!-- Vertical tabs sidebar -->
                 <div class="tab-sidebar" id="tabSidebar">
                     <div class="tab-header">
                         <button class="tab-btn active" data-tab="challan">
-                            <i class="fas fa-store"></i> Challan Invoice
+                            <i class="fas fa-store"></i>
+                            Challan Invoice
                         </button>
                         <button class="tab-btn" data-tab="PrimaryCalculator">
-                            <i class="fas fa-file-invoice-dollar"></i> Primary Calculator
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            Primay Calculator
                         </button>
                         <button class="tab-btn" data-tab="Quotation">
-                            <i class="fas fa-clipboard-list"></i> Quotation
+                            <i class="fas fa-clipboard-list"></i>
+                            Quotation
                         </button>
                         <button class="tab-btn" data-tab="OrdersAvailability">
-                            <i class="fas fa-calculator"></i> Orders Availability
+                            <i class="fas fa-calculator"></i>
+                            Orders Availability
                         </button>
-                        <button class="tab-btn" data-tab="notrecieve">
-                            <i class="fas fa-calculator"></i> Not Recieve Product Vs Availability
+						<button class="tab-btn" data-tab="notrecieve">
+                            <i class="fas fa-calculator"></i>
+                            Not Recieve Product Vs Availability
                         </button>
-                        <button class="tab-btn" data-tab="grade">
-                            <i class="fas fa-file-invoice-dollar"></i> Grade Analysis
+						<button class="tab-btn" data-tab="grade">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            Grade Analysis
                         </button>
-                        <button class="tab-btn" data-tab="myprofit">
-                            <i class="fas fa-file-invoice-dollar"></i> Monthly yearly Profit % Analys
+						<button class="tab-btn" data-tab="myprofit">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            Monthly yearly Profit % Analys
                         </button>
                     </div>
                 </div>
                 
+                <!-- Tab content area -->
                 <div class="tab-content-area">
                     <div class="tab-content active" id="challan-tab">
                         <h2 class="tab-title"><i class="fas fa-store"></i> Challan Generator</h2>
                         <p class="tab-desc">Manage all your Invoice orders efficiently.process customer invoices with our comprehensive order system designed specifically for Auto Lube House. Access real-time data, generate reports, and streamline your ordering process with our intuitive platform.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Create and manage Challan in real-time</li>
                             <li><i class="fas fa-check-circle"></i> Add order status from placement to delivery</li>
                             <li><i class="fas fa-check-circle"></i> Generate invoices and receipts automatically</li>
                             <li><i class="fas fa-check-circle"></i> Challan Pricelist inventory levels and set reorder points</li>
-                            <li><i class="fas fa-check-circle"></i> Save And Print management with order</li>
+                            <li><i class="fas fa-check-circle"></i> Save And Print management with order </li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="Challan_invoice.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
@@ -890,6 +1073,7 @@
                     <div class="tab-content" id="PrimaryCalculator-tab">
                         <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> Primary Calculator</h2>
                         <p class="tab-desc">Handle Primary Purhase Calculator to Improve Oder Compilation efficiency, reduce errors, and enhance satisfaction with our comprehensive calculation solution.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Purchase assign</li>
                             <li><i class="fas fa-check-circle"></i> Track status and estimated completion times</li>
@@ -897,6 +1081,7 @@
                             <li><i class="fas fa-check-circle"></i> Generate service estimates Total final invoices</li>
                             <li><i class="fas fa-check-circle"></i> Integration with inventory and purchase amount</li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="Primary_Calculator.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
@@ -909,12 +1094,14 @@
                     <div class="tab-content" id="Quotation-tab">
                         <h2 class="tab-title"><i class="fas fa-clipboard-list"></i> Quotation Invoice</h2>
                         <p class="tab-desc">Monitor your inventory levels, identify requirements, and ensure you never run out of essential lubrication products with our smart inventory management system. Get real-time insights, automated alerts, and data-driven recommendations to optimize your inventory and reduce operational costs.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Create Quotation with Per Liters</li>
                             <li><i class="fas fa-check-circle"></i> Modify Calculation recommendations</li>
                             <li><i class="fas fa-check-circle"></i> Supplier management and purchase reorder generation</li>
                             <li><i class="fas fa-check-circle"></i> Product categorization and batch tracking</li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="Quotation.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
@@ -927,6 +1114,7 @@
                     <div class="tab-content" id="OrdersAvailability-tab">
                         <h2 class="tab-title"><i class="fas fa-calculator"></i> Orders Availability</h2>
                         <p class="tab-desc">Make informed business decisions with our comprehensive Orders Availability tools. Track Orders, analyze Availability, and optimize business performance with interactive dashboards and reports that help you identify Stocks and efficiency improvements.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Calculate Availability margins on individual products</li>
                             <li><i class="fas fa-check-circle"></i> Sales Order analytics with visual reports</li>
@@ -934,6 +1122,7 @@
                             <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
                             <li><i class="fas fa-check-circle"></i> Analysis for Stock Available and Not Available strategies</li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="ordersavailablity.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
@@ -942,10 +1131,11 @@
                             <p class="link-note">Click to access Orders Availability dashboard</p>
                         </div>
                     </div>
-                    
-                    <div class="tab-content" id="notrecieve-tab">
+					
+					<div class="tab-content" id="notrecieve-tab">
                         <h2 class="tab-title"><i class="fas fa-calculator"></i>Not Recieve Product Vs Availability</h2>
                         <p class="tab-desc">Make informed stock decisions with our comprehensive stock Availability tools. Track availability, analyze  and optimize reports that help you identify Stocks and efficiency improvements.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Calculate Availability margins on individual products</li>
                             <li><i class="fas fa-check-circle"></i> analytics with visual reports</li>
@@ -953,18 +1143,20 @@
                             <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
                             <li><i class="fas fa-check-circle"></i> Product Not Recieve Analysis for Stock Available and Not Available strategies</li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="Stock Available from Not Received physical product/Stock_Checker.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
-                                Open Not Receive Product Vs Stock Availability Website
+                                Open  Not Receive Product Vs Stock Availability Website
                             </a>
                             <p class="link-note">Click to access Not Receive Product Vs Stock Availability dashboard</p>
                         </div>
                     </div>
-                    
-                    <div class="tab-content" id="grade-tab">
+					
+					<div class="tab-content" id="grade-tab">
                         <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i>Grade Analysis</h2>
                         <p class="tab-desc">Grade analyze  and optimize reports that help you identify Grade and efficiency improvements.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Calculate Grade products</li>
                             <li><i class="fas fa-check-circle"></i> analytics with visual reports</li>
@@ -972,6 +1164,7 @@
                             <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
                             <li><i class="fas fa-check-circle"></i> Grade Analysis for strategies</li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="Grade/grade.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
@@ -980,10 +1173,11 @@
                             <p class="link-note">Click to access Product Grade Analysis</p>
                         </div>
                     </div>
-                    
-                    <div class="tab-content" id="myprofit-tab">
+					
+					<div class="tab-content" id="myprofit-tab">
                         <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i>Monthly Yearly Analys Profit</h2>
                         <p class="tab-desc">Monthly and Yearly Analys identify Grade and efficiency improvements.</p>
+                        
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Calculate Grade products</li>
                             <li><i class="fas fa-check-circle"></i> analytics with visual reports</li>
@@ -991,6 +1185,7 @@
                             <li><i class="fas fa-check-circle"></i> Yearly tracking</li>
                             <li><i class="fas fa-check-circle"></i> Profit & Loss, Moving & Not Moving Stock Analysis for strategies</li>
                         </ul>
+                        
                         <div class="website-link-container">
                             <a href="monthly profit/monthlyprofit.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
@@ -1017,15 +1212,21 @@
         
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
                 tabBtns.forEach(b => b.classList.remove('active'));
                 tabContents.forEach(c => c.classList.remove('active'));
                 
+                // Add active class to clicked button
                 btn.classList.add('active');
+                
+                // Show corresponding tab content
                 const tabId = btn.getAttribute('data-tab');
                 document.getElementById(`${tabId}-tab`).classList.add('active');
                 
+                // Animate stereo bars on tab change
                 animateStereoBars();
                 
+                // On mobile, close the tab sidebar after selection
                 if (window.innerWidth <= 768) {
                     const tabSidebar = document.getElementById('tabSidebar');
                     const mobileToggle = document.getElementById('mobileTabToggle');
@@ -1035,24 +1236,24 @@
             });
         });
         
-        // Mobile tab toggle
+        // Mobile tab toggle functionality
         const mobileTabToggle = document.getElementById('mobileTabToggle');
         const tabSidebar = document.getElementById('tabSidebar');
         
         if (mobileTabToggle && tabSidebar) {
-            mobileTabToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
+            mobileTabToggle.addEventListener('click', function() {
                 tabSidebar.classList.toggle('active');
                 this.classList.toggle('active');
                 animateStereoBars();
             });
         }
         
-        // Close mobile sidebar when clicking outside
+        // Close mobile sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
             if (window.innerWidth <= 768) {
                 const isClickInsideSidebar = tabSidebar.contains(event.target);
                 const isClickOnToggle = mobileTabToggle.contains(event.target);
+                
                 if (!isClickInsideSidebar && !isClickOnToggle && tabSidebar.classList.contains('active')) {
                     tabSidebar.classList.remove('active');
                     mobileTabToggle.classList.remove('active');
@@ -1060,23 +1261,26 @@
             }
         });
         
-        // About button
-        document.getElementById('aboutBtn').addEventListener('click', function() {
-            alert('About Auto Lube House\n\nProprietor: "Shekhar Podar"\n\nAuto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.\n\nOur spinning ALH logo represents the dynamic energy of our automotive solutions.');
+        // About button functionality
+        const aboutBtn = document.getElementById('aboutBtn');
+        aboutBtn.addEventListener('click', function() {
+            alert('About Auto Lube House\n\nProprietor:"Shekhar Podar" Auto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.\n\nOur spinning ALH logo represents the dynamic energy of our automotive solutions.');
             animateStereoBars();
         });
         
-        // Spinning icon hover speed
+        // Add hover effect to spinning icon
         const spinIcon = document.querySelector('.spinning-icon');
+        
         spinIcon.addEventListener('mouseenter', function() {
             this.style.animationDuration = '3s';
             animateStereoBars();
         });
+        
         spinIcon.addEventListener('mouseleave', function() {
             this.style.animationDuration = '6s';
         });
         
-        // Stereo bars animation
+        // Stereo bars animation function
         function animateStereoBars() {
             const bars = document.querySelectorAll('.stereo-bar');
             bars.forEach(bar => {
@@ -1090,27 +1294,31 @@
         // Random stereo bar movement when idle
         setInterval(() => {
             const bars = document.querySelectorAll('.stereo-bar');
-            bars.forEach((bar) => {
+            bars.forEach((bar, index) => {
                 const randomScale = 0.8 + Math.random() * 0.7;
                 bar.style.transform = `scaleY(${randomScale})`;
             });
         }, 1500);
         
+        // Initialize stereo bars animation
         animateStereoBars();
         
-        // Handle resize
+        // Handle window resize for responsive behavior
         window.addEventListener('resize', function() {
+            // If resizing to larger screen, ensure tab sidebar is visible
             if (window.innerWidth > 768) {
                 tabSidebar.classList.add('active');
                 mobileTabToggle.style.display = 'none';
             } else {
                 mobileTabToggle.style.display = 'flex';
+                // Only keep sidebar open if it was already open
                 if (!mobileTabToggle.classList.contains('active')) {
                     tabSidebar.classList.remove('active');
                 }
             }
         });
         
+        // Initialize based on current screen size
         if (window.innerWidth <= 768) {
             mobileTabToggle.style.display = 'flex';
             tabSidebar.classList.remove('active');
