@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic_Knowledge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f0f4f8;
+            padding: 2rem 1.5rem;
+            color: #1e293b;
+        }
+
+        .wrapper { max-width: 1500px; margin: 0 auto; }
+
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.25rem;
+            color: #0b3b5c;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .subhead {
+            font-size: 1rem;
+            color: #2c5a7a;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #1e7e34;
+            padding-left: 1.2rem;
+            background: #e9f2f9;
+            padding: 0.75rem 1.2rem;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .badge-detail {
+            background: #1e7e34;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== UNIVERSAL SEARCH ===== */
+        .search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input-wrap {
+            flex: 1;
+            min-width: 260px;
+            position: relative;
+        }
+
+        /* FIX: more left padding so text starts far from the icon */
+        .search-input-wrap input {
+            width: 100%;
+            padding: 1rem 3.2rem 1rem 3.4rem;   /* ← increased left padding */
+            border: 2px solid #bdd3e6;
+            border-radius: 60px;
+            font-size: 1rem;
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: 0.2s;
+            font-family: inherit;
+            color: #0b3b5c;
+        }
+
+        .search-input-wrap input::placeholder {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .search-input-wrap input:focus {
+            border-color: #1e7e34;
+            box-shadow: 0 0 0 4px rgba(30,126,52,0.12), 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        /* FIX: search icon pushed further left so it never overlaps text */
+        .search-input-wrap .search-icon {
+            position: absolute;
+            left: 1.35rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            color: #6b8ba3;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .search-input-wrap .clear-icon {
+            position: absolute;
+            right: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #94a3b8;
+            cursor: pointer;
+            display: none;
+            background: #eef2f7;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            transition: 0.15s;
+            border: none;
+            line-height: 1;
+        }
+
+        .search-input-wrap .clear-icon.visible { display: flex; }
+        .search-input-wrap .clear-icon:hover { background: #dbe9f5; color: #0b3b5c; }
+
+        .search-box button {
+            background: #0b3b5c;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 4px 10px rgba(11,59,92,0.2);
+        }
+
+        .search-box button:hover { background: #0f4b74; }
+
+        /* Suggestions dropdown */
+        .suggestions-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 36px rgba(11, 59, 92, 0.18);
+            border: 1px solid #dbe9f5;
+            max-height: 420px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            padding: 0.5rem;
+        }
+
+        .suggestions-dropdown.show { display: block; }
+
+        .suggestion-item {
+            padding: 0.65rem 0.9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            transition: 0.12s;
+            border-bottom: 1px solid #f1f7fd;
+        }
+
+        .suggestion-item:last-child { border-bottom: none; }
+
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: #e8f5ee;
+        }
+
+        .suggestion-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .suggestion-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .suggestion-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #0b3b5c;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .suggestion-title mark {
+            background: #fef08a;
+            color: #854d0e;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+
+        .suggestion-sub {
+            font-size: 0.75rem;
+            color: #6b8ba3;
+            margin-top: 2px;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+        .suggestion-sub mark {
+            background: #dcfce7;
+            color: #166534;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .suggestion-category {
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-start;
+            margin-top: 2px;
+        }
+
+        .cat-org { background: #dbeafe; color: #1e40af; }
+        .cat-api-s { background: #dcfce7; color: #166534; }
+        .cat-api-c { background: #ffedd5; color: #9a3412; }
+        .cat-jaso { background: #f3e8ff; color: #6b21a8; }
+        .cat-ilsac { background: #e0f2fe; color: #0369a1; }
+        .cat-tech { background: #fee2e2; color: #991b1b; }
+        .cat-visc { background: #fef9c3; color: #854d0e; }
+        .cat-add { background: #f1f5f9; color: #334155; }
+
+        .no-suggestions {
+            padding: 1.5rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .no-suggestions span {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .suggestions-header {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            font-weight: 700;
+            padding: 0.5rem 0.9rem 0.3rem;
+        }
+
+        /* Highlight search results info */
+        .search-info {
+            font-size: 0.82rem;
+            color: #4e6b7e;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: #e8f5ee;
+            border-radius: 30px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-info.show { display: inline-flex; }
+
+        .search-info strong { color: #0b3b5c; }
+
+        /* ===== KNOWLEDGE BASE ===== */
+        .kb-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 6px 18px rgba(0, 20, 30, 0.06);
+            border: 1px solid #dbe9f5;
+            padding: 1.6rem 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .kb-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0b3b5c;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kb-subtitle {
+            font-size: 0.85rem;
+            color: #4e6b7e;
+            margin-bottom: 1.3rem;
+        }
+
+        .kb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .kb-card {
+            background: #f8fbff;
+            border: 1px solid #d9e8f5;
+            border-radius: 14px;
+            padding: 1rem 1.1rem;
+        }
+
+        .kb-card.highlight-card {
+            background: #fefce8;
+            border-color: #fde047;
+            box-shadow: 0 0 0 3px rgba(253, 224, 71, 0.25);
+        }
+
+        .kb-card h3 {
+            font-size: 0.95rem;
+            color: #0b3b5c;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 2px solid #e2eef9;
+            padding-bottom: 0.4rem;
+        }
+
+        .kb-card p, .kb-card li {
+            font-size: 0.82rem;
+            line-height: 1.5;
+            color: #2d4b64;
+        }
+
+        .kb-card ul { list-style: none; padding-left: 0; }
+
+        .kb-card li {
+            padding: 0.25rem 0;
+            border-bottom: 1px dashed #e8f1f9;
+        }
+
+        .kb-card li:last-child { border-bottom: none; }
+
+        .kb-tag {
+            display: inline-block;
+            background: #0b3b5c;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            margin-right: 6px;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .kb-tag.green { background: #1e7e34; }
+        .kb-tag.orange { background: #c2410c; }
+        .kb-tag.blue { background: #1d4ed8; }
+        .kb-tag.purple { background: #6b21a8; }
+        .kb-tag.red { background: #b91c1c; }
+
+        .kb-note {
+            background: #fff7ed;
+            border-left: 4px solid #ea580c;
+            border-radius: 8px;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.8rem;
+            color: #7c2d12;
+            margin-top: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .kb-note strong { color: #9a3412; }
+
+        .kb-note.red {
+            background: #fef2f2;
+            border-left-color: #b91c1c;
+            color: #7f1d1d;
+        }
+
+        .kb-note.red strong { color: #991b1b; }
+
+        /* ===== FULL FORMS TABLE ===== */
+        .fullform-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin-top: 0.5rem;
+        }
+
+        .fullform-table th {
+            background: #0b3b5c;
+            color: white;
+            padding: 0.5rem 0.7rem;
+            text-align: left;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+        }
+
+        .fullform-table td {
+            padding: 0.45rem 0.7rem;
+            border-bottom: 1px solid #e8f1f9;
+            color: #2d4b64;
+            line-height: 1.4;
+        }
+
+        .fullform-table tr:last-child td { border-bottom: none; }
+        .fullform-table tr:hover td { background: #f4faff; }
+        .fullform-table tr.row-highlight td {
+            background: #fefce8;
+            box-shadow: inset 3px 0 0 #facc15;
+        }
+
+        .fullform-table .abbr {
+            font-weight: 700;
+            color: #0b3b5c;
+            font-family: 'SF Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .fullform-table .abbr mark,
+        .fullform-table td mark {
+            background: #fef08a;
+            color: #854d0e;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+
+        .fullform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .hidden-by-search { display: none !important; }
+
+        /* ===== EMPTY CATALOGUE ===== */
+        .section-heading {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0b3b5c;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-catalogue {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 6px 18px rgba(0, 20, 30, 0.06);
+            border: 1px dashed #bdd3e6;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #4e6b7e;
+        }
+
+        .empty-catalogue .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-catalogue h3 { font-size: 1.2rem; color: #0b3b5c; margin-bottom: 0.5rem; }
+        .empty-catalogue p {
+            font-size: 0.9rem;
+            max-width: 500px;
+            margin: 0 auto 1.2rem;
+            line-height: 1.5;
+        }
+        .empty-catalogue .note {
+            display: inline-block;
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #fecaca;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #4e6b7e;
+            background: #e3eef8;
+            padding: 1rem 1.5rem;
+            border-radius: 40px;
+            display: inline-block;
+            border: 1px solid #bdd3e6;
+        }
+
+        @media (max-width: 500px) {
+            .kb-grid, .fullform-grid { grid-template-columns: 1fr; }
+            .fullform-table { font-size: 0.75rem; }
+            .fullform-table th, .fullform-table td { padding: 0.35rem 0.5rem; }
+            .suggestion-category { display: none; }
+            .search-input-wrap input { padding-left: 3rem; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <h1>
+        ⚙️ AUTO LUBE HOUSE · Knowledge Base
+        <span class="badge-detail">Basic Knowledge</span>
+    </h1>
+    <div class="subhead">
+        Understand <strong>the</strong> — basic knowledge of Lube <strong>is very important</strong> in order to know how to explain it to others.
+    </div>
+
+    <!-- ================= UNIVERSAL SEARCH ================= -->
+    <div class="search-container">
+        <div class="search-box">
+            <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="universalSearch" placeholder="Search here ..." autocomplete="off" spellcheck="false">
+                <button class="clear-icon" id="clearSearch" title="Clear search">✕</button>
+                <div class="suggestions-dropdown" id="suggestionsDropdown"></div>
+            </div>
+            <button id="searchBtn">Search</button>
+        </div>
+    </div>
+
+    <div class="search-info" id="searchInfo">
+        <span>🔎 Showing results for:</span>
+        <strong id="searchTerm"></strong>
+        <span id="searchCount"></span>
+    </div>
+
+    <!-- ================= KNOWLEDGE BASE ================= -->
+    <div class="kb-section">
+        <div class="kb-title">📚 API &amp; JASO Knowledge Base</div>
+        <div class="kb-subtitle">Understand the letters on your oil label — a short guide to service categories.</div>
+
+        <div class="kb-grid" id="kbGrid">
+
+            <div class="kb-card" data-search="api s series petrol engines service sj sl sm sn sn plus sp spark ignition lspi timing chain turbo gdi">
+                <h3>🅰️ API "S" Series — Petrol Engines</h3>
+                <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
+                    <em>"S" = Service (petrol). Progression: SJ &lt; SL &lt; SM &lt; SN &lt; SN Plus &lt; SP</em>
+                </p>
+                <ul>
+                    <li><span class="kb-tag green">SP</span><strong>Latest</strong> — LSPI protection, timing chain wear, turbo/GDI. Backward compatible.</li>
+                    <li><span class="kb-tag green">SN Plus</span><strong>Interim</strong> — addresses LSPI in TGDI engines. API SP includes all SN Plus.</li>
+                    <li><span class="kb-tag blue">SN</span>2010 — better high‑temp deposits &amp; fuel economy.</li>
+                    <li><span class="kb-tag blue">SM</span>2004 — improved oxidation &amp; wear protection.</li>
+                    <li><span class="kb-tag blue">SL</span>2001 — better high‑temperature deposit control.</li>
+                    <li><span class="kb-tag blue">SJ</span>1996 — improved deposit control &amp; oil consumption.</li>
+                </ul>
+            </div>
+
+            <div class="kb-card" data-search="api c series diesel engines commercial ck-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 egr dpf scr">
+                <h3>🛢️ API "C" Series — Diesel Engines</h3>
+                <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
+                    <em>"C" = Commercial (diesel). Progression: CF‑4 &lt; CG‑4 &lt; CH‑4 &lt; CI‑4 &lt; CI‑4 Plus &lt; CJ‑4 &lt; CK‑4</em>
+                </p>
+                <ul>
+                    <li><span class="kb-tag orange">CK‑4</span><strong>2017</strong> — modern diesel, DPF/SCR compatible. Exceeds CI‑4 Plus.</li>
+                    <li><span class="kb-tag orange">CJ‑4</span><strong>2006</strong> — low‑ash, DPF compatible, 2007 emissions.</li>
+                    <li><span class="kb-tag orange">CI‑4 Plus</span>Higher protection vs. soot‑viscosity &amp; shear loss.</li>
+                    <li><span class="kb-tag orange">CI‑4</span><strong>2002</strong> — EGR engines, superior soot dispersal.</li>
+                    <li><span class="kb-tag red">CH‑4</span><strong>1998</strong> — up to 0.5% sulphur fuel. <em>(removed from catalogue)</em></li>
+                    <li><span class="kb-tag red">CG‑4</span><strong>1995</strong> — severe duty. <em>(removed from catalogue)</em></li>
+                    <li><span class="kb-tag red">CF‑4</span><strong>1990</strong> — basic soot control. <em>(removed from catalogue)</em></li>
+                </ul>
+                <div class="kb-note red">
+                    <strong>⚠️ Note:</strong> CH‑4, CG‑4 and CF‑4 entries were removed from the catalogue because they were listed inaccurately. Only verified categories remain.
+                </div>
+            </div>
+
+            <div class="kb-card" data-search="jaso motorcycle oils wet clutch friction ma ma1 ma2 mb dry clutch japan automobile standards organization">
+                <h3>🏍️ JASO — Motorcycle Oils</h3>
+                <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
+                    <em>JASO T 903 — wet clutch friction classification.</em>
+                </p>
+                <ul>
+                    <li><span class="kb-tag purple">MA2</span>High friction — wet clutch, maximum grip. <strong>Most modern bikes.</strong></li>
+                    <li><span class="kb-tag purple">MA1</span>Medium friction — wet clutch, balance of grip &amp; smooth engagement.</li>
+                    <li><span class="kb-tag purple">MA</span>Older standard, now split into MA1 &amp; MA2.</li>
+                    <li><span class="kb-tag purple">MB</span>Low friction — <strong>dry clutch</strong> only. <em>Not for wet clutch bikes.</em></li>
+                </ul>
+                <div class="kb-note">
+                    <strong>⚠️ Important:</strong> For any motorcycle with a wet clutch, always use a <strong>JASO MA</strong> rated oil. Standard car oils may cause clutch slippage.
+                </div>
+            </div>
+
+            <div class="kb-card" data-search="ilsac gf-6a gf-6b gf-5 american japanese automaker fuel economy emission system w-grade winter viscosity cold flow">
+                <h3>🇺🇸🇯🇵 ILSAC &amp; ❄️ W‑Grade</h3>
+                <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
+                    <em>ILSAC = American &amp; Japanese automaker standard.</em>
+                </p>
+                <ul>
+                    <li><span class="kb-tag blue">GF‑6A</span>Based on API SP — adds fuel economy &amp; emission system protection.</li>
+                    <li><span class="kb-tag blue">GF‑6B</span>For 0W‑16 grades only (very low viscosity).</li>
+                    <li><span class="kb-tag blue">GF‑5</span>Based on API SN — previous generation.</li>
+                </ul>
+                <div style="margin-top:0.7rem;">
+                    <p style="font-size:0.8rem; font-weight:700; color:#0b3b5c; margin-bottom:0.3rem;">W‑Grade explained (e.g. 5W‑30):</p>
+                    <ul>
+                        <li><span class="kb-tag orange">Before W</span>Cold‑weather flow. Lower = better cold start. <em>0W best, 20W weakest.</em></li>
+                        <li><span class="kb-tag orange">After W</span>Viscosity at 100°C. Higher = thicker when hot. <em>20 thin, 50 thick.</em></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= FULL FORMS ================= -->
+        <div style="margin-top: 2rem; border-top: 2px dashed #dbe9f5; padding-top: 1.5rem;">
+            <div class="kb-title">🔤 Full Forms &amp; Abbreviations</div>
+            <div class="kb-subtitle">Complete expansion of every abbreviation used in this guide.</div>
+
+            <div class="fullform-grid" id="fullformGrid">
+
+                <div class="kb-card" data-search="organizations standards api american petroleum institute jaso japan automobile standards organization ilsac international lubricant specification advisory committee acea european automobile manufacturers association sae society of automotive engineers iso international organization for standardization nlgi national lubricating grease institute oem original equipment manufacturer">
+                    <h3>🏛️ Organizations &amp; Standards</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">API</td><td>American Petroleum Institute</td></tr>
+                        <tr><td class="abbr">JASO</td><td>Japanese Automobile Standards Organization</td></tr>
+                        <tr><td class="abbr">ILSAC</td><td>International Lubricant Specification Advisory Committee</td></tr>
+                        <tr><td class="abbr">ACEA</td><td>Association des Constructeurs Européens d'Automobiles</td></tr>
+                        <tr><td class="abbr">SAE</td><td>Society of Automotive Engineers</td></tr>
+                        <tr><td class="abbr">ISO</td><td>International Organization for Standardization</td></tr>
+                        <tr><td class="abbr">NLGI</td><td>National Lubricating Grease Institute</td></tr>
+                        <tr><td class="abbr">OEM</td><td>Original Equipment Manufacturer</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="api s series full forms sp sn sn plus sm sl sj sf spark ignition petrol service category">
+                    <h3>🅰️ API "S" Series Full Forms</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">API SP</td><td>API Service Category SP (Spark‑Ignition, Petrol) — latest</td></tr>
+                        <tr><td class="abbr">API SN</td><td>API Service Category SN (Spark‑Ignition, Petrol)</td></tr>
+                        <tr><td class="abbr">API SN Plus</td><td>API Service Category SN Plus (Petrol + LSPI protection)</td></tr>
+                        <tr><td class="abbr">API SM</td><td>API Service Category SM (Spark‑Ignition, Petrol)</td></tr>
+                        <tr><td class="abbr">API SL</td><td>API Service Category SL (Spark‑Ignition, Petrol)</td></tr>
+                        <tr><td class="abbr">API SJ</td><td>API Service Category SJ (Spark‑Ignition, Petrol)</td></tr>
+                        <tr><td class="abbr">API SF</td><td>API Service Category SF (Spark‑Ignition, Petrol — older)</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="api c series full forms ck-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 cf compression ignition diesel commercial">
+                    <h3>🛢️ API "C" Series Full Forms</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">API CK-4</td><td>API Service Category CK‑4 (Compression‑Ignition, Diesel) — latest</td></tr>
+                        <tr><td class="abbr">API CJ-4</td><td>API Service Category CJ‑4 (Compression‑Ignition, Diesel)</td></tr>
+                        <tr><td class="abbr">API CI-4 Plus</td><td>API Service Category CI‑4 Plus (Diesel + soot protection)</td></tr>
+                        <tr><td class="abbr">API CI-4</td><td>API Service Category CI‑4 (Compression‑Ignition, Diesel)</td></tr>
+                        <tr><td class="abbr">API CH-4</td><td>API Service Category CH‑4 (Compression‑Ignition, Diesel)</td></tr>
+                        <tr><td class="abbr">API CG-4</td><td>API Service Category CG‑4 (Compression‑Ignition, Diesel)</td></tr>
+                        <tr><td class="abbr">API CF-4</td><td>API Service Category CF‑4 (Compression‑Ignition, Diesel)</td></tr>
+                        <tr><td class="abbr">API CF</td><td>API Service Category CF (Compression‑Ignition, Diesel — older)</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="jaso ilsac full forms ma ma1 ma2 mb fb fc fd gf-6a gf-6b gf-5 motorcycle wet clutch dry clutch gasoline fuel">
+                    <h3>🏍️ JASO &amp; ILSAC Full Forms</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">JASO MA</td><td>JASO MA (Motorcycle, wet clutch, high friction)</td></tr>
+                        <tr><td class="abbr">JASO MA1</td><td>JASO MA1 (Motorcycle, wet clutch, medium friction)</td></tr>
+                        <tr><td class="abbr">JASO MA2</td><td>JASO MA2 (Motorcycle, wet clutch, high friction)</td></tr>
+                        <tr><td class="abbr">JASO MB</td><td>JASO MB (Motorcycle, dry clutch, low friction)</td></tr>
+                        <tr><td class="abbr">JASO FB</td><td>JASO FB (2‑stroke engine oil, low ash)</td></tr>
+                        <tr><td class="abbr">JASO FC</td><td>JASO FC (2‑stroke engine oil, low smoke)</td></tr>
+                        <tr><td class="abbr">JASO FD</td><td>JASO FD (2‑stroke engine oil, low smoke + detergent)</td></tr>
+                        <tr><td class="abbr">ILSAC GF-6A</td><td>ILSAC GF‑6A (based on API SP)</td></tr>
+                        <tr><td class="abbr">ILSAC GF-6B</td><td>ILSAC GF‑6B (for 0W‑16 grades only)</td></tr>
+                        <tr><td class="abbr">ILSAC GF-5</td><td>ILSAC GF‑5 (based on API SN)</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="technical terms emission standards lspi low-speed pre-ignition tgdi turbocharged gasoline direct injection gdi dpf diesel particulate filter scr selective catalytic reduction egr exhaust gas recirculation def diesel exhaust fluid bs4 bs6 bharat stage atf automatic transmission fluid dot department of transportation">
+                    <h3>🔬 Technical Terms &amp; Emission Standards</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">LSPI</td><td>Low‑Speed Pre‑Ignition</td></tr>
+                        <tr><td class="abbr">TGDI</td><td>Turbocharged Gasoline Direct Injection</td></tr>
+                        <tr><td class="abbr">GDI</td><td>Gasoline Direct Injection</td></tr>
+                        <tr><td class="abbr">DPF</td><td>Diesel Particulate Filter</td></tr>
+                        <tr><td class="abbr">SCR</td><td>Selective Catalytic Reduction</td></tr>
+                        <tr><td class="abbr">EGR</td><td>Exhaust Gas Recirculation</td></tr>
+                        <tr><td class="abbr">DEF</td><td>Diesel Exhaust Fluid (AdBlue)</td></tr>
+                        <tr><td class="abbr">BS4 / BS6</td><td>Bharat Stage 4 / Bharat Stage 6 (Indian emission standards)</td></tr>
+                        <tr><td class="abbr">ATF</td><td>Automatic Transmission Fluid</td></tr>
+                        <tr><td class="abbr">DOT 3 / DOT 4</td><td>Department of Transportation brake fluid grades 3 and 4</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="viscosity w-grade full forms sae 5w-30 winter cold flow monograde multigrade 0w 5w 10w 15w 20w 25w">
+                    <h3>❄️ Viscosity &amp; W‑Grade Full Forms</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">SAE 5W-30</td><td>Society of Automotive Engineers — 5W‑30 (5 = cold flow, W = Winter, 30 = hot viscosity)</td></tr>
+                        <tr><td class="abbr">W</td><td>Winter — indicates cold‑weather performance rating</td></tr>
+                        <tr><td class="abbr">0W</td><td>0 Winter — flows at very low temps (below −35 °C)</td></tr>
+                        <tr><td class="abbr">5W</td><td>5 Winter — cold start down to about −30 °C</td></tr>
+                        <tr><td class="abbr">10W</td><td>10 Winter — cold start down to about −25 °C</td></tr>
+                        <tr><td class="abbr">15W</td><td>15 Winter — cold start down to about −20 °C</td></tr>
+                        <tr><td class="abbr">20W</td><td>20 Winter — cold start down to about −15 °C</td></tr>
+                        <tr><td class="abbr">Monograde</td><td>Single viscosity oil (e.g., SAE 40) — no winter rating</td></tr>
+                        <tr><td class="abbr">Multigrade</td><td>Oil with both winter (W) and hot viscosity ratings (e.g., 15W‑40)</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="additional terms hdpe high-density polyethylene buc bucket ctn carton pou pouch li liquid 4t 4-stroke 2t 2-stroke pcmo passenger car motor oil mgo maruti genuine oil mgdo diesel mga accessories crdi common rail direct injection">
+                    <h3>📋 Additional Terms</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">HDPE</td><td>High‑Density Polyethylene (container material)</td></tr>
+                        <tr><td class="abbr">BUC</td><td>Bucket (packaging type)</td></tr>
+                        <tr><td class="abbr">CTN</td><td>Carton (packaging type)</td></tr>
+                        <tr><td class="abbr">POU</td><td>Pouch (packaging type)</td></tr>
+                        <tr><td class="abbr">LI</td><td>Liquid (packaging type)</td></tr>
+                        <tr><td class="abbr">4T</td><td>4‑Stroke engine oil</td></tr>
+                        <tr><td class="abbr">2T</td><td>2‑Stroke engine oil</td></tr>
+                        <tr><td class="abbr">PCMO</td><td>Passenger Car Motor Oil</td></tr>
+                        <tr><td class="abbr">MGO</td><td>Maruti Genuine Oil</td></tr>
+                        <tr><td class="abbr">MGDO</td><td>Maruti Genuine Diesel Oil</td></tr>
+                        <tr><td class="abbr">MGA</td><td>Maruti Genuine Accessories</td></tr>
+                        <tr><td class="abbr">CRDi</td><td>Common Rail Direct Injection</td></tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==============================================================
+    // UNIVERSAL AUTO-SUGGEST SEARCH
+    // ==============================================================
+
+    const searchInput   = document.getElementById('universalSearch');
+    const dropdown      = document.getElementById('suggestionsDropdown');
+    const clearBtn      = document.getElementById('clearSearch');
+    const searchBtn     = document.getElementById('searchBtn');
+    const searchInfo    = document.getElementById('searchInfo');
+    const searchTerm    = document.getElementById('searchTerm');
+    const searchCount   = document.getElementById('searchCount');
+
+    let activeIndex = -1;
+    let currentSuggestions = [];
+
+    // ------------------------------------------------------------
+    // Collect every searchable item from the page
+    // ------------------------------------------------------------
+    function collectSearchItems() {
+        const items = [];
+
+        // ----- Knowledge base cards -----
+        document.querySelectorAll('#kbGrid .kb-card').forEach(card => {
+            const title = card.querySelector('h3')?.textContent.trim() || '';
+            const body  = card.textContent.replace(/\s+/g, ' ').trim();
+            const dataSearch = card.getAttribute('data-search') || '';
+            items.push({
+                title: title,
+                sub: body.slice(0, 140) + (body.length > 140 ? '…' : ''),
+                category: 'Knowledge Base',
+                categoryClass: 'cat-tech',
+                target: card,
+                rawText: (title + ' ' + body + ' ' + dataSearch).toLowerCase()
+            });
+        });
+
+        // ----- Full form tables: every row is a suggestion -----
+        document.querySelectorAll('.fullform-table tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 2) return;
+            const abbr = cells[0].textContent.trim();
+            const full = cells[1].textContent.trim();
+            const card = row.closest('.kb-card');
+            const cardTitle = card?.querySelector('h3')?.textContent.trim() || 'Full Forms';
+
+            let catClass = 'cat-add';
+            if (/Organization/i.test(cardTitle)) catClass = 'cat-org';
+            else if (/API "S"/i.test(cardTitle)) catClass = 'cat-api-s';
+            else if (/API "C"/i.test(cardTitle)) catClass = 'cat-api-c';
+            else if (/JASO/i.test(cardTitle)) catClass = 'cat-jaso';
+            else if (/ILSAC/i.test(cardTitle)) catClass = 'cat-ilsac';
+            else if (/Technical/i.test(cardTitle)) catClass = 'cat-tech';
+            else if (/Viscosity/i.test(cardTitle)) catClass = 'cat-visc';
+
+            items.push({
+                title: abbr + ' — ' + full,
+                sub: cardTitle,
+                category: cardTitle.replace(/[^\w\s"&-]/g, '').trim().slice(0, 22),
+                categoryClass: catClass,
+                target: row,
+                rawText: (abbr + ' ' + full + ' ' + cardTitle).toLowerCase()
+            });
+        });
+
+        // ----- List items inside knowledge cards -----
+        document.querySelectorAll('#kbGrid .kb-card li').forEach(li => {
+            const text = li.textContent.replace(/\s+/g, ' ').trim();
+            const card = li.closest('.kb-card');
+            const cardTitle = card?.querySelector('h3')?.textContent.trim() || '';
+            if (!text) return;
+
+            const tag = li.querySelector('.kb-tag');
+            const abbr = tag ? tag.textContent.trim() : '';
+
+            let catClass = 'cat-tech';
+            if (/API "S"/i.test(cardTitle)) catClass = 'cat-api-s';
+            else if (/API "C"/i.test(cardTitle)) catClass = 'cat-api-c';
+            else if (/JASO/i.test(cardTitle)) catClass = 'cat-jaso';
+            else if (/ILSAC/i.test(cardTitle)) catClass = 'cat-ilsac';
+
+            items.push({
+                title: abbr ? (abbr + ' — ' + text.replace(abbr, '').trim()) : text,
+                sub: cardTitle,
+                category: cardTitle.replace(/[^\w\s"&-]/g, '').trim().slice(0, 22),
+                categoryClass: catClass,
+                target: li,
+                rawText: (abbr + ' ' + text + ' ' + cardTitle).toLowerCase()
+            });
+        });
+
+        return items;
+    }
+
+    const ALL_ITEMS = collectSearchItems();
+
+    function universalMatch(query, text) {
+        if (!query) return false;
+        return text.includes(query);
+    }
+
+    function highlightMatch(text, query) {
+        if (!query) return escapeHtml(text);
+        const escaped = escapeHtml(text);
+        const regex = new RegExp('(' + escapeRegex(query) + ')', 'gi');
+        return escaped.replace(regex, '<mark>$1</mark>');
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function buildSuggestions(query) {
+        const q = query.toLowerCase().trim();
+        if (!q) return [];
+
+        const matches = ALL_ITEMS.filter(item => universalMatch(q, item.rawText));
+
+        const seen = new Set();
+        const unique = [];
+        for (const m of matches) {
+            const key = m.title + '|' + m.sub;
+            if (!seen.has(key)) {
+                seen.add(key);
+                unique.push(m);
+            }
+        }
+
+        unique.sort((a, b) => {
+            const aStart = a.title.toLowerCase().startsWith(q) ? 0 : 1;
+            const bStart = b.title.toLowerCase().startsWith(q) ? 0 : 1;
+            if (aStart !== bStart) return aStart - bStart;
+            return a.title.localeCompare(b.title);
+        });
+
+        return unique.slice(0, 25);
+    }
+
+    function renderSuggestions(suggestions, query) {
+        if (suggestions.length === 0) {
+            dropdown.innerHTML = `
+                <div class="no-suggestions">
+                    <span>🔍</span>
+                    No matches for "<strong>${escapeHtml(query)}</strong>"
+                </div>
+            `;
+            dropdown.classList.add('show');
+            return;
+        }
+
+        let html = `<div class="suggestions-header">Suggestions (${suggestions.length})</div>`;
+
+        suggestions.forEach((s, i) => {
+            html += `
+                <div class="suggestion-item" data-index="${i}">
+                    <span class="suggestion-icon">${getIcon(s.categoryClass)}</span>
+                    <div class="suggestion-content">
+                        <div class="suggestion-title">${highlightMatch(s.title, query)}</div>
+                        <div class="suggestion-sub">${highlightMatch(s.sub, query)}</div>
+                    </div>
+                    <span class="suggestion-category ${s.categoryClass}">${escapeHtml(s.category)}</span>
+                </div>
+            `;
+        });
+
+        dropdown.innerHTML = html;
+        dropdown.classList.add('show');
+
+        dropdown.querySelectorAll('.suggestion-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt(el.getAttribute('data-index'), 10);
+                selectSuggestion(suggestions[idx]);
+            });
+        });
+    }
+
+    function getIcon(catClass) {
+        switch (catClass) {
+            case 'cat-org':    return '🏛️';
+            case 'cat-api-s':  return '🅰️';
+            case 'cat-api-c':  return '🛢️';
+            case 'cat-jaso':   return '🏍️';
+            case 'cat-ilsac':  return '🇺🇸';
+            case 'cat-tech':   return '🔬';
+            case 'cat-visc':   return '❄️';
+            default:           return '📋';
+        }
+    }
+
+    function selectSuggestion(item) {
+        dropdown.classList.remove('show');
+        searchInput.value = item.title.split(' — ')[0] || item.title;
+
+        document.querySelectorAll('.highlight-card, .row-highlight').forEach(el => {
+            el.classList.remove('highlight-card', 'row-highlight');
+        });
+
+        if (item.target) {
+            if (item.target.tagName === 'TR') {
+                item.target.classList.add('row-highlight');
+            } else if (item.target.classList.contains('kb-card')) {
+                item.target.classList.add('highlight-card');
+            } else {
+                const card = item.target.closest('.kb-card');
+                if (card) card.classList.add('highlight-card');
+            }
+            item.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function applyFilter(query) {
+        const q = query.toLowerCase().trim();
+        const allCards = document.querySelectorAll('#kbGrid .kb-card, #fullformGrid .kb-card');
+        const allRows  = document.querySelectorAll('.fullform-table tr');
+
+        document.querySelectorAll('.highlight-card, .row-highlight').forEach(el => {
+            el.classList.remove('highlight-card', 'row-highlight');
+        });
+
+        if (!q) {
+            allCards.forEach(c => c.classList.remove('hidden-by-search'));
+            allRows.forEach(r => r.classList.remove('hidden-by-search'));
+            searchInfo.classList.remove('show');
+            return;
+        }
+
+        let matchCount = 0;
+
+        allCards.forEach(card => {
+            const data = (card.getAttribute('data-search') || '') + ' ' + card.textContent.toLowerCase();
+            if (data.includes(q)) {
+                card.classList.remove('hidden-by-search');
+                matchCount++;
+            } else {
+                card.classList.add('hidden-by-search');
+            }
+        });
+
+        allRows.forEach(row => {
+            const txt = row.textContent.toLowerCase();
+            if (txt.includes(q)) {
+                row.classList.remove('hidden-by-search');
+            } else {
+                row.classList.add('hidden-by-search');
+            }
+        });
+
+        searchTerm.textContent = query;
+        searchCount.textContent = `(${matchCount} card${matchCount !== 1 ? 's' : ''})`;
+        searchInfo.classList.add('show');
+    }
+
+    function clearAll() {
+        searchInput.value = '';
+        dropdown.classList.remove('show');
+        clearBtn.classList.remove('visible');
+        searchInfo.classList.remove('show');
+        document.querySelectorAll('.highlight-card, .row-highlight, .hidden-by-search').forEach(el => {
+            el.classList.remove('highlight-card', 'row-highlight', 'hidden-by-search');
+        });
+        activeIndex = -1;
+        currentSuggestions = [];
+        searchInput.focus();
+    }
+
+    function navigateSuggestions(direction) {
+        const items = dropdown.querySelectorAll('.suggestion-item');
+        if (items.length === 0) return;
+
+        if (direction === 'down') {
+            activeIndex = (activeIndex + 1) % items.length;
+        } else {
+            activeIndex = (activeIndex - 1 + items.length) % items.length;
+        }
+
+        items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+        items[activeIndex]?.scrollIntoView({ block: 'nearest' });
+    }
+
+    let debounceTimer = null;
+
+    searchInput.addEventListener('input', function() {
+        const val = this.value.trim();
+        clearBtn.classList.toggle('visible', val.length > 0);
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            if (!val) {
+                dropdown.classList.remove('show');
+                clearAll();
+                return;
+            }
+            currentSuggestions = buildSuggestions(val);
+            activeIndex = -1;
+            renderSuggestions(currentSuggestions, val);
+            applyFilter(val);
+        }, 120);
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        if (!dropdown.classList.contains('show')) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            navigateSuggestions('down');
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            navigateSuggestions('up');
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
+                selectSuggestion(currentSuggestions[activeIndex]);
+            } else if (currentSuggestions.length > 0) {
+                selectSuggestion(currentSuggestions[0]);
+            }
+        } else if (e.key === 'Escape') {
+            dropdown.classList.remove('show');
+        }
+    });
+
+    clearBtn.addEventListener('click', clearAll);
+
+    searchBtn.addEventListener('click', function() {
+        const val = searchInput.value.trim();
+        if (val) {
+            applyFilter(val);
+            const first = ALL_ITEMS.find(item => item.rawText.includes(val.toLowerCase()));
+            if (first) selectSuggestion(first);
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-input-wrap')) {
+            dropdown.classList.remove('show');
+        }
+    });
+
+    searchInput.addEventListener('focus', function() {
+        const val = this.value.trim();
+        if (val) {
+            currentSuggestions = buildSuggestions(val);
+            renderSuggestions(currentSuggestions, val);
+        }
+    });
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Lube House · Tabs in Row</title>
+    <title>Home1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -21,6 +21,7 @@
             position: relative;
         }
 
+        /* ----- simplified background (no waves, just subtle gradient) ----- */
         .simple-bg {
             position: fixed;
             top: 0;
@@ -31,6 +32,7 @@
             background: radial-gradient(ellipse at 50% 50%, #0a0800 0%, #000000 100%);
         }
 
+        /* container */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -42,7 +44,7 @@
             z-index: 1;
         }
 
-        /* header – unchanged, only spinning icon */
+        /* header – only spinning icon, no stereo bars, no moving background */
         header {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
@@ -60,6 +62,7 @@
             overflow: hidden;
         }
 
+        /* ONLY spinning icon remains */
         .header-icon-container {
             display: flex;
             flex-direction: column;
@@ -135,6 +138,7 @@
             100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
         }
 
+        /* header text */
         .header-content {
             flex: 1;
             position: relative;
@@ -192,6 +196,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        /* about button */
         .about-btn {
             position: absolute;
             top: 15px;
@@ -226,48 +231,43 @@
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2);
         }
 
-        /* ===== TAB LAYOUT – NOW ROW ORIENTED ===== */
+        /* tab layout */
         .tab-wrapper {
             display: flex;
-            flex-direction: column;      /* stack toggle + row of tabs + content */
-            gap: 15px;
+            gap: 30px;
             margin-top: 10px;
             flex: 1;
         }
 
-        /* horizontal sidebar – all tabs in a single row */
         .tab-sidebar {
-            width: 100%;
+            width: 300px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 15px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
             border: 1px solid rgba(255, 215, 0, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.05);
             position: relative;
             z-index: 2;
-            transition: max-height 0.3s ease;
         }
 
         .tab-header {
             display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;             /* allow wrapping on narrow screens */
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
+            flex-direction: column;
             background: rgba(255, 255, 255, 0.05);
-            padding: 6px 8px;
-            width: 100%;
+            border-right: 1px solid rgba(255, 215, 0, 0.2);
+            flex: 1;
         }
 
         .tab-btn {
-            flex: 0 0 auto;
-            padding: 12px 18px;
+            padding: 25px 20px;
             background: transparent;
             border: none;
-            font-size: 0.95rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
@@ -275,18 +275,20 @@
             position: relative;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
             text-align: left;
-            border-radius: 40px;
-            white-space: nowrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .tab-btn:last-child {
+            border-bottom: none;
         }
 
         .tab-btn i {
-            font-size: 1.1rem;
-            width: 20px;
-            transition: all 0.2s ease;
+            font-size: 1.5rem;
+            width: 30px;
+            transition: all 0.3s ease;
         }
 
         .tab-btn::before {
@@ -303,7 +305,6 @@
         .tab-btn:hover {
             background: rgba(255, 215, 0, 0.1);
             color: #FFD700;
-            border-color: rgba(255, 215, 0, 0.3);
         }
 
         .tab-btn:hover::before {
@@ -311,22 +312,24 @@
         }
 
         .tab-btn:hover i {
-            transform: scale(1.1);
+            transform: translateX(5px);
             color: #88E788;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .tab-btn.active {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.15);
             color: #FFD700;
-            border: 1px solid #FFD700;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+            border-left: 4px solid #FFD700;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1);
         }
 
         .tab-btn.active i {
             color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
-        /* content area – below the row of tabs */
+        /* content area */
         .tab-content-area {
             flex: 1;
             background: rgba(255, 255, 255, 0.08);
@@ -344,7 +347,7 @@
 
         .tab-content {
             padding: 40px;
-            min-height: 400px;
+            min-height: 500px;
             display: none;
             flex: 1;
             flex-direction: column;
@@ -477,6 +480,7 @@
             font-style: italic;
         }
 
+        /* footer */
         footer {
             text-align: center;
             padding: 40px 0 20px;
@@ -502,7 +506,7 @@
             text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
 
-        /* mobile toggle – hidden by default, shown on small screens */
+        /* mobile toggle */
         .mobile-tab-toggle {
             display: none;
             background: rgba(255, 215, 0, 0.15);
@@ -513,7 +517,7 @@
             font-weight: 700;
             cursor: pointer;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
             z-index: 100;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -532,19 +536,34 @@
             transform: rotate(180deg);
         }
 
-        /* ===== RESPONSIVE: on smaller screens, tabs can wrap, but we keep row ===== */
+        /* responsive */
         @media (max-width: 1024px) {
+            .tab-wrapper {
+                flex-direction: column;
+            }
+            .tab-sidebar {
+                width: 100%;
+                flex-direction: row;
+            }
             .tab-header {
-                flex-wrap: wrap;
-                justify-content: center;
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 215, 0, 0.2);
             }
             .tab-btn {
-                padding: 10px 14px;
-                font-size: 0.9rem;
+                min-width: 200px;
+                border-bottom: none;
+                border-right: 1px solid rgba(255, 255, 255, 0.05);
+                justify-content: center;
+                text-align: center;
             }
-            .tab-btn i {
-                font-size: 1rem;
-                width: 18px;
+            .tab-btn.active {
+                border-left: none;
+                border-bottom: 4px solid #FFD700;
+            }
+            .tab-btn:hover i {
+                transform: translateY(3px);
             }
         }
 
@@ -595,36 +614,44 @@
                 justify-content: center;
                 margin-top: 15px;
             }
-
-            /* on mobile, show toggle; we hide the raw tab row unless toggled */
             .mobile-tab-toggle {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
             .tab-sidebar {
+                width: 100%;
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height 0.4s ease;
-                border-radius: 15px;
+                transition: max-height 0.5s ease;
+                border-radius: 10px;
                 margin-bottom: 0;
+                order: 1;
             }
             .tab-sidebar.active {
-                max-height: 600px;        /* enough for wrapped row */
-                margin-bottom: 10px;
+                max-height: 500px;
+                margin-bottom: 20px;
             }
             .tab-header {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                padding: 10px;
-                gap: 6px;
+                flex-direction: column;
+                overflow: visible;
+                border-bottom: none;
             }
             .tab-btn {
-                flex: 0 1 auto;
-                padding: 10px 14px;
-                font-size: 0.85rem;
-                white-space: nowrap;
+                min-width: 100%;
+                padding: 18px 15px;
+                font-size: 1rem;
+                justify-content: flex-start;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .tab-btn.active {
+                border-left: 4px solid #FFD700;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .tab-content-area {
+                order: 2;
+                width: 100%;
             }
             .tab-content {
                 padding: 25px;
@@ -659,6 +686,7 @@
                 justify-content: center;
             }
             .link-note { text-align: center; font-size: 0.8rem; }
+            .tab-wrapper { gap: 15px; }
             footer {
                 padding: 25px 15px;
                 margin-top: 40px;
@@ -685,10 +713,10 @@
             h1 { font-size: 1.8rem; }
             .subtitle { font-size: 0.9rem; }
             .tab-btn {
-                padding: 8px 12px;
-                font-size: 0.8rem;
+                padding: 15px 12px;
+                font-size: 0.95rem;
             }
-            .tab-btn i { font-size: 0.9rem; width: 16px; }
+            .tab-btn i { font-size: 1.2rem; width: 25px; }
             .tab-content { padding: 20px; }
             .feature-list li {
                 padding: 10px 12px;
@@ -704,26 +732,27 @@
             h1 { font-size: 1.6rem; }
             .tab-title { font-size: 1.5rem; }
             .tab-btn {
-                padding: 6px 10px;
-                font-size: 0.75rem;
+                padding: 12px 10px;
+                font-size: 0.9rem;
             }
         }
 
         @media (hover: none) and (pointer: coarse) {
             .tab-btn:hover { background: transparent; }
-            .tab-btn.active:hover { background: rgba(255, 215, 0, 0.2); }
+            .tab-btn.active:hover { background: rgba(255, 215, 0, 0.15); }
             .website-link:hover { transform: none; }
             .feature-list li:hover {
                 transform: none;
                 background: rgba(255, 215, 0, 0.08);
             }
-            .tab-btn { min-height: 44px; }
+            .tab-btn { min-height: 60px; }
             .website-link { min-height: 55px; }
             .about-btn { min-height: 45px; }
         }
     </style>
 </head>
 <body>
+    <!-- simple static background – NO WAVES -->
     <div class="simple-bg"></div>
 
     <div class="container">
@@ -744,13 +773,11 @@
 
         <main>
             <div class="tab-wrapper">
-                <!-- mobile toggle only visible on small screens -->
                 <button class="mobile-tab-toggle" id="mobileTabToggle">
                     <span>Navigation Menu</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
 
-                <!-- TAB SIDEBAR NOW HORIZONTAL ROW -->
                 <div class="tab-sidebar" id="tabSidebar">
                     <div class="tab-header">
                         <button class="tab-btn active" data-tab="bazaar">
@@ -784,7 +811,7 @@
                             <i class="fa-file-invoice-dollar"></i> HP Incentive
                         </button>
                         <button class="tab-btn" data-tab="Home2">
-                            <i class="fa-clipboard-list"></i> Next Page
+                            <i class="fa-clipboard-list"></i> Next Button
                         </button>
                     </div>
                 </div>
@@ -802,6 +829,7 @@
                             <li><i class="fas fa-check-circle"></i> Customer management with order history</li>
                         </ul>
                         <div class="website-link-container">
+                            <!-- FIXED href: removed stray quote -->
                             <a href="alhbazaar.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open Bazaar Order Website
@@ -822,6 +850,7 @@
                             <li><i class="fas fa-check-circle"></i> Integration with inventory for parts usage tracking</li>
                         </ul>
                         <div class="website-link-container">
+                            <!-- FIXED href: removed stray quote and made clickable -->
                             <a href="alhro.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open RO Order Website
@@ -842,6 +871,7 @@
                             <li><i class="fas fa-check-circle"></i> Create Customer and staff trust</li>
                         </ul>
                         <div class="website-link-container">
+                            <!-- FIXED href: removed stray quote -->
                             <a href="money_receipt.html" target="_blank" class="website-link">
                                 <i class="fas fa-external-link-alt"></i>
                                 Open Digitally Receipt Website
@@ -1049,8 +1079,7 @@
         const tabSidebar = document.getElementById('tabSidebar');
 
         if (mobileTabToggle && tabSidebar) {
-            mobileTabToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
+            mobileTabToggle.addEventListener('click', function() {
                 tabSidebar.classList.toggle('active');
                 this.classList.toggle('active');
             });
@@ -1073,7 +1102,10 @@
             alert('About Auto Lube House\n\nProprietor: "Shekhar Podar"\n\nAuto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.');
         });
 
-        // Spinning icon hover speed
+        // Ensure all website links open in new tab (already do) – no alert interception for normal links
+        // (removed the previous demo alert that was preventing clicks)
+
+        // Spinning icon hover speed (only spinning icon)
         const spinIcon = document.querySelector('.spinning-icon');
         spinIcon.addEventListener('mouseenter', function() {
             this.style.animationDuration = '3s';
