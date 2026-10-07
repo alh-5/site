@@ -42,7 +42,6 @@
             z-index: 1;
         }
 
-        /* header – unchanged, only spinning icon */
         header {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
@@ -226,16 +225,15 @@
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2);
         }
 
-        /* ===== TAB LAYOUT – NOW ROW ORIENTED ===== */
+        /* ===== TAB LAYOUT – ROW ORIENTED ===== */
         .tab-wrapper {
             display: flex;
-            flex-direction: column;      /* stack toggle + row of tabs + content */
+            flex-direction: column;
             gap: 15px;
             margin-top: 10px;
             flex: 1;
         }
 
-        /* horizontal sidebar – all tabs in a single row */
         .tab-sidebar {
             width: 100%;
             background: rgba(255, 255, 255, 0.08);
@@ -253,7 +251,7 @@
         .tab-header {
             display: flex;
             flex-direction: row;
-            flex-wrap: wrap;             /* allow wrapping on narrow screens */
+            flex-wrap: wrap;
             justify-content: center;
             align-items: center;
             gap: 4px;
@@ -326,7 +324,6 @@
             color: #FFD700;
         }
 
-        /* content area – below the row of tabs */
         .tab-content-area {
             flex: 1;
             background: rgba(255, 255, 255, 0.08);
@@ -360,16 +357,99 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .tab-title {
-            font-size: 2.2rem;
-            color: #FFD700;
+        /* ===== TOP BAR: TITLE + LINK + NOTE ON SAME ROW ===== */
+        .tab-top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px 20px;
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .tab-title {
+            font-size: 2rem;
+            color: #FFD700;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab-title i {
+            font-size: 1.8rem;
+        }
+
+        .top-link-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .top-link-group .website-link {
+            padding: 10px 22px;
+            font-size: 1rem;
+            font-weight: 700;
+            min-width: auto;
+            width: auto;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            border: 1px solid rgba(255, 215, 0, 0.6);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-link-group .website-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .top-link-group .website-link:hover {
+            background: linear-gradient(90deg, #FFD700, #DAA520);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(255, 215, 0, 0.5);
+            color: #000;
+        }
+
+        .top-link-group .website-link:hover::before {
+            left: 100%;
+        }
+
+        .top-link-group .website-link i {
+            font-size: 1rem;
+        }
+
+        .top-link-group .link-note {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-style: italic;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            margin: 0;
+            line-height: 1.4;
         }
 
         .tab-desc {
@@ -413,68 +493,9 @@
             font-size: 1.2rem;
         }
 
+        /* Hide old bottom link container */
         .website-link-container {
-            margin-top: auto;
-            padding-top: 30px;
-            border-top: 2px dashed rgba(255, 215, 0, 0.3);
-        }
-
-        .website-link {
-            display: inline-block;
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.8), rgba(218, 165, 32, 0.8));
-            color: #000;
-            text-decoration: none;
-            padding: 16px 35px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3), 0 0 15px rgba(255, 215, 0, 0.2);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: fit-content;
-            min-width: 250px;
-            border: 1px solid rgba(255, 215, 0, 0.5);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .website-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .website-link:hover {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5), 0 0 25px rgba(255, 215, 0, 0.3);
-            color: #000;
-        }
-
-        .website-link:hover::before {
-            left: 100%;
-        }
-
-        .website-link i {
-            font-size: 1.3rem;
-        }
-
-        .link-note {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 12px;
-            font-style: italic;
+            display: none;
         }
 
         footer {
@@ -502,7 +523,6 @@
             text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
 
-        /* mobile toggle – hidden by default, shown on small screens */
         .mobile-tab-toggle {
             display: none;
             background: rgba(255, 215, 0, 0.15);
@@ -532,7 +552,7 @@
             transform: rotate(180deg);
         }
 
-        /* ===== RESPONSIVE: on smaller screens, tabs can wrap, but we keep row ===== */
+        /* Responsive */
         @media (max-width: 1024px) {
             .tab-header {
                 flex-wrap: wrap;
@@ -545,6 +565,19 @@
             .tab-btn i {
                 font-size: 1rem;
                 width: 18px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .tab-top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .top-link-group {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
             }
         }
 
@@ -596,7 +629,6 @@
                 margin-top: 15px;
             }
 
-            /* on mobile, show toggle; we hide the raw tab row unless toggled */
             .mobile-tab-toggle {
                 display: flex;
                 justify-content: space-between;
@@ -610,7 +642,7 @@
                 margin-bottom: 0;
             }
             .tab-sidebar.active {
-                max-height: 600px;        /* enough for wrapped row */
+                max-height: 600px;
                 margin-bottom: 10px;
             }
             .tab-header {
@@ -630,14 +662,34 @@
                 padding: 25px;
                 min-height: auto;
             }
-            .tab-title {
-                font-size: 1.7rem;
-                flex-direction: column;
-                align-items: flex-start;
+            .tab-top-bar {
                 gap: 10px;
-                margin-bottom: 20px;
+                margin-bottom: 18px;
+                padding-bottom: 12px;
             }
-            .tab-title i { font-size: 1.5rem; }
+            .tab-title {
+                font-size: 1.5rem;
+                white-space: normal;
+                flex-wrap: wrap;
+            }
+            .tab-title i {
+                font-size: 1.3rem;
+            }
+            .top-link-group {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .top-link-group .website-link {
+                padding: 9px 16px;
+                font-size: 0.85rem;
+                white-space: normal;
+                min-width: auto;
+            }
+            .top-link-group .link-note {
+                font-size: 0.75rem;
+                white-space: normal;
+                padding: 3px 10px;
+            }
             .tab-desc {
                 font-size: 1rem;
                 line-height: 1.6;
@@ -652,13 +704,6 @@
                 gap: 8px;
             }
             .feature-list li i { font-size: 1.1rem; }
-            .website-link {
-                min-width: 100%;
-                padding: 14px 25px;
-                font-size: 1rem;
-                justify-content: center;
-            }
-            .link-note { text-align: center; font-size: 0.8rem; }
             footer {
                 padding: 25px 15px;
                 margin-top: 40px;
@@ -690,19 +735,24 @@
             }
             .tab-btn i { font-size: 0.9rem; width: 16px; }
             .tab-content { padding: 20px; }
+            .tab-title { font-size: 1.3rem; }
             .feature-list li {
                 padding: 10px 12px;
                 font-size: 0.9rem;
             }
-            .website-link {
-                padding: 12px 20px;
-                font-size: 0.95rem;
+            .top-link-group .website-link {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .top-link-group .link-note {
+                font-size: 0.7rem;
+                padding: 3px 8px;
             }
         }
 
         @media (max-width: 360px) {
             h1 { font-size: 1.6rem; }
-            .tab-title { font-size: 1.5rem; }
+            .tab-title { font-size: 1.2rem; }
             .tab-btn {
                 padding: 6px 10px;
                 font-size: 0.75rem;
@@ -712,13 +762,13 @@
         @media (hover: none) and (pointer: coarse) {
             .tab-btn:hover { background: transparent; }
             .tab-btn.active:hover { background: rgba(255, 215, 0, 0.2); }
-            .website-link:hover { transform: none; }
+            .top-link-group .website-link:hover { transform: none; }
             .feature-list li:hover {
                 transform: none;
                 background: rgba(255, 215, 0, 0.08);
             }
             .tab-btn { min-height: 44px; }
-            .website-link { min-height: 55px; }
+            .top-link-group .website-link { min-height: 44px; }
             .about-btn { min-height: 45px; }
         }
     </style>
@@ -744,13 +794,12 @@
 
         <main>
             <div class="tab-wrapper">
-                <!-- mobile toggle only visible on small screens -->
                 <button class="mobile-tab-toggle" id="mobileTabToggle">
                     <span>Navigation Menu</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
 
-                <!-- TAB SIDEBAR NOW HORIZONTAL ROW -->
+                <!-- TAB SIDEBAR - HORIZONTAL ROW -->
                 <div class="tab-sidebar" id="tabSidebar">
                     <div class="tab-header">
                         <button class="tab-btn active" data-tab="bazaar">
@@ -792,7 +841,16 @@
                 <div class="tab-content-area">
                     <!-- BAZAAR -->
                     <div class="tab-content active" id="bazaar-tab">
-                        <h2 class="tab-title"><i class="fas fa-store"></i> Bazaar Order Management</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-store"></i> Bazaar Order Management</h2>
+                            <div class="top-link-group">
+                                <a href="alhbazaar.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Bazaar Order Website
+                                </a>
+                                <span class="link-note">Click to access bazaar order system</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Manage all your bazaar orders efficiently. Track orders, manage inventory, and process customer requests with our comprehensive bazaar order system designed specifically for Auto Lube House. Access real-time data, generate reports, and streamline your ordering process with our intuitive platform.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Create and manage bazaar orders in real-time</li>
@@ -801,18 +859,20 @@
                             <li><i class="fas fa-check-circle"></i> Monitor inventory levels and set reorder points</li>
                             <li><i class="fas fa-check-circle"></i> Customer management with order history</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="alhbazaar.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Bazaar Order Website
-                            </a>
-                            <p class="link-note">Click to access bazaar order system</p>
-                        </div>
                     </div>
 
                     <!-- RO -->
                     <div class="tab-content" id="ro-tab">
-                        <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> R/O Retail Outlet</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> R/O Retail Outlet</h2>
+                            <div class="top-link-group">
+                                <a href="alhro.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open RO Order Website
+                                </a>
+                                <span class="link-note">Click to access R/O order</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Streamline RO process with our dedicated RO management system. Handle Retail Outlet, Order requests, all in one place. Improve Oeder Compilation efficiency, reduce errors, and enhance customer satisfaction with our comprehensive RO management solution.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Create and assign orders to Retail Outlet</li>
@@ -821,18 +881,20 @@
                             <li><i class="fas fa-check-circle"></i> Generate service estimates and final invoices</li>
                             <li><i class="fas fa-check-circle"></i> Integration with inventory for parts usage tracking</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="alhro.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open RO Order Website
-                            </a>
-                            <p class="link-note">Click to access R/O order</p>
-                        </div>
                     </div>
 
                     <!-- RECEIPT -->
                     <div class="tab-content" id="receipt-tab">
-                        <h2 class="tab-title"><i class="fas fa-store"></i> Digital Money Receipt's</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-store"></i> Digital Money Receipt's</h2>
+                            <div class="top-link-group">
+                                <a href="money_receipt.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Digitally Receipt Website
+                                </a>
+                                <span class="link-note">Click to access Digital Money Receipt system</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Manage Money Receipt efficiently. Track orders, manage Serial Number, and process evidence with our comprehensive system designed specifically for Auto Lube House. Access real-time data, generate receipt, and streamline your process with our intuitive platform.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> manage Payment in real-time</li>
@@ -841,18 +903,20 @@
                             <li><i class="fas fa-check-circle"></i> Monitor and no duplicate accessible levels and set at high security points</li>
                             <li><i class="fas fa-check-circle"></i> Create Customer and staff trust</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="money_receipt.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Digitally Receipt Website
-                            </a>
-                            <p class="link-note">Click to access Digital Money Receipt system</p>
-                        </div>
                     </div>
 
                     <!-- LEDGERS -->
                     <div class="tab-content" id="ledgers-tab">
-                        <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i>Account Ledger's</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> Account Ledger's</h2>
+                            <div class="top-link-group">
+                                <a href="ledger.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Account Ledger's Website
+                                </a>
+                                <span class="link-note">Click to access Account Ledger's</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Streamline Account process with our dedicated Account management system. Handle Ledger's, Sales requests, all in one place. Improve Order Compilation efficiency, reduce errors, and enhance customer satisfaction with our comprehensive Account's management solution.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Easy Account Statement Searchable</li>
@@ -861,18 +925,20 @@
                             <li><i class="fas fa-check-circle"></i> Generate service estimates and final invoices</li>
                             <li><i class="fas fa-check-circle"></i> Integration with Sales And Purchase for parts usage tracking</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="ledger.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Account Ledger's Website
-                            </a>
-                            <p class="link-note">Click to access Account Ledger's</p>
-                        </div>
                     </div>
 
                     <!-- REQUIREMENT -->
                     <div class="tab-content" id="requirement-tab">
-                        <h2 class="tab-title"><i class="fas fa-clipboard-list"></i> Requirements & Inventory</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-clipboard-list"></i> Requirements & Inventory</h2>
+                            <div class="top-link-group">
+                                <a href="Advance Stock/alhadvancestock.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Requirements Website
+                                </a>
+                                <span class="link-note">Click to access inventory management</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Monitor your inventory levels, identify requirements, and ensure you never run out of essential lubrication products with our smart inventory management system. Get real-time insights, automated alerts, and data-driven recommendations to optimize your inventory and reduce operational costs.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Real-time inventory tracking across all locations</li>
@@ -881,18 +947,20 @@
                             <li><i class="fas fa-check-circle"></i> Supplier management and purchase order generation</li>
                             <li><i class="fas fa-check-circle"></i> Product categorization and batch tracking</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="Advance Stock/alhadvancestock.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Requirements Website
-                            </a>
-                            <p class="link-note">Click to access inventory management</p>
-                        </div>
                     </div>
 
                     <!-- ORDER CALCULATOR -->
                     <div class="tab-content" id="order-tab">
-                        <h2 class="tab-title"><i class="fas fa-calculator"></i> Profit Calculator & Analytics</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Profit Calculator & Analytics</h2>
+                            <div class="top-link-group">
+                                <a href="Profit Amount/alhprofit.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Profit Calculator Website
+                                </a>
+                                <span class="link-note">Click to access financial analysis dashboard</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Make informed business decisions with our comprehensive profit calculation and analytics tools. Track margins, analyze sales data, and optimize pricing strategies. Visualize your business performance with interactive dashboards and reports that help you identify opportunities for growth and efficiency improvements.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Calculate profit margins on individual products and services</li>
@@ -901,18 +969,20 @@
                             <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
                             <li><i class="fas fa-check-circle"></i> What-if analysis for pricing and discount strategies</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="Profit Amount/alhprofit.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Profit Calculator Website
-                            </a>
-                            <p class="link-note">Click to access financial analysis dashboard</p>
-                        </div>
                     </div>
 
                     <!-- PRICELIST -->
                     <div class="tab-content" id="Pricelist-tab">
-                        <h2 class="tab-title"><i class="fas fa-calculator"></i> Pricelist</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Pricelist</h2>
+                            <div class="top-link-group">
+                                <a href="smlp.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Pricelist Website
+                                </a>
+                                <span class="link-note">Click to access Pricelist analysis dashboard</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Pricelist calculation and analytics tools. Track margins, analyze sales data, and optimize pricing strategies. Visualize your business performance with interactive dashboards and reports that help you identify opportunities for growth and efficiency improvements.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Price and margins on individual products and services</li>
@@ -921,18 +991,20 @@
                             <li><i class="fas fa-check-circle"></i> Performance comparison on products</li>
                             <li><i class="fas fa-check-circle"></i> pricing and discount strategies</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="smlp.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Pricelist Website
-                            </a>
-                            <p class="link-note">Click to access Pricelist analysis dashboard</p>
-                        </div>
                     </div>
 
                     <!-- SPANALYS -->
                     <div class="tab-content" id="SPanalys-tab">
-                        <h2 class="tab-title"><i class="fas fa-calculator"></i> Sales & Purchase Analys</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Sales & Purchase Analys</h2>
+                            <div class="top-link-group">
+                                <a href="salfy.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Sales & Purchase Financial Website
+                                </a>
+                                <span class="link-note">Click to access Sales & Purchase Financial dashboard</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Sales & Purchase Financial and analytics tools. Track margins, analyze sales purchase data, and optimize Margin strategies. Visualize your business performance with interactive dashboards and reports that help you identify opportunities for growth and efficiency improvements.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Analys Customers products and services</li>
@@ -941,18 +1013,20 @@
                             <li><i class="fas fa-check-circle"></i> Performance comparison on products</li>
                             <li><i class="fas fa-check-circle"></i> Market strategies</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="salfy.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Open Sales & Purchase Financial Website
-                            </a>
-                            <p class="link-note">Click to access Sales & Purchase Financial dashboard</p>
-                        </div>
                     </div>
 
                     <!-- INVTRACKER -->
                     <div class="tab-content" id="invtracker-tab">
-                        <h2 class="tab-title"><i class="fas fa-calculator"></i>Invoice Status Tracker</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Invoice Status Tracker</h2>
+                            <div class="top-link-group">
+                                <a href="https://invnotdeliver.netlify.app/" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Invoice Status Tracker
+                                </a>
+                                <span class="link-note">Click Invoice Status</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Click Invoice Status to View More.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Invoices Pending Tracker</li>
@@ -961,18 +1035,20 @@
                             <li><i class="fas fa-check-circle"></i> Support mobile Version View</li>
                             <li><i class="fas fa-check-circle"></i> friendly and responsive</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="https://invnotdeliver.netlify.app/" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Invoice Status Tracker
-                            </a>
-                            <p class="link-note">Click Invoice Status</p>
-                        </div>
                     </div>
 
                     <!-- HPINCENTIVE -->
                     <div class="tab-content" id="hpincentive-tab">
-                        <h2 class="tab-title"><i class="fas fa-calculator"></i>HP Incentive</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> HP Incentive</h2>
+                            <div class="top-link-group">
+                                <a href="hp/hpincentive.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    HP incentive Tracker
+                                </a>
+                                <span class="link-note">Click Invoice Status</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Click Invoice Status to View More.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> HP incentives</li>
@@ -981,18 +1057,20 @@
                             <li><i class="fas fa-check-circle"></i> Support mobile Version View</li>
                             <li><i class="fas fa-check-circle"></i> friendly and responsive</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="hp/hpincentive.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                HP incentive Tracker
-                            </a>
-                            <p class="link-note">Click Invoice Status</p>
-                        </div>
                     </div>
 
                     <!-- HOME2 -->
                     <div class="tab-content" id="Home2-tab">
-                        <h2 class="tab-title"><i class="fas fa-calculator"></i>Next</h2>
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Next</h2>
+                            <div class="top-link-group">
+                                <a href="alhhome2.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Tools & Services
+                                </a>
+                                <span class="link-note">Click Next</span>
+                            </div>
+                        </div>
                         <p class="tab-desc">Click Next to View More.</p>
                         <ul class="feature-list">
                             <li><i class="fas fa-check-circle"></i> Click Next to View More tools & services</li>
@@ -1001,13 +1079,6 @@
                             <li><i class="fas fa-check-circle"></i> Support mobile Version View</li>
                             <li><i class="fas fa-check-circle"></i> friendly and responsive</li>
                         </ul>
-                        <div class="website-link-container">
-                            <a href="alhhome2.html" target="_blank" class="website-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Tools & Services
-                            </a>
-                            <p class="link-note">Click Next</p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1034,7 +1105,6 @@
                 const tabId = btn.getAttribute('data-tab');
                 document.getElementById(`${tabId}-tab`).classList.add('active');
 
-                // close mobile sidebar
                 if (window.innerWidth <= 768) {
                     const tabSidebar = document.getElementById('tabSidebar');
                     const mobileToggle = document.getElementById('mobileTabToggle');
@@ -1082,7 +1152,7 @@
             this.style.animationDuration = '6s';
         });
 
-        // Handle resize to show/hide mobile toggle and sidebar correctly
+        // Handle resize
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
                 tabSidebar.classList.add('active');
