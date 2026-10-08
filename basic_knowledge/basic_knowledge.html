@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic_Knowledge</title>
+    <title>Basic Knowledge</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -68,10 +68,9 @@
             position: relative;
         }
 
-        /* FIX: more left padding so text starts far from the icon */
         .search-input-wrap input {
             width: 100%;
-            padding: 1rem 3.2rem 1rem 3.4rem;   /* ← increased left padding */
+            padding: 1rem 3.2rem 1rem 3.4rem;
             border: 2px solid #bdd3e6;
             border-radius: 60px;
             font-size: 1rem;
@@ -93,7 +92,6 @@
             box-shadow: 0 0 0 4px rgba(30,126,52,0.12), 0 4px 12px rgba(0,0,0,0.06);
         }
 
-        /* FIX: search icon pushed further left so it never overlaps text */
         .search-input-wrap .search-icon {
             position: absolute;
             left: 1.35rem;
@@ -244,6 +242,7 @@
         .cat-tech { background: #fee2e2; color: #991b1b; }
         .cat-visc { background: #fef9c3; color: #854d0e; }
         .cat-add { background: #f1f5f9; color: #334155; }
+        .cat-acea { background: #fce7f3; color: #9d174d; }
 
         .no-suggestions {
             padding: 1.5rem;
@@ -372,6 +371,9 @@
         .kb-tag.blue { background: #1d4ed8; }
         .kb-tag.purple { background: #6b21a8; }
         .kb-tag.red { background: #b91c1c; }
+        .kb-tag.grey { background: #64748b; }
+        .kb-tag.pink { background: #be185d; }
+        .kb-tag.teal { background: #0f766e; }
 
         .kb-note {
             background: #fff7ed;
@@ -393,6 +395,22 @@
         }
 
         .kb-note.red strong { color: #991b1b; }
+
+        .kb-note.blue {
+            background: #eff6ff;
+            border-left-color: #1d4ed8;
+            color: #1e3a8a;
+        }
+
+        .kb-note.blue strong { color: #1e40af; }
+
+        .kb-note.green {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+            color: #14532d;
+        }
+
+        .kb-note.green strong { color: #166534; }
 
         /* ===== FULL FORMS TABLE ===== */
         .fullform-table {
@@ -561,28 +579,35 @@
                     <li><span class="kb-tag blue">SL</span>2001 — better high‑temperature deposit control.</li>
                     <li><span class="kb-tag blue">SJ</span>1996 — improved deposit control &amp; oil consumption.</li>
                 </ul>
+                <div class="kb-note green">
+                    <strong>💡 Energy / Resource Conserving:</strong> Look for <strong>"Energy Conserving"</strong> (older, ILSAC GF-4 and earlier) or <strong>"Resource Conserving"</strong> (API SN onward, 2010+) on the API donut. Resource Conserving includes fuel economy, emission system protection, seal compatibility, and E85 (up to 85% ethanol) compatibility.
+                </div>
             </div>
 
-            <div class="kb-card" data-search="api c series diesel engines commercial ck-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 egr dpf scr">
+            <div class="kb-card" data-search="api c series diesel engines commercial ck-4 fa-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 egr dpf scr">
                 <h3>🛢️ API "C" Series — Diesel Engines</h3>
                 <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
-                    <em>"C" = Commercial (diesel). Progression: CF‑4 &lt; CG‑4 &lt; CH‑4 &lt; CI‑4 &lt; CI‑4 Plus &lt; CJ‑4 &lt; CK‑4</em>
+                    <em>"C" = Commercial (diesel). Progression: CF‑4 &lt; CG‑4 &lt; CH‑4 &lt; CI‑4 &lt; CI‑4 Plus &lt; CJ‑4 &lt; CK‑4 / FA‑4</em>
                 </p>
                 <ul>
-                    <li><span class="kb-tag orange">CK‑4</span><strong>2017</strong> — modern diesel, DPF/SCR compatible. Exceeds CI‑4 Plus.</li>
+                    <li><span class="kb-tag green">CK‑4</span><strong>2017</strong> — modern diesel, DPF/SCR compatible. <em>Current. Backward compatible.</em></li>
+                    <li><span class="kb-tag teal">FA‑4</span><strong>2017</strong> — fuel‑economy optimised for select 2017+ on‑highway diesel. Typically 10W‑30 / 5W‑30. <strong>NOT backward compatible.</strong></li>
                     <li><span class="kb-tag orange">CJ‑4</span><strong>2006</strong> — low‑ash, DPF compatible, 2007 emissions.</li>
                     <li><span class="kb-tag orange">CI‑4 Plus</span>Higher protection vs. soot‑viscosity &amp; shear loss.</li>
                     <li><span class="kb-tag orange">CI‑4</span><strong>2002</strong> — EGR engines, superior soot dispersal.</li>
                     <li><span class="kb-tag red">CH‑4</span><strong>1998</strong> — up to 0.5% sulphur fuel. <em>(removed from catalogue)</em></li>
-                    <li><span class="kb-tag red">CG‑4</span><strong>1995</strong> — severe duty. <em>(removed from catalogue)</em></li>
+                    <li><span class="kb-tag red">CG‑4</span><strong>1995</strong> — severe duty. <em>Obsolete since 31 Aug 2009.</em></li>
                     <li><span class="kb-tag red">CF‑4</span><strong>1990</strong> — basic soot control. <em>(removed from catalogue)</em></li>
                 </ul>
+                <div class="kb-note red">
+                    <strong>⚠️ FA‑4 warning:</strong> FA‑4 is <strong>NOT backward compatible</strong>. Never use it in an engine designed for CK‑4 or older unless the engine manufacturer explicitly approves it — may cause increased wear and void warranty.
+                </div>
                 <div class="kb-note red">
                     <strong>⚠️ Note:</strong> CH‑4, CG‑4 and CF‑4 entries were removed from the catalogue because they were listed inaccurately. Only verified categories remain.
                 </div>
             </div>
 
-            <div class="kb-card" data-search="jaso motorcycle oils wet clutch friction ma ma1 ma2 mb dry clutch japan automobile standards organization">
+            <div class="kb-card" data-search="jaso motorcycle oils wet clutch friction ma ma1 ma2 mb dry clutch japan automobile standards organization two stroke 2t fb fc fd m345">
                 <h3>🏍️ JASO — Motorcycle Oils</h3>
                 <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
                     <em>JASO T 903 — wet clutch friction classification.</em>
@@ -592,6 +617,12 @@
                     <li><span class="kb-tag purple">MA1</span>Medium friction — wet clutch, balance of grip &amp; smooth engagement.</li>
                     <li><span class="kb-tag purple">MA</span>Older standard, now split into MA1 &amp; MA2.</li>
                     <li><span class="kb-tag purple">MB</span>Low friction — <strong>dry clutch</strong> only. <em>Not for wet clutch bikes.</em></li>
+                </ul>
+                <p style="font-size:0.8rem; font-weight:700; color:#0b3b5c; margin:0.8rem 0 0.3rem;">🛵 2‑Stroke (JASO M345):</p>
+                <ul>
+                    <li><span class="kb-tag grey">FB</span>Base grade — low smoke.</li>
+                    <li><span class="kb-tag grey">FC</span>Improved — better smoke &amp; exhaust‑system blocking control.</li>
+                    <li><span class="kb-tag grey">FD</span>Best — stronger high‑temp detergency. Lower sulphated‑ash limit (0.18% vs 0.25% for FB/FC).</li>
                 </ul>
                 <div class="kb-note">
                     <strong>⚠️ Important:</strong> For any motorcycle with a wet clutch, always use a <strong>JASO MA</strong> rated oil. Standard car oils may cause clutch slippage.
@@ -614,6 +645,76 @@
                         <li><span class="kb-tag orange">Before W</span>Cold‑weather flow. Lower = better cold start. <em>0W best, 20W weakest.</em></li>
                         <li><span class="kb-tag orange">After W</span>Viscosity at 100°C. Higher = thicker when hot. <em>20 thin, 50 thick.</em></li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- ============ ACEA EUROPEAN CLASSIFICATIONS (NEW) ============ -->
+            <div class="kb-card" data-search="acea european classifications a b c e high saps low saps mid saps gasoline diesel catalyst aftertreatment vw bmw mercedes">
+                <h3>🇪🇺 ACEA — European Classifications</h3>
+                <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
+                    <em>ACEA = European equivalent of API. Required for most European vehicles (VW, BMW, Mercedes, etc.).</em>
+                </p>
+                <ul>
+                    <li><span class="kb-tag pink">A/B</span><strong>High SAPS</strong> — Gasoline (A) &amp; light‑duty diesel (B). Traditional European specs.</li>
+                    <li><span class="kb-tag pink">C</span><strong>Low SAPS</strong> — Catalyst &amp; aftertreatment compatible. Essential for DPF/SCR equipped vehicles.</li>
+                    <li><span class="kb-tag pink">E</span><strong>Heavy‑duty diesel</strong> — For trucks &amp; buses. Replaces the old E‑series.</li>
+                </ul>
+                <div class="kb-note blue">
+                    <strong>💡 Tip:</strong> Always match the ACEA spec in the vehicle's owner manual. A "C" rated oil must never be used in an engine requiring "A/B" (and vice versa) unless the manual allows it.
+                </div>
+            </div>
+
+            <!-- ============ COMPLETE API CATEGORY TIMELINE (latest → oldest) ============ -->
+            <div class="kb-card" data-search="complete api category timeline obsolete legacy current sp sn sn plus sm sl sj sh sg sf se sd sc sb sa ck-4 fa-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 cf-2 cf cd cc cb ca petrol diesel vintage classic history">
+                <h3>⏳ Complete API Category Timeline</h3>
+                <p style="margin-bottom:0.5rem; font-size:0.78rem; color:#4e6b7e;">
+                    <em>Full history — <strong>latest → oldest</strong>. Green = current, teal = current (diesel), orange = recent, grey = obsolete/legacy.</em>
+                </p>
+
+                <p style="font-size:0.8rem; font-weight:700; color:#0b3b5c; margin:0.5rem 0 0.3rem;">🅰️ Petrol (S‑series) — newest to oldest</p>
+                <ul>
+                    <li><span class="kb-tag green">SP</span><strong>2020</strong> — Petrol. LSPI protection, timing chain, turbo/GDI. <em>Current.</em></li>
+                    <li><span class="kb-tag green">SN Plus</span><strong>2018</strong> — Petrol. Interim LSPI protection for TGDI. <em>Current (merged into SP).</em></li>
+                    <li><span class="kb-tag orange">SN</span><strong>2010</strong> — Petrol. Better high‑temp deposits &amp; fuel economy.</li>
+                    <li><span class="kb-tag orange">SM</span><strong>2004</strong> — Petrol. Improved oxidation &amp; wear protection.</li>
+                    <li><span class="kb-tag orange">SL</span><strong>2001</strong> — Petrol. Better high‑temperature deposit control.</li>
+                    <li><span class="kb-tag orange">SJ</span><strong>1996</strong> — Petrol. Improved deposit control &amp; oil consumption.</li>
+                    <li><span class="kb-tag grey">SH</span><strong>1993</strong> — Petrol. Obsolete. <em>Not suitable for engines built after 1996.</em></li>
+                    <li><span class="kb-tag grey">SG</span><strong>1989</strong> — Petrol. Better deposit &amp; wear control vs SF. <em>Obsolete since 1993.</em></li>
+                    <li><span class="kb-tag grey">SF</span><strong>1980</strong> — Petrol. Improved oxidation stability. <em>Obsolete since 1988.</em></li>
+                    <li><span class="kb-tag grey">SE</span><strong>1972</strong> — Petrol. Better high‑temp protection. <em>Obsolete since 1979.</em></li>
+                    <li><span class="kb-tag grey">SD</span><strong>1968</strong> — Petrol. For older engines with PCV. <em>Obsolete since 1971.</em></li>
+                    <li><span class="kb-tag grey">SC</span><strong>1964</strong> — Petrol. Anti‑corrosion &amp; deposit control. <em>Obsolete since 1967.</em></li>
+                    <li><span class="kb-tag grey">SB</span><strong>1951</strong> — Petrol. Minimal protection. <em>For pre‑1951 vehicles only.</em></li>
+                    <li><span class="kb-tag grey">SA</span><strong>1930s</strong> — Petrol. <strong>No additives.</strong> <em>Pre‑1930 vehicles only.</em></li>
+                </ul>
+
+                <p style="font-size:0.8rem; font-weight:700; color:#0b3b5c; margin:0.7rem 0 0.3rem;">🛢️ Diesel (C‑series) — newest to oldest</p>
+                <ul>
+                    <li><span class="kb-tag green">CK‑4</span><strong>2017</strong> — Diesel. Modern DPF/SCR compatible. <em>Current. Backward compatible.</em></li>
+                    <li><span class="kb-tag teal">FA‑4</span><strong>2017</strong> — Diesel. Fuel‑economy optimised (XW‑30). <strong>NOT backward compatible.</strong></li>
+                    <li><span class="kb-tag orange">CJ‑4</span><strong>2006</strong> — Diesel. Low‑ash, DPF compatible, 2007 emissions.</li>
+                    <li><span class="kb-tag orange">CI‑4 Plus</span><strong>2004</strong> — Diesel. Higher protection vs. soot‑viscosity &amp; shear loss.</li>
+                    <li><span class="kb-tag orange">CI‑4</span><strong>2002</strong> — Diesel. EGR engines, superior soot dispersal.</li>
+                    <li><span class="kb-tag grey">CH‑4</span><strong>1998</strong> — Diesel. Up to 0.5% sulphur fuel. <em>Obsolete.</em></li>
+                    <li><span class="kb-tag grey">CG‑4</span><strong>1995</strong> — Diesel. Severe duty. <em>Obsolete since 31 Aug 2009.</em></li>
+                    <li><span class="kb-tag grey">CF‑4</span><strong>1990</strong> — Diesel. Basic soot control. <em>Obsolete.</em></li>
+                    <li><span class="kb-tag grey">CF‑2</span><strong>1994</strong> — Diesel. Two‑stroke cycle. <em>Obsolete since 1 Feb 2010.</em></li>
+                    <li><span class="kb-tag grey">CF</span><strong>1980s</strong> — Diesel. Indirect‑injection &amp; off‑road. <em>Obsolete since 30 Dec 2010.</em></li>
+                    <li><span class="kb-tag grey">CD</span><strong>1955</strong> — Diesel. Naturally aspirated &amp; turbo. <em>Obsolete since 1971.</em></li>
+                    <li><span class="kb-tag grey">CC</span><strong>1961</strong> — Diesel. Mild turbo &amp; naturally aspirated. <em>Obsolete.</em></li>
+                    <li><span class="kb-tag grey">CB</span><strong>1949</strong> — Diesel. Moderate duty. <em>Obsolete.</em></li>
+                    <li><span class="kb-tag grey">CA</span><strong>1940s</strong> — Diesel. Light duty. <em>Obsolete.</em></li>
+                </ul>
+
+                <div class="kb-note red">
+                    <strong>⚠️ Legacy warning:</strong> Never use SA/SB/SC/SD/SE/SF/SG/SH oils in modern engines with catalytic converters, turbochargers, or EGR/DPF systems. They lack the additive packages needed for today’s hardware. Use only the latest API SP / CK‑4 / FA‑4 (or ILSAC GF‑6 / ACEA C‑series) for current vehicles.
+                </div>
+                <div class="kb-note red">
+                    <strong>⚠️ SA / SB clarification:</strong> <strong>SA</strong> contains <strong>no additives</strong> and is limited to cars built <strong>prior to 1930</strong>. It cannot be a legitimate multigrade and can harm nearly all modern engines. <strong>SB</strong> is for vehicles built <strong>prior to 1951</strong> only.
+                </div>
+                <div class="kb-note">
+                    <strong>💡 Quick tip:</strong> If you see <strong>SG / CF‑4</strong> on a bottle, it’s a legacy oil — safe only for older engines that originally specified it. For mixed fleets, always match the OEM manual’s minimum requirement.
                 </div>
             </div>
 
@@ -640,7 +741,7 @@
                     </table>
                 </div>
 
-                <div class="kb-card" data-search="api s series full forms sp sn sn plus sm sl sj sf spark ignition petrol service category">
+                <div class="kb-card" data-search="api s series full forms sp sn sn plus sm sl sj sh sg sf se sd sc sb sa spark ignition petrol service category energy conserving resource conserving">
                     <h3>🅰️ API "S" Series Full Forms</h3>
                     <table class="fullform-table">
                         <tr><td class="abbr">API SP</td><td>API Service Category SP (Spark‑Ignition, Petrol) — latest</td></tr>
@@ -649,46 +750,72 @@
                         <tr><td class="abbr">API SM</td><td>API Service Category SM (Spark‑Ignition, Petrol)</td></tr>
                         <tr><td class="abbr">API SL</td><td>API Service Category SL (Spark‑Ignition, Petrol)</td></tr>
                         <tr><td class="abbr">API SJ</td><td>API Service Category SJ (Spark‑Ignition, Petrol)</td></tr>
+                        <tr><td class="abbr">API SH</td><td>API Service Category SH (Spark‑Ignition, Petrol — obsolete)</td></tr>
+                        <tr><td class="abbr">API SG</td><td>API Service Category SG (Spark‑Ignition, Petrol — obsolete)</td></tr>
                         <tr><td class="abbr">API SF</td><td>API Service Category SF (Spark‑Ignition, Petrol — older)</td></tr>
+                        <tr><td class="abbr">API SE</td><td>API Service Category SE (Spark‑Ignition, Petrol — obsolete)</td></tr>
+                        <tr><td class="abbr">API SD</td><td>API Service Category SD (Spark‑Ignition, Petrol — obsolete)</td></tr>
+                        <tr><td class="abbr">API SC</td><td>API Service Category SC (Spark‑Ignition, Petrol — obsolete)</td></tr>
+                        <tr><td class="abbr">API SB</td><td>API Service Category SB (Spark‑Ignition, Petrol — obsolete, pre‑1951)</td></tr>
+                        <tr><td class="abbr">API SA</td><td>API Service Category SA (Spark‑Ignition, Petrol — obsolete, no additives)</td></tr>
+                        <tr><td class="abbr">EC</td><td>Energy Conserving (older fuel‑economy designation, ILSAC GF‑4 and earlier)</td></tr>
+                        <tr><td class="abbr">RC</td><td>Resource Conserving (API SN onward, 2010+) — fuel economy, emission system, seals, E85</td></tr>
                     </table>
                 </div>
 
-                <div class="kb-card" data-search="api c series full forms ck-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 cf compression ignition diesel commercial">
+                <div class="kb-card" data-search="api c series full forms ck-4 fa-4 cj-4 ci-4 plus ci-4 ch-4 cg-4 cf-4 cf cf-2 cd cc cb ca compression ignition diesel commercial">
                     <h3>🛢️ API "C" Series Full Forms</h3>
                     <table class="fullform-table">
-                        <tr><td class="abbr">API CK-4</td><td>API Service Category CK‑4 (Compression‑Ignition, Diesel) — latest</td></tr>
+                        <tr><td class="abbr">API CK-4</td><td>API Service Category CK‑4 (Compression‑Ignition, Diesel) — current, backward compatible</td></tr>
+                        <tr><td class="abbr">API FA-4</td><td>API Service Category FA‑4 (Diesel, XW‑30 fuel‑economy optimised) — current, <strong>NOT backward compatible</strong></td></tr>
                         <tr><td class="abbr">API CJ-4</td><td>API Service Category CJ‑4 (Compression‑Ignition, Diesel)</td></tr>
                         <tr><td class="abbr">API CI-4 Plus</td><td>API Service Category CI‑4 Plus (Diesel + soot protection)</td></tr>
                         <tr><td class="abbr">API CI-4</td><td>API Service Category CI‑4 (Compression‑Ignition, Diesel)</td></tr>
                         <tr><td class="abbr">API CH-4</td><td>API Service Category CH‑4 (Compression‑Ignition, Diesel)</td></tr>
-                        <tr><td class="abbr">API CG-4</td><td>API Service Category CG‑4 (Compression‑Ignition, Diesel)</td></tr>
+                        <tr><td class="abbr">API CG-4</td><td>API Service Category CG‑4 (Compression‑Ignition, Diesel — obsolete since 31 Aug 2009)</td></tr>
                         <tr><td class="abbr">API CF-4</td><td>API Service Category CF‑4 (Compression‑Ignition, Diesel)</td></tr>
-                        <tr><td class="abbr">API CF</td><td>API Service Category CF (Compression‑Ignition, Diesel — older)</td></tr>
+                        <tr><td class="abbr">API CF-2</td><td>API Service Category CF‑2 (Diesel, two‑stroke — obsolete since 1 Feb 2010)</td></tr>
+                        <tr><td class="abbr">API CF</td><td>API Service Category CF (Compression‑Ignition, Diesel — obsolete since 30 Dec 2010)</td></tr>
+                        <tr><td class="abbr">API CD</td><td>API Service Category CD (Diesel — obsolete)</td></tr>
+                        <tr><td class="abbr">API CC</td><td>API Service Category CC (Diesel — obsolete)</td></tr>
+                        <tr><td class="abbr">API CB</td><td>API Service Category CB (Diesel — obsolete)</td></tr>
+                        <tr><td class="abbr">API CA</td><td>API Service Category CA (Diesel — obsolete)</td></tr>
                     </table>
                 </div>
 
-                <div class="kb-card" data-search="jaso ilsac full forms ma ma1 ma2 mb fb fc fd gf-6a gf-6b gf-5 motorcycle wet clutch dry clutch gasoline fuel">
+                <div class="kb-card" data-search="jaso ilsac full forms ma ma1 ma2 mb fb fc fd m345 gf-6a gf-6b gf-5 motorcycle wet clutch dry clutch gasoline fuel two stroke 2 stroke">
                     <h3>🏍️ JASO &amp; ILSAC Full Forms</h3>
                     <table class="fullform-table">
                         <tr><td class="abbr">JASO MA</td><td>JASO MA (Motorcycle, wet clutch, high friction)</td></tr>
                         <tr><td class="abbr">JASO MA1</td><td>JASO MA1 (Motorcycle, wet clutch, medium friction)</td></tr>
                         <tr><td class="abbr">JASO MA2</td><td>JASO MA2 (Motorcycle, wet clutch, high friction)</td></tr>
                         <tr><td class="abbr">JASO MB</td><td>JASO MB (Motorcycle, dry clutch, low friction)</td></tr>
-                        <tr><td class="abbr">JASO FB</td><td>JASO FB (2‑stroke engine oil, low ash)</td></tr>
-                        <tr><td class="abbr">JASO FC</td><td>JASO FC (2‑stroke engine oil, low smoke)</td></tr>
-                        <tr><td class="abbr">JASO FD</td><td>JASO FD (2‑stroke engine oil, low smoke + detergent)</td></tr>
+                        <tr><td class="abbr">JASO FB</td><td>JASO FB (2‑stroke engine oil, low ash — base grade)</td></tr>
+                        <tr><td class="abbr">JASO FC</td><td>JASO FC (2‑stroke engine oil, low smoke — improved)</td></tr>
+                        <tr><td class="abbr">JASO FD</td><td>JASO FD (2‑stroke engine oil, low smoke + detergent — best)</td></tr>
                         <tr><td class="abbr">ILSAC GF-6A</td><td>ILSAC GF‑6A (based on API SP)</td></tr>
                         <tr><td class="abbr">ILSAC GF-6B</td><td>ILSAC GF‑6B (for 0W‑16 grades only)</td></tr>
                         <tr><td class="abbr">ILSAC GF-5</td><td>ILSAC GF‑5 (based on API SN)</td></tr>
                     </table>
                 </div>
 
-                <div class="kb-card" data-search="technical terms emission standards lspi low-speed pre-ignition tgdi turbocharged gasoline direct injection gdi dpf diesel particulate filter scr selective catalytic reduction egr exhaust gas recirculation def diesel exhaust fluid bs4 bs6 bharat stage atf automatic transmission fluid dot department of transportation">
+                <div class="kb-card" data-search="acea european full forms a b c e high saps low saps mid saps vw bmw mercedes catalyst aftertreatment">
+                    <h3>🇪🇺 ACEA Full Forms</h3>
+                    <table class="fullform-table">
+                        <tr><td class="abbr">ACEA A/B</td><td>ACEA A/B — High SAPS. Gasoline (A) &amp; light‑duty diesel (B) engines.</td></tr>
+                        <tr><td class="abbr">ACEA C</td><td>ACEA C — Low SAPS. Catalyst &amp; aftertreatment compatible (DPF/SCR).</td></tr>
+                        <tr><td class="abbr">ACEA E</td><td>ACEA E — Heavy‑duty diesel engines (trucks, buses).</td></tr>
+                        <tr><td class="abbr">SAPS</td><td>Sulphated Ash, Phosphorus, Sulphur — additive levels in oil</td></tr>
+                    </table>
+                </div>
+
+                <div class="kb-card" data-search="technical terms emission standards lspi low-speed pre-ignition tgdi turbocharged gasoline direct injection gdi dpf diesel particulate filter scr selective catalytic reduction egr exhaust gas recirculation def diesel exhaust fluid bs4 bs6 bharat stage atf automatic transmission fluid dot department of transportation hths high temperature high shear">
                     <h3>🔬 Technical Terms &amp; Emission Standards</h3>
                     <table class="fullform-table">
                         <tr><td class="abbr">LSPI</td><td>Low‑Speed Pre‑Ignition</td></tr>
                         <tr><td class="abbr">TGDI</td><td>Turbocharged Gasoline Direct Injection</td></tr>
                         <tr><td class="abbr">GDI</td><td>Gasoline Direct Injection</td></tr>
+                        <tr><td class="abbr">HTHS</td><td>High Temperature High Shear — viscosity under extreme conditions</td></tr>
                         <tr><td class="abbr">DPF</td><td>Diesel Particulate Filter</td></tr>
                         <tr><td class="abbr">SCR</td><td>Selective Catalytic Reduction</td></tr>
                         <tr><td class="abbr">EGR</td><td>Exhaust Gas Recirculation</td></tr>
@@ -789,6 +916,7 @@
             else if (/API "C"/i.test(cardTitle)) catClass = 'cat-api-c';
             else if (/JASO/i.test(cardTitle)) catClass = 'cat-jaso';
             else if (/ILSAC/i.test(cardTitle)) catClass = 'cat-ilsac';
+            else if (/ACEA/i.test(cardTitle)) catClass = 'cat-acea';
             else if (/Technical/i.test(cardTitle)) catClass = 'cat-tech';
             else if (/Viscosity/i.test(cardTitle)) catClass = 'cat-visc';
 
@@ -817,6 +945,7 @@
             else if (/API "C"/i.test(cardTitle)) catClass = 'cat-api-c';
             else if (/JASO/i.test(cardTitle)) catClass = 'cat-jaso';
             else if (/ILSAC/i.test(cardTitle)) catClass = 'cat-ilsac';
+            else if (/ACEA/i.test(cardTitle)) catClass = 'cat-acea';
 
             items.push({
                 title: abbr ? (abbr + ' — ' + text.replace(abbr, '').trim()) : text,
@@ -929,6 +1058,7 @@
             case 'cat-api-c':  return '🛢️';
             case 'cat-jaso':   return '🏍️';
             case 'cat-ilsac':  return '🇺🇸';
+            case 'cat-acea':   return '🇪🇺';
             case 'cat-tech':   return '🔬';
             case 'cat-visc':   return '❄️';
             default:           return '📋';
