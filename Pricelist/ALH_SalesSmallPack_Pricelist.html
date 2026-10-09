@@ -9,8 +9,30 @@
     .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
     h2 { color: #1e3c5a; margin-top: 0; }
     .search-container { position: relative; margin-bottom: 25px; max-width: 550px; }
-    #searchInput { width: 100%; padding: 14px 18px; font-size: 16px; border: 2px solid #cbdae9; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+    #searchInput { width: 100%; padding: 14px 46px 14px 18px; font-size: 16px; border: 2px solid #cbdae9; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
     #searchInput:focus { border-color: #2c7be5; box-shadow: 0 0 0 3px rgba(44,123,229,0.15); }
+    #searchClearBtn {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #475569;
+        border: none;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+        transition: background 0.2s;
+    }
+    #searchClearBtn:hover { background: #cbd5e1; color: #1e293b; }
     .autocomplete-items { position: absolute; border: 1px solid #d4e0ec; border-radius: 12px; z-index: 99; top: 100%; left: 0; right: 0; max-height: 260px; overflow-y: auto; background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; margin-top: 6px; }
     .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #eef3f9; display: flex; justify-content: space-between; align-items: center; }
     .autocomplete-items div:last-child { border-bottom: none; }
@@ -31,6 +53,8 @@
     .select-col input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #2c7be5; display: block; margin: 0 auto; }
     tr.row-selected { background-color: #dbeafe !important; }
     tr.row-selected:hover { background-color: #c7defd !important; }
+    tr.row-search-selected { background-color: #fff4ce !important; }
+    tr.row-search-selected:hover { background-color: #ffe9a8 !important; }
     .select-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #f1f6fc; border: 1px solid #d0deeb; border-radius: 10px; margin-top: 15px; font-size: 14px; font-weight: 600; color: #1e3c5a; flex-wrap: wrap; }
     .select-bar label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .select-bar input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: #2c7be5; }
@@ -52,6 +76,7 @@
 <h2>📋 Auto Lube House - Sales Small Pack Price List</h2>
 <div class="search-container">
     <input type="text" id="searchInput" placeholder="🔍 Search ..." autocomplete="off">
+    <button id="searchClearBtn" title="Clear search">✕</button>
     <div id="autocomplete-list" class="autocomplete-items"></div>
 </div>
 
@@ -2630,6 +2655,7 @@
     document.querySelectorAll('.row-select').forEach(cb => {
         cb.addEventListener('change', function() {
             this.closest('tr').classList.toggle('row-selected', this.checked);
+            if (!this.checked) this.closest('tr').classList.remove('row-search-selected');
             updateSelection();
         });
     });
@@ -2638,6 +2664,7 @@
         document.querySelectorAll('.row-select').forEach(cb => {
             cb.checked = this.checked;
             cb.closest('tr').classList.toggle('row-selected', this.checked);
+            if (!this.checked) cb.closest('tr').classList.remove('row-search-selected');
         });
         selectAllBottom.checked = this.checked;
         updateSelection();
@@ -2646,6 +2673,7 @@
         document.querySelectorAll('.row-select').forEach(cb => {
             cb.checked = this.checked;
             cb.closest('tr').classList.toggle('row-selected', this.checked);
+            if (!this.checked) cb.closest('tr').classList.remove('row-search-selected');
         });
         selectAllTop.checked = this.checked;
         updateSelection();
@@ -2654,6 +2682,7 @@
         document.querySelectorAll('.row-select').forEach(cb => {
             cb.checked = false;
             cb.closest('tr').classList.remove('row-selected');
+            cb.closest('tr').classList.remove('row-search-selected');
         });
         selectAllTop.checked = false;
         selectAllBottom.checked = false;
@@ -2688,11 +2717,23 @@
         else { atBottom = false; scrollIcon.textContent = '▲'; }
     });
 
+
     const searchInput = document.getElementById('searchInput');
     const autocompleteList = document.getElementById('autocomplete-list');
+    const searchClearBtn = document.getElementById('searchClearBtn');
     const searchableData = tableRows.map(row => {
         return { code: row.querySelector('.mat-code').innerText, desc: row.querySelector('.mat-desc').innerText, rowElement: row };
     });
+
+    function updateSearchClearBtn() {
+        if (!searchClearBtn) return;
+        if (searchInput.value.trim() !== '') {
+            searchClearBtn.style.display = 'flex';
+        } else {
+            searchClearBtn.style.display = 'none';
+        }
+    }
+
     function filterTable(term) {
         term = term.toLowerCase().trim();
         tableRows.forEach(row => {
@@ -2702,27 +2743,73 @@
         });
     }
     function closeAllLists() { autocompleteList.innerHTML = ''; autocompleteList.style.display = 'none'; }
+
+    function selectRowByElement(rowElement, isAutoSearch) {
+        if (!rowElement) return;
+        // Remove hidden class so row is visible
+        rowElement.classList.remove('hidden-row');
+        // Tick checkbox
+        const cb = rowElement.querySelector('.row-select');
+        if (cb) {
+            cb.checked = true;
+            rowElement.classList.add('row-selected');
+            if (isAutoSearch) {
+                rowElement.classList.add('row-search-selected');
+            }
+        }
+        // Update whatever selection logic this page uses
+        if (typeof updateSelection === 'function') updateSelection();
+        if (typeof updateSelectedTotal === 'function') updateSelectedTotal();
+        // Scroll into view (smooth, centered)
+        rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     searchInput.addEventListener('input', function() {
         const val = this.value.toLowerCase().trim();
         closeAllLists();
+        updateSearchClearBtn();
         filterTable(val);
         if (!val) return;
         const matches = searchableData.filter(item => item.code.toLowerCase().includes(val) || item.desc.toLowerCase().includes(val));
         if (matches.length > 0) {
             autocompleteList.style.display = 'block';
-            matches.forEach(match => {
+            matches.slice(0, 30).forEach(match => {
                 const div = document.createElement('div');
                 let codeHTML = match.code, descHTML = match.desc;
                 if (match.code.toLowerCase().includes(val)) codeHTML = match.code.replace(new RegExp(`(${val})`, 'gi'), '<strong>$1</strong>');
                 if (match.desc.toLowerCase().includes(val)) descHTML = match.desc.replace(new RegExp(`(${val})`, 'gi'), '<strong>$1</strong>');
                 div.innerHTML = `<span>${codeHTML}</span> <span style="color:#5a7a9a; font-size:12px;">${descHTML}</span>`;
-                div.onclick = function() { searchInput.value = match.code + ' - ' + match.desc; filterTable(match.code); closeAllLists(); };
+                div.onclick = function() {
+                    searchInput.value = match.code + ' - ' + match.desc;
+                    filterTable(match.code);
+                    closeAllLists();
+                    updateSearchClearBtn();
+                    // AUTO-SELECT the clicked product
+                    selectRowByElement(match.rowElement, true);
+                };
                 autocompleteList.appendChild(div);
             });
         }
     });
-    searchInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') closeAllLists(); });
-    document.addEventListener('click', function(e) { if (e.target !== searchInput && e.target !== autocompleteList) closeAllLists(); });
+
+    searchInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { closeAllLists(); } });
+
+    if (searchClearBtn) {
+        searchClearBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            searchInput.value = '';
+            filterTable('');
+            closeAllLists();
+            updateSearchClearBtn();
+            searchInput.focus();
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target !== searchInput && e.target !== autocompleteList && e.target !== searchClearBtn) closeAllLists();
+    });
+
+    updateSearchClearBtn();
 </script>
 </body>
 </html>
