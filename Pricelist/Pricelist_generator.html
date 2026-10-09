@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Price List Generator (Small Pack & Barrel)</title>
+<title>Price List Generator (Sales & Purchase)</title>
 <!-- SheetJS for Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- PDF.js for PDF text extraction -->
@@ -45,21 +45,9 @@
         from { transform: scale(0.9); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
     }
-    .login-icon {
-        font-size: 48px;
-        margin-bottom: 10px;
-    }
-    .login-card h2 {
-        margin: 0 0 6px;
-        color: #1e3c5a;
-        font-size: 22px;
-        font-weight: 700;
-    }
-    .login-card p {
-        margin: 0 0 22px;
-        color: #6b8299;
-        font-size: 14px;
-    }
+    .login-icon { font-size: 48px; margin-bottom: 10px; }
+    .login-card h2 { margin: 0 0 6px; color: #1e3c5a; font-size: 22px; font-weight: 700; }
+    .login-card p { margin: 0 0 22px; color: #6b8299; font-size: 14px; }
     #loginInput {
         width: 100%;
         padding: 14px 18px;
@@ -73,10 +61,7 @@
         font-weight: 700;
         color: #1e3c5a;
     }
-    #loginInput:focus {
-        border-color: #2c7be5;
-        box-shadow: 0 0 0 4px rgba(44,123,229,0.15);
-    }
+    #loginInput:focus { border-color: #2c7be5; box-shadow: 0 0 0 4px rgba(44,123,229,0.15); }
     #loginBtn {
         margin-top: 18px;
         width: 100%;
@@ -92,13 +77,7 @@
     }
     #loginBtn:hover { background: #1a5bbf; }
     #loginBtn:active { transform: scale(0.98); }
-    #loginError {
-        margin-top: 14px;
-        color: #e74c3c;
-        font-size: 14px;
-        font-weight: 600;
-        min-height: 20px;
-    }
+    #loginError { margin-top: 14px; color: #e74c3c; font-size: 14px; font-weight: 600; min-height: 20px; }
     .login-shake { animation: shake 0.4s; }
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
@@ -118,31 +97,9 @@
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
-    h1 {
-        text-align: center;
-        color: #1e3c5a;
-        margin-top: 0;
-        font-weight: 600;
-        font-size: 28px;
-    }
-    .subtitle {
-        text-align: center;
-        color: #4a6a85;
-        margin-bottom: 25px;
-        font-size: 16px;
-    }
-    .instructions {
-        background: #e6f0fa;
-        border-left: 6px solid #2c7be5;
-        padding: 18px 22px;
-        margin-bottom: 30px;
-        border-radius: 10px;
-        font-size: 15px;
-    }
-    .instructions ul {
-        margin: 10px 0 0 20px;
-        padding: 0;
-    }
+    h1 { text-align: center; color: #1e3c5a; margin-top: 0; font-weight: 600; font-size: 28px; }
+    .subtitle { text-align: center; color: #4a6a85; margin-bottom: 25px; font-size: 16px; }
+
     .section-title {
         font-size: 20px;
         font-weight: 700;
@@ -153,29 +110,39 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        flex-wrap: wrap;
     }
-    .section-title.small-pack { border-bottom-color: #2c7be5; }
-    .section-title.barrel { border-bottom-color: #e67e22; }
+    .section-title.sales-small { border-bottom-color: #2c7be5; }
+    .section-title.sales-barrel { border-bottom-color: #e67e22; }
+    .section-title.purchase-small { border-bottom-color: #8e44ad; }
+    .section-title.purchase-barrel { border-bottom-color: #16a085; }
 
-    .upload-card {
+    .section-top-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 14px 18px;
         background: #f8fafd;
+        border: 1px solid #d0deeb;
         border-radius: 12px;
-        padding: 20px 25px;
-        border: 2px dashed #bdd3e8;
-        transition: border-color 0.2s;
-        text-align: center;
-        max-width: 500px;
-        margin: 0 auto 20px;
+        margin-bottom: 12px;
     }
-    .upload-card:hover { border-color: #2c7be5; }
-    .upload-card.barrel-card { border-color: #f0c99e; }
-    .upload-card.barrel-card:hover { border-color: #e67e22; }
+    .section-top-bar .status-text {
+        font-size: 13px;
+        color: #3f5e7a;
+        font-weight: 600;
+        flex: 1 1 auto;
+        min-width: 140px;
+    }
+    .section-top-bar .status-text.sales-barrel-status { color: #a35d10; }
+    .section-top-bar .status-text.purchase-small-status { color: #6c3483; }
+    .section-top-bar .status-text.purchase-barrel-status { color: #0e7b63; }
 
     .file-input-wrapper {
         position: relative;
         overflow: hidden;
         display: inline-block;
-        margin-top: 10px;
     }
     .file-input-wrapper input[type=file] {
         font-size: 100px;
@@ -188,35 +155,53 @@
     .btn {
         border: none;
         color: white;
-        padding: 12px 24px;
+        padding: 11px 20px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
-        margin: 4px 2px;
         cursor: pointer;
         border-radius: 8px;
         transition: background 0.2s, transform 0.1s;
+        white-space: nowrap;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-upload-small { background-color: #2c7be5; }
-    .btn-upload-small:hover { background-color: #1a5bbf; }
-    .btn-upload-barrel { background-color: #e67e22; }
-    .btn-upload-barrel:hover { background-color: #cf6d17; }
+    .btn-upload-sales-small { background-color: #2c7be5; }
+    .btn-upload-sales-small:hover { background-color: #1a5bbf; }
+    .btn-upload-sales-barrel { background-color: #e67e22; }
+    .btn-upload-sales-barrel:hover { background-color: #cf6d17; }
+    .btn-upload-purchase-small { background-color: #8e44ad; }
+    .btn-upload-purchase-small:hover { background-color: #6c3483; }
+    .btn-upload-purchase-barrel { background-color: #16a085; }
+    .btn-upload-purchase-barrel:hover { background-color: #0e7b63; }
+
     .btn-download {
         background-color: #27ae60;
         display: none;
-        margin: 15px auto 5px;
-        font-size: 16px;
-        padding: 14px 32px;
-        border-radius: 40px;
-        font-weight: 600;
+        font-size: 14px;
+        padding: 11px 22px;
+        border-radius: 8px;
+        font-weight: 700;
         letter-spacing: 0.3px;
     }
     .btn-download:hover { background-color: #1e8e4f; }
-    .btn-download.barrel-dl { background-color: #e67e22; }
-    .btn-download.barrel-dl:hover { background-color: #cf6d17; }
+    .btn-download.sales-barrel-dl { background-color: #e67e22; }
+    .btn-download.sales-barrel-dl:hover { background-color: #cf6d17; }
+    .btn-download.purchase-small-dl { background-color: #8e44ad; }
+    .btn-download.purchase-small-dl:hover { background-color: #6c3483; }
+    .btn-download.purchase-barrel-dl { background-color: #16a085; }
+    .btn-download.purchase-barrel-dl:hover { background-color: #0e7b63; }
+
+    .btn-reset {
+        background-color: #e74c3c;
+        display: none;
+        font-size: 14px;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    .btn-reset:hover { background-color: #c0392b; }
 
     #loading {
         display: none;
@@ -280,13 +265,7 @@
         white-space: nowrap;
     }
     .wa-share-btn:hover { background-color: #128C7E; }
-    .status-text {
-        margin-top: 12px;
-        font-size: 13px;
-        color: #3f5e7a;
-        font-weight: 600;
-    }
-    .barrel-status { color: #a35d10; }
+    .status-text { font-size: 13px; color: #3f5e7a; font-weight: 600; }
     .flex-center { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px; }
 
     .select-col { width: 36px; text-align: center !important; padding: 7px 6px !important; }
@@ -300,6 +279,73 @@
     }
     tr.row-selected { background-color: #dbeafe !important; }
     tr.row-selected:hover { background-color: #c7defd !important; }
+    /* Auto-selected row highlight for Purchase qty>1 */
+    tr.row-auto-selected { background-color: #e8d9f5 !important; }
+    tr.row-auto-selected:hover { background-color: #dbc7ee !important; }
+
+    /* Quantity input */
+    .qty-input {
+        width: 70px;
+        padding: 5px 7px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        border: 2px solid #cbdae9;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        background: #fff;
+        color: #1e3c5a;
+    }
+    .qty-input:focus {
+        border-color: #8e44ad;
+        box-shadow: 0 0 0 3px rgba(142,68,173,0.15);
+    }
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    .qty-input[type=number] { -moz-appearance: textfield; }
+
+    .amount-cell {
+        font-weight: 700;
+        color: #16a085;
+    }
+
+    .selected-total-banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        background: linear-gradient(135deg, #f3e8ff 0%, #e8f8f4 100%);
+        border: 2px solid #c9b8e8;
+        border-radius: 10px;
+        margin-top: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #4a2b7a;
+        flex-wrap: wrap;
+    }
+    .selected-total-banner .total-label { font-size: 14px; color: #6c3483; font-weight: 600; }
+    .selected-total-banner .total-value {
+        font-size: 20px;
+        font-weight: 800;
+        color: #16a085;
+        background: #fff;
+        padding: 4px 14px;
+        border-radius: 8px;
+        border: 2px solid #16a085;
+    }
+    .selected-total-banner .items-count {
+        font-size: 13px;
+        color: #6c3483;
+        font-weight: 600;
+        background: #fff;
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid #c9b8e8;
+    }
 
     .float-buttons {
         position: fixed;
@@ -324,11 +370,12 @@
         align-items: center;
         justify-content: center;
         transition: background 0.2s, transform 0.15s;
+        position: relative;
     }
     .float-btn:active { transform: scale(0.92); }
     .float-scroll-btn { background-color: #34495e; }
     .float-scroll-btn:hover { background-color: #22303f; }
-    .float-share-btn { background-color: #25D366; position: relative; }
+    .float-share-btn { background-color: #25D366; }
     .float-share-btn:hover { background-color: #128C7E; }
     .float-share-btn .share-count {
         position: absolute;
@@ -352,6 +399,25 @@
         cursor: not-allowed;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+    #showSelectedBtn { background-color: #0f766e; }
+    #showSelectedBtn:hover { background-color: #0b5d56; }
+    #showSelectedBtn .share-count {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #e74c3c;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        min-width: 22px;
+        height: 22px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        border: 2px solid #fff;
+    }
 
     .select-bar {
         display: flex;
@@ -371,6 +437,169 @@
     .select-bar input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: #2c7be5; }
     .select-bar .clear-sel { margin-left: auto; background: #e74c3c; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
     .select-bar .clear-sel:hover { background: #c0392b; }
+
+    /* ============ SHOW SELECTED PANEL ============ */
+    #selectedPanel {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 420px;
+        max-width: 92vw;
+        height: 100vh;
+        background: #fff;
+        box-shadow: -8px 0 30px rgba(0,0,0,0.25);
+        z-index: 100000;
+        transition: right 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        border-left: 4px solid #0f766e;
+    }
+    #selectedPanel.open { right: 0; }
+    #selectedPanel .panel-header {
+        padding: 18px 20px;
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+    #selectedPanel .panel-header h3 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    #selectedPanel .panel-header .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+    #selectedPanel .panel-header .close-btn:hover { background: rgba(255,255,255,0.35); }
+    #selectedPanel .panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px 16px;
+    }
+    #selectedPanel .panel-group {
+        margin-bottom: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    #selectedPanel .panel-group-title {
+        padding: 9px 12px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #fff;
+    }
+    #selectedPanel .panel-group-title.sales-small { background: #2c7be5; }
+    #selectedPanel .panel-group-title.sales-barrel { background: #e67e22; }
+    #selectedPanel .panel-group-title.purchase-small { background: #8e44ad; }
+    #selectedPanel .panel-group-title.purchase-barrel { background: #16a085; }
+    #selectedPanel .panel-item {
+        padding: 10px 12px;
+        border-top: 1px solid #eef2f7;
+        font-size: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+    #selectedPanel .panel-item:first-child { border-top: none; }
+    #selectedPanel .panel-item .pi-name {
+        font-weight: 700;
+        color: #1e2b3c;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+    #selectedPanel .panel-item .pi-code {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    #selectedPanel .panel-item .pi-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #334155;
+        margin-top: 2px;
+    }
+    #selectedPanel .panel-item .pi-row .pi-label { color: #64748b; font-weight: 600; }
+    #selectedPanel .panel-item .pi-row .pi-val { font-weight: 700; color: #0f172a; }
+    #selectedPanel .panel-item .pi-row .pi-amount { color: #16a085; font-weight: 800; }
+    #selectedPanel .panel-empty {
+        text-align: center;
+        color: #94a3b8;
+        padding: 40px 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    #selectedPanel .panel-footer {
+        padding: 14px 16px;
+        border-top: 2px solid #e2e8f0;
+        background: #f8fafc;
+        flex-shrink: 0;
+    }
+    #selectedPanel .panel-footer .pf-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 10px;
+    }
+    #selectedPanel .panel-footer .pf-total .pf-value {
+        font-size: 20px;
+        font-weight: 800;
+        color: #16a085;
+    }
+    #selectedPanel .panel-footer .pf-actions {
+        display: flex;
+        gap: 8px;
+    }
+    #selectedPanel .panel-footer .pf-actions button {
+        flex: 1;
+        border: none;
+        border-radius: 8px;
+        padding: 11px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+        color: #fff;
+    }
+    #selectedPanel .panel-footer .pf-actions .pf-share { background: #25D366; }
+    #selectedPanel .panel-footer .pf-actions .pf-share:hover { background: #128C7E; }
+    #selectedPanel .panel-footer .pf-actions .pf-share:disabled { background: #b0b0b0; cursor: not-allowed; }
+    #selectedPanel .panel-footer .pf-actions .pf-clear { background: #e74c3c; }
+    #selectedPanel .panel-footer .pf-actions .pf-clear:hover { background: #c0392b; }
+    #selectedPanel .panel-footer .pf-actions .pf-clear:disabled { background: #d5d5d5; cursor: not-allowed; }
+
+    #panelOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 99999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    #panelOverlay.open { display: block; opacity: 1; }
 </style>
 </head>
 <body>
@@ -391,31 +620,28 @@
 <div id="mainApp">
 <div class="container">
     <h1>📋 Price List Generator</h1>
-    <div class="subtitle">Small Pack & Barrel</div>
+    <div class="subtitle">Sales & Purchase — Small Pack & Barrel</div>
 
-        <div id="loading">⏳ Processing file... Please wait.</div>
+    <div id="loading">⏳ Processing file... Please wait.</div>
 
-    <!-- ==================== SMALL PACK SECTION ==================== -->
-    <div class="section-title small-pack">🛢️ Small Pack</div>
+    <!-- ==================== SALES SMALL PACK ==================== -->
+    <div class="section-title sales-small">💰 Sales Small Pack</div>
 
-    <div class="upload-card">
-        <p style="color:#4a6a85; font-size:14px; margin:5px 0 12px;">Excel / CSV / Text-based PDF</p>
+    <div class="section-top-bar">
         <div class="file-input-wrapper">
-            <button class="btn btn-upload-small">📂 Upload Small Pack File</button>
-            <input type="file" id="smallPackUpload" accept=".xlsx, .xls, .csv, .pdf" />
+            <button class="btn btn-upload-sales-small">📂 Upload Sales Small Pack</button>
+            <input type="file" id="salesSmallUpload" accept=".xlsx, .xls, .csv, .pdf" />
         </div>
-        <div class="status-text" id="smallPackStatus">No file loaded</div>
+        <button id="salesSmallDownloadBtn" class="btn btn-download">⬇️ Download Sales Small Pack HTML</button>
+        <button id="salesSmallResetBtn" class="btn btn-reset">🔄 Reset</button>
+        <div class="status-text" id="salesSmallStatus">No file loaded</div>
     </div>
 
-    <div class="flex-center">
-        <button id="smallPackDownloadBtn" class="btn btn-download">⬇️ Download Small Pack HTML</button>
-    </div>
-
-    <div class="preview-section" id="smallPackPreviewSection">
-        <table id="smallPackPreviewTable">
+    <div class="preview-section" id="salesSmallPreviewSection">
+        <table id="salesSmallPreviewTable">
             <thead>
                 <tr>
-                    <th class="select-col"><input type="checkbox" id="smallPackSelectAllTop" title="Select all"></th>
+                    <th class="select-col"><input type="checkbox" id="salesSmallSelectAllTop" title="Select all"></th>
                     <th>Mat code</th>
                     <th class="mat-desc-cell">Mat Description</th>
                     <th>MRP/Pc</th>
@@ -424,36 +650,33 @@
                     <th>Share</th>
                 </tr>
             </thead>
-            <tbody id="smallPackTableBody"></tbody>
+            <tbody id="salesSmallTableBody"></tbody>
         </table>
     </div>
-    <div class="select-bar" id="smallPackSelectBar" style="display:none;">
-        <label><input type="checkbox" id="smallPackSelectAll"> Select All</label>
-        <span id="smallPackSelCount">0 selected</span>
-        <button class="clear-sel" id="smallPackClearSel">Clear Selection</button>
+    <div class="select-bar" id="salesSmallSelectBar" style="display:none;">
+        <label><input type="checkbox" id="salesSmallSelectAll"> Select All</label>
+        <span id="salesSmallSelCount">0 selected</span>
+        <button class="clear-sel" id="salesSmallClearSel">Clear Selection</button>
     </div>
 
-    <!-- ==================== BARREL SECTION ==================== -->
-    <div class="section-title barrel">🛢️ Barrel</div>
+    <!-- ==================== SALES BARREL ==================== -->
+    <div class="section-title sales-barrel">🛢️ Sales Barrel</div>
 
-    <div class="upload-card barrel-card">
-        <p style="color:#a35d10; font-size:14px; margin:5px 0 12px;">Excel / CSV / Text-based PDF</p>
+    <div class="section-top-bar">
         <div class="file-input-wrapper">
-            <button class="btn btn-upload-barrel">📂 Upload Barrel File</button>
-            <input type="file" id="barrelUpload" accept=".xlsx, .xls, .csv, .pdf" />
+            <button class="btn btn-upload-sales-barrel">📂 Upload Sales Barrel</button>
+            <input type="file" id="salesBarrelUpload" accept=".xlsx, .xls, .csv, .pdf" />
         </div>
-        <div class="status-text barrel-status" id="barrelStatus">No file loaded</div>
+        <button id="salesBarrelDownloadBtn" class="btn btn-download sales-barrel-dl">⬇️ Download Sales Barrel HTML</button>
+        <button id="salesBarrelResetBtn" class="btn btn-reset">🔄 Reset</button>
+        <div class="status-text sales-barrel-status" id="salesBarrelStatus">No file loaded</div>
     </div>
 
-    <div class="flex-center">
-        <button id="barrelDownloadBtn" class="btn btn-download barrel-dl">⬇️ Download Barrel HTML</button>
-    </div>
-
-    <div class="preview-section" id="barrelPreviewSection">
-        <table id="barrelPreviewTable">
+    <div class="preview-section" id="salesBarrelPreviewSection">
+        <table id="salesBarrelPreviewTable">
             <thead>
                 <tr>
-                    <th class="select-col"><input type="checkbox" id="barrelSelectAllTop" title="Select all"></th>
+                    <th class="select-col"><input type="checkbox" id="salesBarrelSelectAllTop" title="Select all"></th>
                     <th>Mat code</th>
                     <th class="mat-desc-cell">Mat Description</th>
                     <th>Disc/L</th>
@@ -461,18 +684,124 @@
                     <th>Share</th>
                 </tr>
             </thead>
-            <tbody id="barrelTableBody"></tbody>
+            <tbody id="salesBarrelTableBody"></tbody>
         </table>
     </div>
-    <div class="select-bar" id="barrelSelectBar" style="display:none;">
-        <label><input type="checkbox" id="barrelSelectAll"> Select All</label>
-        <span id="barrelSelCount">0 selected</span>
-        <button class="clear-sel" id="barrelClearSel">Clear Selection</button>
+    <div class="select-bar" id="salesBarrelSelectBar" style="display:none;">
+        <label><input type="checkbox" id="salesBarrelSelectAll"> Select All</label>
+        <span id="salesBarrelSelCount">0 selected</span>
+        <button class="clear-sel" id="salesBarrelClearSel">Clear Selection</button>
+    </div>
+
+    <!-- ==================== PURCHASE SMALL PACK ==================== -->
+    <div class="section-title purchase-small">🛒 Purchase Small Pack <span style="font-size:12px; color:#8e44ad; font-weight:400;">(password protected: 1551)</span></div>
+
+    <div class="section-top-bar">
+        <div class="file-input-wrapper">
+            <button class="btn btn-upload-purchase-small">📂 Upload Purchase Small Pack</button>
+            <input type="file" id="purchaseSmallUpload" accept=".xlsx, .xls, .csv, .pdf" />
+        </div>
+        <button id="purchaseSmallDownloadBtn" class="btn btn-download purchase-small-dl">⬇️ Download Purchase Small Pack HTML</button>
+        <button id="purchaseSmallResetBtn" class="btn btn-reset">🔄 Reset</button>
+        <div class="status-text purchase-small-status" id="purchaseSmallStatus">No file loaded</div>
+    </div>
+
+    <div class="preview-section" id="purchaseSmallPreviewSection">
+        <table id="purchaseSmallPreviewTable">
+            <thead>
+                <tr>
+                    <th class="select-col"><input type="checkbox" id="purchaseSmallSelectAllTop" title="Select all"></th>
+                    <th>PRODUCT CODE</th>
+                    <th class="mat-desc-cell">PRODUCT NAME</th>
+                    <th>TOTAL INCLUDING GST</th>
+                    <th>QTY</th>
+                    <th>AMOUNT</th>
+                    <th>Share</th>
+                </tr>
+            </thead>
+            <tbody id="purchaseSmallTableBody"></tbody>
+        </table>
+    </div>
+    <div class="selected-total-banner" id="purchaseSmallTotalBanner" style="display:none;">
+        <span class="total-label">Selected Total:</span>
+        <span class="total-value" id="purchaseSmallSelectedTotal">₹0</span>
+        <span class="items-count" id="purchaseSmallSelectedCount">0 items</span>
+    </div>
+    <div class="select-bar" id="purchaseSmallSelectBar" style="display:none;">
+        <label><input type="checkbox" id="purchaseSmallSelectAll"> Select All</label>
+        <span id="purchaseSmallSelCount">0 selected</span>
+        <button class="clear-sel" id="purchaseSmallClearSel">Clear Selection</button>
+    </div>
+
+    <!-- ==================== PURCHASE BARREL ==================== -->
+    <div class="section-title purchase-barrel">🛢️ Purchase Barrel <span style="font-size:12px; color:#16a085; font-weight:400;">(password protected: 1551)</span></div>
+
+    <div class="section-top-bar">
+        <div class="file-input-wrapper">
+            <button class="btn btn-upload-purchase-barrel">📂 Upload Purchase Barrel</button>
+            <input type="file" id="purchaseBarrelUpload" accept=".xlsx, .xls, .csv, .pdf" />
+        </div>
+        <button id="purchaseBarrelDownloadBtn" class="btn btn-download purchase-barrel-dl">⬇️ Download Purchase Barrel HTML</button>
+        <button id="purchaseBarrelResetBtn" class="btn btn-reset">🔄 Reset</button>
+        <div class="status-text purchase-barrel-status" id="purchaseBarrelStatus">No file loaded</div>
+    </div>
+
+    <div class="preview-section" id="purchaseBarrelPreviewSection">
+        <table id="purchaseBarrelPreviewTable">
+            <thead>
+                <tr>
+                    <th class="select-col"><input type="checkbox" id="purchaseBarrelSelectAllTop" title="Select all"></th>
+                    <th>PRODUCT CODE</th>
+                    <th class="mat-desc-cell">PRODUCT NAME</th>
+                    <th>TOTAL INCLUDING GST</th>
+                    <th>QTY</th>
+                    <th>AMOUNT</th>
+                    <th>Share</th>
+                </tr>
+            </thead>
+            <tbody id="purchaseBarrelTableBody"></tbody>
+        </table>
+    </div>
+    <div class="selected-total-banner" id="purchaseBarrelTotalBanner" style="display:none;">
+        <span class="total-label">Selected Total:</span>
+        <span class="total-value" id="purchaseBarrelSelectedTotal">₹0</span>
+        <span class="items-count" id="purchaseBarrelSelectedCount">0 items</span>
+    </div>
+    <div class="select-bar" id="purchaseBarrelSelectBar" style="display:none;">
+        <label><input type="checkbox" id="purchaseBarrelSelectAll"> Select All</label>
+        <span id="purchaseBarrelSelCount">0 selected</span>
+        <button class="clear-sel" id="purchaseBarrelClearSel">Clear Selection</button>
+    </div>
+</div>
+
+<!-- ==================== SHOW SELECTED PANEL ==================== -->
+<div id="panelOverlay"></div>
+<div id="selectedPanel">
+    <div class="panel-header">
+        <h3>📋 Selected Items</h3>
+        <button class="close-btn" id="closePanelBtn">✕</button>
+    </div>
+    <div class="panel-body" id="selectedPanelBody">
+        <div class="panel-empty">No items selected yet.</div>
+    </div>
+    <div class="panel-footer">
+        <div class="pf-total">
+            <span>Grand Total:</span>
+            <span class="pf-value" id="panelGrandTotal">₹0</span>
+        </div>
+        <div class="pf-actions">
+            <button class="pf-share" id="panelShareBtn" disabled>📤 Share</button>
+            <button class="pf-clear" id="panelClearBtn" disabled>🗑 Clear</button>
+        </div>
     </div>
 </div>
 
 <!-- ==================== FLOATING BUTTONS ==================== -->
 <div class="float-buttons">
+    <button class="float-btn" id="showSelectedBtn" title="Show selected items">
+        <span>📋</span>
+        <span class="share-count" id="showSelectedCount">0</span>
+    </button>
     <button class="float-btn float-share-btn" id="floatShareBtn" title="Share selected items on WhatsApp" disabled>
         <span>📤</span>
         <span class="share-count" id="floatShareCount">0</span>
@@ -499,7 +828,6 @@
             if (entered === ACCESS_CODE) {
                 loginGate.classList.add('hidden');
                 mainApp.style.display = 'block';
-                // init app after login
                 if (typeof window.initApp === 'function') window.initApp();
             } else {
                 loginError.textContent = '❌ Incorrect code. Please try again.';
@@ -514,25 +842,44 @@
         loginInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') tryLogin();
         });
-        // Auto-focus
         setTimeout(() => loginInput.focus(), 100);
     })();
 
     // ==================== MAIN APP LOGIC ====================
     window.initApp = function() {
-        // Set PDF.js worker path
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        let smallPackData = [];
-        let barrelData = [];
-        let smallPackHTML = "";
-        let barrelHTML = "";
+        let salesSmallData = [];
+        let salesBarrelData = [];
+        let purchaseSmallData = [];
+        let purchaseBarrelData = [];
+
+        let salesSmallHTML = "";
+        let salesBarrelHTML = "";
+        let purchaseSmallHTML = "";
+        let purchaseBarrelHTML = "";
 
         const loadingDiv = document.getElementById('loading');
-        const smallPackStatus = document.getElementById('smallPackStatus');
-        const barrelStatus = document.getElementById('barrelStatus');
-
         let selectedItems = [];
+
+        const selectedPanel = document.getElementById('selectedPanel');
+        const panelOverlay = document.getElementById('panelOverlay');
+        const selectedPanelBody = document.getElementById('selectedPanelBody');
+        const panelGrandTotal = document.getElementById('panelGrandTotal');
+        const panelShareBtn = document.getElementById('panelShareBtn');
+        const panelClearBtn = document.getElementById('panelClearBtn');
+
+        function openPanel() {
+            selectedPanel.classList.add('open');
+            panelOverlay.classList.add('open');
+        }
+        function closePanel() {
+            selectedPanel.classList.remove('open');
+            panelOverlay.classList.remove('open');
+        }
+        document.getElementById('showSelectedBtn').addEventListener('click', openPanel);
+        document.getElementById('closePanelBtn').addEventListener('click', closePanel);
+        panelOverlay.addEventListener('click', closePanel);
 
         function roundValue(val) {
             if (val === undefined || val === null || val === '') return '';
@@ -541,7 +888,7 @@
             return Math.round(num);
         }
 
-        function parseSpreadsheet(file, callback, isBarrel) {
+        function parseSpreadsheet(file, callback, mode) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -565,40 +912,63 @@
                         return null;
                     }
 
-                    const codeKey = findKey(['Mat code', 'Matcode', 'Code', 'MAT CODE']);
-                    const descKey = findKey(['Mat Description', 'Description', 'Desc', 'MAT DESCRIPTION']);
-                    const mrpKey = findKey(['MRP/Pc', 'MRP', 'RSP/L', 'RSP', 'M.R.P']);
-                    const discKey = findKey(['Disc/L', 'Disc', 'DISC/L', 'Discount']);
-                    const invKey = findKey(['Invoice rate/Item', 'Invoice rate', 'Invoice/Item', 'Invoice rate/ Item']);
+                    if (mode === 'sales') {
+                        const codeKey = findKey(['Mat code', 'Matcode', 'Code', 'MAT CODE', 'PRODUCT CODE', 'Product Code']);
+                        const descKey = findKey(['Mat Description', 'Description', 'Desc', 'MAT DESCRIPTION', 'PRODUCT NAME', 'Product Name']);
+                        const mrpKey = findKey(['MRP/Pc', 'MRP', 'RSP/L', 'RSP', 'M.R.P']);
+                        const discKey = findKey(['Disc/L', 'Disc', 'DISC/L', 'Discount']);
+                        const invKey = findKey(['Invoice rate/Item', 'Invoice rate', 'Invoice/Item', 'Invoice rate/ Item', 'TOTAL INCLUDING GST', 'Total Including GST', 'Total']);
 
-                    if (!codeKey || !descKey) {
-                        alert("Required columns 'Mat code' and 'Mat Description' not found. Please check your file.");
-                        callback([]);
-                        return;
-                    }
-
-                    const rows = jsonData.map(row => {
-                        const code = String(row[codeKey] || '').trim();
-                        const desc = String(row[descKey] || '').trim();
-                        let mrp = '';
-                        if (mrpKey) mrp = row[mrpKey];
-                        else {
-                            const altKey = keys.find(k => k.toLowerCase().includes('mrp') || k.toLowerCase().includes('rsp'));
-                            if (altKey) mrp = row[altKey];
+                        if (!codeKey || !descKey) {
+                            alert("Required columns 'Mat code' and 'Mat Description' not found. Please check your file.");
+                            callback([]);
+                            return;
                         }
-                        let disc = discKey ? row[discKey] : '';
-                        let invoice = invKey ? row[invKey] : '';
 
-                        return {
-                            code: code,
-                            desc: desc,
-                            mrp: roundValue(mrp),
-                            disc: roundValue(disc),
-                            invoice: roundValue(invoice)
-                        };
-                    }).filter(r => r.code && r.desc);
+                        const rows = jsonData.map(row => {
+                            const code = String(row[codeKey] || '').trim();
+                            const desc = String(row[descKey] || '').trim();
+                            let mrp = mrpKey ? row[mrpKey] : '';
+                            if (!mrp) {
+                                const altKey = keys.find(k => k.toLowerCase().includes('mrp') || k.toLowerCase().includes('rsp'));
+                                if (altKey) mrp = row[altKey];
+                            }
+                            let disc = discKey ? row[discKey] : '';
+                            let invoice = invKey ? row[invKey] : '';
+                            return {
+                                code, desc,
+                                mrp: roundValue(mrp),
+                                disc: roundValue(disc),
+                                invoice: roundValue(invoice)
+                            };
+                        }).filter(r => r.code && r.desc);
 
-                    callback(rows);
+                        callback(rows);
+                    } else {
+                        const codeKey = findKey(['PRODUCT CODE', 'Product Code', 'Mat code', 'Matcode', 'Code', 'MAT CODE']);
+                        const descKey = findKey(['PRODUCT NAME', 'Product Name', 'Mat Description', 'Description', 'Desc', 'MAT DESCRIPTION']);
+                        const totalKey = findKey(['TOTAL INCLUDING GST', 'Total Including GST', 'Total', 'Invoice rate/Item', 'Invoice rate', 'Invoice/Item']);
+
+                        if (!codeKey || !descKey) {
+                            alert("Required columns 'PRODUCT CODE' and 'PRODUCT NAME' not found. Please check your file.");
+                            callback([]);
+                            return;
+                        }
+
+                        const rows = jsonData.map(row => {
+                            const code = String(row[codeKey] || '').trim();
+                            const desc = String(row[descKey] || '').trim();
+                            let total = '';
+                            if (totalKey) total = row[totalKey];
+                            else {
+                                const altKey = keys.find(k => k.toLowerCase().includes('total') || k.toLowerCase().includes('gst') || k.toLowerCase().includes('rate'));
+                                if (altKey) total = row[altKey];
+                            }
+                            return { code, desc, total: roundValue(total) };
+                        }).filter(r => r.code && r.desc);
+
+                        callback(rows);
+                    }
                 } catch (err) {
                     console.error(err);
                     alert("Error parsing file: " + err.message);
@@ -608,7 +978,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        async function parsePDF(file, callback) {
+        async function parsePDF(file, callback, mode) {
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
@@ -621,37 +991,55 @@
                 }
                 const lines = fullText.split(/\n/);
                 const results = [];
-                const regex = /(\d{7})\s+(.+?)\s+(\d+)\s+(\d+)?\s*(\d+)/;
-                const globalRegex = /(\d{7})\s+([A-Z0-9\-\s\.\/xX]+?)\s+(\d+)\s+(\d+)?\s*(\d+)/g;
 
-                lines.forEach(line => {
-                    const match = regex.exec(line.trim());
-                    if (match) {
-                        results.push({
-                            code: match[1],
-                            desc: match[2].trim(),
-                            mrp: roundValue(match[3]),
-                            disc: match[4] ? roundValue(match[4]) : '',
-                            invoice: roundValue(match[5])
-                        });
+                if (mode === 'sales') {
+                    const regex = /(\d{7})\s+(.+?)\s+(\d+)\s+(\d+)?\s*(\d+)/;
+                    const globalRegex = /(\d{7})\s+([A-Z0-9\-\s\.\/xX]+?)\s+(\d+)\s+(\d+)?\s*(\d+)/g;
+                    lines.forEach(line => {
+                        const match = regex.exec(line.trim());
+                        if (match) {
+                            results.push({
+                                code: match[1],
+                                desc: match[2].trim(),
+                                mrp: roundValue(match[3]),
+                                disc: match[4] ? roundValue(match[4]) : '',
+                                invoice: roundValue(match[5])
+                            });
+                        }
+                    });
+                    if (results.length === 0) {
+                        let match;
+                        while ((match = globalRegex.exec(fullText)) !== null) {
+                            results.push({
+                                code: match[1],
+                                desc: match[2].trim(),
+                                mrp: roundValue(match[3]),
+                                disc: match[4] ? roundValue(match[4]) : '',
+                                invoice: roundValue(match[5])
+                            });
+                        }
                     }
-                });
-
-                if (results.length === 0) {
-                    let match;
-                    while ((match = globalRegex.exec(fullText)) !== null) {
-                        results.push({
-                            code: match[1],
-                            desc: match[2].trim(),
-                            mrp: roundValue(match[3]),
-                            disc: match[4] ? roundValue(match[4]) : '',
-                            invoice: roundValue(match[5])
-                        });
+                    if (results.length === 0) {
+                        alert("No product rows detected in PDF. Please ensure it is text-based and contains 7-digit material codes.");
                     }
-                }
-
-                if (results.length === 0) {
-                    alert("No product rows detected in PDF. Please ensure it is text-based and contains 7-digit material codes.");
+                } else {
+                    const regex = /(\d{7})\s+(.+?)\s+(\d+)/;
+                    const globalRegex = /(\d{7})\s+([A-Z0-9\-\s\.\/xX]+?)\s+(\d+)/g;
+                    lines.forEach(line => {
+                        const match = regex.exec(line.trim());
+                        if (match) {
+                            results.push({ code: match[1], desc: match[2].trim(), total: roundValue(match[3]) });
+                        }
+                    });
+                    if (results.length === 0) {
+                        let match;
+                        while ((match = globalRegex.exec(fullText)) !== null) {
+                            results.push({ code: match[1], desc: match[2].trim(), total: roundValue(match[3]) });
+                        }
+                    }
+                    if (results.length === 0) {
+                        alert("No product rows detected in PDF. Please ensure it is text-based and contains 7-digit product codes.");
+                    }
                 }
                 callback(results);
             } catch (err) {
@@ -661,121 +1049,381 @@
             }
         }
 
-        function handleUpload(file, callback) {
+        function handleUpload(file, callback, mode) {
             if (file.name.toLowerCase().endsWith('.pdf')) {
-                parsePDF(file, callback);
+                parsePDF(file, callback, mode);
             } else {
-                parseSpreadsheet(file, callback, false);
+                parseSpreadsheet(file, callback, mode);
             }
         }
 
-        // ==================== SMALL PACK ====================
-        document.getElementById('smallPackUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            showLoading(true);
-            smallPackStatus.textContent = 'Processing...';
-            handleUpload(file, (data) => {
-                smallPackData = data;
-                smallPackStatus.textContent = `${data.length} items loaded`;
-                showLoading(false);
-                e.target.value = '';
-                renderSmallPack();
-            });
-        });
-
-        function renderSmallPack() {
-            const tbody = document.getElementById('smallPackTableBody');
+        function renderSalesTable(data, tableBodyId, previewSectionId, downloadBtnId, selectBarId, sourceKey, isBarrel) {
+            const tbody = document.getElementById(tableBodyId);
             tbody.innerHTML = '';
-            if (smallPackData.length === 0) {
-                document.getElementById('smallPackPreviewSection').style.display = 'none';
-                document.getElementById('smallPackDownloadBtn').style.display = 'none';
-                document.getElementById('smallPackSelectBar').style.display = 'none';
+            if (data.length === 0) {
+                document.getElementById(previewSectionId).style.display = 'none';
+                document.getElementById(downloadBtnId).style.display = 'none';
+                document.getElementById(selectBarId).style.display = 'none';
                 return;
             }
-            smallPackData.forEach((row, idx) => {
+            data.forEach((row, idx) => {
                 const safeDesc = String(row.desc).replace(/'/g, "\\'");
                 const safeCode = String(row.code).replace(/'/g, "\\'");
                 const tr = document.createElement('tr');
                 tr.dataset.index = idx;
-                tr.innerHTML = `
-                    <td class="select-col"><input type="checkbox" class="row-select" data-source="small" data-index="${idx}"></td>
-                    <td>${row.code}</td>
-                    <td class="mat-desc-cell">${row.desc}</td>
-                    <td>${row.mrp}</td>
-                    <td>${row.disc}</td>
-                    <td>${row.invoice}</td>
-                    <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
-                `;
+                if (isBarrel) {
+                    tr.innerHTML = `
+                        <td class="select-col"><input type="checkbox" class="row-select" data-source="${sourceKey}" data-index="${idx}"></td>
+                        <td>${row.code}</td>
+                        <td class="mat-desc-cell">${row.desc}</td>
+                        <td>${row.disc}</td>
+                        <td>${row.invoice}</td>
+                        <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td class="select-col"><input type="checkbox" class="row-select" data-source="${sourceKey}" data-index="${idx}"></td>
+                        <td>${row.code}</td>
+                        <td class="mat-desc-cell">${row.desc}</td>
+                        <td>${row.mrp}</td>
+                        <td>${row.disc}</td>
+                        <td>${row.invoice}</td>
+                        <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
+                    `;
+                }
                 tbody.appendChild(tr);
             });
-            document.getElementById('smallPackPreviewSection').style.display = 'block';
-            document.getElementById('smallPackDownloadBtn').style.display = 'block';
-            document.getElementById('smallPackSelectBar').style.display = 'flex';
-            attachRowListeners('small');
-            buildSmallPackHTML();
+            document.getElementById(previewSectionId).style.display = 'block';
+            document.getElementById(downloadBtnId).style.display = 'inline-block';
+            document.getElementById(selectBarId).style.display = 'flex';
+            attachRowListeners(sourceKey);
         }
 
-        // ==================== BARREL ====================
-        document.getElementById('barrelUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            showLoading(true);
-            barrelStatus.textContent = 'Processing...';
-            handleUpload(file, (data) => {
-                barrelData = data;
-                barrelStatus.textContent = `${data.length} items loaded`;
-                showLoading(false);
-                e.target.value = '';
-                renderBarrel();
-            });
-        });
-
-        function renderBarrel() {
-            const tbody = document.getElementById('barrelTableBody');
+        function renderPurchaseTable(data, tableBodyId, previewSectionId, downloadBtnId, selectBarId, sourceKey) {
+            const tbody = document.getElementById(tableBodyId);
             tbody.innerHTML = '';
-            if (barrelData.length === 0) {
-                document.getElementById('barrelPreviewSection').style.display = 'none';
-                document.getElementById('barrelDownloadBtn').style.display = 'none';
-                document.getElementById('barrelSelectBar').style.display = 'none';
+            if (data.length === 0) {
+                document.getElementById(previewSectionId).style.display = 'none';
+                document.getElementById(downloadBtnId).style.display = 'none';
+                document.getElementById(selectBarId).style.display = 'none';
                 return;
             }
-            barrelData.forEach((row, idx) => {
-                const safeDesc = String(row.desc).replace(/'/g, "\\'");
-                const safeCode = String(row.code).replace(/'/g, "\\'");
+            data.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 tr.dataset.index = idx;
                 tr.innerHTML = `
-                    <td class="select-col"><input type="checkbox" class="row-select" data-source="barrel" data-index="${idx}"></td>
+                    <td class="select-col"><input type="checkbox" class="row-select" data-source="${sourceKey}" data-index="${idx}"></td>
                     <td>${row.code}</td>
                     <td class="mat-desc-cell">${row.desc}</td>
-                    <td>${row.disc}</td>
-                    <td>${row.invoice}</td>
-                    <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
+                    <td class="row-total">${row.total}</td>
+                    <td><input type="number" class="qty-input" data-source="${sourceKey}" data-index="${idx}" value="1" min="0" step="1"></td>
+                    <td class="amount-cell row-amount">${row.total}</td>
+                    <td><button class="wa-share-btn" onclick="shareSinglePurchase('${String(row.code).replace(/'/g, "\\'")}', '${String(row.desc).replace(/'/g, "\\'")}', '${row.total}', '${sourceKey}')">Share</button></td>
                 `;
                 tbody.appendChild(tr);
             });
-            document.getElementById('barrelPreviewSection').style.display = 'block';
-            document.getElementById('barrelDownloadBtn').style.display = 'block';
-            document.getElementById('barrelSelectBar').style.display = 'flex';
-            attachRowListeners('barrel');
-            buildBarrelHTML();
+            document.getElementById(previewSectionId).style.display = 'block';
+            document.getElementById(downloadBtnId).style.display = 'inline-block';
+            document.getElementById(selectBarId).style.display = 'flex';
+            attachRowListeners(sourceKey);
+            attachQtyListeners(sourceKey);
         }
 
-        // ---------- ROW SELECTION ----------
-        function attachRowListeners(source) {
-            const tbodyId = source === 'small' ? 'smallPackTableBody' : 'barrelTableBody';
+        function attachQtyListeners(sourceKey) {
+            const tbodyId = sourceKey === 'purchaseSmall' ? 'purchaseSmallTableBody' : 'purchaseBarrelTableBody';
             const tbody = document.getElementById(tbodyId);
-            const selectAllTop = document.getElementById(source === 'small' ? 'smallPackSelectAllTop' : 'barrelSelectAllTop');
-            const selectAllBottom = document.getElementById(source === 'small' ? 'smallPackSelectAll' : 'barrelSelectAll');
+            tbody.querySelectorAll('.qty-input').forEach(inp => {
+                inp.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    recalcRowAmount(this);
+                    autoSelectIfQtyGreaterThanOne(this);
+                    updateSelectedTotal(sourceKey);
+                    updateSelectedItems();
+                    syncSelectAll(sourceKey);
+                });
+                inp.addEventListener('change', function() {
+                    recalcRowAmount(this);
+                    autoSelectIfQtyGreaterThanOne(this);
+                    updateSelectedTotal(sourceKey);
+                    updateSelectedItems();
+                    syncSelectAll(sourceKey);
+                });
+            });
+        }
+
+        // NEW: Auto-tick checkbox if qty > 1, untick only if it was auto-ticked and qty drops to <=1
+        function autoSelectIfQtyGreaterThanOne(input) {
+            const tr = input.closest('tr');
+            if (!tr) return;
+            const checkbox = tr.querySelector('.row-select');
+            if (!checkbox) return;
+            const qty = parseInt(input.value, 10) || 0;
+
+            if (qty > 1) {
+                // Force select
+                checkbox.checked = true;
+                tr.classList.add('row-selected');
+                tr.classList.add('row-auto-selected');
+            } else {
+                // If it was auto-selected and qty is now 1 or less, deselect
+                if (tr.classList.contains('row-auto-selected')) {
+                    checkbox.checked = false;
+                    tr.classList.remove('row-selected');
+                    tr.classList.remove('row-auto-selected');
+                }
+            }
+        }
+
+        function recalcRowAmount(input) {
+            const tr = input.closest('tr');
+            const totalCell = tr.querySelector('.row-total');
+            const amountCell = tr.querySelector('.row-amount');
+            if (!totalCell || !amountCell) return;
+            const baseTotal = parseFloat(String(totalCell.textContent).replace(/[^0-9.\-]/g, '')) || 0;
+            let qty = parseInt(input.value, 10);
+            if (isNaN(qty) || qty < 0) qty = 0;
+            input.value = qty;
+            const amount = Math.round(baseTotal * qty);
+            amountCell.textContent = amount;
+        }
+
+        function updateSelectedTotal(sourceKey) {
+            let bannerId, totalId, countId, tbodyId;
+            if (sourceKey === 'purchaseSmall') {
+                bannerId = 'purchaseSmallTotalBanner'; totalId = 'purchaseSmallSelectedTotal';
+                countId = 'purchaseSmallSelectedCount'; tbodyId = 'purchaseSmallTableBody';
+            } else if (sourceKey === 'purchaseBarrel') {
+                bannerId = 'purchaseBarrelTotalBanner'; totalId = 'purchaseBarrelSelectedTotal';
+                countId = 'purchaseBarrelSelectedCount'; tbodyId = 'purchaseBarrelTableBody';
+            } else return;
+
+            const tbody = document.getElementById(tbodyId);
+            const checked = tbody.querySelectorAll('.row-select:checked');
+            let sum = 0;
+            checked.forEach(cb => {
+                const tr = cb.closest('tr');
+                const amountCell = tr.querySelector('.row-amount');
+                if (amountCell) sum += parseFloat(String(amountCell.textContent).replace(/[^0-9.\-]/g, '')) || 0;
+            });
+            const banner = document.getElementById(bannerId);
+            if (checked.length > 0) {
+                banner.style.display = 'flex';
+                document.getElementById(totalId).textContent = '₹' + sum.toLocaleString('en-IN');
+                document.getElementById(countId).textContent = checked.length + ' item' + (checked.length > 1 ? 's' : '');
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        document.getElementById('salesSmallUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            showLoading(true);
+            document.getElementById('salesSmallStatus').textContent = 'Processing...';
+            handleUpload(file, (data) => {
+                salesSmallData = data;
+                document.getElementById('salesSmallStatus').textContent = `${data.length} items loaded`;
+                showLoading(false); e.target.value = '';
+                renderSalesTable(salesSmallData, 'salesSmallTableBody', 'salesSmallPreviewSection', 'salesSmallDownloadBtn', 'salesSmallSelectBar', 'salesSmall', false);
+                document.getElementById('salesSmallResetBtn').style.display = 'inline-block';
+                buildSalesSmallHTML();
+            }, 'sales');
+        });
+
+        document.getElementById('salesBarrelUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            showLoading(true);
+            document.getElementById('salesBarrelStatus').textContent = 'Processing...';
+            handleUpload(file, (data) => {
+                salesBarrelData = data;
+                document.getElementById('salesBarrelStatus').textContent = `${data.length} items loaded`;
+                showLoading(false); e.target.value = '';
+                renderSalesTable(salesBarrelData, 'salesBarrelTableBody', 'salesBarrelPreviewSection', 'salesBarrelDownloadBtn', 'salesBarrelSelectBar', 'salesBarrel', true);
+                document.getElementById('salesBarrelResetBtn').style.display = 'inline-block';
+                buildSalesBarrelHTML();
+            }, 'sales');
+        });
+
+        document.getElementById('purchaseSmallUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            showLoading(true);
+            document.getElementById('purchaseSmallStatus').textContent = 'Processing...';
+            handleUpload(file, (data) => {
+                purchaseSmallData = data;
+                document.getElementById('purchaseSmallStatus').textContent = `${data.length} items loaded`;
+                showLoading(false); e.target.value = '';
+                renderPurchaseTable(purchaseSmallData, 'purchaseSmallTableBody', 'purchaseSmallPreviewSection', 'purchaseSmallDownloadBtn', 'purchaseSmallSelectBar', 'purchaseSmall');
+                document.getElementById('purchaseSmallResetBtn').style.display = 'inline-block';
+                buildPurchaseSmallHTML();
+            }, 'purchase');
+        });
+
+        document.getElementById('purchaseBarrelUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            showLoading(true);
+            document.getElementById('purchaseBarrelStatus').textContent = 'Processing...';
+            handleUpload(file, (data) => {
+                purchaseBarrelData = data;
+                document.getElementById('purchaseBarrelStatus').textContent = `${data.length} items loaded`;
+                showLoading(false); e.target.value = '';
+                renderPurchaseTable(purchaseBarrelData, 'purchaseBarrelTableBody', 'purchaseBarrelPreviewSection', 'purchaseBarrelDownloadBtn', 'purchaseBarrelSelectBar', 'purchaseBarrel');
+                document.getElementById('purchaseBarrelResetBtn').style.display = 'inline-block';
+                buildPurchaseBarrelHTML();
+            }, 'purchase');
+        });
+
+        document.getElementById('salesSmallResetBtn').addEventListener('click', function() { resetSection('salesSmall'); });
+        document.getElementById('salesBarrelResetBtn').addEventListener('click', function() { resetSection('salesBarrel'); });
+        document.getElementById('purchaseSmallResetBtn').addEventListener('click', function() { resetSection('purchaseSmall'); });
+        document.getElementById('purchaseBarrelResetBtn').addEventListener('click', function() { resetSection('purchaseBarrel'); });
+
+        function resetSection(sourceKey) {
+            const map = {
+                salesSmall: { tableBody: 'salesSmallTableBody', preview: 'salesSmallPreviewSection', downloadBtn: 'salesSmallDownloadBtn', selectBar: 'salesSmallSelectBar', status: 'salesSmallStatus', resetBtn: 'salesSmallResetBtn', fileInput: 'salesSmallUpload' },
+                salesBarrel: { tableBody: 'salesBarrelTableBody', preview: 'salesBarrelPreviewSection', downloadBtn: 'salesBarrelDownloadBtn', selectBar: 'salesBarrelSelectBar', status: 'salesBarrelStatus', resetBtn: 'salesBarrelResetBtn', fileInput: 'salesBarrelUpload' },
+                purchaseSmall: { tableBody: 'purchaseSmallTableBody', preview: 'purchaseSmallPreviewSection', downloadBtn: 'purchaseSmallDownloadBtn', selectBar: 'purchaseSmallSelectBar', status: 'purchaseSmallStatus', resetBtn: 'purchaseSmallResetBtn', fileInput: 'purchaseSmallUpload', banner: 'purchaseSmallTotalBanner' },
+                purchaseBarrel: { tableBody: 'purchaseBarrelTableBody', preview: 'purchaseBarrelPreviewSection', downloadBtn: 'purchaseBarrelDownloadBtn', selectBar: 'purchaseBarrelSelectBar', status: 'purchaseBarrelStatus', resetBtn: 'purchaseBarrelResetBtn', fileInput: 'purchaseBarrelUpload', banner: 'purchaseBarrelTotalBanner' }
+            };
+            const m = map[sourceKey]; if (!m) return;
+
+            if (sourceKey === 'salesSmall') { salesSmallData = []; salesSmallHTML = ''; }
+            if (sourceKey === 'salesBarrel') { salesBarrelData = []; salesBarrelHTML = ''; }
+            if (sourceKey === 'purchaseSmall') { purchaseSmallData = []; purchaseSmallHTML = ''; }
+            if (sourceKey === 'purchaseBarrel') { purchaseBarrelData = []; purchaseBarrelHTML = ''; }
+
+            document.getElementById(m.tableBody).innerHTML = '';
+            document.getElementById(m.preview).style.display = 'none';
+            document.getElementById(m.downloadBtn).style.display = 'none';
+            document.getElementById(m.selectBar).style.display = 'none';
+            document.getElementById(m.resetBtn).style.display = 'none';
+            document.getElementById(m.status).textContent = 'No file loaded';
+            document.getElementById(m.fileInput).value = '';
+            if (m.banner) document.getElementById(m.banner).style.display = 'none';
+
+            selectedItems = selectedItems.filter(i => i.source !== sourceKey);
+            updateSelectedItemsUI();
+        }
+
+        function updateSelectedItemsUI() {
+            const counts = { salesSmall: 0, salesBarrel: 0, purchaseSmall: 0, purchaseBarrel: 0 };
+            selectedItems.forEach(i => counts[i.source]++);
+            document.getElementById('salesSmallSelCount').textContent = `${counts.salesSmall} selected`;
+            document.getElementById('salesBarrelSelCount').textContent = `${counts.salesBarrel} selected`;
+            document.getElementById('purchaseSmallSelCount').textContent = `${counts.purchaseSmall} selected`;
+            document.getElementById('purchaseBarrelSelCount').textContent = `${counts.purchaseBarrel} selected`;
+
+            const floatBtn = document.getElementById('floatShareBtn');
+            const floatCount = document.getElementById('floatShareCount');
+            floatCount.textContent = selectedItems.length;
+            floatBtn.disabled = selectedItems.length === 0;
+
+            document.getElementById('showSelectedCount').textContent = selectedItems.length;
+            renderSelectedPanel();
+        }
+
+        function renderSelectedPanel() {
+            const groups = {
+                salesSmall: selectedItems.filter(i => i.source === 'salesSmall'),
+                salesBarrel: selectedItems.filter(i => i.source === 'salesBarrel'),
+                purchaseSmall: selectedItems.filter(i => i.source === 'purchaseSmall'),
+                purchaseBarrel: selectedItems.filter(i => i.source === 'purchaseBarrel')
+            };
+            const groupLabels = {
+                salesSmall: 'Sales Small Pack',
+                salesBarrel: 'Sales Barrel',
+                purchaseSmall: 'Purchase Small Pack',
+                purchaseBarrel: 'Purchase Barrel'
+            };
+            if (selectedItems.length === 0) {
+                selectedPanelBody.innerHTML = '<div class="panel-empty">No items selected yet.</div>';
+                panelGrandTotal.textContent = '₹0';
+                panelShareBtn.disabled = true;
+                panelClearBtn.disabled = true;
+                return;
+            }
+            let html = '', grandTotal = 0;
+            ['salesSmall', 'salesBarrel', 'purchaseSmall', 'purchaseBarrel'].forEach(key => {
+                const items = groups[key];
+                if (items.length === 0) return;
+                html += `<div class="panel-group">`;
+                html += `<div class="panel-group-title ${key}">${groupLabels[key]} (${items.length})</div>`;
+                items.forEach((item, i) => {
+                    const isPurchase = (key === 'purchaseSmall' || key === 'purchaseBarrel');
+                    html += `<div class="panel-item">`;
+                    html += `<div class="pi-name">${i + 1}. ${item.desc}</div>`;
+                    html += `<div class="pi-code">Code: ${item.code}</div>`;
+                    if (isPurchase) {
+                        const qty = item.qty !== undefined ? item.qty : 0;
+                        const amount = item.amount !== undefined ? item.amount : 0;
+                        html += `<div class="pi-row"><span class="pi-label">Total Incl. GST:</span><span class="pi-val">₹${item.total}</span></div>`;
+                        html += `<div class="pi-row"><span class="pi-label">Qty:</span><span class="pi-val">${qty}</span></div>`;
+                        html += `<div class="pi-row"><span class="pi-label">Amount:</span><span class="pi-amount">₹${amount}</span></div>`;
+                        grandTotal += amount;
+                    } else {
+                        if (key === 'salesSmall') {
+                            html += `<div class="pi-row"><span class="pi-label">MRP/Pc:</span><span class="pi-val">₹${item.mrp}</span></div>`;
+                        }
+                        if (item.disc && String(item.disc).trim() !== '' && String(item.disc) !== '0') {
+                            html += `<div class="pi-row"><span class="pi-label">Disc/L:</span><span class="pi-val">${item.disc}</span></div>`;
+                        }
+                        html += `<div class="pi-row"><span class="pi-label">Invoice Rate:</span><span class="pi-val">₹${item.invoice}</span></div>`;
+                        const numTotal = parseFloat(String(item.invoice).replace(/[^0-9.\-]/g, '')) || 0;
+                        grandTotal += numTotal;
+                    }
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            });
+            selectedPanelBody.innerHTML = html;
+            panelGrandTotal.textContent = '₹' + grandTotal.toLocaleString('en-IN');
+            panelShareBtn.disabled = false;
+            panelClearBtn.disabled = false;
+        }
+
+        panelClearBtn.addEventListener('click', function() {
+            document.querySelectorAll('.row-select:checked').forEach(cb => {
+                cb.checked = false;
+                cb.closest('tr').classList.remove('row-selected');
+                cb.closest('tr').classList.remove('row-auto-selected');
+            });
+            ['salesSmall','salesBarrel','purchaseSmall','purchaseBarrel'].forEach(k => {
+                const top = document.getElementById(k + 'SelectAllTop');
+                const bottom = document.getElementById(k + 'SelectAll');
+                if (top) top.checked = false;
+                if (bottom) bottom.checked = false;
+            });
+            updateSelectedItems();
+            updateSelectedTotal('purchaseSmall');
+            updateSelectedTotal('purchaseBarrel');
+        });
+
+        panelShareBtn.addEventListener('click', function() {
+            document.getElementById('floatShareBtn').click();
+        });
+
+        function attachRowListeners(sourceKey) {
+            const map = {
+                salesSmall: { tbody: 'salesSmallTableBody', selectAllTop: 'salesSmallSelectAllTop', selectAllBottom: 'salesSmallSelectAll', clearBtn: 'salesSmallClearSel' },
+                salesBarrel: { tbody: 'salesBarrelTableBody', selectAllTop: 'salesBarrelSelectAllTop', selectAllBottom: 'salesBarrelSelectAll', clearBtn: 'salesBarrelClearSel' },
+                purchaseSmall: { tbody: 'purchaseSmallTableBody', selectAllTop: 'purchaseSmallSelectAllTop', selectAllBottom: 'purchaseSmallSelectAll', clearBtn: 'purchaseSmallClearSel' },
+                purchaseBarrel: { tbody: 'purchaseBarrelTableBody', selectAllTop: 'purchaseBarrelSelectAllTop', selectAllBottom: 'purchaseBarrelSelectAll', clearBtn: 'purchaseBarrelClearSel' }
+            };
+            const m = map[sourceKey]; if (!m) return;
+            const tbody = document.getElementById(m.tbody);
+            const selectAllTop = document.getElementById(m.selectAllTop);
+            const selectAllBottom = document.getElementById(m.selectAllBottom);
+            const clearBtn = document.getElementById(m.clearBtn);
 
             tbody.querySelectorAll('.row-select').forEach(cb => {
                 cb.addEventListener('change', function() {
                     const tr = this.closest('tr');
                     if (this.checked) tr.classList.add('row-selected');
-                    else tr.classList.remove('row-selected');
+                    else {
+                        tr.classList.remove('row-selected');
+                        tr.classList.remove('row-auto-selected');
+                    }
                     updateSelectedItems();
-                    syncSelectAll(source);
+                    syncSelectAll(sourceKey);
+                    if (sourceKey === 'purchaseSmall' || sourceKey === 'purchaseBarrel') updateSelectedTotal(sourceKey);
                 });
             });
 
@@ -784,43 +1432,49 @@
                 selectAllBottom.checked = checked;
                 tbody.querySelectorAll('.row-select').forEach(cb => {
                     cb.checked = checked;
-                    const tr = cb.closest('tr');
-                    if (checked) tr.classList.add('row-selected');
-                    else tr.classList.remove('row-selected');
+                    cb.closest('tr').classList.toggle('row-selected', checked);
+                    if (!checked) cb.closest('tr').classList.remove('row-auto-selected');
                 });
                 updateSelectedItems();
+                if (sourceKey === 'purchaseSmall' || sourceKey === 'purchaseBarrel') updateSelectedTotal(sourceKey);
             };
             selectAllBottom.onchange = function() {
                 const checked = this.checked;
                 selectAllTop.checked = checked;
                 tbody.querySelectorAll('.row-select').forEach(cb => {
                     cb.checked = checked;
-                    const tr = cb.closest('tr');
-                    if (checked) tr.classList.add('row-selected');
-                    else tr.classList.remove('row-selected');
+                    cb.closest('tr').classList.toggle('row-selected', checked);
+                    if (!checked) cb.closest('tr').classList.remove('row-auto-selected');
                 });
                 updateSelectedItems();
+                if (sourceKey === 'purchaseSmall' || sourceKey === 'purchaseBarrel') updateSelectedTotal(sourceKey);
             };
-
-            const clearBtn = document.getElementById(source === 'small' ? 'smallPackClearSel' : 'barrelClearSel');
             clearBtn.onclick = function() {
                 tbody.querySelectorAll('.row-select').forEach(cb => {
                     cb.checked = false;
                     cb.closest('tr').classList.remove('row-selected');
+                    cb.closest('tr').classList.remove('row-auto-selected');
                 });
                 selectAllTop.checked = false;
                 selectAllBottom.checked = false;
                 updateSelectedItems();
+                if (sourceKey === 'purchaseSmall' || sourceKey === 'purchaseBarrel') updateSelectedTotal(sourceKey);
             };
         }
 
-        function syncSelectAll(source) {
-            const tbodyId = source === 'small' ? 'smallPackTableBody' : 'barrelTableBody';
-            const tbody = document.getElementById(tbodyId);
+        function syncSelectAll(sourceKey) {
+            const map = {
+                salesSmall: { tbody: 'salesSmallTableBody', selectAllTop: 'salesSmallSelectAllTop', selectAllBottom: 'salesSmallSelectAll' },
+                salesBarrel: { tbody: 'salesBarrelTableBody', selectAllTop: 'salesBarrelSelectAllTop', selectAllBottom: 'salesBarrelSelectAll' },
+                purchaseSmall: { tbody: 'purchaseSmallTableBody', selectAllTop: 'purchaseSmallSelectAllTop', selectAllBottom: 'purchaseSmallSelectAll' },
+                purchaseBarrel: { tbody: 'purchaseBarrelTableBody', selectAllTop: 'purchaseBarrelSelectAllTop', selectAllBottom: 'purchaseBarrelSelectAll' }
+            };
+            const m = map[sourceKey]; if (!m) return;
+            const tbody = document.getElementById(m.tbody);
             const all = tbody.querySelectorAll('.row-select');
             const checked = tbody.querySelectorAll('.row-select:checked');
-            const selectAllTop = document.getElementById(source === 'small' ? 'smallPackSelectAllTop' : 'barrelSelectAllTop');
-            const selectAllBottom = document.getElementById(source === 'small' ? 'smallPackSelectAll' : 'barrelSelectAll');
+            const selectAllTop = document.getElementById(m.selectAllTop);
+            const selectAllBottom = document.getElementById(m.selectAllBottom);
             const isAll = all.length > 0 && all.length === checked.length;
             selectAllTop.checked = isAll;
             selectAllBottom.checked = isAll;
@@ -828,39 +1482,39 @@
 
         function updateSelectedItems() {
             selectedItems = [];
-            document.querySelectorAll('#smallPackTableBody .row-select:checked').forEach(cb => {
+            document.querySelectorAll('.row-select:checked').forEach(cb => {
+                const source = cb.dataset.source;
                 const idx = parseInt(cb.dataset.index);
-                const row = smallPackData[idx];
-                if (row) selectedItems.push({ source: 'small', ...row });
+                let row = null;
+                if (source === 'salesSmall') row = salesSmallData[idx];
+                else if (source === 'salesBarrel') row = salesBarrelData[idx];
+                else if (source === 'purchaseSmall') row = purchaseSmallData[idx];
+                else if (source === 'purchaseBarrel') row = purchaseBarrelData[idx];
+                if (row) {
+                    const item = { source: source, ...row };
+                    if (source === 'purchaseSmall' || source === 'purchaseBarrel') {
+                        const tr = cb.closest('tr');
+                        const qtyInput = tr.querySelector('.qty-input');
+                        const amountCell = tr.querySelector('.row-amount');
+                        item.qty = qtyInput ? parseInt(qtyInput.value, 10) || 0 : 0;
+                        item.amount = amountCell ? parseFloat(String(amountCell.textContent).replace(/[^0-9.\-]/g, '')) || 0 : 0;
+                    }
+                    selectedItems.push(item);
+                }
             });
-            document.querySelectorAll('#barrelTableBody .row-select:checked').forEach(cb => {
-                const idx = parseInt(cb.dataset.index);
-                const row = barrelData[idx];
-                if (row) selectedItems.push({ source: 'barrel', ...row });
-            });
-
-            const smallCount = selectedItems.filter(i => i.source === 'small').length;
-            const barrelCount = selectedItems.filter(i => i.source === 'barrel').length;
-            document.getElementById('smallPackSelCount').textContent = `${smallCount} selected`;
-            document.getElementById('barrelSelCount').textContent = `${barrelCount} selected`;
-
-            const floatBtn = document.getElementById('floatShareBtn');
-            const floatCount = document.getElementById('floatShareCount');
-            floatCount.textContent = selectedItems.length;
-            floatBtn.disabled = selectedItems.length === 0;
+            updateSelectedItemsUI();
         }
 
-        // ---------- SHARE SINGLE ----------
         window.shareSingle = function(code, desc, mrp, disc, invoice, isBarrel) {
             let message = '';
             if (isBarrel) {
-                message = `*Auto Lube House - Barrel Price*\n\n`;
+                message = `*Auto Lube House - Sales Barrel Price*\n\n`;
                 message += `*Code:* ${code}\n`;
                 message += `*Item:* ${desc}\n`;
                 if (disc && String(disc).trim() !== '' && String(disc) !== '0') message += `*Disc/L:* ${disc}\n`;
                 message += `*Invoice Rate:* ₹${invoice}`;
             } else {
-                message = `*Auto Lube House - Small Pack Price*\n\n`;
+                message = `*Auto Lube House - Sales Small Pack Price*\n\n`;
                 message += `*Code:* ${code}\n`;
                 message += `*Item:* ${desc}\n`;
                 message += `*MRP/Pc:* ₹${mrp}\n`;
@@ -870,70 +1524,98 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
         };
 
-        // ---------- SHARE MULTIPLE ----------
+        window.shareSinglePurchase = function(code, desc, total, sourceKey) {
+            const typeLabel = {
+                purchaseSmall: 'Purchase Small Pack',
+                purchaseBarrel: 'Purchase Barrel'
+            }[sourceKey] || 'Purchase Price List';
+            let message = `*Auto Lube House - ${typeLabel}*\n\n`;
+            message += `*Product Code:* ${code}\n`;
+            message += `*Product Name:* ${desc}\n`;
+            message += `*Total Including GST:* ₹${total}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        };
+
         document.getElementById('floatShareBtn').addEventListener('click', function() {
             if (selectedItems.length === 0) return;
-
-            const smallSel = selectedItems.filter(i => i.source === 'small');
-            const barrelSel = selectedItems.filter(i => i.source === 'barrel');
-
+            const groups = {
+                salesSmall: selectedItems.filter(i => i.source === 'salesSmall'),
+                salesBarrel: selectedItems.filter(i => i.source === 'salesBarrel'),
+                purchaseSmall: selectedItems.filter(i => i.source === 'purchaseSmall'),
+                purchaseBarrel: selectedItems.filter(i => i.source === 'purchaseBarrel')
+            };
             let message = `*Auto Lube House - Price List*\n`;
             message += `_${selectedItems.length} item(s) selected_\n`;
+            let grandTotal = 0;
 
-            if (smallSel.length > 0) {
-                message += `\n━━━ *SMALL PACK* ━━━\n`;
-                smallSel.forEach((item, i) => {
+            if (groups.salesSmall.length) {
+                message += `\n━━━ *SALES SMALL PACK* ━━━\n`;
+                groups.salesSmall.forEach((item, i) => {
                     message += `\n*${i + 1}. ${item.desc}*\n`;
                     message += `Code: ${item.code}\n`;
                     message += `MRP/Pc: ₹${item.mrp}\n`;
                     if (item.disc && String(item.disc).trim() !== '' && String(item.disc) !== '0') message += `Disc/L: ${item.disc}\n`;
                     message += `Invoice: ₹${item.invoice}\n`;
+                    grandTotal += parseFloat(String(item.invoice).replace(/[^0-9.\-]/g, '')) || 0;
                 });
             }
-
-            if (barrelSel.length > 0) {
-                message += `\n━━━ *BARREL* ━━━\n`;
-                barrelSel.forEach((item, i) => {
+            if (groups.salesBarrel.length) {
+                message += `\n━━━ *SALES BARREL* ━━━\n`;
+                groups.salesBarrel.forEach((item, i) => {
                     message += `\n*${i + 1}. ${item.desc}*\n`;
                     message += `Code: ${item.code}\n`;
                     if (item.disc && String(item.disc).trim() !== '' && String(item.disc) !== '0') message += `Disc/L: ${item.disc}\n`;
                     message += `Invoice: ₹${item.invoice}\n`;
+                    grandTotal += parseFloat(String(item.invoice).replace(/[^0-9.\-]/g, '')) || 0;
                 });
             }
-
+            if (groups.purchaseSmall.length) {
+                message += `\n━━━ *PURCHASE SMALL PACK* ━━━\n`;
+                groups.purchaseSmall.forEach((item, i) => {
+                    message += `\n*${i + 1}. ${item.desc}*\n`;
+                    message += `Code: ${item.code}\n`;
+                    message += `Total Incl. GST: ₹${item.total}\n`;
+                    message += `Qty: ${item.qty}\n`;
+                    message += `Amount: ₹${item.amount}\n`;
+                    grandTotal += item.amount;
+                });
+            }
+            if (groups.purchaseBarrel.length) {
+                message += `\n━━━ *PURCHASE BARREL* ━━━\n`;
+                groups.purchaseBarrel.forEach((item, i) => {
+                    message += `\n*${i + 1}. ${item.desc}*\n`;
+                    message += `Code: ${item.code}\n`;
+                    message += `Total Incl. GST: ₹${item.total}\n`;
+                    message += `Qty: ${item.qty}\n`;
+                    message += `Amount: ₹${item.amount}\n`;
+                    grandTotal += item.amount;
+                });
+            }
+            message += `\n━━━━━━━━━━━━━━━\n*GRAND TOTAL: ₹${grandTotal}*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
         });
 
-        // ---------- FLOATING SCROLL BUTTON ----------
         const scrollBtn = document.getElementById('floatScrollBtn');
         const scrollIcon = document.getElementById('floatScrollIcon');
         let atBottom = false;
-
         scrollBtn.addEventListener('click', function() {
-            if (!atBottom) {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            if (!atBottom) window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
         window.addEventListener('scroll', function() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight;
             const clientHeight = document.documentElement.clientHeight;
-            if (scrollTop + clientHeight >= scrollHeight - 80) {
-                atBottom = true;
-                scrollIcon.textContent = '▼';
-            } else {
-                atBottom = false;
-                scrollIcon.textContent = '▲';
-            }
+            if (scrollTop + clientHeight >= scrollHeight - 80) { atBottom = true; scrollIcon.textContent = '▼'; }
+            else { atBottom = false; scrollIcon.textContent = '▲'; }
         });
 
-        // ---------- BUILD HTML FOR DOWNLOAD ----------
-        function buildSmallPackHTML() {
+        // ================================================================
+        // BUILD SALES HTML (original layout, unchanged)
+        // ================================================================
+        function buildSalesSmallHTML() {
             let rowsHtml = '';
-            smallPackData.forEach((row, idx) => {
+            salesSmallData.forEach((row, idx) => {
                 const safeDesc = String(row.desc).replace(/'/g, "\\'");
                 const safeCode = String(row.code).replace(/'/g, "\\'");
                 rowsHtml += `
@@ -947,13 +1629,12 @@
                 <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
             </tr>`;
             });
-
-            smallPackHTML = `<!DOCTYPE html>
+            salesSmallHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auto Lube House - Small Pack Price List</title>
+<title>Auto Lube House - Sales Small Pack Price List</title>
 <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; margin: 20px; background: #f5f8fc; color: #1e2b3c; }
     .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
@@ -999,7 +1680,7 @@
 </head>
 <body>
 <div class="container">
-<h2>📋 Auto Lube House - Small Pack Price List</h2>
+<h2>📋 Auto Lube House - Sales Small Pack Price List</h2>
 <div class="search-container">
     <input type="text" id="searchInput" placeholder="🔍 Search ..." autocomplete="off">
     <div id="autocomplete-list" class="autocomplete-items"></div>
@@ -1020,7 +1701,7 @@
     </thead>
     <tbody>
         <tr class="category-header">
-            <td colspan="7">AUTO LUBE HOUSE - SMALL PACK PRICE LIST</td>
+            <td colspan="7">AUTO LUBE HOUSE - SALES SMALL PACK PRICE LIST</td>
         </tr>
 ${rowsHtml}
     </tbody>
@@ -1042,10 +1723,10 @@ ${rowsHtml}
 </div>
 
 <script>
-    const rowsData = ${JSON.stringify(smallPackData)};
+    const rowsData = ${JSON.stringify(salesSmallData)};
 
     function shareSingle(code, desc, mrp, disc, invoice, isBarrel) {
-        let message = \`*Auto Lube House - Small Pack Price*\\n\\n\`;
+        let message = \`*Auto Lube House - Sales Small Pack Price*\\n\\n\`;
         message += \`*Code:* \${code}\\n\`;
         message += \`*Item:* \${desc}\\n\`;
         message += \`*MRP/Pc:* ₹\${mrp}\\n\`;
@@ -1110,7 +1791,7 @@ ${rowsHtml}
 
     document.getElementById('floatShareBtn').onclick = function() {
         if (selected.length === 0) return;
-        let message = \`*Auto Lube House - Small Pack Price List*\\n_\${selected.length} item(s) selected_\\n\`;
+        let message = \`*Auto Lube House - Sales Small Pack Price List*\\n_\${selected.length} item(s) selected_\\n\`;
         selected.forEach((item, i) => {
             message += \`\\n*\${i+1}. \${item.desc}*\\n\`;
             message += \`Code: \${item.code}\\n\`;
@@ -1176,9 +1857,9 @@ ${rowsHtml}
 </html>`;
         }
 
-        function buildBarrelHTML() {
+        function buildSalesBarrelHTML() {
             let rowsHtml = '';
-            barrelData.forEach((row, idx) => {
+            salesBarrelData.forEach((row, idx) => {
                 const safeDesc = String(row.desc).replace(/'/g, "\\'");
                 const safeCode = String(row.code).replace(/'/g, "\\'");
                 rowsHtml += `
@@ -1191,13 +1872,12 @@ ${rowsHtml}
                 <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
             </tr>`;
             });
-
-            barrelHTML = `<!DOCTYPE html>
+            salesBarrelHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auto Lube House - Barrel Price List</title>
+<title>Auto Lube House - Sales Barrel Price List</title>
 <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; margin: 20px; background: #fef8f2; color: #1e2b3c; }
     .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
@@ -1243,7 +1923,7 @@ ${rowsHtml}
 </head>
 <body>
 <div class="container">
-<h2>🛢️ Auto Lube House - Barrel Price List</h2>
+<h2>🛢️ Auto Lube House - Sales Barrel Price List</h2>
 <div class="search-container">
     <input type="text" id="searchInput" placeholder="🔍 Search ..." autocomplete="off">
     <div id="autocomplete-list" class="autocomplete-items"></div>
@@ -1263,7 +1943,7 @@ ${rowsHtml}
     </thead>
     <tbody>
         <tr class="category-header">
-            <td colspan="6">AUTO LUBE HOUSE - BARREL PRICE LIST</td>
+            <td colspan="6">AUTO LUBE HOUSE - SALES BARREL PRICE LIST</td>
         </tr>
 ${rowsHtml}
     </tbody>
@@ -1285,10 +1965,10 @@ ${rowsHtml}
 </div>
 
 <script>
-    const rowsData = ${JSON.stringify(barrelData)};
+    const rowsData = ${JSON.stringify(salesBarrelData)};
 
     function shareSingle(code, desc, mrp, disc, invoice, isBarrel) {
-        let message = \`*Auto Lube House - Barrel Price*\\n\\n\`;
+        let message = \`*Auto Lube House - Sales Barrel Price*\\n\\n\`;
         message += \`*Code:* \${code}\\n\`;
         message += \`*Item:* \${desc}\\n\`;
         if(disc && String(disc).trim() !== '' && String(disc) !== '0') message += \`*Disc/L:* \${disc}\\n\`;
@@ -1352,7 +2032,7 @@ ${rowsHtml}
 
     document.getElementById('floatShareBtn').onclick = function() {
         if (selected.length === 0) return;
-        let message = \`*Auto Lube House - Barrel Price List*\\n_\${selected.length} item(s) selected_\\n\`;
+        let message = \`*Auto Lube House - Sales Barrel Price List*\\n_\${selected.length} item(s) selected_\\n\`;
         selected.forEach((item, i) => {
             message += \`\\n*\${i+1}. \${item.desc}*\\n\`;
             message += \`Code: \${item.code}\\n\`;
@@ -1417,32 +2097,579 @@ ${rowsHtml}
 </html>`;
         }
 
-        // ---------- DOWNLOAD BUTTONS ----------
-        document.getElementById('smallPackDownloadBtn').addEventListener('click', function() {
-            if (!smallPackHTML) { alert("No Small Pack data to download."); return; }
-            const blob = new Blob([smallPackHTML], {type: 'text/html'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'ALH_SmallPack_Pricelist.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        // ================================================================
+        // BUILD PURCHASE HTML (with auto-select on qty>1)
+        // ================================================================
+        function generatePurchaseHTML(data, title, accentColor, accentLight, accentDark, sourceKey, password) {
+            let rowsHtml = '';
+            data.forEach((row, idx) => {
+                const safeDesc = String(row.desc).replace(/'/g, "\\'");
+                const safeCode = String(row.code).replace(/'/g, "\\'");
+                rowsHtml += `
+            <tr data-index="${idx}">
+                <td class="select-col"><input type="checkbox" class="row-select" data-index="${idx}"></td>
+                <td class="mat-code">${row.code}</td>
+                <td class="mat-desc mat-desc-cell">${row.desc}</td>
+                <td class="row-total">${row.total}</td>
+                <td><input type="number" class="qty-input" data-index="${idx}" value="1" min="0" step="1"></td>
+                <td class="amount-cell row-amount">${row.total}</td>
+                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.total}')">Share</button></td>
+            </tr>`;
+            });
+
+            const passwordGateHTML = password ? `
+<div id="pwdGate" style="position:fixed; inset:0; background:linear-gradient(135deg,${accentDark} 0%,${accentColor} 100%); display:flex; align-items:center; justify-content:center; z-index:999999; padding:20px;">
+    <div id="pwdCard" style="background:#fff; border-radius:20px; padding:40px 35px; max-width:400px; width:100%; box-shadow:0 25px 60px rgba(0,0,0,0.35); text-align:center;">
+        <div style="font-size:48px; margin-bottom:10px;">🔒</div>
+        <h2 style="margin:0 0 6px; color:${accentDark}; font-size:22px; font-weight:700;">Protected Content</h2>
+        <p style="margin:0 0 22px; color:#6b8299; font-size:14px;">Enter password to view this price list</p>
+        <input type="password" id="pwdInput" inputmode="numeric" placeholder="••••" maxlength="6" autocomplete="off"
+            style="width:100%; padding:14px 18px; font-size:22px; letter-spacing:10px; text-align:center; border:2px solid #cbdae9; border-radius:12px; outline:none; font-weight:700; color:${accentDark}; box-sizing:border-box;">
+        <button id="pwdBtn" style="margin-top:18px; width:100%; padding:14px; font-size:16px; font-weight:700; color:#fff; background:${accentColor}; border:none; border-radius:12px; cursor:pointer;">Unlock</button>
+        <div id="pwdError" style="margin-top:14px; color:#e74c3c; font-size:14px; font-weight:600; min-height:20px;"></div>
+    </div>
+</div>
+<script>
+(function(){
+    var PASSWORD = "${password}";
+    var gate = document.getElementById('pwdGate');
+    var card = document.getElementById('pwdCard');
+    var input = document.getElementById('pwdInput');
+    var btn = document.getElementById('pwdBtn');
+    var err = document.getElementById('pwdError');
+    function tryUnlock(){
+        if(input.value.trim() === PASSWORD){
+            gate.style.display = 'none';
+            document.body.style.overflow = '';
+        } else {
+            err.textContent = '❌ Incorrect password. Try again.';
+            card.style.animation = 'none';
+            void card.offsetWidth;
+            card.style.animation = 'shake 0.4s';
+            input.value = '';
+            input.focus();
+        }
+    }
+    btn.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', function(e){ if(e.key === 'Enter') tryUnlock(); });
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ input.focus(); }, 150);
+})();
+<\/script>
+<style>
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+}
+</style>
+` : '';
+
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Lube House - ${title}</title>
+<style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; margin: 20px; background: #f5f8fc; color: #1e2b3c; }
+    .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+    h2 { color: ${accentDark}; margin-top: 0; }
+    .search-container { position: relative; margin-bottom: 25px; max-width: 550px; }
+    #searchInput { width: 100%; padding: 14px 18px; font-size: 16px; border: 2px solid #cbdae9; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+    #searchInput:focus { border-color: ${accentColor}; box-shadow: 0 0 0 3px ${accentLight}; }
+    .autocomplete-items { position: absolute; border: 1px solid #d4e0ec; border-radius: 12px; z-index: 99; top: 100%; left: 0; right: 0; max-height: 260px; overflow-y: auto; background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; margin-top: 6px; }
+    .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #eef3f9; display: flex; justify-content: space-between; align-items: center; }
+    .autocomplete-items div:last-child { border-bottom: none; }
+    .autocomplete-items div:hover { background-color: ${accentLight}; }
+    .autocomplete-items div strong { font-weight: 700; color: ${accentColor}; }
+    .table-wrap { overflow-x: auto; border: 1px solid #d0deeb; border-radius: 12px; }
+    table { width: auto; min-width: 100%; border-collapse: collapse; font-size: 13px; table-layout: auto; }
+    th, td { border: 1px solid #d8e2ed; padding: 7px 10px; text-align: left; vertical-align: middle; white-space: nowrap; }
+    th { background-color: #e3edf7; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #1a3a5c; letter-spacing: 0.4px; }
+    tr:nth-child(even) { background-color: #f9fcff; }
+    tr:hover { background-color: ${accentLight}; }
+    td.mat-desc-cell, th.mat-desc-cell { white-space: normal; min-width: 220px; max-width: 380px; word-break: break-word; }
+    .category-header { background-color: #d4e6ff; font-weight: 700; text-transform: uppercase; color: ${accentDark}; }
+    .hidden-row { display: none; }
+    .wa-share-btn { background-color: #25D366; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 11px; font-weight: 700; transition: background 0.2s; white-space: nowrap; }
+    .wa-share-btn:hover { background-color: #128C7E; }
+    .select-col { width: 36px; text-align: center !important; padding: 7px 6px !important; }
+    .select-col input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: ${accentColor}; display: block; margin: 0 auto; }
+    tr.row-selected { background-color: ${accentLight} !important; }
+    tr.row-selected:hover { background-color: ${accentLight} !important; }
+    tr.row-auto-selected { background-color: #e8d9f5 !important; }
+    tr.row-auto-selected:hover { background-color: #dbc7ee !important; }
+    .select-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #f1f6fc; border: 1px solid #d0deeb; border-radius: 10px; margin-top: 15px; font-size: 14px; font-weight: 600; color: #1e3c5a; flex-wrap: wrap; }
+    .select-bar label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .select-bar input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: ${accentColor}; }
+    .select-bar .clear-sel { margin-left: auto; background: #e74c3c; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .select-bar .clear-sel:hover { background: #c0392b; }
+    .float-buttons { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; gap: 12px; z-index: 9999; }
+    .float-btn { width: 56px; height: 56px; border-radius: 50%; border: none; color: #fff; font-size: 22px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.22); display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; position: relative; }
+    .float-btn:active { transform: scale(0.92); }
+    .float-scroll-btn { background-color: #34495e; }
+    .float-scroll-btn:hover { background-color: #22303f; }
+    .float-share-btn { background-color: #25D366; }
+    .float-share-btn:hover { background-color: #128C7E; }
+    .float-share-btn .share-count { position: absolute; top: -4px; right: -4px; background: #e74c3c; color: #fff; font-size: 12px; font-weight: 700; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
+    .float-share-btn:disabled { background-color: #b0b0b0; cursor: not-allowed; }
+    #showSelectedBtn { background-color: #0f766e; }
+    #showSelectedBtn:hover { background-color: #0b5d56; }
+    #showSelectedBtn .share-count { position: absolute; top: -4px; right: -4px; background: #e74c3c; color: #fff; font-size: 12px; font-weight: 700; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
+    .qty-input {
+        width: 70px;
+        padding: 5px 7px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        border: 2px solid #cbdae9;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        background: #fff;
+        color: #1e3c5a;
+    }
+    .qty-input:focus { border-color: ${accentColor}; box-shadow: 0 0 0 3px ${accentLight}; }
+    .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .qty-input[type=number] { -moz-appearance: textfield; }
+    .amount-cell { font-weight: 700; color: #16a085; }
+    .selected-total-banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        background: linear-gradient(135deg, #f3e8ff 0%, #e8f8f4 100%);
+        border: 2px solid #c9b8e8;
+        border-radius: 10px;
+        margin-top: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #4a2b7a;
+        flex-wrap: wrap;
+    }
+    .selected-total-banner .total-label { font-size: 14px; color: ${accentDark}; font-weight: 600; }
+    .selected-total-banner .total-value { font-size: 20px; font-weight: 800; color: #16a085; background: #fff; padding: 4px 14px; border-radius: 8px; border: 2px solid #16a085; }
+    .selected-total-banner .items-count { font-size: 13px; color: ${accentDark}; font-weight: 600; background: #fff; padding: 4px 12px; border-radius: 8px; border: 1px solid #c9b8e8; }
+
+    #selectedPanel { position: fixed; top: 0; right: -420px; width: 420px; max-width: 92vw; height: 100vh; background: #fff; box-shadow: -8px 0 30px rgba(0,0,0,0.25); z-index: 100000; transition: right 0.3s ease; display: flex; flex-direction: column; border-left: 4px solid #0f766e; }
+    #selectedPanel.open { right: 0; }
+    #selectedPanel .panel-header { padding: 18px 20px; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #fff; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    #selectedPanel .panel-header h3 { margin: 0; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    #selectedPanel .panel-header .close-btn { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    #selectedPanel .panel-header .close-btn:hover { background: rgba(255,255,255,0.35); }
+    #selectedPanel .panel-body { flex: 1; overflow-y: auto; padding: 14px 16px; }
+    #selectedPanel .panel-group { margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+    #selectedPanel .panel-group-title { padding: 9px 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: ${accentColor}; }
+    #selectedPanel .panel-item { padding: 10px 12px; border-top: 1px solid #eef2f7; font-size: 12px; display: flex; flex-direction: column; gap: 3px; }
+    #selectedPanel .panel-item:first-child { border-top: none; }
+    #selectedPanel .panel-item .pi-name { font-weight: 700; color: #1e2b3c; font-size: 13px; line-height: 1.3; }
+    #selectedPanel .panel-item .pi-code { color: #64748b; font-size: 11px; font-weight: 600; }
+    #selectedPanel .panel-item .pi-row { display: flex; justify-content: space-between; font-size: 12px; color: #334155; margin-top: 2px; }
+    #selectedPanel .panel-item .pi-row .pi-label { color: #64748b; font-weight: 600; }
+    #selectedPanel .panel-item .pi-row .pi-val { font-weight: 700; color: #0f172a; }
+    #selectedPanel .panel-item .pi-row .pi-amount { color: #16a085; font-weight: 800; }
+    #selectedPanel .panel-empty { text-align: center; color: #94a3b8; padding: 40px 20px; font-size: 14px; font-weight: 600; }
+    #selectedPanel .panel-footer { padding: 14px 16px; border-top: 2px solid #e2e8f0; background: #f8fafc; flex-shrink: 0; }
+    #selectedPanel .panel-footer .pf-total { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 10px; }
+    #selectedPanel .panel-footer .pf-total .pf-value { font-size: 20px; font-weight: 800; color: #16a085; }
+    #selectedPanel .panel-footer .pf-actions { display: flex; gap: 8px; }
+    #selectedPanel .panel-footer .pf-actions button { flex: 1; border: none; border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; color: #fff; }
+    #selectedPanel .panel-footer .pf-actions .pf-share { background: #25D366; }
+    #selectedPanel .panel-footer .pf-actions .pf-share:hover { background: #128C7E; }
+    #selectedPanel .panel-footer .pf-actions .pf-share:disabled { background: #b0b0b0; cursor: not-allowed; }
+    #selectedPanel .panel-footer .pf-actions .pf-clear { background: #e74c3c; }
+    #selectedPanel .panel-footer .pf-actions .pf-clear:hover { background: #c0392b; }
+    #selectedPanel .panel-footer .pf-actions .pf-clear:disabled { background: #d5d5d5; cursor: not-allowed; }
+    #panelOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 99999; display: none; opacity: 0; transition: opacity 0.3s; }
+    #panelOverlay.open { display: block; opacity: 1; }
+</style>
+</head>
+<body>
+${passwordGateHTML}
+<div class="container">
+<h2>📋 Auto Lube House - ${title}</h2>
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="🔍 Search ..." autocomplete="off">
+    <div id="autocomplete-list" class="autocomplete-items"></div>
+</div>
+
+<div class="table-wrap">
+<table id="priceTable">
+    <thead>
+        <tr>
+            <th class="select-col"><input type="checkbox" id="selectAllTop"></th>
+            <th>PRODUCT CODE</th>
+            <th class="mat-desc-cell">PRODUCT NAME</th>
+            <th>TOTAL INCLUDING GST</th>
+            <th>QTY</th>
+            <th>AMOUNT</th>
+            <th>Share</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="category-header">
+            <td colspan="7">AUTO LUBE HOUSE - ${title.toUpperCase()}</td>
+        </tr>
+${rowsHtml}
+    </tbody>
+</table>
+</div>
+<div class="selected-total-banner" id="totalBanner" style="display:none;">
+    <span class="total-label">Selected Total:</span>
+    <span class="total-value" id="selectedTotal">₹0</span>
+    <span class="items-count" id="selectedCount">0 items</span>
+</div>
+<div class="select-bar">
+    <label><input type="checkbox" id="selectAll"> Select All</label>
+    <span id="selCount">0 selected</span>
+    <button class="clear-sel" id="clearSel">Clear Selection</button>
+</div>
+</div>
+
+<div id="panelOverlay"></div>
+<div id="selectedPanel">
+    <div class="panel-header">
+        <h3>📋 Selected Items</h3>
+        <button class="close-btn" id="closePanelBtn">✕</button>
+    </div>
+    <div class="panel-body" id="selectedPanelBody">
+        <div class="panel-empty">No items selected yet.</div>
+    </div>
+    <div class="panel-footer">
+        <div class="pf-total">
+            <span>Grand Total:</span>
+            <span class="pf-value" id="panelGrandTotal">₹0</span>
+        </div>
+        <div class="pf-actions">
+            <button class="pf-share" id="panelShareBtn" disabled>📤 Share</button>
+            <button class="pf-clear" id="panelClearBtn" disabled>🗑 Clear</button>
+        </div>
+    </div>
+</div>
+
+<div class="float-buttons">
+    <button class="float-btn" id="showSelectedBtn" title="Show selected items">
+        <span>📋</span>
+        <span class="share-count" id="showSelectedCount">0</span>
+    </button>
+    <button class="float-btn float-share-btn" id="floatShareBtn" disabled>
+        <span>📤</span>
+        <span class="share-count" id="floatShareCount">0</span>
+    </button>
+    <button class="float-btn float-scroll-btn" id="floatScrollBtn"><span id="floatScrollIcon">▲</span></button>
+</div>
+
+<script>
+    const rowsData = ${JSON.stringify(data)};
+
+    function shareSingle(code, desc, total) {
+        let message = \`*Auto Lube House - ${title}*\\n\\n\`;
+        message += \`*Product Code:* \${code}\\n\`;
+        message += \`*Product Name:* \${desc}\\n\`;
+        message += \`*Total Including GST:* ₹\${total}\`;
+        window.open(\`https://wa.me/?text=\${encodeURIComponent(message)}\`, '_blank');
+    }
+
+    let selected = [];
+    const tableRows = Array.from(document.querySelectorAll('#priceTable tbody tr')).filter(tr => !tr.classList.contains('category-header'));
+    const selectAllTop = document.getElementById('selectAllTop');
+    const selectAllBottom = document.getElementById('selectAll');
+
+    const selectedPanel = document.getElementById('selectedPanel');
+    const panelOverlay = document.getElementById('panelOverlay');
+    const selectedPanelBody = document.getElementById('selectedPanelBody');
+    const panelGrandTotal = document.getElementById('panelGrandTotal');
+    const panelShareBtn = document.getElementById('panelShareBtn');
+    const panelClearBtn = document.getElementById('panelClearBtn');
+
+    function openPanel() { selectedPanel.classList.add('open'); panelOverlay.classList.add('open'); }
+    function closePanel() { selectedPanel.classList.remove('open'); panelOverlay.classList.remove('open'); }
+    document.getElementById('showSelectedBtn').addEventListener('click', openPanel);
+    document.getElementById('closePanelBtn').addEventListener('click', closePanel);
+    panelOverlay.addEventListener('click', closePanel);
+
+    function recalcRowAmount(input) {
+        const tr = input.closest('tr');
+        const totalCell = tr.querySelector('.row-total');
+        const amountCell = tr.querySelector('.row-amount');
+        if (!totalCell || !amountCell) return;
+        const baseTotal = parseFloat(String(totalCell.textContent).replace(/[^0-9.\\-]/g, '')) || 0;
+        let qty = parseInt(input.value, 10);
+        if (isNaN(qty) || qty < 0) qty = 0;
+        input.value = qty;
+        const amount = Math.round(baseTotal * qty);
+        amountCell.textContent = amount;
+    }
+
+    // NEW: Auto-select if qty > 1
+    function autoSelectIfQtyGreaterThanOne(input) {
+        const tr = input.closest('tr');
+        if (!tr) return;
+        const checkbox = tr.querySelector('.row-select');
+        if (!checkbox) return;
+        const qty = parseInt(input.value, 10) || 0;
+        if (qty > 1) {
+            checkbox.checked = true;
+            tr.classList.add('row-selected');
+            tr.classList.add('row-auto-selected');
+        } else {
+            if (tr.classList.contains('row-auto-selected')) {
+                checkbox.checked = false;
+                tr.classList.remove('row-selected');
+                tr.classList.remove('row-auto-selected');
+            }
+        }
+    }
+
+    function updateSelectedTotal() {
+        const tbody = document.querySelector('#priceTable tbody');
+        const checked = tbody.querySelectorAll('.row-select:checked');
+        let sum = 0;
+        checked.forEach(cb => {
+            const tr = cb.closest('tr');
+            const amountCell = tr.querySelector('.row-amount');
+            if (amountCell) sum += parseFloat(String(amountCell.textContent).replace(/[^0-9.\\-]/g, '')) || 0;
+        });
+        const banner = document.getElementById('totalBanner');
+        if (checked.length > 0) {
+            banner.style.display = 'flex';
+            document.getElementById('selectedTotal').textContent = '₹' + sum.toLocaleString('en-IN');
+            document.getElementById('selectedCount').textContent = checked.length + ' item' + (checked.length > 1 ? 's' : '');
+        } else {
+            banner.style.display = 'none';
+        }
+    }
+
+    function renderSelectedPanel() {
+        if (selected.length === 0) {
+            selectedPanelBody.innerHTML = '<div class="panel-empty">No items selected yet.</div>';
+            panelGrandTotal.textContent = '₹0';
+            panelShareBtn.disabled = true;
+            panelClearBtn.disabled = true;
+            return;
+        }
+        let html = '';
+        let grandTotal = 0;
+        html += '<div class="panel-group">';
+        html += '<div class="panel-group-title">${title} (' + selected.length + ')</div>';
+        selected.forEach(function(item, i) {
+            html += '<div class="panel-item">';
+            html += '<div class="pi-name">' + (i + 1) + '. ' + item.desc + '</div>';
+            html += '<div class="pi-code">Code: ' + item.code + '</div>';
+            html += '<div class="pi-row"><span class="pi-label">Total Incl. GST:</span><span class="pi-val">₹' + item.baseTotal + '</span></div>';
+            html += '<div class="pi-row"><span class="pi-label">Qty:</span><span class="pi-val">' + item.qty + '</span></div>';
+            html += '<div class="pi-row"><span class="pi-label">Amount:</span><span class="pi-amount">₹' + item.amount + '</span></div>';
+            grandTotal += item.amount;
+            html += '</div>';
+        });
+        html += '</div>';
+        selectedPanelBody.innerHTML = html;
+        panelGrandTotal.textContent = '₹' + grandTotal.toLocaleString('en-IN');
+        panelShareBtn.disabled = false;
+        panelClearBtn.disabled = false;
+    }
+
+    function updateSelection() {
+        selected = [];
+        document.querySelectorAll('.row-select:checked').forEach(cb => {
+            const idx = parseInt(cb.dataset.index);
+            if (rowsData[idx]) {
+                const item = Object.assign({}, rowsData[idx]);
+                item.baseTotal = item.total;
+                const tr = cb.closest('tr');
+                const qtyInput = tr.querySelector('.qty-input');
+                const amountCell = tr.querySelector('.row-amount');
+                item.qty = qtyInput ? parseInt(qtyInput.value, 10) || 0 : 0;
+                item.amount = amountCell ? parseFloat(String(amountCell.textContent).replace(/[^0-9.\\-]/g, '')) || 0 : 0;
+                selected.push(item);
+            }
+        });
+        document.getElementById('selCount').textContent = selected.length + ' selected';
+        document.getElementById('floatShareCount').textContent = selected.length;
+        document.getElementById('floatShareBtn').disabled = selected.length === 0;
+        const showSelectedCount = document.getElementById('showSelectedCount');
+        if (showSelectedCount) showSelectedCount.textContent = selected.length;
+        const all = document.querySelectorAll('.row-select');
+        const checked = document.querySelectorAll('.row-select:checked');
+        const isAll = all.length > 0 && all.length === checked.length;
+        selectAllTop.checked = isAll;
+        selectAllBottom.checked = isAll;
+        renderSelectedPanel();
+    }
+
+    document.querySelectorAll('.qty-input').forEach(inp => {
+        inp.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            recalcRowAmount(this);
+            autoSelectIfQtyGreaterThanOne(this);
+            updateSelectedTotal();
+            updateSelection();
+        });
+        inp.addEventListener('change', function() {
+            recalcRowAmount(this);
+            autoSelectIfQtyGreaterThanOne(this);
+            updateSelectedTotal();
+            updateSelection();
+        });
+    });
+
+    document.querySelectorAll('.row-select').forEach(cb => {
+        cb.addEventListener('change', function() {
+            this.closest('tr').classList.toggle('row-selected', this.checked);
+            if (!this.checked) this.closest('tr').classList.remove('row-auto-selected');
+            updateSelection();
+            updateSelectedTotal();
+        });
+    });
+
+    selectAllTop.onchange = function() {
+        document.querySelectorAll('.row-select').forEach(cb => {
+            cb.checked = this.checked;
+            cb.closest('tr').classList.toggle('row-selected', this.checked);
+            if (!this.checked) cb.closest('tr').classList.remove('row-auto-selected');
+        });
+        selectAllBottom.checked = this.checked;
+        updateSelection();
+        updateSelectedTotal();
+    };
+    selectAllBottom.onchange = function() {
+        document.querySelectorAll('.row-select').forEach(cb => {
+            cb.checked = this.checked;
+            cb.closest('tr').classList.toggle('row-selected', this.checked);
+            if (!this.checked) cb.closest('tr').classList.remove('row-auto-selected');
+        });
+        selectAllTop.checked = this.checked;
+        updateSelection();
+        updateSelectedTotal();
+    };
+    document.getElementById('clearSel').onclick = function() {
+        document.querySelectorAll('.row-select').forEach(cb => {
+            cb.checked = false;
+            cb.closest('tr').classList.remove('row-selected');
+            cb.closest('tr').classList.remove('row-auto-selected');
+        });
+        selectAllTop.checked = false;
+        selectAllBottom.checked = false;
+        updateSelection();
+        updateSelectedTotal();
+    };
+
+    panelClearBtn.addEventListener('click', function() {
+        document.getElementById('clearSel').click();
+    });
+    panelShareBtn.addEventListener('click', function() {
+        document.getElementById('floatShareBtn').click();
+    });
+
+    document.getElementById('floatShareBtn').onclick = function() {
+        if (selected.length === 0) return;
+        let message = \`*Auto Lube House - ${title}*\\n_\${selected.length} item(s) selected_\\n\`;
+        let subtotal = 0;
+        selected.forEach((item, i) => {
+            message += \`\\n*\${i+1}. \${item.desc}*\\n\`;
+            message += \`Code: \${item.code}\\n\`;
+            message += \`Total Incl. GST: ₹\${item.baseTotal}\\n\`;
+            message += \`Qty: \${item.qty}\\n\`;
+            message += \`Amount: ₹\${item.amount}\\n\`;
+            subtotal += item.amount;
+        });
+        message += \`\\n*Subtotal: ₹\${subtotal}*\`;
+        window.open(\`https://wa.me/?text=\${encodeURIComponent(message)}\`, '_blank');
+    };
+
+    const scrollBtn = document.getElementById('floatScrollBtn');
+    const scrollIcon = document.getElementById('floatScrollIcon');
+    let atBottom = false;
+    scrollBtn.onclick = function() {
+        if (!atBottom) window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+        else window.scrollTo({top: 0, behavior: 'smooth'});
+    };
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        if (scrollTop + clientHeight >= scrollHeight - 80) { atBottom = true; scrollIcon.textContent = '▼'; }
+        else { atBottom = false; scrollIcon.textContent = '▲'; }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    const autocompleteList = document.getElementById('autocomplete-list');
+    const searchableData = tableRows.map(row => {
+        return { code: row.querySelector('.mat-code').innerText, desc: row.querySelector('.mat-desc').innerText, rowElement: row };
+    });
+    function filterTable(term) {
+        term = term.toLowerCase().trim();
+        tableRows.forEach(row => {
+            const code = row.querySelector('.mat-code').innerText.toLowerCase();
+            const desc = row.querySelector('.mat-desc').innerText.toLowerCase();
+            row.classList.toggle('hidden-row', !(code.includes(term) || desc.includes(term)));
+        });
+    }
+    function closeAllLists() { autocompleteList.innerHTML = ''; autocompleteList.style.display = 'none'; }
+    searchInput.addEventListener('input', function() {
+        const val = this.value.toLowerCase().trim();
+        closeAllLists();
+        filterTable(val);
+        if (!val) return;
+        const matches = searchableData.filter(item => item.code.toLowerCase().includes(val) || item.desc.toLowerCase().includes(val));
+        if (matches.length > 0) {
+            autocompleteList.style.display = 'block';
+            matches.forEach(match => {
+                const div = document.createElement('div');
+                let codeHTML = match.code, descHTML = match.desc;
+                if (match.code.toLowerCase().includes(val)) codeHTML = match.code.replace(new RegExp(\`(\${val})\`, 'gi'), '<strong>$1</strong>');
+                if (match.desc.toLowerCase().includes(val)) descHTML = match.desc.replace(new RegExp(\`(\${val})\`, 'gi'), '<strong>$1</strong>');
+                div.innerHTML = \`<span>\${codeHTML}</span> <span style="color:#5a7a9a; font-size:12px;">\${descHTML}</span>\`;
+                div.onclick = function() { searchInput.value = match.code + ' - ' + match.desc; filterTable(match.code); closeAllLists(); };
+                autocompleteList.appendChild(div);
+            });
+        }
+    });
+    searchInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') closeAllLists(); });
+    document.addEventListener('click', function(e) { if (e.target !== searchInput && e.target !== autocompleteList) closeAllLists(); });
+<\/script>
+</body>
+</html>`;
+        }
+
+        function buildPurchaseSmallHTML() {
+            purchaseSmallHTML = generatePurchaseHTML(purchaseSmallData, 'Purchase Small Pack', '#8e44ad', 'rgba(142,68,173,0.15)', '#6c3483', 'purchaseSmall', '1551');
+        }
+        function buildPurchaseBarrelHTML() {
+            purchaseBarrelHTML = generatePurchaseHTML(purchaseBarrelData, 'Purchase Barrel', '#16a085', 'rgba(22,160,133,0.15)', '#0e7b63', 'purchaseBarrel', '1551');
+        }
+
+        document.getElementById('salesSmallDownloadBtn').addEventListener('click', function() {
+            if (!salesSmallHTML) { alert("No Sales Small Pack data to download."); return; }
+            downloadHTML(salesSmallHTML, 'ALH_SalesSmallPack_Pricelist.html');
+        });
+        document.getElementById('salesBarrelDownloadBtn').addEventListener('click', function() {
+            if (!salesBarrelHTML) { alert("No Sales Barrel data to download."); return; }
+            downloadHTML(salesBarrelHTML, 'ALH_SalesBarrel_Pricelist.html');
+        });
+        document.getElementById('purchaseSmallDownloadBtn').addEventListener('click', function() {
+            if (!purchaseSmallHTML) { alert("No Purchase Small Pack data to download."); return; }
+            downloadHTML(purchaseSmallHTML, 'ALH_PurchaseSmallPack_Pricelist.html');
+        });
+        document.getElementById('purchaseBarrelDownloadBtn').addEventListener('click', function() {
+            if (!purchaseBarrelHTML) { alert("No Purchase Barrel data to download."); return; }
+            downloadHTML(purchaseBarrelHTML, 'ALH_PurchaseBarrel_Pricelist.html');
         });
 
-        document.getElementById('barrelDownloadBtn').addEventListener('click', function() {
-            if (!barrelHTML) { alert("No Barrel data to download."); return; }
-            const blob = new Blob([barrelHTML], {type: 'text/html'});
+        function downloadHTML(html, filename) {
+            const blob = new Blob([html], {type: 'text/html'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'ALH_Barrel_Pricelist.html';
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        });
+        }
 
         function showLoading(isLoading) {
             loadingDiv.style.display = isLoading ? 'block' : 'none';
