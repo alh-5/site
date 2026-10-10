@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Relationship Management | Lube Selector</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef2f7;color:#172033}
+.container{max-width:950px;margin:24px auto;padding:15px}
+.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 30px rgba(0,0,0,.10)}
+h1{margin:0 0 6px;text-align:center;font-size:27px}
+.subtitle{text-align:center;color:#64748b;margin-bottom:22px}
+label.title{display:block;font-weight:700;margin:15px 0 7px}
+label.title .req{color:#dc2626;font-weight:700;margin-left:4px;font-size:16px}
+input[type=text]{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;outline:none}
+input[type=text]:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.10)}
+.dropdown{position:relative}
+.drop-btn{width:100%;background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:13px;text-align:left;font-size:15px;cursor:pointer;min-height:48px}
+.drop-btn::after{content:"▼";float:right;color:#64748b;font-size:12px;margin-top:3px}
+.drop-panel{display:none;position:absolute;z-index:50;left:0;right:0;top:54px;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.14);max-height:360px;overflow:auto;padding:8px}
+.drop-panel.open{display:block}
+.search{margin-bottom:7px}
+.option{display:flex;align-items:flex-start;gap:9px;padding:9px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1.3}
+.option:hover{background:#f1f5f9}
+.option input[type=checkbox]{width:auto;margin-top:2px}
+.group-title{font-weight:800;color:#1d4ed8;background:#eff6ff;padding:8px;border-radius:7px;margin:6px 0}
+.selection-count{font-size:12px;color:#64748b;margin-top:5px}
+.products-box{display:none}
+.products-box.show{display:block}
+.selected-summary{margin-top:8px;padding:10px;background:#f8fafc;border-radius:9px;font-size:13px;color:#475569;max-height:180px;overflow:auto}
+.message{margin-top:18px}
+textarea{width:100%;min-height:230px;padding:14px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;resize:vertical;line-height:1.45}
+.buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+button.action{border:0;border-radius:10px;padding:13px;font-weight:700;cursor:pointer;color:white;font-size:14px}
+button.action:disabled{opacity:.6;cursor:not-allowed}
+.wa{background:#16a34a} .save{background:#2563eb}
+.note{font-size:12px;color:#64748b;margin-top:10px}
+.error-border{border-color:#dc2626 !important; box-shadow:0 0 0 3px rgba(220,38,38,.10) !important;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999}
+.toast.show{opacity:1}
+@media(max-width:650px){.buttons{grid-template-columns:1fr 1fr}.container{padding:10px}.card{padding:15px}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<h1>Customer Relationship Management</h1>
+<div class="subtitle">Select segment(s), then select the required product grade(s) — all fields are mandatory</div>
+
+<label class="title" for="counter">Counter Name <span class="req">*</span></label>
+<input id="counter" type="text" placeholder="Enter Counter Name" required>
+
+<label class="title" for="address">Address / Area <span class="req">*</span></label>
+<input id="address" type="text" placeholder="Enter Address / Area" required>
+
+<label class="title">Lube Segment <span class="req">*</span></label>
+<div class="dropdown">
+  <button type="button" class="drop-btn" id="segmentBtn">Select Lube Segment</button>
+  <div class="drop-panel" id="segmentPanel">
+    <input class="search" id="segmentSearch" type="text" placeholder="Search segment...">
+    <div id="segmentOptions"></div>
+  </div>
+</div>
+<div class="selection-count" id="segmentCount">0 segment selected</div>
+
+<div class="products-box" id="productsBox">
+<label class="title">Product Grade <span class="req">*</span></label>
+<div class="dropdown">
+  <button type="button" class="drop-btn" id="productBtn">Select Product Grade</button>
+  <div class="drop-panel" id="productPanel">
+    <input class="search" id="productSearch" type="text" placeholder="Search grade...">
+    <div id="productOptions"></div>
+  </div>
+</div>
+<div class="selection-count" id="productCount">0 grade selected</div>
+<div class="selected-summary" id="selectedSummary">Select a grade to see it here.</div>
+</div>
+
+<div class="message">
+<label class="title">WhatsApp / Share Message</label>
+<textarea id="message" readonly></textarea>
+</div>
+
+<div class="buttons">
+<button class="action wa" id="waBtn" onclick="whatsappMessage()">WHATSAPP</button>
+<button class="action save" id="saveBtn" onclick="saveEntry()">SAVE</button>
+</div>
+<div class="note">One Time required for Customer Relationship Management (CRM).</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   GOOGLE SHEETS CONFIGURATION
+   ------------------------------------------------------------
+   Sheet headers (row 1):
+     Timestamp | Counter Name | Address / Area | Lube Segment | Product Grades
+   ------------------------------------------------------------
+   Apps Script (Code.gs):
+   function doPost(e) {
+     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+     var data = JSON.parse(e.postData.contents);
+     sheet.appendRow([
+       new Date(),
+       data.counterName,
+       data.address,
+       data.segments,
+       data.grades
+     ]);
+     return ContentService
+       .createTextOutput(JSON.stringify({status:"success"}))
+       .setMimeType(ContentService.MimeType.JSON);
+   }
+   ============================================================ */
+const SHEET_URL = "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL_HERE/exec";
+
+/* ============================================================
+   PRODUCT DATA — SIMPLE GRADE LISTS
+   ------------------------------------------------------------
+   To add a new product in the future, just add a plain string
+   to the array. No SKU codes, no pack sizes, no brackets.
+
+   Example:
+     "MG GRADES": [
+       "SERVO MG R AXLE REDUCER FLUID",
+       "SERVO MG HECTOR DIESEL ENGINE OIL",
+       "SERVO MG HECTOR PETROL EO",
+       "SERVO MG GLOSTER DIESEL EO"
+     ],
+
+   Duplicates are automatically merged (case-insensitive), so
+   you don't need to worry about repeats.
+   ============================================================ */
+const productData = {
+  "MARUTI GENUINE OILS & MGA OIL": [
+    "MGGO 80W-90",
+    "SERVO FUTURA SYNTH 0W-40",
+    "ECSTAR PETROL 0W-20",
+    "ECSTAR DIESEL 5W-30",
+    "MGO 20W-40",
+    "MGDO 15W-40",
+    "MGO 5W-30"
+  ],
+  "HYUNDAI GENUINE OILS": [
+    "HYUNDAI S.GEAR OIL 75W-85",
+    "HYUNDAI SERVO BRAKE OIL",
+    "HY SERVO SYNTH 0W-30 SP/C3",
+    "HY.SERVO SYNTH PLUS 5W-30",
+    "HY.SERVO ENGINE OIL 5W-30",
+    "HYUNDAI SERVO STEERING OIL",
+    "HYUNDAI SERVO SUPERIOR 0W30",
+    "HY SERVO PETROL EO SN PLUS",
+    "HYUNDAI SERVO DEO ACEA C5",
+    "HY.SERVO PRM.EO SM 5W-30",
+    "HYUNDAI SERVO COOLANT 50",
+    "HYUNDAI SERVO COOLANT LL",
+    "HYUNDAI SERVO CRDi PREM.ENG.OIL",
+    "HYU SERVO BRAKE FLUID DOT 4 LV"
+  ],
+  "MG GRADES": [
+    "SERVO MG R AXLE REDUCER FLUID",
+    "SERVO MG HECTOR DIESEL ENGINE OIL",
+    "SERVO MG HECTOR PETROL EO",
+    "SERVO MG GLOSTER DIESEL EO"
+  ],
+  "ALT GRADES": [
+    "SERVO PRIDE ALT PLUS 15W-40"
+  ],
+  "TVS GENUINE OILS": [
+    "TRU4 KRAAFT"
+  ],
+  "HONDA GENUINE OILS": [
+    "SERVO HONDA JOSH",
+    "SERVO HONDA SCOOTONXT"
+  ],
+  "DIESEL ENGINE OILS": [
+    "SERVO PRIDE 40",
+    "SERVO GAS ENGINE OIL",
+    "SERVO RAFTAAR",
+    "SERVO SUPERMILE 10W-30",
+    "SERVO SUPERMILE PLUS 5W-30",
+    "SERVO PRIDE NXT CK4 10W-30",
+    "SERVO PRIDE NXT CK4 15W-40",
+    "S FLEET SUPREME CI4PLUS 15W-40",
+    "SERVO FLEET SUPREME CI4 PLUS 15W-40",
+    "SERVO FLT CF4 15W-40",
+    "SERVO SUPER 20W-40 MG",
+    "SERVO PRIDE XL PLUS 15W40",
+    "SERVO SUP.MULT.GRD 20W-40",
+    "SERVO AUTORIKSHAW OIL 20W-40",
+    "SERVO CHHAKADA ENG OIL 20W-40",
+    "SERVO PRIDE TC 15W40",
+    "SERVO PREMIUM CF-4 15W-40"
+  ],
+  "GEAR": [
+    "SERVO GEAR HP 90",
+    "SERVO GEAR HP 140",
+    "SERVO TRANSFLUID A",
+    "SERVO GEAR SUPER 80W-90",
+    "SERVO GEAR SUPER 85W-140"
+  ],
+  "AGRI": [
+    "SERVO PUMP SET OIL 20W-40",
+    "SERVO SUPER PUMP SO 40",
+    "SERVO OIB OIL",
+    "SERVO TILLER SUPER 20W-40",
+    "SERVO TRCTR OIL PLS 15W40",
+    "SERVO TRACTOR OIL MG 20W-40",
+    "SERVO TRACTOR GREEN",
+    "SERVO AGROSPRAY T",
+    "SERVO ORCHARD SPRAY OIL",
+    "SERVO MKM TRACTOR OIL"
+  ],
+  "4T": [
+    "SERVO 4T GREEN",
+    "SERVO HYPERSPORT F5",
+    "SERVO 4T XTRA",
+    "SERVO 4T XTRA 10W-30",
+    "SERVO 4T XTRA 20W-50",
+    "SERVO SCOOTOMATIC XTRA 5W-30",
+    "SERVO SCOOTOMATIC 4ST 10W-30",
+    "SERVO 4T",
+    "SERVO 4T 20W-50",
+    "SERVO 4T ZOOM 10W-30",
+    "SERVO 4T 10W-30",
+    "SERVO 4T SYNTH",
+    "SERVO 4T HD"
+  ],
+  "PCMO": [
+    "SERVO FUTURA G PLUS 5W-30",
+    "SERVO GREENMILE",
+    "SERVO FUTURA NXT 0W-16",
+    "SERVO BLACKBIRD X"
+  ],
+  "2W": [
+    "SERVO 2T SUPREME"
+  ],
+  "GREASE": [
+    "SERVO GREASE MP",
+    "SERVO GREASE MP 3",
+    "SERVO GEM RR 3",
+    "SERVO LONG LIFE GREASE",
+    "SERVOGREASE MIRACLE 3",
+    "SERVOGEM EP 2"
+  ],
+  "SPECIALITY GRADES": [
+    "SERVO BRAKE FLUID SUPER HD",
+    "SERVO TROPIKOOL",
+    "SERVO TROPIKOOL READY",
+    "SERVO KOOL PLUS",
+    "SERVO KOOL READY",
+    "SERVO BRAKE FLUID DOT 4"
+  ],
+  "INDUSTRIAL": [
+    "SERVOSYSTEM 32",
+    "SERVOSYSTEM 46",
+    "SERVOSYSTEM 68",
+    "SERVOSYSTEM 220",
+    "SERVOMESH SP 320",
+    "SERVOMESH SP 220",
+    "SERVOHYDRASHAKTI 68",
+    "SERVO EXCAVATOR TH 46",
+    "SERVOHYDREX TH 46 PLUS",
+    "SERVOHYDREX TH 46",
+    "SERVOSYSTEM HLP 68",
+    "SERVOCUT S",
+    "SERVOELECTRA"
+  ],
+  "MAHINDRA EARTHMASTER (EM)": [
+    "MAHINDRA EM BRAKEFLUID",
+    "MAHINDRA EM HYDRAULIC OIL",
+    "MAHINDRA EM TRNSMISON OIL",
+    "MAHINDRA EM GREASE",
+    "MAHINDRA EM REAR AXLE OIL"
+  ],
+  "DIESEL EXHAUST FLUID/ CLEARBLUE": [
+    "IOC CLEARBLUE"
+  ],
+  "ECO SERIES GRADE": [
+    "SERVO ECO 4T",
+    "SERVO ECO CF-4 15W-40",
+    "SERVO ECO CI4 PLUS 15W-40",
+    "SERVO ECO TRACTOR OIL"
+  ]
+};
+
+/* ============================================================
+   DEDUPLICATE grades within each segment (case-insensitive)
+   ============================================================ */
+function buildSimplifiedProducts(segment){
+  const raw = productData[segment] || [];
+  const seen = new Set();
+  const result = [];
+  raw.forEach(item=>{
+    // item may be a string, or an array from older format
+    const grade = Array.isArray(item) ? String(item[1] || item[0] || "") : String(item || "");
+    const clean = grade.trim().toUpperCase();
+    if(!clean) return;
+    if(seen.has(clean)) return;
+    seen.add(clean);
+    result.push({grade: grade.trim()});
+  });
+  result.sort((a,b)=> a.grade.localeCompare(b.grade));
+  return result;
+}
+
+/* Build the simplified product map once */
+const cleanedProductData = {};
+Object.keys(productData).forEach(seg=>{
+  cleanedProductData[seg] = buildSimplifiedProducts(seg);
+});
+
+const segmentNames = Object.keys(cleanedProductData);
+const segmentBtn = document.getElementById("segmentBtn");
+const segmentPanel = document.getElementById("segmentPanel");
+const productBtn = document.getElementById("productBtn");
+const productPanel = document.getElementById("productPanel");
+const segmentOptions = document.getElementById("segmentOptions");
+const productOptions = document.getElementById("productOptions");
+const productsBox = document.getElementById("productsBox");
+const messageBox = document.getElementById("message");
+const counterInput = document.getElementById("counter");
+const addressInput = document.getElementById("address");
+const toastEl = document.getElementById("toast");
+
+let lastSavedSnapshot = "";
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function showToast(text, isError){
+  toastEl.textContent = text;
+  toastEl.style.background = isError ? "#dc2626" : "#172033";
+  toastEl.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>toastEl.classList.remove("show"), 2500);
+}
+
+function renderSegments(filter=""){
+  segmentOptions.innerHTML="";
+  segmentNames.filter(s=>s.toLowerCase().includes(filter.toLowerCase())).forEach(segment=>{
+    const row=document.createElement("label");
+    row.className="option";
+    row.innerHTML=`<input type="checkbox" class="segmentCheck" value="${esc(segment)}"><span>${esc(segment)}</span>`;
+    row.querySelector("input").addEventListener("change", updateProducts);
+    segmentOptions.appendChild(row);
+  });
+}
+
+function updateProducts(){
+  const selectedSegments=[...document.querySelectorAll(".segmentCheck:checked")].map(x=>x.value);
+  document.getElementById("segmentCount").textContent =
+    selectedSegments.length + (selectedSegments.length===1 ? " segment selected" : " segments selected");
+  segmentBtn.textContent=selectedSegments.length ? selectedSegments.join(", ") : "Select Lube Segment";
+
+  productOptions.innerHTML="";
+  if(!selectedSegments.length){
+    productsBox.classList.remove("show");
+    productBtn.textContent="Select Product Grade";
+    updateMessage();
+    return;
+  }
+
+  productsBox.classList.add("show");
+
+  // Global dedupe across selected segments
+  const globalSeen = new Set();
+
+  selectedSegments.forEach(segment=>{
+    const title=document.createElement("div");
+    title.className="group-title";
+    title.textContent=segment;
+    productOptions.appendChild(title);
+
+    (cleanedProductData[segment]||[]).forEach(item=>{
+      const key = item.grade.toUpperCase();
+      if(globalSeen.has(key)) return;
+      globalSeen.add(key);
+
+      const row=document.createElement("label");
+      row.className="option productOption";
+      row.dataset.search=(item.grade+" "+segment).toLowerCase();
+      row.dataset.grade=item.grade;
+      row.innerHTML=`<input type="checkbox" class="productCheck" data-segment="${esc(segment)}" data-grade="${esc(item.grade)}">
+      <span>${esc(item.grade)}</span>`;
+      row.querySelector("input").addEventListener("change", updateMessage);
+      productOptions.appendChild(row);
+    });
+  });
+  updateMessage();
+}
+
+function getFormData(){
+  const counter = counterInput.value.trim();
+  const address = addressInput.value.trim();
+  const selectedSegments=[...document.querySelectorAll(".segmentCheck:checked")].map(x=>x.value);
+  const products=[...document.querySelectorAll(".productCheck:checked")].map(x=>({
+    segment:x.dataset.segment, grade:x.dataset.grade
+  }));
+  return {counter, address, selectedSegments, products};
+}
+
+function updateMessage(){
+  const {counter, address, selectedSegments, products} = getFormData();
+
+  document.getElementById("productCount").textContent =
+    products.length + (products.length===1 ? " grade selected" : " grades selected");
+
+  document.getElementById("selectedSummary").innerHTML=products.length
+    ? products.map(p=>`<div>${esc(p.grade)}</div>`).join("")
+    : "Select a grade to see it here.";
+
+  let msg="LUBE REQUIREMENT\n\n";
+  msg+="Counter Name: "+(counter||"-")+"\n";
+  msg+="Address / Area: "+(address||"-")+"\n";
+  msg+="Lube Segment: "+(selectedSegments.length?selectedSegments.join(", "):"-")+"\n";
+  msg+="\nPRODUCT GRADES:\n";
+  if(products.length){
+    products.forEach((p,i)=>msg+=(i+1)+". "+p.grade+"\n");
+  }else msg+="-\n";
+  messageBox.value=msg;
+}
+
+function filterProducts(){
+  const term=document.getElementById("productSearch").value.toLowerCase();
+  document.querySelectorAll(".productOption").forEach(row=>{
+    row.style.display=row.dataset.search.includes(term)?"flex":"none";
+  });
+  document.querySelectorAll(".group-title").forEach(title=>{
+    let any=false, next=title.nextElementSibling;
+    while(next && !next.classList.contains("group-title")){
+      if(next.classList.contains("productOption") && next.style.display!=="none") any=true;
+      next=next.nextElementSibling;
+    }
+    title.style.display=any?"block":"none";
+  });
+}
+
+function validateForm(){
+  let isValid = true;
+  if(!counterInput.value.trim()){
+    counterInput.classList.add("error-border");
+    isValid = false;
+  } else {
+    counterInput.classList.remove("error-border");
+  }
+
+  if(!addressInput.value.trim()){
+    addressInput.classList.add("error-border");
+    isValid = false;
+  } else {
+    addressInput.classList.remove("error-border");
+  }
+
+  const segments = document.querySelectorAll(".segmentCheck:checked");
+  if(segments.length === 0){
+    segmentBtn.classList.add("error-border");
+    isValid = false;
+  } else {
+    segmentBtn.classList.remove("error-border");
+  }
+
+  const products = document.querySelectorAll(".productCheck:checked");
+  if(products.length === 0){
+    productBtn.classList.add("error-border");
+    isValid = false;
+  } else {
+    productBtn.classList.remove("error-border");
+  }
+
+  if(!isValid){
+    showToast("Please fill all mandatory fields: Counter Name, Address / Area, Lube Segment, and Product Grade.", true);
+  }
+  return isValid;
+}
+
+function buildProductString(products){
+  return products.map((p,i)=>(i+1)+". "+p.grade).join(" | ");
+}
+
+function buildSnapshot(){
+  const {counter, address, selectedSegments, products} = getFormData();
+  return counter + "||" + address + "||" + selectedSegments.join(",") + "||" +
+    products.map(p=>p.segment+":"+p.grade).join(",");
+}
+
+async function saveToSheet(){
+  const {counter, address, selectedSegments, products} = getFormData();
+
+  const payload = {
+    counterName: counter,
+    address: address,
+    segments: selectedSegments.join(", "),
+    grades: buildProductString(products),
+    timestamp: new Date().toISOString()
+  };
+
+  if(!SHEET_URL || SHEET_URL.includes("PASTE_YOUR_WEB_APP_URL_HERE")){
+    console.warn("Google Sheet URL not configured. Payload:", payload);
+    return {skipped:true};
+  }
+
+  try{
+    await fetch(SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    return {success:true};
+  }catch(err){
+    console.error("Sheet save failed:", err);
+    return {success:false, error: err};
+  }
+}
+
+async function saveEntry(){
+  if(!validateForm()) return;
+
+  const snapshot = buildSnapshot();
+  if(snapshot === lastSavedSnapshot){
+    showToast("This entry is already saved.");
+    return;
+  }
+
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.disabled = true;
+  saveBtn.textContent = "SAVING...";
+
+  const result = await saveToSheet();
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = "SAVE";
+
+  if(result.skipped){
+    lastSavedSnapshot = snapshot;
+    showToast("Entry validated. (Google Sheet URL not configured)");
+  } else if(result.success){
+    lastSavedSnapshot = snapshot;
+    showToast("Entry saved to Google Sheet.");
+  } else {
+    showToast("Could not save entry. Please check your connection.", true);
+  }
+}
+
+async function whatsappMessage(){
+  if(!validateForm()) return;
+
+  const snapshot = buildSnapshot();
+  if(snapshot !== lastSavedSnapshot){
+    saveToSheet().then(res=>{
+      if(res && res.success) lastSavedSnapshot = snapshot;
+    });
+  }
+
+  const url = "https://wa.me/?text="+encodeURIComponent(messageBox.value);
+  window.open(url,"_blank");
+}
+
+segmentBtn.addEventListener("click",()=>{
+  segmentPanel.classList.toggle("open");
+  productPanel.classList.remove("open");
+});
+productBtn.addEventListener("click",()=>{
+  productPanel.classList.toggle("open");
+  segmentPanel.classList.remove("open");
+});
+document.getElementById("segmentSearch").addEventListener("input",e=>renderSegments(e.target.value));
+document.getElementById("productSearch").addEventListener("input",filterProducts);
+counterInput.addEventListener("input",()=>{
+  if(counterInput.value.trim()) counterInput.classList.remove("error-border");
+  updateMessage();
+});
+addressInput.addEventListener("input",()=>{
+  if(addressInput.value.trim()) addressInput.classList.remove("error-border");
+  updateMessage();
+});
+
+document.addEventListener("change", function(e){
+  if(e.target.classList.contains("segmentCheck")){
+    if(document.querySelectorAll(".segmentCheck:checked").length) segmentBtn.classList.remove("error-border");
+  }
+  if(e.target.classList.contains("productCheck")){
+    if(document.querySelectorAll(".productCheck:checked").length) productBtn.classList.remove("error-border");
+  }
+});
+
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".dropdown")){
+    segmentPanel.classList.remove("open");
+    productPanel.classList.remove("open");
+  }
+});
+
+renderSegments();
+updateMessage();
+</script>
+</body>
+</html>
