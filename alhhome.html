@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home1</title>
+    <title>Auto Lube House – Home1</title>
+    <!-- Font Awesome 6 (free) – solid + regular icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -809,10 +810,10 @@
                             <i class="fas fa-file-invoice-dollar"></i> R/O Order
                         </button>
                         <button class="tab-btn" data-tab="receipt">
-                            <i class="fas fa-file-invoice-dollar"></i> Money Receipt's
+                            <i class="fas fa-receipt"></i> Money Receipt's
                         </button>
                         <button class="tab-btn" data-tab="ledgers">
-                            <i class="fas fa-file-invoice-dollar"></i> Account Ledger's
+                            <i class="fas fa-book"></i> Account Ledger's
                         </button>
                         <button class="tab-btn" data-tab="requirement">
                             <i class="fas fa-clipboard-list"></i> Requirement
@@ -821,19 +822,23 @@
                             <i class="fas fa-calculator"></i> Order Calculator
                         </button>
                         <button class="tab-btn" data-tab="Pricelist">
-                            <i class="fa-file-invoice-dollar"></i> Pricelist
+                            <i class="fas fa-tags"></i> Pricelist
+                        </button>
+                        <!-- NEW CRM BUTTON -->
+                        <button class="tab-btn" data-tab="crm">
+                            <i class="fas fa-users"></i> CRM
                         </button>
                         <button class="tab-btn" data-tab="SPanalys">
-                            <i class="fas fa-store"></i> Sales & Purchase Analys
+                            <i class="fas fa-chart-line"></i> Sales & Purchase Analys
                         </button>
                         <button class="tab-btn" data-tab="invtracker">
-                            <i class="fas fa-store"></i> Invoice Status
+                            <i class="fas fa-truck"></i> Invoice Status
                         </button>
                         <button class="tab-btn" data-tab="basic">
-                            <i class="fa-file-invoice-dollar"></i> Basic Knowledge
+                            <i class="fas fa-graduation-cap"></i> Basic Knowledge
                         </button>
                         <button class="tab-btn" data-tab="Home2">
-                            <i class="fa-clipboard-list"></i> Next Page
+                            <i class="fas fa-arrow-right"></i> Next Page
                         </button>
                     </div>
                 </div>
@@ -886,7 +891,7 @@
                     <!-- RECEIPT -->
                     <div class="tab-content" id="receipt-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-store"></i> Digital Money Receipt's</h2>
+                            <h2 class="tab-title"><i class="fas fa-receipt"></i> Digital Money Receipt's</h2>
                             <div class="top-link-group">
                                 <a href="money_receipt.html" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -908,7 +913,7 @@
                     <!-- LEDGERS -->
                     <div class="tab-content" id="ledgers-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> Account Ledger's</h2>
+                            <h2 class="tab-title"><i class="fas fa-book"></i> Account Ledger's</h2>
                             <div class="top-link-group">
                                 <a href="ledger.html" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -974,7 +979,7 @@
                     <!-- PRICELIST -->
                     <div class="tab-content" id="Pricelist-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Pricelist</h2>
+                            <h2 class="tab-title"><i class="fas fa-tags"></i> Pricelist</h2>
                             <div class="top-link-group">
                                 <a href="Pricelist.html" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -993,10 +998,32 @@
                         </ul>
                     </div>
 
+                    <!-- CRM (NEW TAB CONTENT) -->
+                    <div class="tab-content" id="crm-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-users"></i> CRM – Customer Relationship Management</h2>
+                            <div class="top-link-group">
+                                <a href="crm.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open CRM Dashboard
+                                </a>
+                                <span class="link-note">Click to access CRM system</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Manage customer relationships, track interactions, and streamline communication with our dedicated CRM system. Access customer profiles, service history, and communication logs to provide personalized service and build long-term loyalty.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Centralized customer database with full profiles</li>
+                            <li><i class="fas fa-check-circle"></i> Track interactions and follow-up reminders</li>
+                            <li><i class="fas fa-check-circle"></i> Service history and purchase analytics</li>
+                            <li><i class="fas fa-check-circle"></i> Customer segmentation and targeting</li>
+                            <li><i class="fas fa-check-circle"></i> Integrated communication tools</li>
+                        </ul>
+                    </div>
+
                     <!-- SPANALYS -->
                     <div class="tab-content" id="SPanalys-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Sales & Purchase Analys</h2>
+                            <h2 class="tab-title"><i class="fas fa-chart-line"></i> Sales & Purchase Analys</h2>
                             <div class="top-link-group">
                                 <a href="salfy.html" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -1018,7 +1045,7 @@
                     <!-- INVTRACKER -->
                     <div class="tab-content" id="invtracker-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Invoice Status Tracker</h2>
+                            <h2 class="tab-title"><i class="fas fa-truck"></i> Invoice Status Tracker</h2>
                             <div class="top-link-group">
                                 <a href="https://invnotdeliver.netlify.app/" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -1037,10 +1064,10 @@
                         </ul>
                     </div>
 
-                    <!-- Basic Knowledge -->
+                    <!-- BASIC KNOWLEDGE -->
                     <div class="tab-content" id="basic-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Basic Knowledge</h2>
+                            <h2 class="tab-title"><i class="fas fa-graduation-cap"></i> Basic Knowledge</h2>
                             <div class="top-link-group">
                                 <a href="basic_knowledge/basic_knowledge.html" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -1061,7 +1088,7 @@
                     <!-- HOME2 -->
                     <div class="tab-content" id="Home2-tab">
                         <div class="tab-top-bar">
-                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Next</h2>
+                            <h2 class="tab-title"><i class="fas fa-arrow-right"></i> Next</h2>
                             <div class="top-link-group">
                                 <a href="alhhome2.html" target="_blank" class="website-link">
                                     <i class="fas fa-external-link-alt"></i>
@@ -1102,7 +1129,8 @@
 
                 btn.classList.add('active');
                 const tabId = btn.getAttribute('data-tab');
-                document.getElementById(`${tabId}-tab`).classList.add('active');
+                const targetContent = document.getElementById(`${tabId}-tab`);
+                if (targetContent) targetContent.classList.add('active');
 
                 if (window.innerWidth <= 768) {
                     const tabSidebar = document.getElementById('tabSidebar');

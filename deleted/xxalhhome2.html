@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header with Stereo Moving Effect */
+        header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(255, 215, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .stereo-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.05) 20%, 
+                transparent 40%, 
+                rgba(255, 215, 0, 0.05) 60%, 
+                transparent 80%, 
+                rgba(255, 215, 0, 0.05) 100%);
+            background-size: 200% 100%;
+            animation: stereoMove 8s infinite linear;
+            z-index: -1;
+        }
+        
+        @keyframes stereoMove {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .stereo-bars {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 0 20px;
+        }
+        
+        .stereo-bar {
+            width: 4px;
+            background: linear-gradient(to top, #88E788, transparent);
+            animation: stereoBarDance 1.5s infinite ease-in-out;
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .stereo-bar:nth-child(1) { height: 3px; animation-delay: 0s; }
+        .stereo-bar:nth-child(2) { height: 5px; animation-delay: 0.1s; }
+        .stereo-bar:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+        .stereo-bar:nth-child(4) { height: 12px; animation-delay: 0.3s; }
+        .stereo-bar:nth-child(5) { height: 15px; animation-delay: 0.4s; }
+        .stereo-bar:nth-child(6) { height: 12px; animation-delay: 0.5s; }
+        .stereo-bar:nth-child(7) { height: 8px; animation-delay: 0.6s; }
+        .stereo-bar:nth-child(8) { height: 5px; animation-delay: 0.7s; }
+        .stereo-bar:nth-child(9) { height: 3px; animation-delay: 0.8s; }
+        
+        @keyframes stereoBarDance {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+        
+        .header-icon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+        
+        .spinning-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #88E788;
+            box-shadow: 
+                0 5px 20px rgba(255, 215, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.2);
+            position: relative;
+            animation: spin 6s linear infinite;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .spinning-icon::before {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 215, 0, 0.1);
+            animation: spinReverse 8s linear infinite;
+        }
+        
+        .spinning-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 8px 25px rgba(255, 215, 0, 0.5),
+                0 0 40px rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.6);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes spinReverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        .icon-label {
+            font-size: 0.9rem;
+            color: #88E788;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 8px;
+            white-space: nowrap;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            animation: pulseGlow 2s infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+        }
+        
+        .header-content {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: 1.5px;
+            position: relative;
+            display: inline-block;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.3),
+                0 0 20px rgba(255, 215, 0, 0.1);
+            animation: textGlow 3s infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.3),
+                            0 0 20px rgba(255, 215, 0, 0.1);
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(255, 215, 0, 0.5),
+                            0 0 30px rgba(255, 215, 0, 0.2);
+            }
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 120px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 2px;
+            box-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.5),
+                0 0 20px rgba(255, 215, 0, 0.2);
+            animation: linePulse 2s infinite alternate;
+        }
+        
+        @keyframes linePulse {
+            0% { width: 120px; opacity: 0.8; }
+            100% { width: 150px; opacity: 1; }
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-top: 12px;
+            max-width: 800px;
+            position: relative;
+            padding-left: 15px;
+            border-left: 2px solid rgba(255, 215, 0, 0.3);
+            animation: subtitleSlide 1s ease-out;
+        }
+        
+        @keyframes subtitleSlide {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .about-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 215, 0, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: #88E788;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                0 0 10px rgba(255, 215, 0, 0.1);
+            font-size: 0.95rem;
+            animation: buttonFloat 4s infinite ease-in-out;
+        }
+        
+        @keyframes buttonFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .about-btn:hover {
+            background: rgba(255, 215, 0, 0.25);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 
+                0 6px 20px rgba(255, 215, 0, 0.2),
+                0 0 15px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* ===== TAB LAYOUT – ROW ORIENTED ===== */
+        .tab-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+            flex: 1;
+        }
+        
+        .tab-sidebar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.05);
+            position: relative;
+            z-index: 2;
+            transition: max-height 0.3s ease;
+        }
+        
+        .tab-header {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 8px;
+            width: 100%;
+        }
+        
+        .tab-btn {
+            flex: 0 0 auto;
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            border-radius: 40px;
+            white-space: nowrap;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .tab-btn i {
+            font-size: 1.1rem;
+            width: 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+        
+        .tab-btn:hover i {
+            transform: scale(1.1);
+            color: #88E788;
+        }
+        
+        .tab-btn.active {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+        
+        .tab-btn.active i {
+            color: #FFD700;
+        }
+        
+        .tab-content-area {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tab-content {
+            padding: 40px;
+            min-height: 400px;
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ===== TOP BAR: TITLE + LINK + NOTE ON SAME ROW ===== */
+        .tab-top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .tab-title {
+            font-size: 2rem;
+            color: #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .tab-title i {
+            font-size: 1.8rem;
+        }
+        
+        .top-link-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+        
+        .top-link-group .website-link {
+            padding: 10px 22px;
+            font-size: 1rem;
+            font-weight: 700;
+            min-width: auto;
+            width: auto;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            border: 1px solid rgba(255, 215, 0, 0.6);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .top-link-group .website-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .top-link-group .website-link:hover {
+            background: linear-gradient(90deg, #FFD700, #DAA520);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(255, 215, 0, 0.5);
+            color: #000;
+        }
+        
+        .top-link-group .website-link:hover::before {
+            left: 100%;
+        }
+        
+        .top-link-group .website-link i {
+            font-size: 1rem;
+        }
+        
+        .top-link-group .link-note {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-style: italic;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        /* Keep tab-desc and feature list as before */
+        .tab-desc {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            flex: 1;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-list li {
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: rgba(255, 215, 0, 0.08);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 10px;
+            border-left: 4px solid #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .feature-list li:hover {
+            background: rgba(255, 215, 0, 0.15);
+            transform: translateX(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-list li i {
+            color: #96F97B;
+            font-size: 1.2rem;
+        }
+        
+        /* Remove old bottom link container (no longer used) */
+        .website-link-container {
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .footer-logo {
+            color: #FFD700;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        
+        .mobile-tab-toggle {
+            display: none;
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 5px;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            font-size: 1.1rem;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mobile-tab-toggle i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-tab-toggle.active i {
+            transform: rotate(180deg);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .tab-header {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            .tab-btn i {
+                font-size: 1rem;
+                width: 18px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .tab-top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .top-link-group {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px;
+                position: relative;
+            }
+            .header-icon-container {
+                flex-direction: row;
+                gap: 15px;
+                align-items: center;
+                width: 100%;
+                justify-content: space-between;
+            }
+            .spinning-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.2rem;
+            }
+            .icon-label {
+                margin-top: 0;
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            h1 { font-size: 2rem; line-height: 1.2; }
+            h1::after { width: 80px; height: 2px; }
+            .subtitle {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-top: 8px;
+                padding-left: 10px;
+            }
+            .about-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                align-self: flex-start;
+                margin-top: 10px;
+                order: 3;
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            
+            .mobile-tab-toggle {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .tab-sidebar {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease;
+                border-radius: 15px;
+                margin-bottom: 0;
+            }
+            .tab-sidebar.active {
+                max-height: 600px;
+                margin-bottom: 10px;
+            }
+            .tab-header {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 10px;
+                gap: 6px;
+            }
+            .tab-btn {
+                flex: 0 1 auto;
+                padding: 10px 14px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            .tab-content {
+                padding: 25px;
+                min-height: auto;
+            }
+            .tab-top-bar {
+                gap: 10px;
+                margin-bottom: 18px;
+                padding-bottom: 12px;
+            }
+            .tab-title {
+                font-size: 1.5rem;
+                white-space: normal;
+                flex-wrap: wrap;
+            }
+            .tab-title i {
+                font-size: 1.3rem;
+            }
+            .top-link-group {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .top-link-group .website-link {
+                padding: 9px 16px;
+                font-size: 0.85rem;
+                white-space: normal;
+                min-width: auto;
+            }
+            .top-link-group .link-note {
+                font-size: 0.75rem;
+                white-space: normal;
+                padding: 3px 10px;
+            }
+            .tab-desc {
+                font-size: 1rem;
+                line-height: 1.6;
+                margin-bottom: 25px;
+            }
+            .feature-list li {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .feature-list li i { font-size: 1.1rem; }
+            .stereo-bars { padding: 0 10px; }
+            .stereo-bar { width: 3px; }
+            footer {
+                padding: 25px 15px;
+                margin-top: 40px;
+                font-size: 0.85rem;
+            }
+            .footer-logo { font-size: 1rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .header-icon-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .spinning-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            .icon-label {
+                align-self: flex-start;
+                font-size: 0.75rem;
+            }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.9rem; }
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            .tab-btn i { font-size: 0.9rem; width: 16px; }
+            .tab-content { padding: 20px; }
+            .tab-title { font-size: 1.3rem; }
+            .feature-list li {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            .top-link-group .website-link {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .top-link-group .link-note {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+            .stereo-bars { height: 3px; }
+            .stereo-bar { width: 2px; }
+        }
+        
+        @media (max-width: 360px) {
+            h1 { font-size: 1.6rem; }
+            .tab-title { font-size: 1.2rem; }
+            .tab-btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            .tab-btn:hover { background: transparent; }
+            .tab-btn.active:hover { background: rgba(255, 215, 0, 0.2); }
+            .top-link-group .website-link:hover { transform: none; }
+            .feature-list li:hover {
+                transform: none;
+                background: rgba(255, 215, 0, 0.08);
+            }
+            .tab-btn { min-height: 44px; }
+            .top-link-group .website-link { min-height: 44px; }
+            .about-btn { min-height: 45px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Stereo Moving Effect -->
+        <header>
+            <div class="stereo-effect"></div>
+            <div class="stereo-bars">
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+                <div class="stereo-bar"></div>
+            </div>
+            
+            <div class="header-icon-container">
+                <div class="spinning-icon">ALH</div>
+                <div class="icon-label">ENERGY & POWER</div>
+            </div>
+            
+            <div class="header-content">
+                <h1>Auto Lube House</h1>
+                <div class="subtitle">Premium Automotive Lubrication Solutions & Transparency System</div>
+                <button class="about-btn" id="aboutBtn">
+                    <i class="fas fa-info-circle"></i>
+                    About ALH
+                </button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="tab-wrapper">
+                <!-- mobile toggle -->
+                <button class="mobile-tab-toggle" id="mobileTabToggle">
+                    <span>Navigation Menu</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <!-- TAB SIDEBAR - HORIZONTAL ROW -->
+                <div class="tab-sidebar" id="tabSidebar">
+                    <div class="tab-header">
+                        <button class="tab-btn active" data-tab="challan">
+                            <i class="fas fa-store"></i> Challan Invoice
+                        </button>
+                        <button class="tab-btn" data-tab="PrimaryCalculator">
+                            <i class="fas fa-file-invoice-dollar"></i> Primary Calculator
+                        </button>
+                        <button class="tab-btn" data-tab="Quotation">
+                            <i class="fas fa-clipboard-list"></i> Quotation
+                        </button>
+                        <button class="tab-btn" data-tab="OrdersAvailability">
+                            <i class="fas fa-calculator"></i> Orders Availability
+                        </button>
+                        <button class="tab-btn" data-tab="notrecieve">
+                            <i class="fas fa-calculator"></i> Not Recieve Product Vs Availability
+                        </button>
+                        <button class="tab-btn" data-tab="grade">
+                            <i class="fas fa-file-invoice-dollar"></i> Grade Analysis
+                        </button>
+                        <button class="tab-btn" data-tab="myprofit">
+                            <i class="fas fa-file-invoice-dollar"></i> Monthly yearly Profit % Analys
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tab-content-area">
+                    <!-- CHALLAN -->
+                    <div class="tab-content active" id="challan-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-store"></i> Challan Generator</h2>
+                            <div class="top-link-group">
+                                <a href="Challan_invoice.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Challan Invoice
+                                </a>
+                                <span class="link-note">Click to access Challan order system</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Manage all your Invoice orders efficiently.process customer invoices with our comprehensive order system designed specifically for Auto Lube House. Access real-time data, generate reports, and streamline your ordering process with our intuitive platform.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Create and manage Challan in real-time</li>
+                            <li><i class="fas fa-check-circle"></i> Add order status from placement to delivery</li>
+                            <li><i class="fas fa-check-circle"></i> Generate invoices and receipts automatically</li>
+                            <li><i class="fas fa-check-circle"></i> Challan Pricelist inventory levels and set reorder points</li>
+                            <li><i class="fas fa-check-circle"></i> Save And Print management with order</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- PRIMARY CALCULATOR -->
+                    <div class="tab-content" id="PrimaryCalculator-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> Primary Calculator</h2>
+                            <div class="top-link-group">
+                                <a href="Primary_Calculator.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Primary Purchase calculator Website
+                                </a>
+                                <span class="link-note">Click to access Primary Purchase calculator</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Handle Primary Purhase Calculator to Improve Oder Compilation efficiency, reduce errors, and enhance satisfaction with our comprehensive calculation solution.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Purchase assign</li>
+                            <li><i class="fas fa-check-circle"></i> Track status and estimated completion times</li>
+                            <li><i class="fas fa-check-circle"></i> Manage Calculation information and service history</li>
+                            <li><i class="fas fa-check-circle"></i> Generate service estimates Total final invoices</li>
+                            <li><i class="fas fa-check-circle"></i> Integration with inventory and purchase amount</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- QUOTATION -->
+                    <div class="tab-content" id="Quotation-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-clipboard-list"></i> Quotation Invoice</h2>
+                            <div class="top-link-group">
+                                <a href="Quotation.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Quotation Website
+                                </a>
+                                <span class="link-note">Click to access Quotation management</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Monitor your inventory levels, identify requirements, and ensure you never run out of essential lubrication products with our smart inventory management system. Get real-time insights, automated alerts, and data-driven recommendations to optimize your inventory and reduce operational costs.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Create Quotation with Per Liters</li>
+                            <li><i class="fas fa-check-circle"></i> Modify Calculation recommendations</li>
+                            <li><i class="fas fa-check-circle"></i> Supplier management and purchase reorder generation</li>
+                            <li><i class="fas fa-check-circle"></i> Product categorization and batch tracking</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- ORDERS AVAILABILITY -->
+                    <div class="tab-content" id="OrdersAvailability-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Orders Availability</h2>
+                            <div class="top-link-group">
+                                <a href="ordersavailablity.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Orders Availability Website
+                                </a>
+                                <span class="link-note">Click to access Orders Availability dashboard</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Make informed business decisions with our comprehensive Orders Availability tools. Track Orders, analyze Availability, and optimize business performance with interactive dashboards and reports that help you identify Stocks and efficiency improvements.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Calculate Availability margins on individual products</li>
+                            <li><i class="fas fa-check-circle"></i> Sales Order analytics with visual reports</li>
+                            <li><i class="fas fa-check-circle"></i> Availability tracking</li>
+                            <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
+                            <li><i class="fas fa-check-circle"></i> Analysis for Stock Available and Not Available strategies</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- NOT RECIEVE -->
+                    <div class="tab-content" id="notrecieve-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-calculator"></i> Not Recieve Product Vs Availability</h2>
+                            <div class="top-link-group">
+                                <a href="Stock Available from Not Received physical product/Stock_Checker.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Not Receive Product Vs Stock Availability Website
+                                </a>
+                                <span class="link-note">Click to access Not Receive Product Vs Stock Availability dashboard</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Make informed stock decisions with our comprehensive stock Availability tools. Track availability, analyze  and optimize reports that help you identify Stocks and efficiency improvements.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Calculate Availability margins on individual products</li>
+                            <li><i class="fas fa-check-circle"></i> analytics with visual reports</li>
+                            <li><i class="fas fa-check-circle"></i> Availability tracking</li>
+                            <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
+                            <li><i class="fas fa-check-circle"></i> Product Not Recieve Analysis for Stock Available and Not Available strategies</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- GRADE -->
+                    <div class="tab-content" id="grade-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> Grade Analysis</h2>
+                            <div class="top-link-group">
+                                <a href="Grade/grade.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open Product Grade Analysis
+                                </a>
+                                <span class="link-note">Click to access Product Grade Analysis</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Grade analyze  and optimize reports that help you identify Grade and efficiency improvements.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Calculate Grade products</li>
+                            <li><i class="fas fa-check-circle"></i> analytics with visual reports</li>
+                            <li><i class="fas fa-check-circle"></i> Gold, Green, Hydraulic, Grease, DEF Grade tracking</li>
+                            <li><i class="fas fa-check-circle"></i> Performance comparison across time periods</li>
+                            <li><i class="fas fa-check-circle"></i> Grade Analysis for strategies</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- MYPROFIT -->
+                    <div class="tab-content" id="myprofit-tab">
+                        <div class="tab-top-bar">
+                            <h2 class="tab-title"><i class="fas fa-file-invoice-dollar"></i> Monthly Yearly Analys Profit</h2>
+                            <div class="top-link-group">
+                                <a href="monthly profit/monthlyprofit.html" target="_blank" class="website-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Open M/Y analysis Protil & Loss
+                                </a>
+                                <span class="link-note">Click to access Product Grade Analysis</span>
+                            </div>
+                        </div>
+                        <p class="tab-desc">Monthly and Yearly Analys identify Grade and efficiency improvements.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Calculate Grade products</li>
+                            <li><i class="fas fa-check-circle"></i> analytics with visual reports</li>
+                            <li><i class="fas fa-check-circle"></i> Monthly tracking</li>
+                            <li><i class="fas fa-check-circle"></i> Yearly tracking</li>
+                            <li><i class="fas fa-check-circle"></i> Profit & Loss, Moving & Not Moving Stock Analysis for strategies</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer-logo">AUTO LUBE HOUSE</div>
+            <p>Premium Automotive Lubrication Solutions &copy; 2026</p>
+            <p style="margin-top: 8px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">All rights reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+                
+                animateStereoBars();
+                
+                if (window.innerWidth <= 768) {
+                    const tabSidebar = document.getElementById('tabSidebar');
+                    const mobileToggle = document.getElementById('mobileTabToggle');
+                    tabSidebar.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                }
+            });
+        });
+        
+        // Mobile tab toggle
+        const mobileTabToggle = document.getElementById('mobileTabToggle');
+        const tabSidebar = document.getElementById('tabSidebar');
+        
+        if (mobileTabToggle && tabSidebar) {
+            mobileTabToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                tabSidebar.classList.toggle('active');
+                this.classList.toggle('active');
+                animateStereoBars();
+            });
+        }
+        
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const isClickInsideSidebar = tabSidebar.contains(event.target);
+                const isClickOnToggle = mobileTabToggle.contains(event.target);
+                if (!isClickInsideSidebar && !isClickOnToggle && tabSidebar.classList.contains('active')) {
+                    tabSidebar.classList.remove('active');
+                    mobileTabToggle.classList.remove('active');
+                }
+            }
+        });
+        
+        // About button
+        document.getElementById('aboutBtn').addEventListener('click', function() {
+            alert('About Auto Lube House\n\nProprietor: "Shekhar Podar"\n\nAuto Lube House is a premium automotive lubrication solutions provider offering comprehensive management systems for bazaar orders, RO orders, inventory requirements, and profit calculations.\n\nOur spinning ALH logo represents the dynamic energy of our automotive solutions.');
+            animateStereoBars();
+        });
+        
+        // Spinning icon hover speed
+        const spinIcon = document.querySelector('.spinning-icon');
+        spinIcon.addEventListener('mouseenter', function() {
+            this.style.animationDuration = '3s';
+            animateStereoBars();
+        });
+        spinIcon.addEventListener('mouseleave', function() {
+            this.style.animationDuration = '6s';
+        });
+        
+        // Stereo bars animation
+        function animateStereoBars() {
+            const bars = document.querySelectorAll('.stereo-bar');
+            bars.forEach(bar => {
+                bar.style.animation = 'none';
+                setTimeout(() => {
+                    bar.style.animation = '';
+                }, 10);
+            });
+        }
+        
+        // Random stereo bar movement when idle
+        setInterval(() => {
+            const bars = document.querySelectorAll('.stereo-bar');
+            bars.forEach((bar) => {
+                const randomScale = 0.8 + Math.random() * 0.7;
+                bar.style.transform = `scaleY(${randomScale})`;
+            });
+        }, 1500);
+        
+        animateStereoBars();
+        
+        // Handle resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                tabSidebar.classList.add('active');
+                mobileTabToggle.style.display = 'none';
+            } else {
+                mobileTabToggle.style.display = 'flex';
+                if (!mobileTabToggle.classList.contains('active')) {
+                    tabSidebar.classList.remove('active');
+                }
+            }
+        });
+        
+        if (window.innerWidth <= 768) {
+            mobileTabToggle.style.display = 'flex';
+            tabSidebar.classList.remove('active');
+        } else {
+            mobileTabToggle.style.display = 'none';
+            tabSidebar.classList.add('active');
+        }
+    </script>
+</body>
+</html>
