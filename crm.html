@@ -6,7 +6,18 @@
 <title>Customer Relationship Management | Lube Selector</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef2f7;color:#172033}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,rgba(10,35,82,.90),rgba(8,72,139,.76)),url("https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=2000&q=85") center/cover fixed;color:#172033}
+.page-brand{max-width:950px;margin:22px auto 0;padding:0 15px}
+.brand-banner{position:relative;overflow:hidden;border-radius:18px;padding:24px 26px;background:linear-gradient(110deg,rgba(7,29,76,.96),rgba(0,84,158,.90) 58%,rgba(239,111,24,.90));color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand-banner:after{content:"";position:absolute;width:210px;height:210px;border:22px solid rgba(255,255,255,.10);border-radius:50%;right:18%;top:-130px}
+.brand-copy{position:relative;z-index:1}
+.brand-kicker{font-size:12px;letter-spacing:3px;font-weight:800;text-transform:uppercase;opacity:.9}
+.brand-name{font-size:clamp(27px,4vw,42px);font-weight:900;line-height:1.1;margin:7px 0}
+.brand-tagline{font-size:14px;letter-spacing:.5px}
+.brand-mark{position:relative;z-index:1;flex-shrink:0;border:2px solid rgba(255,255,255,.75);border-radius:50%;width:78px;height:78px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:13px;line-height:1.1;background:rgba(255,255,255,.12)}
+.brand-mark span{display:block}
+.container{max-width:950px;margin:14px auto 24px;padding:15px}
+.card{background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-radius:18px;padding:22px;box-shadow:0 8px 30px rgba(0,0,0,.18);border-top:5px solid #f47721}
 .container{max-width:950px;margin:24px auto;padding:15px}
 .card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 30px rgba(0,0,0,.10)}
 h1{margin:0 0 6px;text-align:center;font-size:27px}
@@ -20,6 +31,8 @@ input[type=text]:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,
 .drop-btn::after{content:"▼";float:right;color:#64748b;font-size:12px;margin-top:3px}
 .drop-panel{display:none;position:absolute;z-index:50;left:0;right:0;top:54px;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.14);max-height:360px;overflow:auto;padding:8px}
 .drop-panel.open{display:block}
+.done-btn{position:sticky;top:0;z-index:3;display:block;width:100%;margin:0 0 8px;padding:11px 12px;border:0;border-radius:8px;background:#f47721;color:#fff;font-size:14px;font-weight:800;letter-spacing:.5px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.done-btn:active{transform:translateY(1px)}
 .search{margin-bottom:7px}
 .option{display:flex;align-items:flex-start;gap:9px;padding:9px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1.3}
 .option:hover{background:#f1f5f9}
@@ -39,25 +52,53 @@ button.action:disabled{opacity:.6;cursor:not-allowed}
 .error-border{border-color:#dc2626 !important; box-shadow:0 0 0 3px rgba(220,38,38,.10) !important;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999}
 .toast.show{opacity:1}
-@media(max-width:650px){.buttons{grid-template-columns:1fr 1fr}.container{padding:10px}.card{padding:15px}}
+@media(max-width:650px){
+  body{background-attachment:scroll}
+  .page-brand{margin:10px auto 0;padding:0 10px}
+  .brand-banner{padding:18px 16px;border-radius:14px;gap:10px}
+  .brand-kicker{font-size:10px;letter-spacing:2px}
+  .brand-name{font-size:clamp(24px,7vw,34px)}
+  .brand-tagline{font-size:12px;line-height:1.4}
+  .brand-mark{width:58px;height:58px;font-size:10px}
+  .container{padding:10px;margin:8px auto 18px}
+  .card{padding:15px;border-radius:14px}
+  h1{font-size:clamp(21px,6vw,27px);line-height:1.2}
+  .subtitle{font-size:13px;line-height:1.45;margin-bottom:18px}
+  input[type=text],.drop-btn{font-size:16px;min-height:48px}
+  .drop-panel{max-height:55vh}
+  textarea{min-height:190px;font-size:14px}
+  .buttons{grid-template-columns:1fr}
+  button.action{min-height:46px}
+}
 </style>
 </head>
 <body>
+<div class="page-brand">
+  <header class="brand-banner" aria-label="Servo IndianOil branding">
+    <div class="brand-copy">
+      <div class="brand-kicker">IndianOil • Servo</div>
+      <div class="brand-name">AUTO LUBE HOUSE</div>
+      <div class="brand-tagline">Customer care • Lubricants • Shillong</div>
+    </div>
+    <div class="brand-mark"><span>SERVO<br>INDIANOIL</span></div>
+  </header>
+</div>
 <div class="container">
 <div class="card">
 <h1>Customer Relationship Management</h1>
 <div class="subtitle">Select segment(s), then select the required product grade(s) — all fields are mandatory</div>
 
 <label class="title" for="counter">Counter Name <span class="req">*</span></label>
-<input id="counter" type="text" placeholder="Enter Counter Name" required>
+<input id="counter" type="text" placeholder="Enter Counter Name" required style="text-transform:uppercase" autocomplete="organization">
 
 <label class="title" for="address">Address / Area <span class="req">*</span></label>
-<input id="address" type="text" placeholder="Enter Address / Area" required>
+<input id="address" type="text" placeholder="Enter Address / Area" required style="text-transform:uppercase" autocomplete="street-address">
 
 <label class="title">Lube Segment <span class="req">*</span></label>
 <div class="dropdown">
   <button type="button" class="drop-btn" id="segmentBtn">Select Lube Segment</button>
   <div class="drop-panel" id="segmentPanel">
+    <button type="button" class="done-btn" id="segmentDoneBtn">DONE ✓</button>
     <input class="search" id="segmentSearch" type="text" placeholder="Search segment...">
     <div id="segmentOptions"></div>
   </div>
@@ -69,6 +110,7 @@ button.action:disabled{opacity:.6;cursor:not-allowed}
 <div class="dropdown">
   <button type="button" class="drop-btn" id="productBtn">Select Product Grade</button>
   <div class="drop-panel" id="productPanel">
+    <button type="button" class="done-btn" id="productDoneBtn">DONE ✓</button>
     <input class="search" id="productSearch" type="text" placeholder="Search grade...">
     <div id="productOptions"></div>
   </div>
@@ -115,7 +157,7 @@ button.action:disabled{opacity:.6;cursor:not-allowed}
        .setMimeType(ContentService.MimeType.JSON);
    }
    ============================================================ */
-const SHEET_URL = "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL_HERE/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwsuMCs7tFfr71TaIDCtTnbpJzbuY8sF70TiFFipacgvVem7ba3EBk3EfTPsesRLHXS/exec";
 
 /* ============================================================
    PRODUCT DATA — SIMPLE GRADE LISTS
@@ -193,7 +235,31 @@ const productData = {
     "SERVO AUTORIKSHAW OIL 20W-40",
     "SERVO CHHAKADA ENG OIL 20W-40",
     "SERVO PRIDE TC 15W40",
-    "SERVO PREMIUM CF-4 15W-40"
+    "SERVO PREMIUM CF-4 15W-40",
+    "SERVO FLEET 40",
+    "SERVO SUPERMILE GEO 20W-50",
+    "SERVO SUPERMILE GEO",
+"SERVO FLEET 15W-40",
+"SERVO FLEET XL 15W-40",
+"SERVO FLEET TC 15W-40",
+"SERVO FLEET 20W-40",
+"SERVO FLEET 20W-50",
+"SERVO FUTURA GEO 15W-40",
+"SERVO PRIDE XL PLUS 15W-40",
+"SERVO PRIDE XL PLUS 10W-30",
+"SERVO PRIDE 15W-40",
+"SERVO PRIDE 20W-40",
+"SERVO PRIDE GEO 15W-40",
+"SERVO PRIDE GEO 20W-50",
+"SERVO FUTURA GEO 20W-50",
+"SERVO PRIDE TC 15W-40",
+"SERVO HYPERTORQ 10W-30",
+"SERVO HYPERTORQ 15W-40",
+"SERVO HYPERTORQ NXT 10W-30",
+"SERVO HYPERTORQ NXT 10W-40",
+"SERVO HYPERTORQ NXT 15W-40",
+"SERVO PRIDE ALT CK4 10W-30",
+"SER PR ALT CK4 10W30"
   ],
   "GEAR": [
     "SERVO GEAR HP 90",
@@ -227,13 +293,47 @@ const productData = {
     "SERVO 4T ZOOM 10W-30",
     "SERVO 4T 10W-30",
     "SERVO 4T SYNTH",
-    "SERVO 4T HD"
+    "SERVO 4T HD",
+"SERVO MOTOCARE 4T-20",
+"SERVO MOTOCARE 4T",
+"SERVO MOTOCARE 4T 20W-50",
+"SERVO MOTOCARE SCOOTER 10W-30",
+"SERVO ZOOM SCOOTER 10W-30",
+"SERVO ZOOM 2T SUPREME",
+"SERVO ZOOM 4T",
+"SERVO ZOOM 4T 20W-50",
+"SERVO ZOOM 4T 10W-30",
+"SERVO ZOOM 4T 10W-40",
+"SERVO HYPERSPORT 4T 5W-30",
+"SERVO HYPERSPORT 4T 10W30",
+"SERVO HYPERSPORT 4T 10W-40",
+"SERVO HYPERSPORT 4T 10W40",
+"SER HYPSPRT 4T 15W50",
+"SERVO HYPERSPORT 4T 15W-50",
+"SERVO HYPERSPORT 4T 20W-50",
+"SERVO HYPERSPORT F5 10W-40",
+"SERVO HYPERSPORT F5 10W-50",
+"SERVO HYPERSPORT F5 15W-50",
+"SERVO HYPERSPORT F5 20W-50",
+"SERVO HYPERSPORT SCOOTER 10W-30"
   ],
   "PCMO": [
     "SERVO FUTURA G PLUS 5W-30",
     "SERVO GREENMILE",
     "SERVO FUTURA NXT 0W-16",
-    "SERVO BLACKBIRD X"
+    "SERVO BLACKBIRD X",
+"SERVO SUPERMILE SMG 20W-40",
+"SERVO SUPERMILE 5W-30",
+"SERVO FUTURA 0W-20",
+"SERVO FUTURA 5W-30",
+"SERVO HYPERDRIVE 5W-30",
+"SERVO HYPERDRIVE 0W-16",
+"SERVO HYPERDRIVE 0W-20",
+"SERVO HYPERDRIVE 5W-50",
+"SERVO HYPERDRIVE NXT 0W-16",
+"SERVO HYPERDRIVE NXT 0W-40",
+"SERVO HYPERDRIVE NXT 10W-40",
+"SERVO HYPE NXT10W-40"
   ],
   "2W": [
     "SERVO 2T SUPREME"
@@ -395,8 +495,8 @@ function updateProducts(){
 }
 
 function getFormData(){
-  const counter = counterInput.value.trim();
-  const address = addressInput.value.trim();
+  const counter = counterInput.value.trim().toUpperCase();
+  const address = addressInput.value.trim().toUpperCase();
   const selectedSegments=[...document.querySelectorAll(".segmentCheck:checked")].map(x=>x.value);
   const products=[...document.querySelectorAll(".productCheck:checked")].map(x=>({
     segment:x.dataset.segment, grade:x.dataset.grade
@@ -518,6 +618,28 @@ async function saveToSheet(){
   }
 }
 
+function clearAllEntries(){
+  counterInput.value = "";
+  addressInput.value = "";
+  document.getElementById("segmentSearch").value = "";
+  document.getElementById("productSearch").value = "";
+
+  // Clear all selected segments and grades.
+  document.querySelectorAll(".segmentCheck:checked, .productCheck:checked").forEach(input=>{
+    input.checked = false;
+  });
+
+  segmentBtn.classList.remove("error-border");
+  productBtn.classList.remove("error-border");
+  counterInput.classList.remove("error-border");
+  addressInput.classList.remove("error-border");
+
+  closeDropdowns();
+  renderSegments();
+  updateMessage();
+  lastSavedSnapshot = "";
+}
+
 async function saveEntry(){
   if(!validateForm()) return;
 
@@ -537,11 +659,11 @@ async function saveEntry(){
   saveBtn.textContent = "SAVE";
 
   if(result.skipped){
-    lastSavedSnapshot = snapshot;
     showToast("Entry validated. (Google Sheet URL not configured)");
+    clearAllEntries();
   } else if(result.success){
-    lastSavedSnapshot = snapshot;
-    showToast("Entry saved to Google Sheet.");
+    showToast("Thankyou Data Entry saved.");
+    clearAllEntries();
   } else {
     showToast("Could not save entry. Please check your connection.", true);
   }
@@ -560,6 +682,14 @@ async function whatsappMessage(){
   const url = "https://wa.me/?text="+encodeURIComponent(messageBox.value);
   window.open(url,"_blank");
 }
+
+function closeDropdowns(){
+  segmentPanel.classList.remove("open");
+  productPanel.classList.remove("open");
+}
+
+document.getElementById("segmentDoneBtn").addEventListener("click", closeDropdowns);
+document.getElementById("productDoneBtn").addEventListener("click", closeDropdowns);
 
 segmentBtn.addEventListener("click",()=>{
   segmentPanel.classList.toggle("open");
