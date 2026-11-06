@@ -1,0 +1,26 @@
+Please convert this vertical Excel layout into a single horizontal row so I can copy and paste it directly into Excel.
+
+Please follow these exact rules:
+
+Do not use a Markdown table. Output the final result as a single line of text with values separated by tabs (Tab-Separated Values), inside a code block, so I can copy it easily.
+
+Assume the following cell mapping for the horizontal layout:
+
+Column A1 = "BARREL / 50 L BUC" (Header), and Column A2 = blank (empty).
+
+Column B (B1/B2) = QUANTITY (BRL/BUC)
+
+Column C (C1/C2) = PRODUCT CODE
+
+Column D onwards = The rest of the fields in order (PRODUCT NAME, RSP, DISCOUNT, etc.).
+
+Crucial for Formulas: Update all the vertical formula references to match the new horizontal layout.
+
+Do NOT lock C2 or B2 (no dollar signs on these).
+
+DO lock the lookup ranges on the 'BARREL' sheet (e.g., $A$2:$C$56304, $A$2:$H$56304).
+
+Update the math references (like RSP, DISCOUNT, etc.) to point to their new horizontal column letters (e.g., E2, F2, G2).
+
+The exact output format I want looks like this (using the correct formulas based on the new layout):
+1 7577401 =VLOOKUP(C2,BARREL!$A$2:$C$56304,3,0) =VLOOKUP(C2,BARREL!$A$2:$H$56304,8,0)*VLOOKUP(C2,BARREL!$A$2:$H$56304,4,0)*B2 =VLOOKUP(C2,BARREL!$A$2:$Q$56304,4,0)*VLOOKUP(C2,BARREL!$A$2:$Q$56304,12,0)*B2 =E2-F2 =VLOOKUP(C2,BARREL!$A$2:$AB$56304,16,0)*E2/100 =2%*(G2-H2) =G2-H2-I2 =J2*0.18 =J2+K2 =0.1%*L2 =L2+M2

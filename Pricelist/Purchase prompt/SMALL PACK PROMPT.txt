@@ -1,0 +1,56 @@
+Please convert this vertical Excel layout into a single horizontal row starting at cell A1 so I can paste it directly into Excel.
+
+Follow these exact rules:
+
+Output Format: Provide the final result as a single line of text with values separated by tabs (Tab-Separated Values) inside a code block. Do not use a Markdown table.
+
+Column Mapping (Horizontal Layout):
+
+Column A = "SMALL PACK" (Header)
+
+Column B (B1/B2) = QUANTITY (CAR/BUC)
+
+Column C (C1/C2) = PRODUCT CODE
+
+Column D = PRODUCT NAME
+
+Column E = MRP
+
+Column F = DLP
+
+Column G = RSP
+
+Column H = DISCOUNT
+
+Column I = DISCOUNTED RSP
+
+Column J = STOCKIST DISCOUNT
+
+Column K = CASH DISCOUNT
+
+Column L = DISC RSP-SD-CD
+
+Column M = TAX 18%
+
+Column N = TOTAL INCLUDING GST
+
+Column O = TCS 0.1%
+
+Column P = TOTAL INCLUDING GST, TCS
+
+Formula Adjustments:
+
+Do NOT lock C2 or B2 (no dollar signs on these).
+
+DO lock the lookup ranges on the 'SMALL PACK' sheet (e.g., $A$2:$E$50903, $A$2:$I$50903, $A$2:$L$50903, $A$2:$S$50903, $A:$AA).
+
+Update all math references to point to their new horizontal column letters based on the mapping above.
+
+Important Fix 1: For the STOCKIST DISCOUNT formula (Column J), ensure it multiplies the lookup result by the DLP cell (which is F2), not E2.
+
+Important Fix 2: For the TOTAL INCLUDING GST, TCS formula (the last column, Column P), it must calculate exactly like this:
+=(I2-J2-K2+O2)*1.18
+(Explanation: It takes DISCOUNTED RSP (I2), subtracts STOCKIST DISCOUNT (J2), subtracts CASH DISCOUNT (K2), adds TCS 0.1% (O2), and multiplies the total by 1.18).
+
+The exact output format I want looks like this:
+1 7577184 =VLOOKUP(C2,'SMALL PACK'!$A$2:$E$50903,5,0) =VLOOKUP(C2,'SMALL PACK'!$A$2:$I$50903,9,0)*VLOOKUP(C2,'SMALL PACK'!$A$2:$I$50903,8,0)*B2 ...etc

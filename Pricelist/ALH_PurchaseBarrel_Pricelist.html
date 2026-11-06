@@ -11,27 +11,7 @@
     .search-container { position: relative; margin-bottom: 25px; max-width: 550px; }
     #searchInput { width: 100%; padding: 14px 46px 14px 18px; font-size: 16px; border: 2px solid #cbdae9; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
     #searchInput:focus { border-color: #16a085; box-shadow: 0 0 0 3px rgba(22,160,133,0.15); }
-    #searchClearBtn {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: #e2e8f0;
-        color: #475569;
-        border: none;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        line-height: 1;
-        transition: background 0.2s;
-    }
+    #searchClearBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; background: #e2e8f0; color: #475569; border: none; font-size: 14px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; line-height: 1; transition: background 0.2s; }
     #searchClearBtn:hover { background: #cbd5e1; color: #1e293b; }
     .autocomplete-items { position: absolute; border: 1px solid #d4e0ec; border-radius: 12px; z-index: 99; top: 100%; left: 0; right: 0; max-height: 260px; overflow-y: auto; background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; margin-top: 6px; }
     .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #eef3f9; display: flex; justify-content: space-between; align-items: center; }
@@ -74,37 +54,12 @@
     #showSelectedBtn { background-color: #0f766e; }
     #showSelectedBtn:hover { background-color: #0b5d56; }
     #showSelectedBtn .share-count { position: absolute; top: -4px; right: -4px; background: #e74c3c; color: #fff; font-size: 12px; font-weight: 700; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
-    .qty-input {
-        width: 70px;
-        padding: 5px 7px;
-        font-size: 13px;
-        font-weight: 600;
-        text-align: center;
-        border: 2px solid #cbdae9;
-        border-radius: 6px;
-        outline: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
-        background: #fff;
-        color: #1e3c5a;
-    }
+    .qty-input { width: 70px; padding: 5px 7px; font-size: 13px; font-weight: 600; text-align: center; border: 2px solid #cbdae9; border-radius: 6px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; color: #1e3c5a; }
     .qty-input:focus { border-color: #16a085; box-shadow: 0 0 0 3px rgba(22,160,133,0.15); }
     .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .qty-input[type=number] { -moz-appearance: textfield; }
     .amount-cell { font-weight: 700; color: #16a085; }
-    .selected-total-banner {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 18px;
-        background: linear-gradient(135deg, #f3e8ff 0%, #e8f8f4 100%);
-        border: 2px solid #c9b8e8;
-        border-radius: 10px;
-        margin-top: 12px;
-        font-size: 15px;
-        font-weight: 700;
-        color: #4a2b7a;
-        flex-wrap: wrap;
-    }
+    .selected-total-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: linear-gradient(135deg, #f3e8ff 0%, #e8f8f4 100%); border: 2px solid #c9b8e8; border-radius: 10px; margin-top: 12px; font-size: 15px; font-weight: 700; color: #4a2b7a; flex-wrap: wrap; }
     .selected-total-banner .total-label { font-size: 14px; color: #0e7b63; font-weight: 600; }
     .selected-total-banner .total-value { font-size: 20px; font-weight: 800; color: #16a085; background: #fff; padding: 4px 14px; border-radius: 8px; border: 2px solid #16a085; }
     .selected-total-banner .items-count { font-size: 13px; color: #0e7b63; font-weight: 600; background: #fff; padding: 4px 12px; border-radius: 8px; border: 1px solid #c9b8e8; }
@@ -225,7 +180,7 @@
                 <td class="row-total">60730</td>
                 <td><input type="number" class="qty-input" data-index="0" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">60730</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7577401', 'SERVO PREMIUM CF-4 15W-40 - 210L BRL', '60730')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7577401', '', 'SERVO PREMIUM CF-4 15W-40 - 210L BRL', '60730')">Share</button></td>
             </tr>
             <tr data-index="1">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="1"></td>
@@ -234,7 +189,7 @@
                 <td class="row-total">142640</td>
                 <td><input type="number" class="qty-input" data-index="1" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">142640</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2960401', 'SERVO FUTURA SYNTH 0W-40-210 L BRL', '142640')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2960401', '', 'SERVO FUTURA SYNTH 0W-40-210 L BRL', '142640')">Share</button></td>
             </tr>
             <tr data-index="2">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="2"></td>
@@ -243,7 +198,7 @@
                 <td class="row-total">80321</td>
                 <td><input type="number" class="qty-input" data-index="2" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">80321</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7427401', 'ECSTAR PETROL 0W-20-210 L', '80321')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7427401', '', 'ECSTAR PETROL 0W-20-210 L', '80321')">Share</button></td>
             </tr>
             <tr data-index="3">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="3"></td>
@@ -252,7 +207,7 @@
                 <td class="row-total">87894</td>
                 <td><input type="number" class="qty-input" data-index="3" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">87894</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7428401', 'ECSTAR DIESEL 5W-30-210 L', '87894')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7428401', '', 'ECSTAR DIESEL 5W-30-210 L', '87894')">Share</button></td>
             </tr>
             <tr data-index="4">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="4"></td>
@@ -261,7 +216,7 @@
                 <td class="row-total">61962</td>
                 <td><input type="number" class="qty-input" data-index="4" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">61962</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7670401', 'MGDO 15W-40 - 210 L BRL', '61962')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7670401', '', 'MGDO 15W-40 - 210 L BRL', '61962')">Share</button></td>
             </tr>
             <tr data-index="5">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="5"></td>
@@ -270,7 +225,7 @@
                 <td class="row-total">70682</td>
                 <td><input type="number" class="qty-input" data-index="5" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">70682</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7688401', 'MGO 5W-30-210 L BRL', '70682')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7688401', '', 'MGO 5W-30-210 L BRL', '70682')">Share</button></td>
             </tr>
             <tr data-index="6">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="6"></td>
@@ -279,7 +234,7 @@
                 <td class="row-total">75960</td>
                 <td><input type="number" class="qty-input" data-index="6" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">75960</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2968401', 'HY.SERVO ENGINE OIL 5W-30-210 L BRL', '75960')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2968401', '', 'HY.SERVO ENGINE OIL 5W-30-210 L BRL', '75960')">Share</button></td>
             </tr>
             <tr data-index="7">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="7"></td>
@@ -288,7 +243,7 @@
                 <td class="row-total">92942</td>
                 <td><input type="number" class="qty-input" data-index="7" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">92942</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7205401', 'HYUNDAI SERVO SUPERIOR 0W30-210 L', '92942')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7205401', '', 'HYUNDAI SERVO SUPERIOR 0W30-210 L', '92942')">Share</button></td>
             </tr>
             <tr data-index="8">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="8"></td>
@@ -297,7 +252,7 @@
                 <td class="row-total">87205</td>
                 <td><input type="number" class="qty-input" data-index="8" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">87205</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7420401', 'HY SERVO PETROL EO SN PLUS-210 L', '87205')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7420401', '', 'HY SERVO PETROL EO SN PLUS-210 L', '87205')">Share</button></td>
             </tr>
             <tr data-index="9">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="9"></td>
@@ -306,7 +261,7 @@
                 <td class="row-total">94090</td>
                 <td><input type="number" class="qty-input" data-index="9" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">94090</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7421401', 'HYUNDAI SERVO DEO ACEA C5-210 L', '94090')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7421401', '', 'HYUNDAI SERVO DEO ACEA C5-210 L', '94090')">Share</button></td>
             </tr>
             <tr data-index="10">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="10"></td>
@@ -315,7 +270,7 @@
                 <td class="row-total">65174</td>
                 <td><input type="number" class="qty-input" data-index="10" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">65174</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7477401', 'HY.SERVO PRM.EO SM 5W-30-210 L BRL', '65174')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7477401', '', 'HY.SERVO PRM.EO SM 5W-30-210 L BRL', '65174')">Share</button></td>
             </tr>
             <tr data-index="11">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="11"></td>
@@ -324,7 +279,7 @@
                 <td class="row-total">193917</td>
                 <td><input type="number" class="qty-input" data-index="11" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">193917</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7209401', 'HYUNDAI SERVO SYNTH 0W-30 API SP/ ACEA C3', '193917')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7209401', '', 'HYUNDAI SERVO SYNTH 0W-30 API SP/ ACEA C3', '193917')">Share</button></td>
             </tr>
             <tr data-index="12">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="12"></td>
@@ -333,7 +288,7 @@
                 <td class="row-total">23768</td>
                 <td><input type="number" class="qty-input" data-index="12" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">23768</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7202271', 'SERVO SUPERIOR EO 0W30 ACEA C2-50 L', '23768')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7202271', '', 'SERVO SUPERIOR EO 0W30 ACEA C2-50 L', '23768')">Share</button></td>
             </tr>
             <tr data-index="13">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="13"></td>
@@ -342,7 +297,7 @@
                 <td class="row-total">22676</td>
                 <td><input type="number" class="qty-input" data-index="13" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">22676</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7206271', 'SERVO SUPERIOR EO 0W20 ACEA C5-50 L', '22676')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7206271', '', 'SERVO SUPERIOR EO 0W20 ACEA C5-50 L', '22676')">Share</button></td>
             </tr>
             <tr data-index="14">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="14"></td>
@@ -351,7 +306,7 @@
                 <td class="row-total">21310</td>
                 <td><input type="number" class="qty-input" data-index="14" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">21310</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7207271', 'SERVO SUPERIOR EO 5W30 ACEA A5/B5-50 L', '21310')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7207271', '', 'SERVO SUPERIOR EO 5W30 ACEA A5/B5-50 L', '21310')">Share</button></td>
             </tr>
             <tr data-index="15">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="15"></td>
@@ -360,7 +315,7 @@
                 <td class="row-total">22129</td>
                 <td><input type="number" class="qty-input" data-index="15" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">22129</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7208271', 'SERVO SUPERIOR EO 0W20 SN PLUS-50 L', '22129')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7208271', '', 'SERVO SUPERIOR EO 0W20 SN PLUS-50 L', '22129')">Share</button></td>
             </tr>
             <tr data-index="16">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="16"></td>
@@ -369,7 +324,7 @@
                 <td class="row-total">99827</td>
                 <td><input type="number" class="qty-input" data-index="16" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">99827</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7202401', 'SERVO SUPERIOR EO 0W30 ACEA C2-210 L', '99827')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7202401', '', 'SERVO SUPERIOR EO 0W30 ACEA C2-210 L', '99827')">Share</button></td>
             </tr>
             <tr data-index="17">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="17"></td>
@@ -378,7 +333,7 @@
                 <td class="row-total">95237</td>
                 <td><input type="number" class="qty-input" data-index="17" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">95237</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7206401', 'SERVO SUPERIOR EO 0W20 ACEA C5-210 L', '95237')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7206401', '', 'SERVO SUPERIOR EO 0W20 ACEA C5-210 L', '95237')">Share</button></td>
             </tr>
             <tr data-index="18">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="18"></td>
@@ -387,7 +342,7 @@
                 <td class="row-total">89500</td>
                 <td><input type="number" class="qty-input" data-index="18" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">89500</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7207401', 'SERVO SUPERIOR EO 5W30 ACEA A5/B5-210 L', '89500')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7207401', '', 'SERVO SUPERIOR EO 5W30 ACEA A5/B5-210 L', '89500')">Share</button></td>
             </tr>
             <tr data-index="19">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="19"></td>
@@ -396,7 +351,7 @@
                 <td class="row-total">92942</td>
                 <td><input type="number" class="qty-input" data-index="19" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">92942</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7208401', 'SERVO SUPERIOR EO 0W20 SN PLUS-210 L', '92942')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7208401', '', 'SERVO SUPERIOR EO 0W20 SN PLUS-210 L', '92942')">Share</button></td>
             </tr>
             <tr data-index="20">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="20"></td>
@@ -405,7 +360,7 @@
                 <td class="row-total">77230</td>
                 <td><input type="number" class="qty-input" data-index="20" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">77230</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7264401', 'SERVO MG HECTOR PETROL ENGINE OIL-210 L', '77230')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7264401', '', 'SERVO MG HECTOR PETROL ENGINE OIL-210 L', '77230')">Share</button></td>
             </tr>
             <tr data-index="21">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="21"></td>
@@ -414,7 +369,7 @@
                 <td class="row-total">164951</td>
                 <td><input type="number" class="qty-input" data-index="21" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">164951</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7267401', 'SERVO MG HECTOR DIESEL ENGINE OIL-210 L', '164951')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7267401', '', 'SERVO MG HECTOR DIESEL ENGINE OIL-210 L', '164951')">Share</button></td>
             </tr>
             <tr data-index="22">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="22"></td>
@@ -423,7 +378,7 @@
                 <td class="row-total">96806</td>
                 <td><input type="number" class="qty-input" data-index="22" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">96806</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7265401', 'SERVO MG GLOSTER DIESEL EO-210 L', '96806')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7265401', '', 'SERVO MG GLOSTER DIESEL EO-210 L', '96806')">Share</button></td>
             </tr>
             <tr data-index="23">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="23"></td>
@@ -432,7 +387,7 @@
                 <td class="row-total">64529</td>
                 <td><input type="number" class="qty-input" data-index="23" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">64529</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('1301401', 'SERVO ULTRA 10W - 210L BRL', '64529')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('1301401', '', 'SERVO ULTRA 10W - 210L BRL', '64529')">Share</button></td>
             </tr>
             <tr data-index="24">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="24"></td>
@@ -441,7 +396,7 @@
                 <td class="row-total">69119</td>
                 <td><input type="number" class="qty-input" data-index="24" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">69119</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('1404401', 'SERVO PRIDE 40 - 210L BRL', '69119')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('1404401', '', 'SERVO PRIDE 40 - 210L BRL', '69119')">Share</button></td>
             </tr>
             <tr data-index="25">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="25"></td>
@@ -450,7 +405,7 @@
                 <td class="row-total">65453</td>
                 <td><input type="number" class="qty-input" data-index="25" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">65453</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7436401', 'SERVO PRIDE NXT CK4 15W40-210 L BRL', '65453')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7436401', '', 'SERVO PRIDE NXT CK4 15W40-210 L BRL', '65453')">Share</button></td>
             </tr>
             <tr data-index="26">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="26"></td>
@@ -459,7 +414,7 @@
                 <td class="row-total">60502</td>
                 <td><input type="number" class="qty-input" data-index="26" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">60502</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7470401', 'SERVO FLEET SUPREME CI4 PLUS 15W-40- 210 L', '60502')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7470401', '', 'SERVO FLEET SUPREME CI4 PLUS 15W-40- 210 L', '60502')">Share</button></td>
             </tr>
             <tr data-index="27">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="27"></td>
@@ -468,7 +423,7 @@
                 <td class="row-total">60201</td>
                 <td><input type="number" class="qty-input" data-index="27" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">60201</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7472401', 'SERVO FLT CF4 15W-40-210 L BRL', '60201')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7472401', '', 'SERVO FLT CF4 15W-40-210 L BRL', '60201')">Share</button></td>
             </tr>
             <tr data-index="28">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="28"></td>
@@ -477,7 +432,7 @@
                 <td class="row-total">57607</td>
                 <td><input type="number" class="qty-input" data-index="28" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">57607</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7485401', 'SERVO SUPER 20W-40 MG-210 L BRL', '57607')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7485401', '', 'SERVO SUPER 20W-40 MG-210 L BRL', '57607')">Share</button></td>
             </tr>
             <tr data-index="29">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="29"></td>
@@ -486,7 +441,7 @@
                 <td class="row-total">16461</td>
                 <td><input type="number" class="qty-input" data-index="29" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">16461</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7489271', 'SERVO PRIDE XL PLUS 15W40-50 L', '16461')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7489271', '', 'SERVO PRIDE XL PLUS 15W40-50 L', '16461')">Share</button></td>
             </tr>
             <tr data-index="30">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="30"></td>
@@ -495,7 +450,7 @@
                 <td class="row-total">64329</td>
                 <td><input type="number" class="qty-input" data-index="30" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">64329</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7489401', 'SERVO PRIDE XL PLUS 15W40-210 L BRL', '64329')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7489401', '', 'SERVO PRIDE XL PLUS 15W40-210 L BRL', '64329')">Share</button></td>
             </tr>
             <tr data-index="31">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="31"></td>
@@ -504,7 +459,7 @@
                 <td class="row-total">13918</td>
                 <td><input type="number" class="qty-input" data-index="31" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">13918</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7577271', 'SERVO PREMIUM CF-4 15W-40-50L HDPE DRUM', '13918')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7577271', '', 'SERVO PREMIUM CF-4 15W-40-50L HDPE DRUM', '13918')">Share</button></td>
             </tr>
             <tr data-index="32">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="32"></td>
@@ -513,7 +468,7 @@
                 <td class="row-total">60730</td>
                 <td><input type="number" class="qty-input" data-index="32" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">60730</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7577401', 'SERVO PREMIUM CF-4 15W-40 - 210L BRL', '60730')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7577401', '', 'SERVO PREMIUM CF-4 15W-40 - 210L BRL', '60730')">Share</button></td>
             </tr>
             <tr data-index="33">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="33"></td>
@@ -522,7 +477,7 @@
                 <td class="row-total">65524</td>
                 <td><input type="number" class="qty-input" data-index="33" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">65524</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7612401', 'SERVO PRIDE XL 15W-40 - 210L BRL', '65524')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7612401', '', 'SERVO PRIDE XL 15W-40 - 210L BRL', '65524')">Share</button></td>
             </tr>
             <tr data-index="34">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="34"></td>
@@ -531,7 +486,7 @@
                 <td class="row-total">62270</td>
                 <td><input type="number" class="qty-input" data-index="34" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">62270</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2502401', 'SERVO GEAR HP 90 - 210L BRL', '62270')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2502401', '', 'SERVO GEAR HP 90 - 210L BRL', '62270')">Share</button></td>
             </tr>
             <tr data-index="35">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="35"></td>
@@ -540,7 +495,7 @@
                 <td class="row-total">64995</td>
                 <td><input type="number" class="qty-input" data-index="35" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">64995</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2503401', 'SERVO GEAR HP 140-210L BRL', '64995')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2503401', '', 'SERVO GEAR HP 140-210L BRL', '64995')">Share</button></td>
             </tr>
             <tr data-index="36">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="36"></td>
@@ -549,7 +504,7 @@
                 <td class="row-total">62328</td>
                 <td><input type="number" class="qty-input" data-index="36" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">62328</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4906401', 'SERVO TRANSFLUID A - 210L BRL', '62328')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4906401', '', 'SERVO TRANSFLUID A - 210L BRL', '62328')">Share</button></td>
             </tr>
             <tr data-index="37">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="37"></td>
@@ -558,7 +513,7 @@
                 <td class="row-total">60876</td>
                 <td><input type="number" class="qty-input" data-index="37" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">60876</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4925401', 'SERVO TRANSMISSION C4 SAE 30-210L BRL', '60876')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4925401', '', 'SERVO TRANSMISSION C4 SAE 30-210L BRL', '60876')">Share</button></td>
             </tr>
             <tr data-index="38">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="38"></td>
@@ -567,7 +522,7 @@
                 <td class="row-total">61882</td>
                 <td><input type="number" class="qty-input" data-index="38" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">61882</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7511401', 'SERVO GEAR SUPER 80W-90 - 210L BRL', '61882')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7511401', '', 'SERVO GEAR SUPER 80W-90 - 210L BRL', '61882')">Share</button></td>
             </tr>
             <tr data-index="39">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="39"></td>
@@ -576,7 +531,7 @@
                 <td class="row-total">61512</td>
                 <td><input type="number" class="qty-input" data-index="39" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">61512</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7515401', 'SERVO GEAR SUPER 85W-140-210L BRL', '61512')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7515401', '', 'SERVO GEAR SUPER 85W-140-210L BRL', '61512')">Share</button></td>
             </tr>
             <tr data-index="40">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="40"></td>
@@ -585,7 +540,7 @@
                 <td class="row-total">7322</td>
                 <td><input type="number" class="qty-input" data-index="40" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">7322</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4950288', 'SERVO OIB OIL-26 L', '7322')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4950288', '', 'SERVO OIB OIL-26 L', '7322')">Share</button></td>
             </tr>
             <tr data-index="41">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="41"></td>
@@ -594,7 +549,7 @@
                 <td class="row-total">65971</td>
                 <td><input type="number" class="qty-input" data-index="41" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">65971</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4950401', 'SERVO OIB OIL-210 L BRL', '65971')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4950401', '', 'SERVO OIB OIL-210 L BRL', '65971')">Share</button></td>
             </tr>
             <tr data-index="42">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="42"></td>
@@ -603,7 +558,7 @@
                 <td class="row-total">54159</td>
                 <td><input type="number" class="qty-input" data-index="42" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">54159</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7651401', 'SERVO AGROSPRAY T - 210L BRL', '54159')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7651401', '', 'SERVO AGROSPRAY T - 210L BRL', '54159')">Share</button></td>
             </tr>
             <tr data-index="43">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="43"></td>
@@ -612,7 +567,7 @@
                 <td class="row-total">64601</td>
                 <td><input type="number" class="qty-input" data-index="43" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">64601</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2900401', 'SERVO 2T SUPREME-210 L BRL', '64601')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2900401', '', 'SERVO 2T SUPREME-210 L BRL', '64601')">Share</button></td>
             </tr>
             <tr data-index="44">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="44"></td>
@@ -621,7 +576,7 @@
                 <td class="row-total">64601</td>
                 <td><input type="number" class="qty-input" data-index="44" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">64601</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2900403', 'SERVO 2T SUPREME-210 L HD', '64601')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2900403', '', 'SERVO 2T SUPREME-210 L HD', '64601')">Share</button></td>
             </tr>
             <tr data-index="45">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="45"></td>
@@ -630,7 +585,7 @@
                 <td class="row-total">61212</td>
                 <td><input type="number" class="qty-input" data-index="45" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">61212</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7701451', 'SERVO GREASE MP-182 KG DRM', '61212')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7701451', '', 'SERVO GREASE MP-182 KG DRM', '61212')">Share</button></td>
             </tr>
             <tr data-index="46">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="46"></td>
@@ -639,7 +594,7 @@
                 <td class="row-total">63325</td>
                 <td><input type="number" class="qty-input" data-index="46" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">63325</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7705451', 'SERVOGREASE MP 3 - 182 KG DRM', '63325')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7705451', '', 'SERVOGREASE MP 3 - 182 KG DRM', '63325')">Share</button></td>
             </tr>
             <tr data-index="47">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="47"></td>
@@ -648,7 +603,7 @@
                 <td class="row-total">75671</td>
                 <td><input type="number" class="qty-input" data-index="47" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">75671</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7727451', 'SERVO GEM RR 3-182 KG DRM', '75671')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7727451', '', 'SERVO GEM RR 3-182 KG DRM', '75671')">Share</button></td>
             </tr>
             <tr data-index="48">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="48"></td>
@@ -657,7 +612,7 @@
                 <td class="row-total">79871</td>
                 <td><input type="number" class="qty-input" data-index="48" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">79871</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7849451', 'SERVO LONG LIFE GREASE-182 KG DRM', '79871')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7849451', '', 'SERVO LONG LIFE GREASE-182 KG DRM', '79871')">Share</button></td>
             </tr>
             <tr data-index="49">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="49"></td>
@@ -666,7 +621,7 @@
                 <td class="row-total">75654</td>
                 <td><input type="number" class="qty-input" data-index="49" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">75654</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7903451', 'SERVOGREASE MIRACLE 3-182 KG', '75654')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7903451', '', 'SERVOGREASE MIRACLE 3-182 KG', '75654')">Share</button></td>
             </tr>
             <tr data-index="50">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="50"></td>
@@ -675,7 +630,7 @@
                 <td class="row-total">54810</td>
                 <td><input type="number" class="qty-input" data-index="50" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">54810</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7584401', 'SERVO KOOL PLUS -210L BRL', '54810')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7584401', '', 'SERVO KOOL PLUS -210L BRL', '54810')">Share</button></td>
             </tr>
             <tr data-index="51">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="51"></td>
@@ -684,7 +639,7 @@
                 <td class="row-total">66491</td>
                 <td><input type="number" class="qty-input" data-index="51" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">66491</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('2909401', 'SERVO BRAKE FLUID SUPER HD  - 210L BRL', '66491')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('2909401', '', 'SERVO BRAKE FLUID SUPER HD  - 210L BRL', '66491')">Share</button></td>
             </tr>
             <tr data-index="52">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="52"></td>
@@ -693,7 +648,7 @@
                 <td class="row-total">56775</td>
                 <td><input type="number" class="qty-input" data-index="52" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">56775</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7742451', 'SERVOGEM EP 2-182 KG DRM', '56775')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7742451', '', 'SERVOGEM EP 2-182 KG DRM', '56775')">Share</button></td>
             </tr>
             <tr data-index="53">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="53"></td>
@@ -702,7 +657,7 @@
                 <td class="row-total">4720</td>
                 <td><input type="number" class="qty-input" data-index="53" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">4720</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3040288', 'SERVOHYDRASHAKTI 68-26 L', '4720')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3040288', '', 'SERVOHYDRASHAKTI 68-26 L', '4720')">Share</button></td>
             </tr>
             <tr data-index="54">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="54"></td>
@@ -711,7 +666,7 @@
                 <td class="row-total">10421</td>
                 <td><input type="number" class="qty-input" data-index="54" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">10421</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3006271', 'SERVOSYSTEM 68 - 50L HDPE', '10421')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3006271', '', 'SERVOSYSTEM 68 - 50L HDPE', '10421')">Share</button></td>
             </tr>
             <tr data-index="55">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="55"></td>
@@ -720,7 +675,7 @@
                 <td class="row-total">5391</td>
                 <td><input type="number" class="qty-input" data-index="55" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">5391</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3006288', 'SERVOSYSTEM 68-26 L', '5391')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3006288', '', 'SERVOSYSTEM 68-26 L', '5391')">Share</button></td>
             </tr>
             <tr data-index="56">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="56"></td>
@@ -729,7 +684,7 @@
                 <td class="row-total">43532</td>
                 <td><input type="number" class="qty-input" data-index="56" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">43532</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3001401', 'SERVOSYSTEM 32 - 210L BRL', '43532')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3001401', '', 'SERVOSYSTEM 32 - 210L BRL', '43532')">Share</button></td>
             </tr>
             <tr data-index="57">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="57"></td>
@@ -738,7 +693,7 @@
                 <td class="row-total">43503</td>
                 <td><input type="number" class="qty-input" data-index="57" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">43503</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3002401', 'SERVOSYSTEM 46 - 210L BRL', '43503')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3002401', '', 'SERVOSYSTEM 46 - 210L BRL', '43503')">Share</button></td>
             </tr>
             <tr data-index="58">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="58"></td>
@@ -747,7 +702,7 @@
                 <td class="row-total">43459</td>
                 <td><input type="number" class="qty-input" data-index="58" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">43459</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3006401', 'SERVOSYSTEM 68 - 210L BRL', '43459')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3006401', '', 'SERVOSYSTEM 68 - 210L BRL', '43459')">Share</button></td>
             </tr>
             <tr data-index="59">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="59"></td>
@@ -756,7 +711,7 @@
                 <td class="row-total">44586</td>
                 <td><input type="number" class="qty-input" data-index="59" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">44586</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3007403', 'SERVOSYSTEM 100-210 L HD', '44586')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3007403', '', 'SERVOSYSTEM 100-210 L HD', '44586')">Share</button></td>
             </tr>
             <tr data-index="60">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="60"></td>
@@ -765,7 +720,7 @@
                 <td class="row-total">49827</td>
                 <td><input type="number" class="qty-input" data-index="60" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">49827</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3020401', 'SERVOSYSTEM 220 - 210L BRL', '49827')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3020401', '', 'SERVOSYSTEM 220 - 210L BRL', '49827')">Share</button></td>
             </tr>
             <tr data-index="61">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="61"></td>
@@ -774,7 +729,7 @@
                 <td class="row-total">50439</td>
                 <td><input type="number" class="qty-input" data-index="61" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">50439</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3017401', 'SERVOSYSTEM 320 - 210L BRL', '50439')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3017401', '', 'SERVOSYSTEM 320 - 210L BRL', '50439')">Share</button></td>
             </tr>
             <tr data-index="62">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="62"></td>
@@ -783,7 +738,7 @@
                 <td class="row-total">49385</td>
                 <td><input type="number" class="qty-input" data-index="62" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">49385</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3019401', 'SERVOSYSTEM 150 - 210L BRL', '49385')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3019401', '', 'SERVOSYSTEM 150 - 210L BRL', '49385')">Share</button></td>
             </tr>
             <tr data-index="63">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="63"></td>
@@ -792,7 +747,7 @@
                 <td class="row-total">56787</td>
                 <td><input type="number" class="qty-input" data-index="63" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">56787</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3064401', 'SERVOHYDREX TH 46-210L BRL', '56787')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3064401', '', 'SERVOHYDREX TH 46-210L BRL', '56787')">Share</button></td>
             </tr>
             <tr data-index="64">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="64"></td>
@@ -801,7 +756,7 @@
                 <td class="row-total">66656</td>
                 <td><input type="number" class="qty-input" data-index="64" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">66656</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3081401', 'SERVOSYSTEM HLP 32 - 210L BRL', '66656')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3081401', '', 'SERVOSYSTEM HLP 32 - 210L BRL', '66656')">Share</button></td>
             </tr>
             <tr data-index="65">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="65"></td>
@@ -810,7 +765,7 @@
                 <td class="row-total">44698</td>
                 <td><input type="number" class="qty-input" data-index="65" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">44698</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3082401', 'SERVOSYSTEM HLP 46 - 210L BRL', '44698')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3082401', '', 'SERVOSYSTEM HLP 46 - 210L BRL', '44698')">Share</button></td>
             </tr>
             <tr data-index="66">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="66"></td>
@@ -819,7 +774,7 @@
                 <td class="row-total">45397</td>
                 <td><input type="number" class="qty-input" data-index="66" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">45397</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3084401', 'SERVOSYSTEM HLP 68 - 210L BRL', '45397')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3084401', '', 'SERVOSYSTEM HLP 68 - 210L BRL', '45397')">Share</button></td>
             </tr>
             <tr data-index="67">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="67"></td>
@@ -828,7 +783,7 @@
                 <td class="row-total">65743</td>
                 <td><input type="number" class="qty-input" data-index="67" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">65743</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3121401', 'SERVOPRIME 46 - 210L BRL', '65743')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3121401', '', 'SERVOPRIME 46 - 210L BRL', '65743')">Share</button></td>
             </tr>
             <tr data-index="68">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="68"></td>
@@ -837,7 +792,7 @@
                 <td class="row-total">65286</td>
                 <td><input type="number" class="qty-input" data-index="68" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">65286</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3122401', 'SERVOPRIME 57 - 210L BRL', '65286')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3122401', '', 'SERVOPRIME 57 - 210L BRL', '65286')">Share</button></td>
             </tr>
             <tr data-index="69">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="69"></td>
@@ -846,7 +801,7 @@
                 <td class="row-total">45703</td>
                 <td><input type="number" class="qty-input" data-index="69" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">45703</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3614401', 'SERVOMESH SP 320 - 210L BRL', '45703')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3614401', '', 'SERVOMESH SP 320 - 210L BRL', '45703')">Share</button></td>
             </tr>
             <tr data-index="70">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="70"></td>
@@ -855,7 +810,7 @@
                 <td class="row-total">47019</td>
                 <td><input type="number" class="qty-input" data-index="70" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">47019</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3617401', 'SERVOMESH SP 220 - 210L BRL', '47019')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3617401', '', 'SERVOMESH SP 220 - 210L BRL', '47019')">Share</button></td>
             </tr>
             <tr data-index="71">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="71"></td>
@@ -864,7 +819,7 @@
                 <td class="row-total">43003</td>
                 <td><input type="number" class="qty-input" data-index="71" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">43003</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('3923401', 'SERVOFRIZ NH 68 - 210 L BRL', '43003')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('3923401', '', 'SERVOFRIZ NH 68 - 210 L BRL', '43003')">Share</button></td>
             </tr>
             <tr data-index="72">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="72"></td>
@@ -873,7 +828,7 @@
                 <td class="row-total">44795</td>
                 <td><input type="number" class="qty-input" data-index="72" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">44795</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4803401', 'SERVOTHERM SPECIAL-210L BRL', '44795')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4803401', '', 'SERVOTHERM SPECIAL-210L BRL', '44795')">Share</button></td>
             </tr>
             <tr data-index="73">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="73"></td>
@@ -882,7 +837,7 @@
                 <td class="row-total">45125</td>
                 <td><input type="number" class="qty-input" data-index="73" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">45125</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4811401', 'SERVOTHERM S SPECIAL-210 L BRL', '45125')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4811401', '', 'SERVOTHERM S SPECIAL-210 L BRL', '45125')">Share</button></td>
             </tr>
             <tr data-index="74">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="74"></td>
@@ -891,7 +846,7 @@
                 <td class="row-total">43911</td>
                 <td><input type="number" class="qty-input" data-index="74" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">43911</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('4501401', 'SERVOCUT S - 210L BRL', '43911')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('4501401', '', 'SERVOCUT S - 210L BRL', '43911')">Share</button></td>
             </tr>
             <tr data-index="75">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="75"></td>
@@ -900,7 +855,7 @@
                 <td class="row-total">47937</td>
                 <td><input type="number" class="qty-input" data-index="75" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">47937</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7403401', 'SERVOELECTRA - 210L BRL', '47937')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7403401', '', 'SERVOELECTRA - 210L BRL', '47937')">Share</button></td>
             </tr>
             <tr data-index="76">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="76"></td>
@@ -909,7 +864,7 @@
                 <td class="row-total">13356</td>
                 <td><input type="number" class="qty-input" data-index="76" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">13356</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('7330403', 'IOC CLEARBLUE-210 L HD', '13356')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('7330403', '', 'IOC CLEARBLUE-210 L HD', '13356')">Share</button></td>
             </tr>
     </tbody>
 </table>
@@ -962,7 +917,7 @@
 <script>
     const rowsData = [{"code":"7577401","desc":"SERVO PREMIUM CF-4 15W-40 - 210L BRL","total":60730},{"code":"2960401","desc":"SERVO FUTURA SYNTH 0W-40-210 L BRL","total":142640},{"code":"7427401","desc":"ECSTAR PETROL 0W-20-210 L","total":80321},{"code":"7428401","desc":"ECSTAR DIESEL 5W-30-210 L","total":87894},{"code":"7670401","desc":"MGDO 15W-40 - 210 L BRL","total":61962},{"code":"7688401","desc":"MGO 5W-30-210 L BRL","total":70682},{"code":"2968401","desc":"HY.SERVO ENGINE OIL 5W-30-210 L BRL","total":75960},{"code":"7205401","desc":"HYUNDAI SERVO SUPERIOR 0W30-210 L","total":92942},{"code":"7420401","desc":"HY SERVO PETROL EO SN PLUS-210 L","total":87205},{"code":"7421401","desc":"HYUNDAI SERVO DEO ACEA C5-210 L","total":94090},{"code":"7477401","desc":"HY.SERVO PRM.EO SM 5W-30-210 L BRL","total":65174},{"code":"7209401","desc":"HYUNDAI SERVO SYNTH 0W-30 API SP/ ACEA C3","total":193917},{"code":"7202271","desc":"SERVO SUPERIOR EO 0W30 ACEA C2-50 L","total":23768},{"code":"7206271","desc":"SERVO SUPERIOR EO 0W20 ACEA C5-50 L","total":22676},{"code":"7207271","desc":"SERVO SUPERIOR EO 5W30 ACEA A5/B5-50 L","total":21310},{"code":"7208271","desc":"SERVO SUPERIOR EO 0W20 SN PLUS-50 L","total":22129},{"code":"7202401","desc":"SERVO SUPERIOR EO 0W30 ACEA C2-210 L","total":99827},{"code":"7206401","desc":"SERVO SUPERIOR EO 0W20 ACEA C5-210 L","total":95237},{"code":"7207401","desc":"SERVO SUPERIOR EO 5W30 ACEA A5/B5-210 L","total":89500},{"code":"7208401","desc":"SERVO SUPERIOR EO 0W20 SN PLUS-210 L","total":92942},{"code":"7264401","desc":"SERVO MG HECTOR PETROL ENGINE OIL-210 L","total":77230},{"code":"7267401","desc":"SERVO MG HECTOR DIESEL ENGINE OIL-210 L","total":164951},{"code":"7265401","desc":"SERVO MG GLOSTER DIESEL EO-210 L","total":96806},{"code":"1301401","desc":"SERVO ULTRA 10W - 210L BRL","total":64529},{"code":"1404401","desc":"SERVO PRIDE 40 - 210L BRL","total":69119},{"code":"7436401","desc":"SERVO PRIDE NXT CK4 15W40-210 L BRL","total":65453},{"code":"7470401","desc":"SERVO FLEET SUPREME CI4 PLUS 15W-40- 210 L","total":60502},{"code":"7472401","desc":"SERVO FLT CF4 15W-40-210 L BRL","total":60201},{"code":"7485401","desc":"SERVO SUPER 20W-40 MG-210 L BRL","total":57607},{"code":"7489271","desc":"SERVO PRIDE XL PLUS 15W40-50 L","total":16461},{"code":"7489401","desc":"SERVO PRIDE XL PLUS 15W40-210 L BRL","total":64329},{"code":"7577271","desc":"SERVO PREMIUM CF-4 15W-40-50L HDPE DRUM","total":13918},{"code":"7577401","desc":"SERVO PREMIUM CF-4 15W-40 - 210L BRL","total":60730},{"code":"7612401","desc":"SERVO PRIDE XL 15W-40 - 210L BRL","total":65524},{"code":"2502401","desc":"SERVO GEAR HP 90 - 210L BRL","total":62270},{"code":"2503401","desc":"SERVO GEAR HP 140-210L BRL","total":64995},{"code":"4906401","desc":"SERVO TRANSFLUID A - 210L BRL","total":62328},{"code":"4925401","desc":"SERVO TRANSMISSION C4 SAE 30-210L BRL","total":60876},{"code":"7511401","desc":"SERVO GEAR SUPER 80W-90 - 210L BRL","total":61882},{"code":"7515401","desc":"SERVO GEAR SUPER 85W-140-210L BRL","total":61512},{"code":"4950288","desc":"SERVO OIB OIL-26 L","total":7322},{"code":"4950401","desc":"SERVO OIB OIL-210 L BRL","total":65971},{"code":"7651401","desc":"SERVO AGROSPRAY T - 210L BRL","total":54159},{"code":"2900401","desc":"SERVO 2T SUPREME-210 L BRL","total":64601},{"code":"2900403","desc":"SERVO 2T SUPREME-210 L HD","total":64601},{"code":"7701451","desc":"SERVO GREASE MP-182 KG DRM","total":61212},{"code":"7705451","desc":"SERVOGREASE MP 3 - 182 KG DRM","total":63325},{"code":"7727451","desc":"SERVO GEM RR 3-182 KG DRM","total":75671},{"code":"7849451","desc":"SERVO LONG LIFE GREASE-182 KG DRM","total":79871},{"code":"7903451","desc":"SERVOGREASE MIRACLE 3-182 KG","total":75654},{"code":"7584401","desc":"SERVO KOOL PLUS -210L BRL","total":54810},{"code":"2909401","desc":"SERVO BRAKE FLUID SUPER HD  - 210L BRL","total":66491},{"code":"7742451","desc":"SERVOGEM EP 2-182 KG DRM","total":56775},{"code":"3040288","desc":"SERVOHYDRASHAKTI 68-26 L","total":4720},{"code":"3006271","desc":"SERVOSYSTEM 68 - 50L HDPE","total":10421},{"code":"3006288","desc":"SERVOSYSTEM 68-26 L","total":5391},{"code":"3001401","desc":"SERVOSYSTEM 32 - 210L BRL","total":43532},{"code":"3002401","desc":"SERVOSYSTEM 46 - 210L BRL","total":43503},{"code":"3006401","desc":"SERVOSYSTEM 68 - 210L BRL","total":43459},{"code":"3007403","desc":"SERVOSYSTEM 100-210 L HD","total":44586},{"code":"3020401","desc":"SERVOSYSTEM 220 - 210L BRL","total":49827},{"code":"3017401","desc":"SERVOSYSTEM 320 - 210L BRL","total":50439},{"code":"3019401","desc":"SERVOSYSTEM 150 - 210L BRL","total":49385},{"code":"3064401","desc":"SERVOHYDREX TH 46-210L BRL","total":56787},{"code":"3081401","desc":"SERVOSYSTEM HLP 32 - 210L BRL","total":66656},{"code":"3082401","desc":"SERVOSYSTEM HLP 46 - 210L BRL","total":44698},{"code":"3084401","desc":"SERVOSYSTEM HLP 68 - 210L BRL","total":45397},{"code":"3121401","desc":"SERVOPRIME 46 - 210L BRL","total":65743},{"code":"3122401","desc":"SERVOPRIME 57 - 210L BRL","total":65286},{"code":"3614401","desc":"SERVOMESH SP 320 - 210L BRL","total":45703},{"code":"3617401","desc":"SERVOMESH SP 220 - 210L BRL","total":47019},{"code":"3923401","desc":"SERVOFRIZ NH 68 - 210 L BRL","total":43003},{"code":"4803401","desc":"SERVOTHERM SPECIAL-210L BRL","total":44795},{"code":"4811401","desc":"SERVOTHERM S SPECIAL-210 L BRL","total":45125},{"code":"4501401","desc":"SERVOCUT S - 210L BRL","total":43911},{"code":"7403401","desc":"SERVOELECTRA - 210L BRL","total":47937},{"code":"7330403","desc":"IOC CLEARBLUE-210 L HD","total":13356}];
 
-    function shareSingle(code, desc, total) {
+    function shareSingle(code, category, desc, total) {
         let message = `*Auto Lube House - Purchase Barrel*\n\n`;
         message += `*Product Code:* ${code}\n`;
         message += `*Product Name:* ${desc}\n`;
@@ -1206,7 +1161,12 @@
     const autocompleteList = document.getElementById('autocomplete-list');
     const searchClearBtn = document.getElementById('searchClearBtn');
     const searchableData = tableRows.map(row => {
-        return { code: row.querySelector('.mat-code').innerText, desc: row.querySelector('.mat-desc').innerText, rowElement: row };
+        return {
+            code: row.querySelector('.mat-code').innerText,
+            category: row.querySelector('.mat-category') ? row.querySelector('.mat-category').innerText : '',
+            desc: row.querySelector('.mat-desc').innerText,
+            rowElement: row
+        };
     });
 
     function updateSearchClearBtn() {
@@ -1223,16 +1183,15 @@
         tableRows.forEach(row => {
             const code = row.querySelector('.mat-code').innerText.toLowerCase();
             const desc = row.querySelector('.mat-desc').innerText.toLowerCase();
-            row.classList.toggle('hidden-row', !(code.includes(term) || desc.includes(term)));
+            const cat = row.querySelector('.mat-category') ? row.querySelector('.mat-category').innerText.toLowerCase() : '';
+            row.classList.toggle('hidden-row', !(code.includes(term) || desc.includes(term) || cat.includes(term)));
         });
     }
     function closeAllLists() { autocompleteList.innerHTML = ''; autocompleteList.style.display = 'none'; }
 
     function selectRowByElement(rowElement, isAutoSearch) {
         if (!rowElement) return;
-        // Remove hidden class so row is visible
         rowElement.classList.remove('hidden-row');
-        // Tick checkbox
         const cb = rowElement.querySelector('.row-select');
         if (cb) {
             cb.checked = true;
@@ -1241,10 +1200,8 @@
                 rowElement.classList.add('row-search-selected');
             }
         }
-        // Update whatever selection logic this page uses
         if (typeof updateSelection === 'function') updateSelection();
         if (typeof updateSelectedTotal === 'function') updateSelectedTotal();
-        // Scroll into view (smooth, centered)
         rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -1254,21 +1211,25 @@
         updateSearchClearBtn();
         filterTable(val);
         if (!val) return;
-        const matches = searchableData.filter(item => item.code.toLowerCase().includes(val) || item.desc.toLowerCase().includes(val));
+        const matches = searchableData.filter(item =>
+            item.code.toLowerCase().includes(val) ||
+            item.desc.toLowerCase().includes(val) ||
+            (item.category && item.category.toLowerCase().includes(val))
+        );
         if (matches.length > 0) {
             autocompleteList.style.display = 'block';
             matches.slice(0, 30).forEach(match => {
                 const div = document.createElement('div');
-                let codeHTML = match.code, descHTML = match.desc;
+                let codeHTML = match.code, descHTML = match.desc, catHTML = match.category;
                 if (match.code.toLowerCase().includes(val)) codeHTML = match.code.replace(new RegExp(`(${val})`, 'gi'), '<strong>$1</strong>');
                 if (match.desc.toLowerCase().includes(val)) descHTML = match.desc.replace(new RegExp(`(${val})`, 'gi'), '<strong>$1</strong>');
-                div.innerHTML = `<span>${codeHTML}</span> <span style="color:#5a7a9a; font-size:12px;">${descHTML}</span>`;
+                if (match.category && match.category.toLowerCase().includes(val)) catHTML = match.category.replace(new RegExp(`(${val})`, 'gi'), '<strong>$1</strong>');
+                div.innerHTML = `<span>${codeHTML}</span> ${catHTML ? '<span style="color:#8e44ad; font-size:11px; font-weight:600;">' + catHTML + '</span>' : ''} <span style="color:#5a7a9a; font-size:12px;">${descHTML}</span>`;
                 div.onclick = function() {
                     searchInput.value = match.code + ' - ' + match.desc;
                     filterTable(match.code);
                     closeAllLists();
                     updateSearchClearBtn();
-                    // AUTO-SELECT the clicked product
                     selectRowByElement(match.rowElement, true);
                 };
                 autocompleteList.appendChild(div);
