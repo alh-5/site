@@ -252,6 +252,15 @@
         max-width: 380px;
         word-break: break-word;
     }
+    td.category-cell, th.category-cell {
+        white-space: normal;
+        min-width: 110px;
+        max-width: 200px;
+        word-break: break-word;
+        font-size: 12px;
+        color: #4a5f75;
+        font-weight: 600;
+    }
     .wa-share-btn {
         background-color: #25D366;
         color: white;
@@ -640,6 +649,7 @@
                 <tr>
                     <th class="select-col"><input type="checkbox" id="salesSmallSelectAllTop" title="Select all"></th>
                     <th>Mat code</th>
+                    <th class="category-cell">Category</th>
                     <th class="mat-desc-cell">Mat Description</th>
                     <th>MRP/Pc</th>
                     <th>Disc/L</th>
@@ -911,6 +921,7 @@
 
                     if (mode === 'sales') {
                         const codeKey = findKey(['Mat code', 'Matcode', 'Code', 'MAT CODE', 'PRODUCT CODE', 'Product Code']);
+                        const categoryKey = findKey(['Category', 'Cat', 'CATEGORY', 'Product Category', 'PRODUCT CATEGORY', 'Category Name', 'CAT']);
                         const descKey = findKey(['Mat Description', 'Description', 'Desc', 'MAT DESCRIPTION', 'PRODUCT NAME', 'Product Name']);
                         const mrpKey = findKey(['MRP/Pc', 'MRP', 'RSP/L', 'RSP', 'M.R.P']);
                         const discKey = findKey(['Disc/L', 'Disc', 'DISC/L', 'Discount']);
@@ -924,6 +935,7 @@
 
                         const rows = jsonData.map(row => {
                             const code = String(row[codeKey] || '').trim();
+                            const category = categoryKey ? String(row[categoryKey] || '').trim() : '';
                             const desc = String(row[descKey] || '').trim();
                             let mrp = mrpKey ? row[mrpKey] : '';
                             if (!mrp) {
@@ -933,7 +945,7 @@
                             let disc = discKey ? row[discKey] : '';
                             let invoice = invKey ? row[invKey] : '';
                             return {
-                                code, desc,
+                                code, category, desc,
                                 mrp: roundValue(mrp),
                                 disc: roundValue(disc),
                                 invoice: roundValue(invoice)
@@ -997,6 +1009,7 @@
                         if (match) {
                             results.push({
                                 code: match[1],
+                                category: '',
                                 desc: match[2].trim(),
                                 mrp: roundValue(match[3]),
                                 disc: match[4] ? roundValue(match[4]) : '',
@@ -1009,6 +1022,7 @@
                         while ((match = globalRegex.exec(fullText)) !== null) {
                             results.push({
                                 code: match[1],
+                                category: '',
                                 desc: match[2].trim(),
                                 mrp: roundValue(match[3]),
                                 disc: match[4] ? roundValue(match[4]) : '',
@@ -1066,6 +1080,7 @@
             data.forEach((row, idx) => {
                 const safeDesc = String(row.desc).replace(/'/g, "\\'");
                 const safeCode = String(row.code).replace(/'/g, "\\'");
+                const safeCat = String(row.category || '').replace(/'/g, "\\'");
                 const tr = document.createElement('tr');
                 tr.dataset.index = idx;
                 if (isBarrel) {
@@ -1075,17 +1090,18 @@
                         <td class="mat-desc-cell">${row.desc}</td>
                         <td>${row.disc}</td>
                         <td>${row.invoice}</td>
-                        <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
+                        <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
                     `;
                 } else {
                     tr.innerHTML = `
                         <td class="select-col"><input type="checkbox" class="row-select" data-source="${sourceKey}" data-index="${idx}"></td>
                         <td>${row.code}</td>
+                        <td class="category-cell">${row.category || ''}</td>
                         <td class="mat-desc-cell">${row.desc}</td>
                         <td>${row.mrp}</td>
                         <td>${row.disc}</td>
                         <td>${row.invoice}</td>
-                        <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
+                        <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeCat}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
                     `;
                 }
                 tbody.appendChild(tr);
@@ -1354,6 +1370,9 @@
                         grandTotal += amount;
                     } else {
                         if (key === 'salesSmall') {
+                            if (item.category && String(item.category).trim() !== '') {
+                                html += `<div class="pi-row"><span class="pi-label">Category:</span><span class="pi-val">${item.category}</span></div>`;
+                            }
                             html += `<div class="pi-row"><span class="pi-label">MRP/Pc:</span><span class="pi-val">₹${item.mrp}</span></div>`;
                         }
                         if (item.disc && String(item.disc).trim() !== '' && String(item.disc) !== '0') {
@@ -1508,7 +1527,7 @@
             updateSelectedItemsUI();
         }
 
-        window.shareSingle = function(code, desc, mrp, disc, invoice, isBarrel) {
+        window.shareSingle = function(code, category, desc, mrp, disc, invoice, isBarrel) {
             let message = '';
             if (isBarrel) {
                 message = `*Auto Lube House - Sales Barrel Price*\n\n`;
@@ -1519,6 +1538,7 @@
             } else {
                 message = `*Auto Lube House - Sales Small Pack Price*\n\n`;
                 message += `*Code:* ${code}\n`;
+                if (category && String(category).trim() !== '') message += `*Category:* ${category}\n`;
                 message += `*Item:* ${desc}\n`;
                 message += `*MRP/Pc:* ₹${mrp}\n`;
                 if (disc && String(disc).trim() !== '' && String(disc) !== '0') message += `*Disc/L:* ${disc}\n`;
@@ -1556,6 +1576,7 @@
                 groups.salesSmall.forEach((item, i) => {
                     message += `\n*${i + 1}. ${item.desc}*\n`;
                     message += `Code: ${item.code}\n`;
+                    if (item.category && String(item.category).trim() !== '') message += `Category: ${item.category}\n`;
                     message += `MRP/Pc: ₹${item.mrp}\n`;
                     if (item.disc && String(item.disc).trim() !== '' && String(item.disc) !== '0') message += `Disc/L: ${item.disc}\n`;
                     message += `Invoice: ₹${item.invoice}\n`;
@@ -1615,7 +1636,6 @@
 
         // ================================================================
         // SHARED SEARCH SCRIPT (used in all downloaded HTML files)
-        // Adds: Clear (✕) button + auto-select on suggestion click
         // ================================================================
         function getSearchScript() {
             return `
@@ -1623,7 +1643,12 @@
     const autocompleteList = document.getElementById('autocomplete-list');
     const searchClearBtn = document.getElementById('searchClearBtn');
     const searchableData = tableRows.map(row => {
-        return { code: row.querySelector('.mat-code').innerText, desc: row.querySelector('.mat-desc').innerText, rowElement: row };
+        return {
+            code: row.querySelector('.mat-code').innerText,
+            category: row.querySelector('.mat-category') ? row.querySelector('.mat-category').innerText : '',
+            desc: row.querySelector('.mat-desc').innerText,
+            rowElement: row
+        };
     });
 
     function updateSearchClearBtn() {
@@ -1640,16 +1665,15 @@
         tableRows.forEach(row => {
             const code = row.querySelector('.mat-code').innerText.toLowerCase();
             const desc = row.querySelector('.mat-desc').innerText.toLowerCase();
-            row.classList.toggle('hidden-row', !(code.includes(term) || desc.includes(term)));
+            const cat = row.querySelector('.mat-category') ? row.querySelector('.mat-category').innerText.toLowerCase() : '';
+            row.classList.toggle('hidden-row', !(code.includes(term) || desc.includes(term) || cat.includes(term)));
         });
     }
     function closeAllLists() { autocompleteList.innerHTML = ''; autocompleteList.style.display = 'none'; }
 
     function selectRowByElement(rowElement, isAutoSearch) {
         if (!rowElement) return;
-        // Remove hidden class so row is visible
         rowElement.classList.remove('hidden-row');
-        // Tick checkbox
         const cb = rowElement.querySelector('.row-select');
         if (cb) {
             cb.checked = true;
@@ -1658,10 +1682,8 @@
                 rowElement.classList.add('row-search-selected');
             }
         }
-        // Update whatever selection logic this page uses
         if (typeof updateSelection === 'function') updateSelection();
         if (typeof updateSelectedTotal === 'function') updateSelectedTotal();
-        // Scroll into view (smooth, centered)
         rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -1671,21 +1693,25 @@
         updateSearchClearBtn();
         filterTable(val);
         if (!val) return;
-        const matches = searchableData.filter(item => item.code.toLowerCase().includes(val) || item.desc.toLowerCase().includes(val));
+        const matches = searchableData.filter(item =>
+            item.code.toLowerCase().includes(val) ||
+            item.desc.toLowerCase().includes(val) ||
+            (item.category && item.category.toLowerCase().includes(val))
+        );
         if (matches.length > 0) {
             autocompleteList.style.display = 'block';
             matches.slice(0, 30).forEach(match => {
                 const div = document.createElement('div');
-                let codeHTML = match.code, descHTML = match.desc;
+                let codeHTML = match.code, descHTML = match.desc, catHTML = match.category;
                 if (match.code.toLowerCase().includes(val)) codeHTML = match.code.replace(new RegExp(\`(\${val})\`, 'gi'), '<strong>$1</strong>');
                 if (match.desc.toLowerCase().includes(val)) descHTML = match.desc.replace(new RegExp(\`(\${val})\`, 'gi'), '<strong>$1</strong>');
-                div.innerHTML = \`<span>\${codeHTML}</span> <span style="color:#5a7a9a; font-size:12px;">\${descHTML}</span>\`;
+                if (match.category && match.category.toLowerCase().includes(val)) catHTML = match.category.replace(new RegExp(\`(\${val})\`, 'gi'), '<strong>$1</strong>');
+                div.innerHTML = \`<span>\${codeHTML}</span> \${catHTML ? '<span style="color:#8e44ad; font-size:11px; font-weight:600;">' + catHTML + '</span>' : ''} <span style="color:#5a7a9a; font-size:12px;">\${descHTML}</span>\`;
                 div.onclick = function() {
                     searchInput.value = match.code + ' - ' + match.desc;
                     filterTable(match.code);
                     closeAllLists();
                     updateSearchClearBtn();
-                    // AUTO-SELECT the clicked product
                     selectRowByElement(match.rowElement, true);
                 };
                 autocompleteList.appendChild(div);
@@ -1714,22 +1740,24 @@
         }
 
         // ================================================================
-        // BUILD SALES HTML
+        // BUILD SALES SMALL PACK HTML (with Category)
         // ================================================================
         function buildSalesSmallHTML() {
             let rowsHtml = '';
             salesSmallData.forEach((row, idx) => {
                 const safeDesc = String(row.desc).replace(/'/g, "\\'");
                 const safeCode = String(row.code).replace(/'/g, "\\'");
+                const safeCat = String(row.category || '').replace(/'/g, "\\'");
                 rowsHtml += `
             <tr data-index="${idx}">
                 <td class="select-col"><input type="checkbox" class="row-select" data-index="${idx}"></td>
                 <td class="mat-code">${row.code}</td>
+                <td class="mat-category category-cell">${row.category || ''}</td>
                 <td class="mat-desc mat-desc-cell">${row.desc}</td>
                 <td>${row.mrp}</td>
                 <td>${row.disc}</td>
                 <td>${row.invoice}</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeCat}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', false)">Share</button></td>
             </tr>`;
             });
             salesSmallHTML = `<!DOCTYPE html>
@@ -1745,30 +1773,10 @@
     .search-container { position: relative; margin-bottom: 25px; max-width: 550px; }
     #searchInput { width: 100%; padding: 14px 46px 14px 18px; font-size: 16px; border: 2px solid #cbdae9; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
     #searchInput:focus { border-color: #2c7be5; box-shadow: 0 0 0 3px rgba(44,123,229,0.15); }
-    #searchClearBtn {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: #e2e8f0;
-        color: #475569;
-        border: none;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        line-height: 1;
-        transition: background 0.2s;
-    }
+    #searchClearBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; background: #e2e8f0; color: #475569; border: none; font-size: 14px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; line-height: 1; transition: background 0.2s; }
     #searchClearBtn:hover { background: #cbd5e1; color: #1e293b; }
     .autocomplete-items { position: absolute; border: 1px solid #d4e0ec; border-radius: 12px; z-index: 99; top: 100%; left: 0; right: 0; max-height: 260px; overflow-y: auto; background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; margin-top: 6px; }
-    .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #eef3f9; display: flex; justify-content: space-between; align-items: center; }
+    .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #eef3f9; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .autocomplete-items div:last-child { border-bottom: none; }
     .autocomplete-items div:hover { background-color: #eef6fe; }
     .autocomplete-items div strong { font-weight: 700; color: #2c7be5; }
@@ -1779,6 +1787,7 @@
     tr:nth-child(even) { background-color: #f9fcff; }
     tr:hover { background-color: #eef6fe; }
     td.mat-desc-cell, th.mat-desc-cell { white-space: normal; min-width: 220px; max-width: 380px; word-break: break-word; }
+    td.category-cell, th.category-cell { white-space: normal; min-width: 110px; max-width: 200px; word-break: break-word; font-size: 12px; color: #4a5f75; font-weight: 600; }
     .category-header { background-color: #d4e6ff; font-weight: 700; text-transform: uppercase; color: #1a4b8c; }
     .hidden-row { display: none; }
     .wa-share-btn { background-color: #25D366; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 11px; font-weight: 700; transition: background 0.2s; white-space: nowrap; }
@@ -1809,7 +1818,7 @@
 <div class="container">
 <h2>📋 Auto Lube House - Sales Small Pack Price List</h2>
 <div class="search-container">
-    <input type="text" id="searchInput" placeholder="🔍 Search ..." autocomplete="off">
+    <input type="text" id="searchInput" placeholder="🔍 Search by code, category or description..." autocomplete="off">
     <button id="searchClearBtn" title="Clear search">✕</button>
     <div id="autocomplete-list" class="autocomplete-items"></div>
 </div>
@@ -1820,6 +1829,7 @@
         <tr>
             <th class="select-col"><input type="checkbox" id="selectAllTop"></th>
             <th>Mat code</th>
+            <th class="category-cell">Category</th>
             <th class="mat-desc-cell">Mat Description</th>
             <th>MRP/Pc</th>
             <th>Disc/L</th>
@@ -1829,7 +1839,7 @@
     </thead>
     <tbody>
         <tr class="category-header">
-            <td colspan="7">AUTO LUBE HOUSE - SALES SMALL PACK PRICE LIST</td>
+            <td colspan="8">AUTO LUBE HOUSE - SALES SMALL PACK PRICE LIST</td>
         </tr>
 ${rowsHtml}
     </tbody>
@@ -1853,9 +1863,10 @@ ${rowsHtml}
 <script>
     const rowsData = ${JSON.stringify(salesSmallData)};
 
-    function shareSingle(code, desc, mrp, disc, invoice, isBarrel) {
+    function shareSingle(code, category, desc, mrp, disc, invoice, isBarrel) {
         let message = \`*Auto Lube House - Sales Small Pack Price*\\n\\n\`;
         message += \`*Code:* \${code}\\n\`;
+        if (category && String(category).trim() !== '') message += \`*Category:* \${category}\\n\`;
         message += \`*Item:* \${desc}\\n\`;
         message += \`*MRP/Pc:* ₹\${mrp}\\n\`;
         if(disc && String(disc).trim() !== '' && String(disc) !== '0') message += \`*Disc/L:* \${disc}\\n\`;
@@ -1927,6 +1938,7 @@ ${rowsHtml}
         selected.forEach((item, i) => {
             message += \`\\n*\${i+1}. \${item.desc}*\\n\`;
             message += \`Code: \${item.code}\\n\`;
+            if (item.category) message += \`Category: \${item.category}\\n\`;
             message += \`MRP/Pc: ₹\${item.mrp}\\n\`;
             if(item.disc && String(item.disc).trim() !== '' && String(item.disc) !== '0') message += \`Disc/L: \${item.disc}\\n\`;
             message += \`Invoice: ₹\${item.invoice}\\n\`;
@@ -1955,6 +1967,9 @@ ${getSearchScript()}
 </html>`;
         }
 
+        // ================================================================
+        // BUILD SALES BARREL HTML (unchanged - no category)
+        // ================================================================
         function buildSalesBarrelHTML() {
             let rowsHtml = '';
             salesBarrelData.forEach((row, idx) => {
@@ -1967,7 +1982,7 @@ ${getSearchScript()}
                 <td class="mat-desc mat-desc-cell">${row.desc}</td>
                 <td>${row.disc}</td>
                 <td>${row.invoice}</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '', '${safeDesc}', '${row.mrp}', '${row.disc}', '${row.invoice}', true)">Share</button></td>
             </tr>`;
             });
             salesBarrelHTML = `<!DOCTYPE html>
@@ -1983,27 +1998,7 @@ ${getSearchScript()}
     .search-container { position: relative; margin-bottom: 25px; max-width: 550px; }
     #searchInput { width: 100%; padding: 14px 46px 14px 18px; font-size: 16px; border: 2px solid #f0c99e; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
     #searchInput:focus { border-color: #e67e22; box-shadow: 0 0 0 3px rgba(230,126,34,0.15); }
-    #searchClearBtn {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: #fae8d6;
-        color: #8b4e0e;
-        border: none;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        line-height: 1;
-        transition: background 0.2s;
-    }
+    #searchClearBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; background: #fae8d6; color: #8b4e0e; border: none; font-size: 14px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; line-height: 1; transition: background 0.2s; }
     #searchClearBtn:hover { background: #f0c99e; }
     .autocomplete-items { position: absolute; border: 1px solid #f0d5b8; border-radius: 12px; z-index: 99; top: 100%; left: 0; right: 0; max-height: 260px; overflow-y: auto; background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; margin-top: 6px; }
     .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #fae8d6; display: flex; justify-content: space-between; align-items: center; }
@@ -2047,7 +2042,7 @@ ${getSearchScript()}
 <div class="container">
 <h2>🛢️ Auto Lube House - Sales Barrel Price List</h2>
 <div class="search-container">
-    <input type="text" id="searchInput" placeholder="🔍 Search ..." autocomplete="off">
+    <input type="text" id="searchInput" placeholder="🔍 Search by code or description..." autocomplete="off">
     <button id="searchClearBtn" title="Clear search">✕</button>
     <div id="autocomplete-list" class="autocomplete-items"></div>
 </div>
@@ -2090,7 +2085,7 @@ ${rowsHtml}
 <script>
     const rowsData = ${JSON.stringify(salesBarrelData)};
 
-    function shareSingle(code, desc, mrp, disc, invoice, isBarrel) {
+    function shareSingle(code, category, desc, mrp, disc, invoice, isBarrel) {
         let message = \`*Auto Lube House - Sales Barrel Price*\\n\\n\`;
         message += \`*Code:* \${code}\\n\`;
         message += \`*Item:* \${desc}\\n\`;
@@ -2206,7 +2201,7 @@ ${getSearchScript()}
                 <td class="row-total">${row.total}</td>
                 <td><input type="number" class="qty-input" data-index="${idx}" value="1" min="0" step="1"></td>
                 <td class="amount-cell row-amount">${row.total}</td>
-                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '${safeDesc}', '${row.total}')">Share</button></td>
+                <td><button class="wa-share-btn" onclick="shareSingle('${safeCode}', '', '${safeDesc}', '${row.total}')">Share</button></td>
             </tr>`;
             });
 
@@ -2273,27 +2268,7 @@ ${getSearchScript()}
     .search-container { position: relative; margin-bottom: 25px; max-width: 550px; }
     #searchInput { width: 100%; padding: 14px 46px 14px 18px; font-size: 16px; border: 2px solid #cbdae9; border-radius: 40px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
     #searchInput:focus { border-color: ${accentColor}; box-shadow: 0 0 0 3px ${accentLight}; }
-    #searchClearBtn {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: #e2e8f0;
-        color: #475569;
-        border: none;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        line-height: 1;
-        transition: background 0.2s;
-    }
+    #searchClearBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; background: #e2e8f0; color: #475569; border: none; font-size: 14px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; line-height: 1; transition: background 0.2s; }
     #searchClearBtn:hover { background: #cbd5e1; color: #1e293b; }
     .autocomplete-items { position: absolute; border: 1px solid #d4e0ec; border-radius: 12px; z-index: 99; top: 100%; left: 0; right: 0; max-height: 260px; overflow-y: auto; background-color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; margin-top: 6px; }
     .autocomplete-items div { padding: 12px 16px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #eef3f9; display: flex; justify-content: space-between; align-items: center; }
@@ -2336,37 +2311,12 @@ ${getSearchScript()}
     #showSelectedBtn { background-color: #0f766e; }
     #showSelectedBtn:hover { background-color: #0b5d56; }
     #showSelectedBtn .share-count { position: absolute; top: -4px; right: -4px; background: #e74c3c; color: #fff; font-size: 12px; font-weight: 700; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
-    .qty-input {
-        width: 70px;
-        padding: 5px 7px;
-        font-size: 13px;
-        font-weight: 600;
-        text-align: center;
-        border: 2px solid #cbdae9;
-        border-radius: 6px;
-        outline: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
-        background: #fff;
-        color: #1e3c5a;
-    }
+    .qty-input { width: 70px; padding: 5px 7px; font-size: 13px; font-weight: 600; text-align: center; border: 2px solid #cbdae9; border-radius: 6px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; color: #1e3c5a; }
     .qty-input:focus { border-color: ${accentColor}; box-shadow: 0 0 0 3px ${accentLight}; }
     .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .qty-input[type=number] { -moz-appearance: textfield; }
     .amount-cell { font-weight: 700; color: #16a085; }
-    .selected-total-banner {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 18px;
-        background: linear-gradient(135deg, #f3e8ff 0%, #e8f8f4 100%);
-        border: 2px solid #c9b8e8;
-        border-radius: 10px;
-        margin-top: 12px;
-        font-size: 15px;
-        font-weight: 700;
-        color: #4a2b7a;
-        flex-wrap: wrap;
-    }
+    .selected-total-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: linear-gradient(135deg, #f3e8ff 0%, #e8f8f4 100%); border: 2px solid #c9b8e8; border-radius: 10px; margin-top: 12px; font-size: 15px; font-weight: 700; color: #4a2b7a; flex-wrap: wrap; }
     .selected-total-banner .total-label { font-size: 14px; color: ${accentDark}; font-weight: 600; }
     .selected-total-banner .total-value { font-size: 20px; font-weight: 800; color: #16a085; background: #fff; padding: 4px 14px; border-radius: 8px; border: 2px solid #16a085; }
     .selected-total-banner .items-count { font-size: 13px; color: ${accentDark}; font-weight: 600; background: #fff; padding: 4px 12px; border-radius: 8px; border: 1px solid #c9b8e8; }
@@ -2483,7 +2433,7 @@ ${rowsHtml}
 <script>
     const rowsData = ${JSON.stringify(data)};
 
-    function shareSingle(code, desc, total) {
+    function shareSingle(code, category, desc, total) {
         let message = \`*Auto Lube House - ${title}*\\n\\n\`;
         message += \`*Product Code:* \${code}\\n\`;
         message += \`*Product Name:* \${desc}\\n\`;
