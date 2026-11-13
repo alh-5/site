@@ -877,6 +877,28 @@
             background-color: #e74c3c;
             color: white;
         }
+
+        /* Profit/Loss Hint */
+        .profit-loss-hint {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .hint-profit {
+            background-color: #d5f5e3;
+            color: #1e8449;
+        }
+        .hint-loss {
+            background-color: #fadbd8;
+            color: #b03a2e;
+        }
+        .hint-neutral {
+            background-color: #f2f3f4;
+            color: #7f8c8d;
+        }
         
         @media (max-width: 1200px) {
             .import-section {
@@ -1302,7 +1324,7 @@
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
         
-        // Initialize mapping tables
+        // Initialize mapping tables with EXACT header names as defaults
         function initMappingTables() {
             const requiredFields = [
                 { field: 'SKU Code', description: 'Unique identifier for the product' },
@@ -1649,16 +1671,17 @@
             });
         }
         
-        // Auto-map columns based on header names
+        // Auto-map columns based on EXACT header names
         function autoMapColumns(type, headers) {
-            const mappingSuggestions = {
-                'SKU Code': ['sku', 'code', 'product code', 'item code', 'sku code', 'product id', 'item id'],
-                'SKU Name': ['name', 'product', 'item', 'description', 'sku name', 'product name', 'item name'],
-                'UOM': ['uom', 'unit', 'unit of measure', 'measure', 'unit type', 'packing'],
-                'Invoice Date': ['date', 'invoice date', 'date of invoice', 'transaction date', 'order date'],
-                'Quantity (Numbers)': ['quantity', 'qty', 'amount', 'number', 'units', 'count', 'total quantity'],
-                'Invoice Value (Rs.)': ['value', 'amount', 'price', 'total', 'invoice value', 'cost', 'invoice amount', 'total amount']
-            };
+            // Exact required field names
+            const requiredFields = [
+                'SKU Code',
+                'SKU Name',
+                'UOM',
+                'Invoice Date',
+                'Quantity (Numbers)',
+                'Invoice Value (Rs.)'
+            ];
             
             // Reset mapping for the type
             if (type === 'sales') {
@@ -1681,32 +1704,65 @@
                 };
             }
             
-            // For each required field, find the best matching header
-            Object.keys(mappingSuggestions).forEach(field => {
-                const possibleNames = mappingSuggestions[field];
+            // Try to map each required field to an exact header match
+            requiredFields.forEach(field => {
+                // Look for exact match first
+                let matchedHeader = headers.find(header => header === field);
                 
-                for (const header of headers) {
-                    const headerLower = header.toLowerCase();
-                    
-                    for (const possibleName of possibleNames) {
-                        if (headerLower.includes(possibleName)) {
-                            // Found a match
-                            if (type === 'sales') {
-                                salesMapping[field] = header;
-                                const select = document.getElementById(`sales-map-${field.replace(/\s+/g, '-')}`);
-                                if (select) select.value = header;
-                            } else {
-                                purchaseMapping[field] = header;
-                                const select = document.getElementById(`purchase-map-${field.replace(/\s+/g, '-')}`);
-                                if (select) select.value = header;
-                            }
-                            break;
-                        }
+                // If no exact match, try case-insensitive match
+                if (!matchedHeader) {
+                    matchedHeader = headers.find(header => 
+                        header.toLowerCase() === field.toLowerCase()
+                    );
+                }
+                
+                // If still no match, try common variations for UOM
+                if (!matchedHeader && field === 'UOM') {
+                    matchedHeader = headers.find(header => {
+                        const h = header.toLowerCase();
+                        return h === 'uom' || h === 'uom code' || h === 'unit' || h === 'unit of measure';
+                    });
+                }
+                
+                // If still no match, try common variations for Quantity
+                if (!matchedHeader && field === 'Quantity (Numbers)') {
+                    matchedHeader = headers.find(header => {
+                        const h = header.toLowerCase();
+                        return h === 'quantity' || h === 'qty' || h === 'quantity (numbers)' || h === 'numbers';
+                    });
+                }
+                
+                // If still no match, try common variations for Invoice Value
+                if (!matchedHeader && field === 'Invoice Value (Rs.)') {
+                    matchedHeader = headers.find(header => {
+                        const h = header.toLowerCase();
+                        return h === 'invoice value' || h === 'invoice value (rs.)' || h === 'value' || h === 'amount';
+                    });
+                }
+                
+                // If still no match, try common variations for Invoice Date
+                if (!matchedHeader && field === 'Invoice Date') {
+                    matchedHeader = headers.find(header => {
+                        const h = header.toLowerCase();
+                        return h === 'invoice date' || h === 'date' || h === 'transaction date';
+                    });
+                }
+                
+                if (matchedHeader) {
+                    if (type === 'sales') {
+                        salesMapping[field] = matchedHeader;
+                        const select = document.getElementById(`sales-map-${field.replace(/\s+/g, '-')}`);
+                        if (select) select.value = matchedHeader;
+                    } else {
+                        purchaseMapping[field] = matchedHeader;
+                        const select = document.getElementById(`purchase-map-${field.replace(/\s+/g, '-')}`);
+                        if (select) select.value = matchedHeader;
                     }
-                    
-                    if ((type === 'sales' && salesMapping[field]) || (type === 'purchase' && purchaseMapping[field])) break;
                 }
             });
+            
+            // Log the mappings for debugging
+            console.log(`${type.toUpperCase()} Mappings:`, type === 'sales' ? salesMapping : purchaseMapping);
         }
         
         // Process and compare data - FIXED VERSION with proper SKU code summation
@@ -2236,6 +2292,17 @@
                 if (item.salesTransactionCount > 1 || item.purchaseTransactionCount > 1) {
                     transactionIndicator = `<span title="${item.salesTransactionCount} sales transactions, ${item.purchaseTransactionCount} purchase transactions" style="font-size: 11px; color: #666;"> (S:${item.salesTransactionCount}/P:${item.purchaseTransactionCount})</span>`;
                 }
+
+                // --- NEW: Profit/Loss hint ---
+                let profitLossHint = '';
+                const totalProfit = item.totalProfit;
+                if (totalProfit > 0) {
+                    profitLossHint = `<span class="profit-loss-hint hint-profit">Profit: Rs. ${totalProfit.toFixed(2)}</span>`;
+                } else if (totalProfit < 0) {
+                    profitLossHint = `<span class="profit-loss-hint hint-loss">Loss: Rs. ${Math.abs(totalProfit).toFixed(2)}</span>`;
+                } else {
+                    profitLossHint = `<span class="profit-loss-hint hint-neutral">Break-even</span>`;
+                }
                 
                 tr.innerHTML = `
                     <td class="sku-code">${item.skuCode}${amountChangeIndicator}${transactionIndicator}</td>
@@ -2267,7 +2334,7 @@
                     <td>${item.totalPurchaseQuantity > 0 ? item.totalPurchaseQuantity.toFixed(0) : '--'}</td>
                     <td>${item.totalSalesValue > 0 ? 'Rs. ' + item.totalSalesValue.toFixed(2) : '--'}</td>
                     <td>${item.totalPurchaseValue > 0 ? 'Rs. ' + item.totalPurchaseValue.toFixed(2) : '--'}</td>
-                    <td class="profit-amount ${totalProfitClass}">${item.totalProfit !== 0 ? 'Rs. ' + item.totalProfit.toFixed(2) : 'Rs. 0.00'}</td>
+                    <td class="profit-amount ${totalProfitClass}">${item.totalProfit !== 0 ? 'Rs. ' + item.totalProfit.toFixed(2) + profitLossHint : 'Rs. 0.00' + profitLossHint}</td>
                     <td><span class="profit-margin ${totalMarginClass}">${item.totalProfitMargin.toFixed(2)}%</span></td>
                 `;
                 
@@ -2294,12 +2361,6 @@
             let countWithPurchase = 0;
             let countWithBoth = 0;
             
-            // Also calculate average change amounts
-            let totalSalesChange = 0;
-            let totalPurchaseChange = 0;
-            let countWithSalesChanges = 0;
-            let countWithPurchaseChanges = 0;
-            
             comparisonData.forEach(item => {
                 if (item.salesPerUnit > 0) {
                     totalSalesPerUnit += item.salesPerUnit;
@@ -2316,16 +2377,6 @@
                     totalPerUnitMargin += item.perUnitMargin;
                     countWithBoth++;
                 }
-                
-                if (Math.abs(item.salesChangeAmount) > 0.01) {
-                    totalSalesChange += item.salesChangeAmount;
-                    countWithSalesChanges++;
-                }
-                
-                if (Math.abs(item.purchaseChangeAmount) > 0.01) {
-                    totalPurchaseChange += item.purchaseChangeAmount;
-                    countWithPurchaseChanges++;
-                }
             });
             
             const avgSales = countWithSales > 0 ? totalSalesPerUnit / countWithSales : 0;
@@ -2339,10 +2390,6 @@
             avgPerUnitProfit.textContent = `Rs. ${avgPerUnitProf.toFixed(2)}`;
             avgPerUnitProfit.className = avgPerUnitProf >= 0 ? 'value positive-value' : 'value negative-value';
             avgPerUnitMargin.textContent = `${avgPerUnitMarg.toFixed(2)}%`;
-            
-            // Log change amounts for debugging
-            console.log(`Average sales change: ${countWithSalesChanges > 0 ? totalSalesChange / countWithSalesChanges : 0}`);
-            console.log(`Average purchase change: ${countWithPurchaseChanges > 0 ? totalPurchaseChange / countWithPurchaseChanges : 0}`);
         }
         
         // Update charts
@@ -2567,6 +2614,7 @@
         
         // Highlight matching text in suggestions
         function highlightMatch(text, searchTerm) {
+            if (!text) return '';
             if (!searchTerm) return text;
             
             const regex = new RegExp(`(${searchTerm})`, 'gi');
