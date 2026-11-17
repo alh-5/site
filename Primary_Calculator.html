@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primary Calculator - ALH Purchase System</title>
+    <title>Primary Calculator - ALH Purchase System (Auto‑Load)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -55,14 +55,7 @@
         .results-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 0.8rem; table-layout: auto; }
         .results-table th { background: linear-gradient(135deg, #2c3e50, #4a6491); color: white; padding: 10px 6px; white-space: nowrap; }
         .results-table td { padding: 10px 6px; border-bottom: 1px solid #eaeaea; vertical-align: top; }
-        /* SKU Name column - wrap text and allow full display */
-        .results-table td:nth-child(7) { 
-            white-space: normal; 
-            word-wrap: break-word; 
-            word-break: break-word;
-            max-width: 220px;
-            min-width: 150px;
-        }
+        .results-table td:nth-child(7) { white-space: normal; word-wrap: break-word; word-break: break-word; max-width: 220px; min-width: 150px; }
         .results-table tr:nth-child(even) { background-color: #f8fafc; }
         .results-table tr:hover { background-color: #f1f5f9; }
         .highlight { background-color: #fff9e6 !important; font-weight: 600; }
@@ -93,12 +86,14 @@
         .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; }
         @keyframes slideDown { from { top: -100px; opacity: 0; } to { top: 20px; opacity: 1; } }
         @media (max-width: 768px) { .main-content { flex-direction: column; } .quadruple-input { flex-direction: column; gap: 15px; } .table-controls { flex-direction: column; } .search-container { width: 100%; } .search-input { flex: 1; } }
+        .auto-load-badge { font-size: 0.7rem; background: #27ae60; color: white; padding: 2px 8px; border-radius: 12px; margin-left: 10px; }
+        .loading-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; }
     </style>
 </head>
 <body>
     <div class="alh-logo-container"><div class="alh-logo" title="ALH Purchase System">ALH</div></div>
     <div class="container">
-        <header><h1><i class="fas fa-boxes"></i> Primary Calculator</h1><p>Calculate Purchase in real-time with Order Tracking</p></header>
+        <header><h1><i class="fas fa-boxes"></i> Primary Calculator <span class="auto-load-badge" id="autoBadge">AUTO‑LOAD</span></h1><p>Calculate Purchase in real-time with Order Tracking</p></header>
         <div class="main-content">
             <div class="left-panel">
                 <div class="import-section">
@@ -112,6 +107,11 @@
                     </div>
                     <div id="importError" class="error-message"></div>
                     <div id="importSuccess" class="success-message"></div>
+                    <div style="margin-top: 12px; font-size: 0.8rem; color: #2e7d32; background: #e8f5e9; padding: 8px; border-radius: 6px;">
+                        <i class="fas fa-cloud-download-alt"></i> Auto‑loading from: 
+                        <a href="https://alh-5.github.io/site/Advance%20Stock/UOM.xlsx" target="_blank" style="color: #1e4b8a;">UOM.xlsx</a> and 
+                        <a href="https://alh-5.github.io/site/Updation/Purchase_Updation.xlsx" target="_blank" style="color: #1e4b8a;">Purchase_Updation.xlsx</a>
+                    </div>
                 </div>
                 <div class="sku-input-section">
                     <h2 class="section-title"><i class="fas fa-calculator"></i> Enter SKU Details</h2>
@@ -156,6 +156,10 @@
         let isSearchActive = false;
         let currentSearchTerm = '';
         
+        // URLs for auto‑load
+        const UOM_URL = "https://alh-5.github.io/site/Advance%20Stock/UOM.xlsx";
+        const PURCHASE_URL = "https://alh-5.github.io/site/Updation/Purchase_Updation.xlsx";
+        
         // DOM elements
         const dateInput = document.getElementById('dateInput');
         const locationInput = document.getElementById('locationInput');
@@ -196,6 +200,7 @@
         const totalQuantityEl = document.getElementById('totalQuantity');
         const totalLitersEl = document.getElementById('totalLiters');
         const totalAmountSumEl = document.getElementById('totalAmountSum');
+        const autoBadge = document.getElementById('autoBadge');
         
         const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         
@@ -217,10 +222,10 @@
         
         function showNotification(msg, type) {
             const n = document.createElement('div');
-            n.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:8px;font-weight:600;z-index:10000;background:${type==='success'?'#2ecc71':type==='warning'?'#e67e22':'#3498db'};color:white;animation:slideDown 0.3s ease;box-shadow:0 5px 20px rgba(0,0,0,0.2);`;
+            n.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:8px;font-weight:600;z-index:10000;background:${type==='success'?'#2ecc71':type==='warning'?'#e67e22':type==='info'?'#3498db':'#e74c3c'};color:white;animation:slideDown 0.3s ease;box-shadow:0 5px 20px rgba(0,0,0,0.2);`;
             n.textContent = msg;
             document.body.appendChild(n);
-            setTimeout(() => n.remove(), 3000);
+            setTimeout(() => n.remove(), 4000);
         }
         
         priceOption.addEventListener('change', function() {
@@ -238,7 +243,7 @@
             totalAmountInput.value = "";
             perCaseAmountInput.value = "";
             skuCodeInput.value = "";
-            seedNumberInput.value = "";  // Clear MRP field
+            seedNumberInput.value = "";
             skuCodeInput.focus();
         }
         
@@ -254,15 +259,16 @@
         
         function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
         
-        function processFileData(fileData) {
+        // Unified process for UOM data (arrayBuffer -> SKUs)
+        function processUOMData(arrayBuffer) {
             try {
-                const workbook = XLSX.read(new Uint8Array(fileData), { type: 'array' });
+                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
                 const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
                 let newSKUs = [];
                 for (let i = 0; i < json.length; i++) {
                     const row = json[i];
-                    if (row && row.length >= 3 && i > 0) { // Skip header row
+                    if (row && row.length >= 3 && i > 0) {
                         const code = row[0]?.toString().trim();
                         const name = row[1]?.toString().trim();
                         const uom = parseFloat(row[2]);
@@ -280,11 +286,13 @@
                 importSuccess.style.display = 'block';
                 importError.style.display = 'none';
                 showNotification(`Imported ${newSKUs.length} SKUs`, 'success');
+                return true;
             } catch (e) {
                 importError.textContent = `Error: ${e.message}`;
                 importError.style.display = 'block';
                 importSuccess.style.display = 'none';
                 showNotification(e.message, 'warning');
+                return false;
             }
         }
         
@@ -297,12 +305,11 @@
             const reader = new FileReader();
             reader.onload = ev => {
                 currentFileData = ev.target.result;
-                processFileData(currentFileData);
+                processUOMData(currentFileData);
             };
             reader.readAsArrayBuffer(file);
         });
         
-        // Fixed download sample button
         const downloadSampleBtn = document.getElementById('downloadSampleBtn');
         if (downloadSampleBtn) {
             downloadSampleBtn.addEventListener('click', function() {
@@ -335,7 +342,10 @@
         
         saveDataBtn.onclick = () => { saveSKUDataToStorage(); saveResultsToStorage(); showNotification('All data saved!', 'success'); };
         loadDataBtn.onclick = () => { loadDataFromStorage(); };
-        refreshBtn.onclick = () => { if (currentFileData) processFileData(currentFileData); else showNotification('Please import a UOM file first', 'warning'); };
+        refreshBtn.onclick = () => { 
+            // Force reload UOM from URL
+            fetchAndLoadUOM(false);
+        };
         
         function updateOrdersSummary() {
             if (!filteredResults.length) { ordersList.innerHTML = '<p class="empty-message">No orders yet</p>'; return; }
@@ -408,7 +418,6 @@
             showNotification('SKU added successfully', 'success');
         };
         
-        // Update results table with FULL SKU NAME display (no truncation, text wraps)
         function updateResultsTable() {
             if (!filteredResults.length) {
                 resultsBody.innerHTML = '<tr><td colspan="13" class="empty-message">No results. Add SKU items above.</td></tr>';
@@ -524,7 +533,73 @@
         }
         window.onclick = e => { if (e.target === document.getElementById('importResultsModal')) closeImportModal(); };
         
-        // Fixed process results file - using button click instead of inline onclick
+        // Process purchase import – shared for manual and auto
+        function processPurchaseData(arrayBuffer) {
+            try {
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                
+                let count = 0;
+                for (let i = 1; i < json.length; i++) {
+                    const row = json[i];
+                    if (row && row.length >= 12) {
+                        const inv = String(row[3] || '').trim();
+                        const mrp = String(row[4] || '').trim();
+                        const code = String(row[5] || '').trim();
+                        const name = String(row[6] || '').trim();
+                        const qty = parseFloat(row[7]) || 1;
+                        const uom = parseFloat(row[8]) || 0;
+                        const liters = parseFloat(row[9]) || 0;
+                        const perCase = parseFloat(row[10]) || 0;
+                        const total = parseFloat(row[11]) || 0;
+                        
+                        if (inv && mrp && code && name) {
+                            const key = `${inv}_${mrp}`;
+                            if (!orderCounter[key]) orderCounter[key] = 1;
+                            allResults.push({
+                                orderNumber: orderCounter[key]++,
+                                date: formatDateToDDMMMYYYY(row[1] || new Date()),
+                                location: String(row[2] || 'Guwahati').trim(),
+                                invoice: inv, 
+                                seed: mrp, 
+                                code: code, 
+                                name: name,
+                                quantity: qty, 
+                                uom: uom, 
+                                totalLiters: liters,
+                                perCaseAmount: perCase, 
+                                totalAmount: total,
+                                id: Date.now() + Math.random()
+                            });
+                            count++;
+                        }
+                    }
+                }
+                
+                if (count > 0) {
+                    filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
+                    updateResultsTable(); 
+                    updateSummary(); 
+                    updateOrdersSummary(); 
+                    saveResultsToStorage();
+                    document.getElementById('importResultsSuccess').textContent = `✅ Successfully imported ${count} records`;
+                    document.getElementById('importResultsSuccess').style.display = 'block';
+                    showNotification(`Imported ${count} purchase records`, 'success');
+                    setTimeout(() => closeImportModal(), 1500);
+                    return true;
+                } else {
+                    throw new Error('No valid records found. Please check the file format.');
+                }
+            } catch (e) {
+                document.getElementById('importResultsError').textContent = `Error: ${e.message}`;
+                document.getElementById('importResultsError').style.display = 'block';
+                showNotification(e.message, 'warning');
+                return false;
+            }
+        }
+        
         const processResultsBtn = document.getElementById('processResultsBtn');
         if (processResultsBtn) {
             processResultsBtn.onclick = function() {
@@ -543,67 +618,7 @@
                 
                 const reader = new FileReader();
                 reader.onload = function(ev) {
-                    try {
-                        const data = new Uint8Array(ev.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                        
-                        let count = 0;
-                        for (let i = 1; i < json.length; i++) { // Skip header row
-                            const row = json[i];
-                            if (row && row.length >= 12) {
-                                const inv = String(row[3] || '').trim();
-                                const mrp = String(row[4] || '').trim();
-                                const code = String(row[5] || '').trim();
-                                const name = String(row[6] || '').trim();
-                                const qty = parseFloat(row[7]) || 1;
-                                const uom = parseFloat(row[8]) || 0;
-                                const liters = parseFloat(row[9]) || 0;
-                                const perCase = parseFloat(row[10]) || 0;
-                                const total = parseFloat(row[11]) || 0;
-                                
-                                if (inv && mrp && code && name) {
-                                    const key = `${inv}_${mrp}`;
-                                    if (!orderCounter[key]) orderCounter[key] = 1;
-                                    allResults.push({
-                                        orderNumber: orderCounter[key]++,
-                                        date: formatDateToDDMMMYYYY(row[1] || new Date()),
-                                        location: String(row[2] || 'Guwahati').trim(),
-                                        invoice: inv, 
-                                        seed: mrp, 
-                                        code: code, 
-                                        name: name,
-                                        quantity: qty, 
-                                        uom: uom, 
-                                        totalLiters: liters,
-                                        perCaseAmount: perCase, 
-                                        totalAmount: total,
-                                        id: Date.now() + Math.random()
-                                    });
-                                    count++;
-                                }
-                            }
-                        }
-                        
-                        if (count > 0) {
-                            filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
-                            updateResultsTable(); 
-                            updateSummary(); 
-                            updateOrdersSummary(); 
-                            saveResultsToStorage();
-                            importResultsSuccess.textContent = `✅ Successfully imported ${count} records`;
-                            importResultsSuccess.style.display = 'block';
-                            showNotification(`Imported ${count} purchase records`, 'success');
-                            setTimeout(() => closeImportModal(), 1500);
-                        } else {
-                            throw new Error('No valid records found. Please check the file format.');
-                        }
-                    } catch (e) {
-                        importResultsError.textContent = `Error: ${e.message}`;
-                        importResultsError.style.display = 'block';
-                        showNotification(e.message, 'warning');
-                    }
+                    processPurchaseData(ev.target.result);
                 };
                 reader.onerror = function() {
                     importResultsError.textContent = 'Error reading file';
@@ -613,34 +628,135 @@
             };
         }
         
+        // ----- AUTO LOAD via CORS PROXY (works on GitHub Pages) -----
+        async function fetchFileWithProxy(url) {
+            // 1) Try direct fetch
+            try {
+                const res = await fetch(url, { mode: 'cors' });
+                if (res.ok) {
+                    console.log('Direct fetch succeeded:', url);
+                    return await res.arrayBuffer();
+                }
+            } catch (e) {
+                console.warn('Direct fetch failed, trying proxy:', e.message);
+            }
+            
+            // 2) Try corsproxy.io
+            try {
+                const proxyUrl = 'https://corsproxy.io/?url=' + encodeURIComponent(url);
+                const res = await fetch(proxyUrl);
+                if (res.ok) {
+                    console.log('corsproxy.io succeeded');
+                    return await res.arrayBuffer();
+                }
+            } catch (e) {
+                console.warn('corsproxy.io failed:', e.message);
+            }
+            
+            // 3) Try allorigins.win
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+                const res = await fetch(proxyUrl);
+                if (res.ok) {
+                    console.log('allorigins.win succeeded');
+                    return await res.arrayBuffer();
+                }
+            } catch (e) {
+                console.warn('allorigins.win failed:', e.message);
+            }
+            
+            throw new Error('All fetch attempts failed (CORS / network)');
+        }
+        
+        async function fetchAndLoadUOM(silent = false) {
+            if (!silent) {
+                importSuccess.textContent = '⏳ Loading UOM from source...';
+                importSuccess.style.display = 'block';
+                importError.style.display = 'none';
+                autoBadge.textContent = 'LOADING…';
+                autoBadge.style.background = '#f39c12';
+            }
+            
+            try {
+                const arrayBuffer = await fetchFileWithProxy(UOM_URL);
+                const ok = processUOMData(arrayBuffer);
+                if (ok) {
+                    autoBadge.textContent = 'AUTO‑LOADED';
+                    autoBadge.style.background = '#27ae60';
+                    if (!silent) showNotification('UOM loaded from remote source', 'success');
+                }
+                return ok;
+            } catch (err) {
+                console.error('UOM auto-load failed:', err);
+                autoBadge.textContent = 'OFFLINE';
+                autoBadge.style.background = '#e74c3c';
+                if (!silent) {
+                    importError.textContent = `Auto‑load failed: ${err.message}. Please upload the UOM file manually.`;
+                    importError.style.display = 'block';
+                    importSuccess.style.display = 'none';
+                    showNotification('UOM auto‑load failed – upload manually', 'warning');
+                }
+                return false;
+            }
+        }
+        
+        async function fetchAndLoadPurchase(silent = false) {
+            try {
+                const arrayBuffer = await fetchFileWithProxy(PURCHASE_URL);
+                return processPurchaseData(arrayBuffer);
+            } catch (err) {
+                console.warn('Purchase auto-load failed:', err);
+                if (!silent) showNotification('Purchase auto‑load failed', 'warning');
+                return false;
+            }
+        }
+        
+        // Initial load: storage first, then remote
+        async function autoLoadAll() {
+            // Load local storage first (instant)
+            loadDataFromStorage();
+            
+            // Then fetch UOM from remote
+            const uomOk = await fetchAndLoadUOM(true);
+            
+            // Clear purchase results and reload from remote (if possible)
+            setTimeout(async () => {
+                allResults = [];
+                filteredResults = [];
+                orderCounter = {};
+                await fetchAndLoadPurchase(true);
+                updateResultsTable();
+                updateSummary();
+                updateOrdersSummary();
+                saveResultsToStorage();
+            }, 300);
+        }
+        
+        // Export functions – save as "Purchase_Updation"
         exportBtn.onclick = function() {
             if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
             const data = [["Order #","Date","Location","Invoice","MRP","SKU Code","SKU Name","Quantity","UOM","Total Liters","Per Case ($)","Total ($)"]];
             filteredResults.forEach(r => data.push([r.orderNumber, r.date, r.location, r.invoice, r.seed, r.code, r.name, r.quantity, r.uom.toFixed(2), r.totalLiters.toFixed(2), r.perCaseAmount.toFixed(2), r.totalAmount.toFixed(2)]));
             const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Purchase_Results");
-            XLSX.writeFile(wb, `Purchase_Results_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.xlsx`);
-            showNotification('Exported to Excel', 'success');
+            XLSX.utils.book_append_sheet(wb, ws, "Purchase_Updation");
+            XLSX.writeFile(wb, `Purchase_Updation.xlsx`);
+            showNotification('Exported to Excel (Purchase_Updation.xlsx)', 'success');
         };
         
-        // PDF Export with Portrait Orientation and Summary Displayed
         exportPdfBtn.onclick = function() {
             if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
             
-            // Check if jsPDF is loaded
             if (typeof window.jspdf === 'undefined') {
                 showNotification('PDF library loading. Please try again.', 'warning');
                 return;
             }
             
             const { jsPDF } = window.jspdf;
-            // Set to Portrait orientation (default is portrait, but we explicitly set it)
             const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
             const pageWidth = doc.internal.pageSize.getWidth();
             const margin = 10;
             
-            // Header
             doc.setFontSize(14); doc.setTextColor(44,62,80);
             doc.text('AUTO LUBE HOUSE - PURCHASE REPORT', pageWidth/2, margin+8, { align: 'center' });
             doc.setFontSize(9); doc.setTextColor(100,100,100);
@@ -650,7 +766,6 @@
                 doc.text(`Filtered: ${currentSearchTerm}`, pageWidth/2, margin+19, { align: 'center' }); 
             }
             
-            // Table Headers & Body - For portrait, adjust column widths to fit
             const headers = [['Ord#','Date','Loc','Invoice','MRP','SKU Code','SKU Name','Qty','UOM','Total L','Per Case','Total']];
             const body = filteredResults.map(r => [
                 r.orderNumber, r.date, r.location, r.invoice, r.seed, 
@@ -658,14 +773,12 @@
                 r.totalLiters.toFixed(1), `$${r.perCaseAmount.toFixed(2)}`, `$${r.totalAmount.toFixed(2)}`
             ]);
             
-            // Calculate summary stats
             const totalQty = filteredResults.reduce((s,i)=>s+i.quantity,0);
             const totalLit = filteredResults.reduce((s,i)=>s+i.totalLiters,0);
             const totalAmt = filteredResults.reduce((s,i)=>s+i.totalAmount,0);
             const uniqueOrders = new Set(filteredResults.map(i=>`${i.invoice}_${i.seed}`)).size;
             const summaryText = `Total Items: ${filteredResults.length} | Total Orders: ${uniqueOrders} | Total Qty: ${totalQty} | Total Liters: ${totalLit.toFixed(2)} | Total Amount: $${totalAmt.toFixed(2)}`;
             
-            // AutoTable with column styles optimized for portrait
             if (typeof doc.autoTable === 'function') {
                 doc.autoTable({
                     head: headers,
@@ -675,39 +788,35 @@
                     headStyles: { fillColor: [44,62,80], textColor: [255,255,255], fontSize: 7, halign: 'center', cellPadding: 1 },
                     bodyStyles: { fontSize: 6.5, cellPadding: 1.5, valign: 'top' },
                     columnStyles: { 
-                        0: { cellWidth: 8, halign: 'center' },   // Ord#
-                        1: { cellWidth: 12, halign: 'center' },  // Date
-                        2: { cellWidth: 14, halign: 'center' },  // Location
-                        3: { cellWidth: 16, halign: 'center' },  // Invoice
-                        4: { cellWidth: 12, halign: 'center' },  // MRP
-                        5: { cellWidth: 15, halign: 'center' },  // SKU Code
-                        6: { cellWidth: 40, halign: 'left', cellWrap: true }, // SKU Name - wrapped
-                        7: { cellWidth: 8, halign: 'center' },   // Qty
-                        8: { cellWidth: 10, halign: 'center' },  // UOM
-                        9: { cellWidth: 11, halign: 'center' },  // Total L
-                        10: { cellWidth: 14, halign: 'center' }, // Per Case
-                        11: { cellWidth: 18, halign: 'center' }  // Total
+                        0: { cellWidth: 8, halign: 'center' },
+                        1: { cellWidth: 12, halign: 'center' },
+                        2: { cellWidth: 14, halign: 'center' },
+                        3: { cellWidth: 16, halign: 'center' },
+                        4: { cellWidth: 12, halign: 'center' },
+                        5: { cellWidth: 15, halign: 'center' },
+                        6: { cellWidth: 40, halign: 'left', cellWrap: true },
+                        7: { cellWidth: 8, halign: 'center' },
+                        8: { cellWidth: 10, halign: 'center' },
+                        9: { cellWidth: 11, halign: 'center' },
+                        10: { cellWidth: 14, halign: 'center' },
+                        11: { cellWidth: 18, halign: 'center' }
                     },
                     margin: { left: margin, right: margin },
                     tableWidth: pageWidth - margin*2,
                     didDrawPage: function(data) {
-                        // Page number at bottom
                         doc.setFontSize(7);
                         doc.text(`Page ${data.pageNumber}`, pageWidth/2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
                     }
                 });
                 
-                // Get final Y position after table
                 let finalY = doc.lastAutoTable.finalY + 5;
                 const pageHeight = doc.internal.pageSize.getHeight();
                 
-                // Add summary box - if not enough space, add new page
                 if (finalY + 20 > pageHeight) {
                     doc.addPage();
                     finalY = margin + 10;
                 }
                 
-                // Draw summary box with border and gold accent
                 doc.setFillColor(245, 247, 250);
                 doc.rect(margin, finalY, pageWidth - margin*2, 20, 'F');
                 doc.setDrawColor(212, 175, 55);
@@ -724,15 +833,17 @@
                 return;
             }
             
-            doc.save(`Purchase_Report_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.pdf`);
-            showNotification('PDF exported (portrait) with summary', 'success');
+            doc.save(`Purchase_Updation.pdf`);
+            showNotification('PDF exported as Purchase_Updation.pdf', 'success');
         };
         
-        window.addEventListener('DOMContentLoaded', function() {
+        // Initialize
+        window.addEventListener('DOMContentLoaded', async function() {
             setDefaultDate();
             locationInput.value = "Guwahati";
             loadDataFromStorage();
             updateControlButtons();
+            await autoLoadAll();
         });
     </script>
 </body>

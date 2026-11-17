@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary Calculator - ALH Purchase System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%); padding: 20px; min-height: 100vh; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 20%); z-index: -1; animation: waveMove 20s infinite linear; }
+        @keyframes waveMove { 0% { transform: translate(0, 0); } 25% { transform: translate(-10px, 10px); } 50% { transform: translate(0, 20px); } 75% { transform: translate(10px, 10px); } 100% { transform: translate(0, 0); } }
+        .alh-logo-container { position: fixed; top: 20px; right: 20px; z-index: 1000; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+        .alh-logo { width: 50px; height: 50px; background: linear-gradient(135deg, #D4AF37, #FFD700, #D4AF37); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #1a1a1a; animation: spin 4s linear infinite; box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); cursor: pointer; transition: all 0.3s ease; }
+        .alh-logo:hover { transform: scale(1.1); animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .container { max-width: 1400px; margin: 0 auto; background-color: rgba(255, 255, 255, 0.95); border-radius: 12px; box-shadow: 0 5px 30px rgba(212, 175, 55, 0.3); overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.2); }
+        header { background: linear-gradient(135deg, #2c3e50, #4a6491); color: white; padding: 25px 30px; text-align: center; }
+        header h1 { font-size: 2.2rem; margin-bottom: 8px; }
+        .main-content { display: flex; flex-wrap: wrap; padding: 25px; gap: 25px; }
+        .left-panel { flex: 1; min-width: 350px; }
+        .right-panel { flex: 2; min-width: 500px; }
+        .section-title { font-size: 1.3rem; color: #2c3e50; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid rgba(212, 175, 55, 0.3); display: flex; align-items: center; justify-content: space-between; }
+        .section-title i { margin-right: 10px; color: #3498db; }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .table-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-container { display: flex; gap: 5px; align-items: center; }
+        .search-input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; min-width: 200px; }
+        .btn-search, .btn-sort { background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 6px; padding: 8px 15px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-search:hover, .btn-sort:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.3); }
+        .btn-search.active, .btn-sort.active { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .search-summary { background-color: #e1f5fe; padding: 8px 15px; border-radius: 6px; margin-top: 10px; display: none; font-size: 0.9rem; }
+        .import-section { background-color: rgba(248, 250, 252, 0.9); padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px dashed #cbd5e1; }
+        .file-input-label { display: inline-block; background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 12px 20px; border-radius: 6px; cursor: pointer; text-align: center; width: 100%; transition: all 0.3s; }
+        .file-input-label:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.3); }
+        #fileInput, #resultsFileInput { display: none; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #475569; }
+        .input-group input, .input-group select { width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; background: white; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,0.2); }
+        .quadruple-input { display: flex; gap: 10px; }
+        .quadruple-input .input-group { flex: 1; margin-bottom: 0; }
+        .btn { padding: 12px 24px; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46,204,113,0.3); }
+        .btn-secondary { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .btn-excel { background: linear-gradient(135deg, #217346, #1a5c38); }
+        .btn-pdf { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .btn-gold { background: linear-gradient(135deg, #D4AF37, #FFD700); color: #1a1a1a; }
+        .btn-refresh { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .button-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .button-group .btn { flex: 1; min-width: 140px; }
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 0.8rem; table-layout: auto; }
+        .results-table th { background: linear-gradient(135deg, #2c3e50, #4a6491); color: white; padding: 10px 6px; white-space: nowrap; }
+        .results-table td { padding: 10px 6px; border-bottom: 1px solid #eaeaea; vertical-align: top; }
+        /* SKU Name column - wrap text and allow full display */
+        .results-table td:nth-child(7) { 
+            white-space: normal; 
+            word-wrap: break-word; 
+            word-break: break-word;
+            max-width: 220px;
+            min-width: 150px;
+        }
+        .results-table tr:nth-child(even) { background-color: #f8fafc; }
+        .results-table tr:hover { background-color: #f1f5f9; }
+        .highlight { background-color: #fff9e6 !important; font-weight: 600; }
+        .order-badge, .invoice-badge, .date-badge, .location-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 3px; }
+        .order-badge { background-color: #3498db; color: white; }
+        .invoice-badge { background-color: #9b59b6; color: white; }
+        .date-badge { background-color: #2ecc71; color: white; }
+        .location-badge { background-color: #e67e22; color: white; }
+        .imported-data { margin-top: 30px; max-height: 300px; overflow-y: auto; }
+        .imported-data table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .imported-data th { background-color: #f1f5f9; padding: 8px; text-align: left; position: sticky; top: 0; }
+        .imported-data td { padding: 8px; border-bottom: 1px solid #eaeaea; }
+        .empty-message { text-align: center; padding: 40px 20px; color: #94a3b8; font-style: italic; }
+        .error-message { color: #e74c3c; background-color: #fee; padding: 10px; border-radius: 6px; margin-top: 10px; display: none; }
+        .success-message { color: #27ae60; background-color: #effff4; padding: 10px; border-radius: 6px; margin-top: 10px; display: none; }
+        .summary-section { background: linear-gradient(135deg, #f8fafc, #e2e8f0); padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .summary-items-container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .summary-item { flex: 1; min-width: 110px; padding: 10px; text-align: center; background: white; border-radius: 6px; }
+        .summary-value { font-size: 1.3rem; font-weight: 700; color: #2c3e50; }
+        .orders-summary { margin-top: 25px; background-color: #f8fafc; padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto; }
+        .order-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eaeaea; font-size: 0.8rem; }
+        .order-item:last-child { border-bottom: none; }
+        .calculation-note { font-size: 0.75rem; color: #666; margin-top: 5px; font-style: italic; }
+        footer { text-align: center; padding: 20px; color: #64748b; border-top: 1px solid rgba(212, 175, 55, 0.2); margin-top: 20px; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 10% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; }
+        @keyframes slideDown { from { top: -100px; opacity: 0; } to { top: 20px; opacity: 1; } }
+        @media (max-width: 768px) { .main-content { flex-direction: column; } .quadruple-input { flex-direction: column; gap: 15px; } .table-controls { flex-direction: column; } .search-container { width: 100%; } .search-input { flex: 1; } }
+    </style>
+</head>
+<body>
+    <div class="alh-logo-container"><div class="alh-logo" title="ALH Purchase System">ALH</div></div>
+    <div class="container">
+        <header><h1><i class="fas fa-boxes"></i> Primary Calculator</h1><p>Calculate Purchase in real-time with Order Tracking</p></header>
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="import-section">
+                    <h2 class="section-title"><i class="fas fa-file-import"></i> Import SKU Data</h2>
+                    <div class="file-input-wrapper"><label for="fileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose UOM File (Excel)</label><input type="file" id="fileInput" accept=".xlsx, .xls, .csv"></div>
+                    <div id="fileName" class="file-info" style="margin-top: 10px; font-size: 0.8rem; color: #666;"></div>
+                    <div class="import-buttons" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" id="downloadSampleBtn"><i class="fas fa-download"></i> Download Sample UOM</button>
+                        <button class="btn btn-gold" id="importResultsBtn"><i class="fas fa-file-import"></i> Import Purchase Data</button>
+                        <button class="btn btn-refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh SKU List</button>
+                    </div>
+                    <div id="importError" class="error-message"></div>
+                    <div id="importSuccess" class="success-message"></div>
+                </div>
+                <div class="sku-input-section">
+                    <h2 class="section-title"><i class="fas fa-calculator"></i> Enter SKU Details</h2>
+                    <div class="quadruple-input">
+                        <div class="input-group"><label>Date *</label><input type="text" id="dateInput" placeholder="01 Jan 2026"></div>
+                        <div class="input-group"><label>Location *</label><select id="locationInput"><option value="">Select</option><option value="Guwahati">Guwahati</option><option value="Jorhat">Jorhat</option><option value="Other">Other</option></select></div>
+                        <div class="input-group"><label>Invoice # *</label><input type="text" id="invoiceNumber" placeholder="SAP Invoice Number"></div>
+                    </div>
+                   
+                    <div class="input-group"><label>SKU Code</label><input type="text" id="skuCode" placeholder="Enter SKU code"></div>
+                    <div class="input-group"><label>MRP *</label><input type="text" id="seedNumber" placeholder="Enter MRP"></div>
+                    <div class="input-group"><label>Quantity</label><input type="number" id="quantity" placeholder="Quantity" min="1"></div>
+                    <div class="input-group" id="totalAmountContainer"><label>Total Amount ($)</label><input type="number" id="totalAmount" placeholder="Total amount" min="0.01" step="0.01"><div class="calculation-note">Total Amount / Quantity = Per Case</div></div>
+                    <div class="input-group"><label>Price Method</label><select id="priceOption"><option value="total">Enter Total Amount</option><option value="perCase">Enter Per Case Amount</option></select></div>
+                    <div class="input-group" id="perCaseInputContainer" style="display: none;"><label>Per Case Amount ($)</label><input type="number" id="perCaseAmount" placeholder="Per case amount" min="0.01" step="0.01"><div class="calculation-note">Per Case × Quantity = Total</div></div>
+                    <div class="button-group"><button id="addBtn" class="btn"><i class="fas fa-plus-circle"></i> Add to Results</button><button id="clearBtn" class="btn btn-secondary"><i class="fas fa-trash-alt"></i> Clear All</button></div>
+                    <div class="button-group"><button id="saveDataBtn" class="btn btn-gold"><i class="fas fa-save"></i> Save Data</button><button id="loadDataBtn" class="btn btn-secondary"><i class="fas fa-folder-open"></i> Load Data</button></div>
+                    <div class="button-group"><button id="exportBtn" class="btn btn-excel"><i class="fas fa-file-excel"></i> Export to Excel</button><button id="exportPdfBtn" class="btn btn-pdf"><i class="fas fa-file-pdf"></i> Export to PDF</button></div>
+                    <div class="orders-summary"><h3 class="section-title"><i class="fas fa-clipboard-list"></i> Orders Summary</h3><div id="ordersList"><p class="empty-message">No orders yet</p></div></div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="table-header"><h2 class="section-title"><i class="fas fa-list-alt"></i> Results Table</h2><div class="table-controls"><div class="search-container"><input type="text" id="invoiceSearchInput" class="search-input" placeholder="Search by Invoice..."><button id="searchInvoiceBtn" class="btn-search"><i class="fas fa-search"></i> Search</button></div><button id="sortByInvoiceBtn" class="btn-sort"><i class="fas fa-sort-alpha-down"></i> Sort Invoice</button><button id="sortByNameBtn" class="btn-sort"><i class="fas fa-sort-alpha-down"></i> Sort SKU Name</button><button id="resetSortBtn" class="btn-sort"><i class="fas fa-undo"></i> Show All</button></div></div>
+                <div id="searchSummary" class="search-summary">Showing <span id="searchCount">0</span> of <span id="totalCount">0</span> results for "<span id="searchTerm"></span>"</div>
+                <div style="overflow-x: auto;"><table class="results-table"><thead><tr><th>Ord#</th><th>Date</th><th>Location</th><th>Invoice</th><th>MRP</th><th>SKU Code</th><th>SKU Name</th><th>Qty</th><th>UOM</th><th>Total L</th><th>Per Case</th><th>Total</th><th></th></tr></thead><tbody id="resultsBody"><tr><td colspan="13" class="empty-message">No results yet. Import SKU data and add items.</td></tr></tbody></table></div>
+                <div class="summary-section"><div class="summary-header"><h3><i class="fas fa-chart-bar"></i> Summary</h3><div id="summaryMode" style="font-size:0.8rem;padding:4px 8px;background:#e1f5fe;border-radius:4px;">All Results</div></div><div class="summary-items-container"><div class="summary-item"><div class="summary-label">Total Items</div><div class="summary-value" id="totalItems">0</div></div><div class="summary-item"><div class="summary-label">Total Orders</div><div class="summary-value" id="totalOrders">0</div></div><div class="summary-item"><div class="summary-label">Total Qty</div><div class="summary-value" id="totalQuantity">0</div></div><div class="summary-item"><div class="summary-label">Total Liters</div><div class="summary-value" id="totalLiters">0.00</div></div><div class="summary-item"><div class="summary-label">Total Amount</div><div class="summary-value" id="totalAmountSum">$0.00</div></div></div></div>
+                <div class="imported-data"><h2 class="section-title"><i class="fas fa-database"></i> Imported SKU Data</h2><table id="importedDataTable"><thead><tr><th>SKU Code</th><th>SKU Name</th><th>UOM (Liters/Unit)</th></tr></thead><tbody id="importedDataBody"><tr><td colspan="3" class="empty-message">No SKU data. Upload UOM file.</td></tr></tbody></table></div>
+            </div>
+        </div>
+        <footer><p>SKU Purchase System &copy; 2026 | Auto Lube House</p></footer>
+    </div>
+    <div id="importResultsModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-file-import"></i> Import Purchase Data</h3><button class="close-modal" onclick="closeImportModal()">&times;</button></div><div class="modal-body"><div class="file-input-wrapper"><label for="resultsFileInput" class="file-input-label"><i class="fas fa-file-excel"></i> Choose Excel File</label><input type="file" id="resultsFileInput" accept=".xlsx, .xls"><div id="resultsFileName" style="margin-top:8px;font-size:0.8rem;"></div></div><div id="importResultsError" class="error-message"></div><div id="importResultsSuccess" class="success-message"></div></div><div class="button-group"><button class="btn" id="processResultsBtn"><i class="fas fa-upload"></i> Import</button><button class="btn btn-secondary" onclick="closeImportModal()"><i class="fas fa-times"></i> Cancel</button></div></div></div>
+
+    <script>
+        // State
+        let importedSKUs = [];
+        let allResults = [];
+        let filteredResults = [];
+        let orderCounter = {};
+        let currentFileData = null;
+        let currentSort = { field: null, direction: 'asc' };
+        let isSearchActive = false;
+        let currentSearchTerm = '';
+        
+        // DOM elements
+        const dateInput = document.getElementById('dateInput');
+        const locationInput = document.getElementById('locationInput');
+        const invoiceNumberInput = document.getElementById('invoiceNumber');
+        const seedNumberInput = document.getElementById('seedNumber');
+        const skuCodeInput = document.getElementById('skuCode');
+        const quantityInput = document.getElementById('quantity');
+        const totalAmountInput = document.getElementById('totalAmount');
+        const priceOption = document.getElementById('priceOption');
+        const perCaseAmountInput = document.getElementById('perCaseAmount');
+        const perCaseInputContainer = document.getElementById('perCaseInputContainer');
+        const totalAmountContainer = document.getElementById('totalAmountContainer');
+        const addBtn = document.getElementById('addBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const importResultsBtn = document.getElementById('importResultsBtn');
+        const saveDataBtn = document.getElementById('saveDataBtn');
+        const loadDataBtn = document.getElementById('loadDataBtn');
+        const resultsBody = document.getElementById('resultsBody');
+        const importedDataBody = document.getElementById('importedDataBody');
+        const importError = document.getElementById('importError');
+        const importSuccess = document.getElementById('importSuccess');
+        const ordersList = document.getElementById('ordersList');
+        const invoiceSearchInput = document.getElementById('invoiceSearchInput');
+        const searchInvoiceBtn = document.getElementById('searchInvoiceBtn');
+        const sortByInvoiceBtn = document.getElementById('sortByInvoiceBtn');
+        const sortByNameBtn = document.getElementById('sortByNameBtn');
+        const resetSortBtn = document.getElementById('resetSortBtn');
+        const searchSummary = document.getElementById('searchSummary');
+        const searchCount = document.getElementById('searchCount');
+        const totalCount = document.getElementById('totalCount');
+        const searchTermSpan = document.getElementById('searchTerm');
+        const summaryMode = document.getElementById('summaryMode');
+        const totalItemsEl = document.getElementById('totalItems');
+        const totalOrdersEl = document.getElementById('totalOrders');
+        const totalQuantityEl = document.getElementById('totalQuantity');
+        const totalLitersEl = document.getElementById('totalLiters');
+        const totalAmountSumEl = document.getElementById('totalAmountSum');
+        
+        const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        
+        function formatDateToDDMMMYYYY(dateStr) {
+            if (typeof dateStr === 'string' && /^\d{2} [A-Za-z]{3} \d{4}$/.test(dateStr)) return dateStr;
+            let date = new Date(dateStr);
+            if (isNaN(date.getTime())) date = new Date();
+            return `${String(date.getDate()).padStart(2,'0')} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        }
+        
+        function setDefaultDate() { dateInput.value = formatDateToDDMMMYYYY(new Date()); }
+        
+        function getOrderNumber(inv, mrp) {
+            const key = `${inv}_${mrp}`;
+            if (!orderCounter[key]) orderCounter[key] = 1;
+            else orderCounter[key]++;
+            return orderCounter[key];
+        }
+        
+        function showNotification(msg, type) {
+            const n = document.createElement('div');
+            n.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:8px;font-weight:600;z-index:10000;background:${type==='success'?'#2ecc71':type==='warning'?'#e67e22':'#3498db'};color:white;animation:slideDown 0.3s ease;box-shadow:0 5px 20px rgba(0,0,0,0.2);`;
+            n.textContent = msg;
+            document.body.appendChild(n);
+            setTimeout(() => n.remove(), 3000);
+        }
+        
+        priceOption.addEventListener('change', function() {
+            if (this.value === 'perCase') {
+                perCaseInputContainer.style.display = 'block';
+                totalAmountContainer.style.display = 'none';
+            } else {
+                perCaseInputContainer.style.display = 'none';
+                totalAmountContainer.style.display = 'block';
+            }
+        });
+        
+        function clearInputFields() {
+            quantityInput.value = "";
+            totalAmountInput.value = "";
+            perCaseAmountInput.value = "";
+            skuCodeInput.value = "";
+            seedNumberInput.value = "";  // Clear MRP field
+            skuCodeInput.focus();
+        }
+        
+        function updateImportedDataTable() {
+            if (!importedSKUs.length) {
+                importedDataBody.innerHTML = '<tr><td colspan="3" class="empty-message">No SKU data. Upload UOM file.</td></tr>';
+                skuCodeInput.placeholder = "Enter SKU code";
+                return;
+            }
+            importedDataBody.innerHTML = importedSKUs.map(s => `<tr><td>${escapeHtml(s.code)}</td><td>${escapeHtml(s.name)}</td><td>${s.uom.toFixed(2)}</td></tr>`).join('');
+            skuCodeInput.placeholder = `SKU code (${importedSKUs.length} available)`;
+        }
+        
+        function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+        
+        function processFileData(fileData) {
+            try {
+                const workbook = XLSX.read(new Uint8Array(fileData), { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                let newSKUs = [];
+                for (let i = 0; i < json.length; i++) {
+                    const row = json[i];
+                    if (row && row.length >= 3 && i > 0) { // Skip header row
+                        const code = row[0]?.toString().trim();
+                        const name = row[1]?.toString().trim();
+                        const uom = parseFloat(row[2]);
+                        if (code && name && !isNaN(uom) && uom > 0) {
+                            newSKUs.push({ code, name, uom });
+                        }
+                    }
+                }
+                if (newSKUs.length === 0) throw new Error('No valid SKU data found. Ensure columns: SKU Code, SKU Name, UOM');
+                importedSKUs = newSKUs;
+                updateImportedDataTable();
+                clearInputFields();
+                saveSKUDataToStorage();
+                importSuccess.textContent = `✅ Imported ${newSKUs.length} SKU records`;
+                importSuccess.style.display = 'block';
+                importError.style.display = 'none';
+                showNotification(`Imported ${newSKUs.length} SKUs`, 'success');
+            } catch (e) {
+                importError.textContent = `Error: ${e.message}`;
+                importError.style.display = 'block';
+                importSuccess.style.display = 'none';
+                showNotification(e.message, 'warning');
+            }
+        }
+        
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.getElementById('fileName').textContent = `📄 ${file.name}`;
+            importError.style.display = 'none';
+            importSuccess.style.display = 'none';
+            const reader = new FileReader();
+            reader.onload = ev => {
+                currentFileData = ev.target.result;
+                processFileData(currentFileData);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+        
+        // Fixed download sample button
+        const downloadSampleBtn = document.getElementById('downloadSampleBtn');
+        if (downloadSampleBtn) {
+            downloadSampleBtn.addEventListener('click', function() {
+                const sample = [["SKU_CODE", "SKU_NAME", "UOM_LITERS"], ["7688203", "MGO 5W-30-4 X 3 L", 12], ["7600203", "MGO 20W-40 - 4 X 3 L", 12], ["7472184", "SERVO FLT CF4 15W-40-20 X 1 L", 20]];
+                const ws = XLSX.utils.aoa_to_sheet(sample);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "UOM_Sample");
+                XLSX.writeFile(wb, "UOM_Sample.xlsx");
+            });
+        }
+        
+        function saveSKUDataToStorage() { localStorage.setItem('purchase_sku_data', JSON.stringify(importedSKUs)); }
+        function saveResultsToStorage() { localStorage.setItem('purchase_results', JSON.stringify(allResults)); localStorage.setItem('purchase_order_counter', JSON.stringify(orderCounter)); }
+        function loadDataFromStorage() {
+            const sku = localStorage.getItem('purchase_sku_data');
+            if (sku) { importedSKUs = JSON.parse(sku); updateImportedDataTable(); }
+            const res = localStorage.getItem('purchase_results');
+            if (res) {
+                allResults = JSON.parse(res);
+                allResults.forEach(r => r.date = formatDateToDDMMMYYYY(r.date));
+                filteredResults = [...allResults];
+                updateResultsTable();
+                updateSummary();
+                updateOrdersSummary();
+            }
+            const oc = localStorage.getItem('purchase_order_counter');
+            if (oc) orderCounter = JSON.parse(oc);
+            showNotification('Data loaded from storage', 'success');
+        }
+        
+        saveDataBtn.onclick = () => { saveSKUDataToStorage(); saveResultsToStorage(); showNotification('All data saved!', 'success'); };
+        loadDataBtn.onclick = () => { loadDataFromStorage(); };
+        refreshBtn.onclick = () => { if (currentFileData) processFileData(currentFileData); else showNotification('Please import a UOM file first', 'warning'); };
+        
+        function updateOrdersSummary() {
+            if (!filteredResults.length) { ordersList.innerHTML = '<p class="empty-message">No orders yet</p>'; return; }
+            const groups = {};
+            filteredResults.forEach(r => {
+                const key = `${r.invoice}_${r.seed}`;
+                if (!groups[key]) groups[key] = { orderNumber: r.orderNumber, date: r.date, location: r.location, invoice: r.invoice, seed: r.seed, items: [] };
+                if (!groups[key].items.includes(r.code)) groups[key].items.push(r.code);
+            });
+            ordersList.innerHTML = Object.values(groups).map(g => `<div class="order-item"><div><span class="order-badge">Order ${g.orderNumber}</span> <span class="date-badge">${g.date}</span> <span class="location-badge">${g.location}</span> <strong>${g.invoice}</strong> / ${g.seed}</div><div>${g.items.length} SKUs</div></div>`).join('');
+        }
+        
+        window.removeResult = function(idx) {
+            if (confirm('Remove this item?')) {
+                const item = filteredResults[idx];
+                allResults = allResults.filter(i => i.id !== item.id);
+                filteredResults = filteredResults.filter(i => i.id !== item.id);
+                if (isSearchActive) filteredResults = allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm));
+                updateResultsTable();
+                updateSummary();
+                updateOrdersSummary();
+                saveResultsToStorage();
+                showNotification('Item removed', 'success');
+            }
+        };
+        
+        addBtn.onclick = function() {
+            const date = dateInput.value.trim();
+            const loc = locationInput.value;
+            const inv = invoiceNumberInput.value.trim();
+            const mrp = seedNumberInput.value.trim();
+            const code = skuCodeInput.value.trim();
+            const qty = parseFloat(quantityInput.value);
+            
+            if (!date || !loc || !inv || !mrp || !code || isNaN(qty) || qty <= 0) {
+                showNotification('Please fill all required fields', 'warning');
+                return;
+            }
+            const fmtDate = formatDateToDDMMMYYYY(date);
+            const sku = importedSKUs.find(s => s.code.toUpperCase() === code.toUpperCase());
+            if (!sku) {
+                showNotification(`SKU "${code}" not found. Import UOM file first.`, 'warning');
+                return;
+            }
+            const orderNum = getOrderNumber(inv, mrp);
+            let totalAmt, perCase;
+            if (priceOption.value === 'total') {
+                totalAmt = parseFloat(totalAmountInput.value);
+                if (isNaN(totalAmt) || totalAmt <= 0) { showNotification('Enter valid total amount', 'warning'); return; }
+                perCase = totalAmt / qty;
+            } else {
+                perCase = parseFloat(perCaseAmountInput.value);
+                if (isNaN(perCase) || perCase <= 0) { showNotification('Enter valid per case amount', 'warning'); return; }
+                totalAmt = perCase * qty;
+            }
+            const result = {
+                orderNumber: orderNum, date: fmtDate, location: loc, invoice: inv, seed: mrp,
+                code: sku.code, name: sku.name, quantity: qty, uom: sku.uom,
+                totalLiters: sku.uom * qty, perCaseAmount: perCase, totalAmount: totalAmt,
+                id: Date.now()
+            };
+            allResults.push(result);
+            filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
+            updateResultsTable();
+            updateSummary();
+            updateOrdersSummary();
+            saveResultsToStorage();
+            clearInputFields();
+            setDefaultDate();
+            showNotification('SKU added successfully', 'success');
+        };
+        
+        // Update results table with FULL SKU NAME display (no truncation, text wraps)
+        function updateResultsTable() {
+            if (!filteredResults.length) {
+                resultsBody.innerHTML = '<tr><td colspan="13" class="empty-message">No results. Add SKU items above.</td></tr>';
+                return;
+            }
+            resultsBody.innerHTML = filteredResults.map((r, i) => `
+                <tr class="${i === filteredResults.length-1 ? 'highlight' : ''}">
+                    <td><span class="order-badge">${r.orderNumber}</span></td>
+                    <td><span class="date-badge">${r.date}</span></td>
+                    <td><span class="location-badge">${r.location}</span></td>
+                    <td><span class="invoice-badge">${escapeHtml(r.invoice)}</span></td>
+                    <td>${escapeHtml(r.seed)}</td>
+                    <td>${escapeHtml(r.code)}</td>
+                    <td style="white-space: normal; word-wrap: break-word; word-break: break-word;">${escapeHtml(r.name)}</td>
+                    <td>${r.quantity}</td>
+                    <td>${r.uom.toFixed(2)}</td>
+                    <td>${r.totalLiters.toFixed(2)}</td>
+                    <td>$${r.perCaseAmount.toFixed(2)}</td>
+                    <td>$${r.totalAmount.toFixed(2)}</td>
+                    <td><button class="btn btn-secondary" style="padding:4px 8px;font-size:0.7rem;" onclick="removeResult(${i})"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateSummary() {
+            const data = filteredResults;
+            totalItemsEl.textContent = data.length;
+            const orderSet = new Set(data.map(i => `${i.invoice}_${i.seed}_${i.orderNumber}`));
+            totalOrdersEl.textContent = orderSet.size;
+            totalQuantityEl.textContent = data.reduce((s, i) => s + i.quantity, 0);
+            totalLitersEl.textContent = data.reduce((s, i) => s + i.totalLiters, 0).toFixed(2);
+            totalAmountSumEl.textContent = `$${data.reduce((s, i) => s + i.totalAmount, 0).toFixed(2)}`;
+        }
+        
+        function sortResults(arr, field, dir) {
+            return [...arr].sort((a, b) => {
+                let av = a[field], bv = b[field];
+                if (typeof av === 'string') return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                return dir === 'asc' ? av - bv : bv - av;
+            });
+        }
+        
+        function applySort(field) {
+            if (currentSort.field === field) currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            else { currentSort.field = field; currentSort.direction = 'asc'; }
+            filteredResults = sortResults(filteredResults, field, currentSort.direction);
+            updateResultsTable();
+            updateControlButtons();
+        }
+        
+        function searchByInvoice(term) {
+            if (!term.trim()) { resetSearch(); return; }
+            currentSearchTerm = term.trim().toLowerCase();
+            isSearchActive = true;
+            filteredResults = allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm));
+            currentSort.field = null;
+            updateResultsTable();
+            updateSummary();
+            updateControlButtons();
+            updateSearchSummary();
+            showNotification(`Found ${filteredResults.length} result(s)`, 'info');
+        }
+        
+        function resetSearch() {
+            isSearchActive = false;
+            currentSearchTerm = '';
+            invoiceSearchInput.value = '';
+            filteredResults = [...allResults];
+            currentSort.field = null;
+            updateResultsTable();
+            updateSummary();
+            updateControlButtons();
+            updateSearchSummary();
+            showNotification('Showing all results', 'info');
+        }
+        
+        function updateSearchSummary() {
+            if (isSearchActive) {
+                searchCount.textContent = filteredResults.length;
+                totalCount.textContent = allResults.length;
+                searchTermSpan.textContent = currentSearchTerm;
+                searchSummary.style.display = 'block';
+                summaryMode.textContent = '🔍 Search Results';
+            } else {
+                searchSummary.style.display = 'none';
+                summaryMode.textContent = '📊 All Results';
+            }
+        }
+        
+        function updateControlButtons() {
+            sortByInvoiceBtn.innerHTML = currentSort.field === 'invoice' ? `<i class="fas ${currentSort.direction === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up'}"></i> Invoice` : '<i class="fas fa-sort-alpha-down"></i> Sort Invoice';
+            sortByNameBtn.innerHTML = currentSort.field === 'name' ? `<i class="fas ${currentSort.direction === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up'}"></i> SKU Name` : '<i class="fas fa-sort-alpha-down"></i> Sort SKU Name';
+            searchInvoiceBtn.innerHTML = isSearchActive ? '<i class="fas fa-times"></i> Clear' : '<i class="fas fa-search"></i> Search';
+            resetSortBtn.innerHTML = (isSearchActive || currentSort.field) ? '<i class="fas fa-undo"></i> Reset' : '<i class="fas fa-undo"></i> Show All';
+        }
+        
+        searchInvoiceBtn.onclick = () => { if (isSearchActive) resetSearch(); else searchByInvoice(invoiceSearchInput.value); };
+        invoiceSearchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchInvoiceBtn.click(); });
+        sortByInvoiceBtn.onclick = () => applySort('invoice');
+        sortByNameBtn.onclick = () => applySort('name');
+        resetSortBtn.onclick = resetSearch;
+        clearBtn.onclick = () => { if (confirm('Clear all results?')) { allResults = []; filteredResults = []; orderCounter = {}; isSearchActive = false; currentSearchTerm = ''; invoiceSearchInput.value = ''; updateResultsTable(); updateSummary(); updateOrdersSummary(); saveResultsToStorage(); updateControlButtons(); showNotification('All cleared', 'success'); } };
+        
+        importResultsBtn.onclick = () => document.getElementById('importResultsModal').style.display = 'block';
+        window.closeImportModal = function() { 
+            document.getElementById('importResultsModal').style.display = 'none'; 
+            document.getElementById('resultsFileInput').value = ''; 
+            document.getElementById('importResultsError').style.display = 'none';
+            document.getElementById('importResultsSuccess').style.display = 'none';
+        };
+        if (document.querySelector('.close-modal')) {
+            document.querySelector('.close-modal').onclick = closeImportModal;
+        }
+        window.onclick = e => { if (e.target === document.getElementById('importResultsModal')) closeImportModal(); };
+        
+        // Fixed process results file - using button click instead of inline onclick
+        const processResultsBtn = document.getElementById('processResultsBtn');
+        if (processResultsBtn) {
+            processResultsBtn.onclick = function() {
+                const file = document.getElementById('resultsFileInput').files[0];
+                const importResultsError = document.getElementById('importResultsError');
+                const importResultsSuccess = document.getElementById('importResultsSuccess');
+                
+                if (!file) { 
+                    importResultsError.textContent = 'Please select a file first';
+                    importResultsError.style.display = 'block'; 
+                    return; 
+                }
+                
+                importResultsError.style.display = 'none';
+                importResultsSuccess.style.display = 'none';
+                
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = new Uint8Array(ev.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                        
+                        let count = 0;
+                        for (let i = 1; i < json.length; i++) { // Skip header row
+                            const row = json[i];
+                            if (row && row.length >= 12) {
+                                const inv = String(row[3] || '').trim();
+                                const mrp = String(row[4] || '').trim();
+                                const code = String(row[5] || '').trim();
+                                const name = String(row[6] || '').trim();
+                                const qty = parseFloat(row[7]) || 1;
+                                const uom = parseFloat(row[8]) || 0;
+                                const liters = parseFloat(row[9]) || 0;
+                                const perCase = parseFloat(row[10]) || 0;
+                                const total = parseFloat(row[11]) || 0;
+                                
+                                if (inv && mrp && code && name) {
+                                    const key = `${inv}_${mrp}`;
+                                    if (!orderCounter[key]) orderCounter[key] = 1;
+                                    allResults.push({
+                                        orderNumber: orderCounter[key]++,
+                                        date: formatDateToDDMMMYYYY(row[1] || new Date()),
+                                        location: String(row[2] || 'Guwahati').trim(),
+                                        invoice: inv, 
+                                        seed: mrp, 
+                                        code: code, 
+                                        name: name,
+                                        quantity: qty, 
+                                        uom: uom, 
+                                        totalLiters: liters,
+                                        perCaseAmount: perCase, 
+                                        totalAmount: total,
+                                        id: Date.now() + Math.random()
+                                    });
+                                    count++;
+                                }
+                            }
+                        }
+                        
+                        if (count > 0) {
+                            filteredResults = isSearchActive ? allResults.filter(i => i.invoice.toLowerCase().includes(currentSearchTerm)) : [...allResults];
+                            updateResultsTable(); 
+                            updateSummary(); 
+                            updateOrdersSummary(); 
+                            saveResultsToStorage();
+                            importResultsSuccess.textContent = `✅ Successfully imported ${count} records`;
+                            importResultsSuccess.style.display = 'block';
+                            showNotification(`Imported ${count} purchase records`, 'success');
+                            setTimeout(() => closeImportModal(), 1500);
+                        } else {
+                            throw new Error('No valid records found. Please check the file format.');
+                        }
+                    } catch (e) {
+                        importResultsError.textContent = `Error: ${e.message}`;
+                        importResultsError.style.display = 'block';
+                        showNotification(e.message, 'warning');
+                    }
+                };
+                reader.onerror = function() {
+                    importResultsError.textContent = 'Error reading file';
+                    importResultsError.style.display = 'block';
+                };
+                reader.readAsArrayBuffer(file);
+            };
+        }
+        
+        exportBtn.onclick = function() {
+            if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
+            const data = [["Order #","Date","Location","Invoice","MRP","SKU Code","SKU Name","Quantity","UOM","Total Liters","Per Case ($)","Total ($)"]];
+            filteredResults.forEach(r => data.push([r.orderNumber, r.date, r.location, r.invoice, r.seed, r.code, r.name, r.quantity, r.uom.toFixed(2), r.totalLiters.toFixed(2), r.perCaseAmount.toFixed(2), r.totalAmount.toFixed(2)]));
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Purchase_Results");
+            XLSX.writeFile(wb, `Purchase_Results_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.xlsx`);
+            showNotification('Exported to Excel', 'success');
+        };
+        
+        // PDF Export with Portrait Orientation and Summary Displayed
+        exportPdfBtn.onclick = function() {
+            if (!filteredResults.length) { showNotification('No results to export', 'warning'); return; }
+            
+            // Check if jsPDF is loaded
+            if (typeof window.jspdf === 'undefined') {
+                showNotification('PDF library loading. Please try again.', 'warning');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            // Set to Portrait orientation (default is portrait, but we explicitly set it)
+            const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 10;
+            
+            // Header
+            doc.setFontSize(14); doc.setTextColor(44,62,80);
+            doc.text('AUTO LUBE HOUSE - PURCHASE REPORT', pageWidth/2, margin+8, { align: 'center' });
+            doc.setFontSize(9); doc.setTextColor(100,100,100);
+            doc.text(`Generated: ${formatDateToDDMMMYYYY(new Date())}`, pageWidth/2, margin+14, { align: 'center' });
+            if (isSearchActive) { 
+                doc.setFontSize(9); doc.setTextColor(231,76,60); 
+                doc.text(`Filtered: ${currentSearchTerm}`, pageWidth/2, margin+19, { align: 'center' }); 
+            }
+            
+            // Table Headers & Body - For portrait, adjust column widths to fit
+            const headers = [['Ord#','Date','Loc','Invoice','MRP','SKU Code','SKU Name','Qty','UOM','Total L','Per Case','Total']];
+            const body = filteredResults.map(r => [
+                r.orderNumber, r.date, r.location, r.invoice, r.seed, 
+                r.code, r.name, r.quantity, r.uom.toFixed(1), 
+                r.totalLiters.toFixed(1), `$${r.perCaseAmount.toFixed(2)}`, `$${r.totalAmount.toFixed(2)}`
+            ]);
+            
+            // Calculate summary stats
+            const totalQty = filteredResults.reduce((s,i)=>s+i.quantity,0);
+            const totalLit = filteredResults.reduce((s,i)=>s+i.totalLiters,0);
+            const totalAmt = filteredResults.reduce((s,i)=>s+i.totalAmount,0);
+            const uniqueOrders = new Set(filteredResults.map(i=>`${i.invoice}_${i.seed}`)).size;
+            const summaryText = `Total Items: ${filteredResults.length} | Total Orders: ${uniqueOrders} | Total Qty: ${totalQty} | Total Liters: ${totalLit.toFixed(2)} | Total Amount: $${totalAmt.toFixed(2)}`;
+            
+            // AutoTable with column styles optimized for portrait
+            if (typeof doc.autoTable === 'function') {
+                doc.autoTable({
+                    head: headers,
+                    body: body,
+                    startY: isSearchActive ? margin+24 : margin+20,
+                    theme: 'grid',
+                    headStyles: { fillColor: [44,62,80], textColor: [255,255,255], fontSize: 7, halign: 'center', cellPadding: 1 },
+                    bodyStyles: { fontSize: 6.5, cellPadding: 1.5, valign: 'top' },
+                    columnStyles: { 
+                        0: { cellWidth: 8, halign: 'center' },   // Ord#
+                        1: { cellWidth: 12, halign: 'center' },  // Date
+                        2: { cellWidth: 14, halign: 'center' },  // Location
+                        3: { cellWidth: 16, halign: 'center' },  // Invoice
+                        4: { cellWidth: 12, halign: 'center' },  // MRP
+                        5: { cellWidth: 15, halign: 'center' },  // SKU Code
+                        6: { cellWidth: 40, halign: 'left', cellWrap: true }, // SKU Name - wrapped
+                        7: { cellWidth: 8, halign: 'center' },   // Qty
+                        8: { cellWidth: 10, halign: 'center' },  // UOM
+                        9: { cellWidth: 11, halign: 'center' },  // Total L
+                        10: { cellWidth: 14, halign: 'center' }, // Per Case
+                        11: { cellWidth: 18, halign: 'center' }  // Total
+                    },
+                    margin: { left: margin, right: margin },
+                    tableWidth: pageWidth - margin*2,
+                    didDrawPage: function(data) {
+                        // Page number at bottom
+                        doc.setFontSize(7);
+                        doc.text(`Page ${data.pageNumber}`, pageWidth/2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
+                    }
+                });
+                
+                // Get final Y position after table
+                let finalY = doc.lastAutoTable.finalY + 5;
+                const pageHeight = doc.internal.pageSize.getHeight();
+                
+                // Add summary box - if not enough space, add new page
+                if (finalY + 20 > pageHeight) {
+                    doc.addPage();
+                    finalY = margin + 10;
+                }
+                
+                // Draw summary box with border and gold accent
+                doc.setFillColor(245, 247, 250);
+                doc.rect(margin, finalY, pageWidth - margin*2, 20, 'F');
+                doc.setDrawColor(212, 175, 55);
+                doc.setLineWidth(0.5);
+                doc.rect(margin, finalY, pageWidth - margin*2, 20);
+                doc.setFontSize(10);
+                doc.setTextColor(44, 62, 80);
+                doc.text('SUMMARY', margin + 5, finalY + 7);
+                doc.setFontSize(8);
+                doc.setTextColor(80, 80, 80);
+                doc.text(summaryText, margin + 5, finalY + 15);
+            } else {
+                showNotification('PDF autoTable not loaded. Please refresh.', 'warning');
+                return;
+            }
+            
+            doc.save(`Purchase_Report_${formatDateToDDMMMYYYY(new Date()).replace(/ /g,'_')}.pdf`);
+            showNotification('PDF exported (portrait) with summary', 'success');
+        };
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            setDefaultDate();
+            locationInput.value = "Guwahati";
+            loadDataFromStorage();
+            updateControlButtons();
+        });
+    </script>
+</body>
+</html>
