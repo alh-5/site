@@ -19,7 +19,7 @@ button.gray{background:#444}
 .tax{font-weight:bold;font-size:10pt;padding-top:0.3mm}
 .company{color:#0070c0;font-size:12pt;font-weight:bold;margin-top:1mm}
 .company-lines{font-size:8pt;line-height:1.15;margin-top:1mm}
-.gstin{font-weight:bold;margin-top:1mm}
+.gstin{font-weight:normal;margin-top:1mm}.gstin b{font-weight:bold}.gstin .tax-id{font-weight:normal}
 .cert{font-size:7pt;margin-top:1mm}
 table{border-collapse:collapse;width:100%;table-layout:fixed}
 td,th{border:1px solid #999;padding:1px 2px;vertical-align:top}
@@ -48,6 +48,7 @@ input:focus,textarea:focus{background:#fff6ce;outline:1px dashed #c99b00}
 .totals td{height:6mm;vertical-align:middle}
 .totals th{text-align:center}
 .totals input{text-align:center}
+.totals td.right{text-align:right;padding-right:5px}.totals #payable{text-align:right!important;padding-right:5px;font-weight:bold;white-space:nowrap}
 .bank{margin-top:1mm;font-size:7.6pt}
 .bank td{height:5.3mm;vertical-align:middle;padding:1px 3px}
 .bank input{font-size:7.6pt}
@@ -87,9 +88,44 @@ input:focus,textarea:focus{background:#fff6ce;outline:1px dashed #c99b00}
 .meta td>div{align-items:flex-start}
 .meta td>div b{align-self:flex-start}
 .meta-fit:focus{background:#fff6ce;outline:1px dashed #c99b00}
+
+/* Editable Bill To / Place of Supply headings wrap naturally and fit their cell */
+.meta textarea.heading-fit{display:block;width:100%;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;height:auto;min-height:1em;overflow:hidden}
+
+/* Left-align customer / place-of-supply name lines, including the second line */
+.meta td > textarea.meta-fit:first-of-type { text-align: left !important; }
+
+/* Center the CGST and SGST/UTGST tax summary rows */
+.totals tr:nth-child(3) td,
+.totals tr:nth-child(4) td {
+  text-align: center;
+}
+
+
+/* Match the reference: amount in words is bold and left-aligned */
+#words {
+  text-align: left !important;
+  font-weight: bold;
+  padding-left: 4px;
+}
+
+
+/* Cash discount: bold label, regular-weight value, left aligned */
+.totals td.cash-discount {
+  text-align: right !important;
+  padding-right: 5px;
+  font-weight: normal;
+}
+.totals td.cash-discount b {
+  font-weight: bold;
+}
+.totals td.cash-discount span {
+  font-weight: normal;
+}
+
 </style></head>
 <body>
-<div class="toolbar"><button onclick="window.print()">PRINT / SAVE PDF</button><button class="gray" onclick="location.reload()">RESET SAMPLE</button></div>
+<div class="toolbar"><button onclick="window.print()">PRINT / SAVE PDF</button><button class="gray" id="undoBtn" type="button" onclick="undoInvoice()" disabled>UNDO</button></div>
 <div class="paper">
 <header class="header">
 <img alt="IndianOil" class="logo left" src="data:image/png;base64,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"/>
@@ -97,17 +133,19 @@ input:focus,textarea:focus{background:#fff6ce;outline:1px dashed #c99b00}
 <div class="tax">TAX INVOICE</div>
 <div class="company">AUTO LUBE HOUSE</div>
 <div class="company-lines">GSS SHILLONG, Lewduh, Bara Bazar, Shillong.<br/>East Khasi Hills,<br/>Bara Bazaar, EAST KHASI HILLS, Meghalaya(17)-793002<br/>Ph:9402134892  Email:</div>
-<div class="gstin">GSTIN:17AFHCA1117F1ZW  PAN:ACHFA1117F</div>
+<div class="gstin"><b>GSTIN:</b><span class="tax-id">17AFHCA1117F1ZW</span>  <b>PAN:</b><span class="tax-id">ACHFA1117F</span></div>
 <div class="cert">Invoice Under Rule 46 of GST Rules. We hereby certify that goods covered by this document have suffered applicable Taxes on clearance.</div>
 </header>
 <table class="meta">
 <tr>
-<td><div><b>Bill To:</b> <textarea class="meta-fit" rows="1">S S AUTO</textarea></div><div>Customer Id: <textarea class="meta-fit" rows="1">7200000044556130</textarea></div><textarea rows="5">KHLEHRIJAT KHLIEHRIAT
-WEST JAINTIA HILLS OPP
-PETROL PUMP MAIN ROAD
+<td><textarea class="meta-fit heading-fit" rows="1">Bill To: JAINTIA SERVICE STATION
+(LADRYMBAI)</textarea><div>Customer Id: <textarea class="meta-fit" rows="1">7200000044556130</textarea></div><textarea class="meta-fit" rows="5">KHLEHRIJAT KHLIEHRIAT WEST
+JAINTIA HILLS OPP PETROL
+PUMP MAIN ROAD
 JOWAI EAST JAINTIA HILLS
 793200</textarea><div>State: <textarea class="meta-fit" rows="1">Meghalaya</textarea></div><div>GSTIN: <textarea class="meta-fit" rows="1"></textarea></div><div>Phone: <textarea class="meta-fit" rows="1">96122121715</textarea></div></td>
-<td><div>Place of Supply: <textarea class="meta-fit" rows="1">S S AUTO</textarea></div><div>Customer Id: <textarea class="meta-fit" rows="1">7200000044556130</textarea></div><textarea rows="5">KHLEHRIJAT KHLIEHRIAT WEST
+<td><textarea class="meta-fit heading-fit" rows="1">Place of Supply: JAINTIA SERVICE STATION
+(LADRYMBAI)</textarea><div>Customer Id: <textarea class="meta-fit" rows="1">7200000044556130</textarea></div><textarea class="meta-fit" rows="5">KHLEHRIJAT KHLIEHRIAT WEST
 JAINTIA HILLS OPP PETROL
 PUMP MAIN ROAD
 JOWAI EAST JAINTIA HILLS
@@ -128,7 +166,7 @@ JOWAI EAST JAINTIA HILLS
 <tr><th>Desc</th><th>Sale Value</th><th>Tax %</th><th>Tax Amt</th><th colspan="3">Voucher Adjustment</th><th colspan="2">Round Off Amount <span id="round" style="float:right">-0.24</span></th></tr>
 <tr><td></td><td></td><td></td><td></td><th>Voucher No.</th><th>Adj Val</th><th>Bal Val</th><th>Net Amt. Payable</th><td class="right" id="payable">6640</td></tr>
 <tr><td>CGST</td><td id="sale1">5627.32</td><td>9</td><td id="cgst">506.46</td><td colspan="3"></td><th>Amount In Words</th><td id="words">Six Thousand Six Hundred Forty Only</td></tr>
-<tr><td>SGST/UTGST</td><td id="sale2">5627.32</td><td>9</td><td id="sgst">506.46</td><td class="right" colspan="3">Total Cash Discount: <span id="totalDiscount">0.00</span></td><td colspan="2"></td></tr>
+<tr><td>SGST/UTGST</td><td id="sale2">5627.32</td><td>9</td><td id="sgst">506.46</td><td class="cash-discount" colspan="3"><b>Total Cash Discount:</b> <span id="totalDiscount">0</span></td><td colspan="2"></td></tr>
 </table>
 <table class="bank">
 <colgroup><col style="width:17%"/><col style="width:2%"/><col style="width:31%"/><col style="width:17%"/><col style="width:2%"/><col style="width:31%"/></colgroup>
@@ -182,19 +220,19 @@ function calc(){
   sumCess:fmt(cessTotal),sumPay:fmt(beforeRound),
   sale1:fmt(taxableTotal),sale2:fmt(taxableTotal),
   cgst:fmt(halfGst),sgst:fmt(halfGst),round:fmt(roundOff),
-  payable:fmt(payable),words:words(payable),
-  totalDiscount:fmt(discountTotal)
+  payable:String(payable),words:words(payable),
+  totalDiscount:String(discountTotal)
  };
  for(const [id,val] of Object.entries(values)){
   const el=document.getElementById(id);if(el)el.textContent=val;
  }
 }
-function removeRow(btn){const rows=document.querySelectorAll('#rows tr');if(rows.length>1){btn.closest('tr').remove();calc();fitSkuFields();}}
+function removeRow(btn){const rows=document.querySelectorAll('#rows tr');if(rows.length>1){btn.closest('tr').remove();calc();fitSkuFields();saveInvoiceHistory();}}
 function fitSkuFields(){document.querySelectorAll('#rows .wrap-field').forEach(el=>{el.style.fontSize='7.2pt';el.style.height='auto';el.style.overflow='hidden';el.style.height=Math.max(el.scrollHeight, 7*96/25.4)+'px';});}
 function addRow(){
  const r=document.createElement('tr');r.className='item';
- r.innerHTML='<td class="sr"></td><td class="name"><textarea class="wrap-field sku-name" rows="2" placeholder="Product name"></textarea></td><td><textarea class="wrap-field sku-code" rows="2" placeholder="SKU"></textarea></td><td><input placeholder="HSN"></td><td><input class="mrp" type="number" min="0" step=".01" value="0"></td><td><input class="qty" type="number" min="0" step=".01" value="1"></td><td><input class="qty2" type="number" min="0" step=".01" value="1"></td><td><input value="PCS"></td><td><input class="rate" type="number" min="0" step=".01" value="0"></td><td class="net">0.00</td><td><input class="disc" type="number" min="0" step=".01" value="0"></td><td class="taxable">0.00</td><td><input class="gst" type="number" min="0" step=".01" value="18"></td><td class="gstamt">0.00</td><td><input class="cess" type="number" min="0" step=".01" value="0"></td><td class="cessamt">0.00</td><td class="netamt">0.00</td>';
- r.querySelector('.sr').innerHTML='<button type="button" class="remove-item" onclick="removeRow(this)" title="Remove line item">×</button>';document.getElementById('rows').appendChild(r);calc();
+ r.innerHTML='<td class="sr"></td><td class="name"><textarea class="wrap-field sku-name" rows="2" placeholder="Product name"></textarea></td><td><textarea class="wrap-field sku-code" rows="2" placeholder="SKU"></textarea></td><td><input placeholder="HSN"></td><td><input class="mrp" type="number" min="0" step=".01" value="0"></td><td><input class="qty" type="number" min="0" step=".01" value="1"></td><td><input class="qty2" type="number" min="0" step=".01" value="1"></td><td><input value="CAR"></td><td><input class="rate" type="number" min="0" step=".01" value="0"></td><td class="net">0.00</td><td><input class="disc" type="number" min="0" step=".01" value="0"></td><td class="taxable">0.00</td><td><input class="gst" type="number" min="0" step=".01" value="18"></td><td class="gstamt">0.00</td><td><input class="cess" type="number" min="0" step=".01" value="0"></td><td class="cessamt">0.00</td><td class="netamt">0.00</td>';
+ r.querySelector('.sr').innerHTML='<button type="button" class="remove-item" onclick="removeRow(this)" title="Remove line item">×</button>';document.getElementById('rows').appendChild(r);calc();fitSkuFields();saveInvoiceHistory();
 }
 document.addEventListener('input',e=>{if(e.target.closest('#rows')){calc();fitSkuFields();}});
 window.addEventListener('resize',fitSkuFields);
@@ -204,5 +242,86 @@ function fitMetaFields(){document.querySelectorAll('.meta-fit').forEach(el=>{el.
 document.addEventListener('input',e=>{if(e.target.closest('.meta'))fitMetaFields();});
 window.addEventListener('resize',fitMetaFields);
 fitMetaFields();
+
+// Reliable single-step Undo history for the invoice.
+let invoiceHistory = [];
+let invoiceHistoryIndex = -1;
+let restoringInvoiceHistory = false;
+
+function captureInvoiceState() {
+  const paper = document.querySelector('.paper');
+  const controls = Array.from(paper.querySelectorAll('input, textarea, select'));
+  return {
+    html: paper.innerHTML,
+    values: controls.map(el => ({
+      value: el.value,
+      checked: el.type === 'checkbox' || el.type === 'radio' ? el.checked : undefined
+    }))
+  };
+}
+
+function updateUndoButton() {
+  const undoBtn = document.getElementById('undoBtn');
+  if (undoBtn) undoBtn.disabled = invoiceHistoryIndex <= 0;
+}
+
+function saveInvoiceHistory() {
+  if (restoringInvoiceHistory) return;
+  const state = captureInvoiceState();
+  const previous = invoiceHistory[invoiceHistoryIndex];
+  if (previous && previous.html === state.html &&
+      JSON.stringify(previous.values) === JSON.stringify(state.values)) return;
+
+  // Keep a bounded history so long editing sessions remain responsive.
+  invoiceHistory = invoiceHistory.slice(0, invoiceHistoryIndex + 1);
+  invoiceHistory.push(state);
+  if (invoiceHistory.length > 100) invoiceHistory.shift();
+  invoiceHistoryIndex = invoiceHistory.length - 1;
+  updateUndoButton();
+}
+
+function undoInvoice() {
+  if (invoiceHistoryIndex <= 0) return;
+  restoringInvoiceHistory = true;
+  invoiceHistoryIndex -= 1;
+
+  const state = invoiceHistory[invoiceHistoryIndex];
+  const paper = document.querySelector('.paper');
+  paper.innerHTML = state.html;
+
+  const controls = Array.from(paper.querySelectorAll('input, textarea, select'));
+  controls.forEach((el, i) => {
+    const saved = state.values[i];
+    if (!saved) return;
+    el.value = saved.value;
+    if (saved.checked !== undefined) el.checked = saved.checked;
+  });
+
+  // Recalculate all derived totals after restoring editable values.
+  calc();
+  fitSkuFields();
+  fitMetaFields();
+  restoringInvoiceHistory = false;
+  updateUndoButton();
+}
+
+// Save each edit after the invoice's calculation listeners have run.
+document.addEventListener('input', e => {
+  if (e.target.closest('.paper') && !restoringInvoiceHistory) saveInvoiceHistory();
+});
+document.addEventListener('change', e => {
+  if (e.target.closest('.paper') && !restoringInvoiceHistory) saveInvoiceHistory();
+});
+
+// Undo shortcut: Ctrl+Z (Windows/Linux) or Command+Z (Mac).
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    undoInvoice();
+  }
+});
+
+// Initial state is the baseline for undo.
+saveInvoiceHistory();
 </script>
-</body></html>
+</body></html> please fix this align Net Amt. Payable	6640.00 in right remove decimal for this it must show only 6640 example in image
